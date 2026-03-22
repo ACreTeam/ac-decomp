@@ -7,6 +7,13 @@
 namespace std {
 #endif
 
+    #if defined(__APPLE__)
+    static inline float sinf(float x) {
+        return (float)sin((double)x);
+    }
+
+    static inline float sqrtf(float x) {
+    #else
     float sqrtf(float);
     float sinf(float);
 
@@ -15,6 +22,7 @@ namespace std {
     }
 
     inline float sqrtf(float x) {
+    #endif
         static const double _half = .5;
         static const double _three = 3.0;
         volatile float y;

@@ -6,7 +6,7 @@ NCPU=$(sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 usage() {
     cat <<'EOF'
 Usage:
-  ./build.sh decomp [full|dol|rel|target <ninja-target...>] [-j N] [--reconfigure]
+    ./build.sh decomp [full|dol|rel|target <ninja-target...>] [-j N] [--reconfigure] [--skip-sha]
   ./build.sh platform [macos|ios|ipados] [clean]
 
 Backwards-compatible shortcuts:
@@ -19,6 +19,9 @@ Decomp profiles:
   dol    Build only static DOL output
   rel    Build only REL output
   target Build custom Ninja target(s)
+
+Flags:
+    --skip-sha   Avoid final build/GAFE01_00/ok checksum check (useful for long non-matching builds)
 EOF
 }
 
@@ -63,6 +66,7 @@ run_decomp_build() {
     local profile="full"
     local jobs="$NCPU"
     local reconfigure="0"
+    local skip_sha="0"
     local -a custom_targets=()
 
     if [[ $# -gt 0 ]]; then
@@ -80,6 +84,10 @@ run_decomp_build() {
                 reconfigure="1"
                 shift
                 ;;
+            --skip-sha)
+                skip_sha="1"
+                shift
+                ;;
             *)
                 custom_targets+=("$1")
                 shift
@@ -94,8 +102,13 @@ run_decomp_build() {
 
     case "$profile" in
         full)
-            echo "[build] Running full decomp build with -j$jobs"
-            ninja -j"$jobs"
+            if [[ "$skip_sha" == "1" ]]; then
+                echo "[build] Running full decomp build without sha check, with -j$jobs"
+                ninja -j"$jobs" build/GAFE01_00/static.dol build/GAFE01_00/foresta/foresta.rel
+            else
+                echo "[build] Running full decomp build with -j$jobs"
+                ninja -j"$jobs"
+            fi
             ;;
         dol)
             echo "[build] Building static DOL target with -j$jobs"

@@ -1350,7 +1350,7 @@ void Jam_UpdateTrackAll(seqp_* track)
 			track->parentController.fxmix  = fxMixValue;
 			track->parentController.dolby  = dolbyValue;
 		} else {
-			// Otherwise, combine with parent’s values using a second attenuation factor
+				   // Otherwise, combine with parent's values using a second attenuation factor
 			parentDistance = track->regParam.param.arguments[4] / 32767.0f;
 
 			track->parentController.volume = track->parent->parentController.volume * volumeValue;
@@ -1389,7 +1389,7 @@ void Jam_UpdateTrackAll(seqp_* track)
  * Address:	80010E00
  * Size:	00000C
  */
-/* OSf32tos8: removed — already defined as static inline in dolphin/os/OSFastCast.h */
+/* OSf32tos8: removed - already defined as static inline in dolphin/os/OSFastCast.h */
 
 /*
  * --INFO--

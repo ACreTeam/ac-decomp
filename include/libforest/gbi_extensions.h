@@ -688,16 +688,37 @@ do { \
     _g->words.w1 = (unsigned int)addr; \
 } while (0)
 
+#ifdef __APPLE__
+#define gsDPLoadTLUT_Dolphin(name, count, unk, addr) \
+{ \
+    .pwords = { \
+        _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14), \
+        (void*)(addr), \
+    }, \
+}
+#else
 #define gsDPLoadTLUT_Dolphin(name, count, unk, addr) \
 {{ \
     _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14), (unsigned int)(addr) \
 }}
+#endif
 
+#ifdef __APPLE__
+#define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
+{ \
+    .pwords = { \
+        _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
+            _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), \
+        (void*)(img), \
+    }, \
+}
+#else
 #define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
 {{ \
     _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (unsigned int)(img) \
 }}
+#endif
 
 #define gsDPSetTile_Dolphin(d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
 {{ \

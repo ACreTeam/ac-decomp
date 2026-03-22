@@ -21,6 +21,10 @@ extern double sin(double deg);
 extern double cos(double deg);
 extern double tan(double deg);
 
+#if defined(__APPLE__)
+float sinf(float);
+float cosf(float);
+#else
 float sinf(float);
 float cosf(float);
 
@@ -31,6 +35,7 @@ inline float sinf(float x) {
 inline float cosf(float x) {
     return (float)cos((double)x);
 }
+#endif
 
 extern double ceil(double);
 

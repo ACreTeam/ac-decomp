@@ -3366,14 +3366,14 @@ ksNesMainLoop1:
     // r26 = (REGISTER_PC >> 11) & 0x1C;
     // address range | r26  | description
     // --------------+------+--------------------------
-    // 0x0000–0x1FFF | 0x00 | internal RAM and mirrors
-    // 0x2000–0x3FFF | 0x04 | PPU registers and mirrors
+    // 0x0000-0x1FFF | 0x00 | internal RAM and mirrors
+    // 0x2000-0x3FFF | 0x04 | PPU registers and mirrors
     // 0x4000-0x5FFF | 0x08 | APU, I/O, and usually unmapped cartridge addresses
-    // 0x6000–0x7FFF | 0x0C | usually cartridge RAM
-    // 0x8000–0x9FFF | 0x10 | usually cartridge ROM and mapper registers
-    // 0xA000–0xBFFF | 0x14 | usually cartridge ROM and mapper registers
-    // 0xC000–0xDFFF | 0x18 | usually cartridge ROM and mapper registers
-    // 0xE000–0xFFFF | 0x1C | usually cartridge ROM and mapper registers
+    // 0x6000-0x7FFF | 0x0C | usually cartridge RAM
+    // 0x8000-0x9FFF | 0x10 | usually cartridge ROM and mapper registers
+    // 0xA000-0xBFFF | 0x14 | usually cartridge ROM and mapper registers
+    // 0xC000-0xDFFF | 0x18 | usually cartridge ROM and mapper registers
+    // 0xE000-0xFFFF | 0x1C | usually cartridge ROM and mapper registers
     rlwinm r26, REGISTER_PC, 21, 27, 29
 
     // r0 = REGISTER_PC - 0x2000;
@@ -3384,10 +3384,10 @@ ksNesMainLoop1:
     //
     // address range | size   | description
     // --------------+--------+----------------------
-    // 0x0000–0x07FF | 0x0800 | 2 KB internal RAM
-    // 0x0800–0x0FFF | 0x0800 | mirror of $0000–$07FF
-    // 0x1000–0x17FF | 0x0800 | mirror of $0000–$07FF
-    // 0x1800–0x1FFF | 0x0800 | mirror of $0000–$07FF
+    // 0x0000-0x07FF | 0x0800 | 2 KB internal RAM
+    // 0x0800-0x0FFF | 0x0800 | mirror of $0000-$07FF
+    // 0x1000-0x17FF | 0x0800 | mirror of $0000-$07FF
+    // 0x1800-0x1FFF | 0x0800 | mirror of $0000-$07FF
     subi r0, REGISTER_PC, 0x2000
 
     // r7 = state_cpu_ranges[r26];

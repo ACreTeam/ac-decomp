@@ -15,7 +15,7 @@ extern u32 *__piReg;
 #define GX_GET_CP_REG(offset)  (*(volatile u16*)((__cpReg) + (offset)))
 #define GX_SET_CP_REG(offset, value) ((*(volatile u16*)((__cpReg) + (offset))) = (value))
 
-inline u32 __GXReadCPCounterU32(u32 regAddrL, u32 regAddrH)
+static inline u32 __GXReadCPCounterU32(u32 regAddrL, u32 regAddrH)
 {
 	u32 ctrH0;
     u32 ctrH1;

@@ -84,10 +84,12 @@ static void aHNW_actor_dt(ACTOR* actor, GAME* game) {
 #include "../src/actor/ac_haniwa_move.c_inc"
 
 static void aHNW_actor_draw(ACTOR* actor, GAME* game) {
+#ifndef __APPLE__
     static Gfx hnw_tex_model[] = {
         gsDPLoadTLUT_Dolphin(15, 16, 1, hnw_face),
         gsSPEndDisplayList(),
     };
+#endif
 
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
     cKF_SkeletonInfo_R_c* keyframe = &haniwa->common_actor_class.anime.keyframe;
@@ -110,7 +112,11 @@ static void aHNW_actor_draw(ACTOR* actor, GAME* game) {
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 255, 255, 255, 255);
         }
 
+    #ifdef __APPLE__
+        gDPLoadTLUT_Dolphin(POLY_OPA_DISP++, 15, 16, 1, hnw_face);
+    #else
         gSPDisplayList(POLY_OPA_DISP++, hnw_tex_model);
+    #endif
 
         CLOSE_POLY_OPA_DISP(g);
 
