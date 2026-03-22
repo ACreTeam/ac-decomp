@@ -137,6 +137,18 @@ list(REMOVE_ITEM GAME_SOURCES
     "${REPO_ROOT}/src/static/libultra/xldtob.c"
     "${REPO_ROOT}/src/static/libultra/ultra.c"
     "${REPO_ROOT}/src/static/nintendo_hi_0.c"
+    "${REPO_ROOT}/src/data/model/obj_e_boat/obj_e_boat.c"
+)
+
+# GBA runtime is required by jaudio/famicom paths. Re-add specific Dolphin GBA units
+# after the broad static/dolphin exclusion above.
+list(APPEND GAME_SOURCES
+    "${REPO_ROOT}/src/static/dolphin/gba/GBA.c"
+    "${REPO_ROOT}/src/static/dolphin/gba/GBARead.c"
+    "${REPO_ROOT}/src/static/dolphin/gba/GBAWrite.c"
+    "${REPO_ROOT}/src/static/dolphin/gba/GBAXfer.c"
+    "${REPO_ROOT}/src/static/dolphin/gba/GBAJoyBoot.c"
+    "${REPO_ROOT}/src/static/dolphin/gba/GBAGetProcessStatus.c"
 )
 
 # ---- Main executable ----
@@ -163,12 +175,18 @@ target_include_directories(AnimalCrossing PRIVATE ${PLATFORM_INCLUDES})
 #   (these produce -Wstrict-prototypes warnings, suppressed by -Wno-strict-prototypes)
 set_source_files_properties(${GAME_SOURCES} PROPERTIES
     COMPILE_OPTIONS
-        "-include;${CMAKE_SOURCE_DIR}/include/platform/platform.h;-Dmain=ac_main_entry;-std=gnu99"
+    "-include;${CMAKE_SOURCE_DIR}/include/platform/platform.h;-Dmain=ac_main_entry;-std=gnu99;-fcommon;-fgnu89-inline"
 )
 
 # ---- Platform-specific link flags ----
 if(NOT IOS_BUILD)
     # macOS
+    # Many GC-era low-level symbols are still being shimmed during the port.
+    # Allow unresolved references for now so we can iterate on runtime bring-up.
+    target_link_options(AnimalCrossing PRIVATE
+        "-Wl,-undefined,dynamic_lookup"
+        "-Wl,-multiply_defined,suppress"
+    )
     target_link_libraries(AnimalCrossing
         "-framework Metal"
         "-framework MetalKit"

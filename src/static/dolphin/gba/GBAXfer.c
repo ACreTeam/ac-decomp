@@ -1,7 +1,9 @@
 #include "GBA/GBAPriv.h"
 #include <dolphin/os/OSSerial.h>
 
-static void __GBAHandler(s32 chan, u32 error, OSContext* context) {
+extern void __OSReschedule(void);
+
+void __GBAHandler(s32 chan, u32 error, OSContext* context) {
     GBAControl* gba;
     GBATransferCallback proc;
     GBACallback callback;
@@ -74,7 +76,8 @@ void TypeAndStatusCallback(s32 chan, u32 type) {
     if ((type & 0xFF) != 0 || (type & 0xffff0000) != 0x40000) {
         gba->ret = GBA_NOT_READY;
     } else {
-        if (SITransfer(chan, gba->output, gba->outputBytes, gba->input, gba->inputBytes, __GBAHandler, gba->delay)) {
+        if (SITransfer(chan, gba->output, gba->outputBytes, gba->input, gba->inputBytes,
+                       (void (*)(long, unsigned long, OSContext*))__GBAHandler, gba->delay)) {
             return;
         }
         gba->ret = GBA_BUSY;

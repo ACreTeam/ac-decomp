@@ -4,8 +4,6 @@
 
 extern "C" {
 
-void GXSetNumChans(u8 n)               { gx_state().numChans = n; }
-
 void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc ambSrc,
                    GXColorSrc matSrc, u32 lightMask, GXDiffuseFn diffFn,
                    GXAttnFn attnFn) {

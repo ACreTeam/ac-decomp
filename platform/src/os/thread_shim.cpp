@@ -189,22 +189,22 @@ void OSSignalCond(OSCond* c) {
 
 /* ---- libultra wrappers ---- */
 
-void osCreateThread2(OSThread* t, s32 id, void(*entry)(void*), void* arg,
+void __attribute__((weak)) osCreateThread2(OSThread* t, s32 id, void(*entry)(void*), void* arg,
                      void* sp, size_t stack_size, OSPriority pri) {
     (void)id;
     OSCreateThread(t, reinterpret_cast<void*(*)(void*)>(entry), arg,
                    sp, (u32)stack_size, pri, 0);
 }
 
-void osStartThread(OSThread* t) {
+void __attribute__((weak)) osStartThread(OSThread* t) {
     OSResumeThread(t);
 }
 
-void osDestroyThread(OSThread* t) {
+void __attribute__((weak)) osDestroyThread(OSThread* t) {
     OSCancelThread(t);
 }
 
-void osSetThreadPri(OSThread* t, int pri) {
+void __attribute__((weak)) osSetThreadPri(OSThread* t, int pri) {
     if (t) t->priority = (OSPriority)pri;
 }
 

@@ -103,15 +103,15 @@ BOOL OSReceiveMessage(OSMessageQueue* q, OSMessage* msg, s32 flags) {
 }
 
 /* ---- libultra message queue wrappers ---- */
-void osCreateMesgQueue(OSMessageQueue* mq, OSMessage* msg, s32 count) {
+void __attribute__((weak)) osCreateMesgQueue(OSMessageQueue* mq, OSMessage* msg, s32 count) {
     OSInitMessageQueue(mq, msg, count);
 }
 
-s32 osSendMesg(OSMessageQueue* mq, OSMessage m, s32 flags) {
+s32 __attribute__((weak)) osSendMesg(OSMessageQueue* mq, OSMessage m, s32 flags) {
     return OSSendMessage(mq, m, flags) ? 0 : -1;
 }
 
-s32 osRecvMesg(OSMessageQueue* mq, OSMessage* m, s32 flags) {
+s32 __attribute__((weak)) osRecvMesg(OSMessageQueue* mq, OSMessage* m, s32 flags) {
     return OSReceiveMessage(mq, m, flags) ? 0 : -1;
 }
 

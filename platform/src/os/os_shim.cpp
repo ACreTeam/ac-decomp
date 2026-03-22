@@ -37,18 +37,18 @@ u32 OSGetConsoleType(void) {
     return OS_CONSOLE_RETAIL;
 }
 
-void OSReport(const char* fmt, ...) {
+void __attribute__((weak)) OSReport(const char* fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
 }
 
-void OSVReport(const char* fmt, va_list list) {
+void __attribute__((weak)) OSVReport(const char* fmt, va_list list) {
     vfprintf(stderr, fmt, list);
 }
 
-void OSPanic(const char* file, int line, const char* msg, ...) {
+void __attribute__((weak)) OSPanic(const char* file, int line, const char* msg, ...) {
     va_list ap;
     va_start(ap, msg);
     fprintf(stderr, "OSPanic %s:%d: ", file, line);

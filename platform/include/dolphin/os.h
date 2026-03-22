@@ -130,12 +130,15 @@ typedef struct BI2Debug {
 #define OSNanosecondsToTicks(nsec)   (((nsec) * (OS_TIMER_CLOCK / 125000)) / 8000)
 #define OSMicrosecondsToTicks(usec)  (((usec) * (OS_TIMER_CLOCK / 125000)) / 8)
 
+/* Avoid external-linkage duplicates on Apple by using local inline forms below. */
+#if !defined(__APPLE__)
 void *OSPhysicalToCached(u32 paddr);
 void *OSPhysicalToUncached(u32 paddr);
 u32 OSCachedToPhysical(void *caddr);
 u32 OSUncachedToPhysical(void *ucaddr);
 void *OSCachedToUncached(void *caddr);
 void *OSUncachedToCached(void *ucaddr);
+#endif
 /* In release builds, these are macros — use inline functions instead to avoid
  * dereferencing GC physical addresses as pointers */
 #if !DEBUG

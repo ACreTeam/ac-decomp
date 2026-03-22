@@ -10,7 +10,7 @@
 
 extern "C" {
 
-void DSPInit(void) {}
+void __attribute__((weak)) DSPInit(void) {}
 void DSPReset(void) {}
 void DSPHalt(void)  {}
 

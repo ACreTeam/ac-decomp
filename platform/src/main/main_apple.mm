@@ -21,7 +21,8 @@
 /* Forward declarations for game entry points (src/main.c) */
 #include <dolphin/gx/GXFifo.h>   /* GXFifoObj */
 extern "C" {
-    extern void* HotStartEntry;
+    void* HotStartEntry = nullptr;
+    void* boot_copyDate = nullptr;
     typedef u32 (*EntryFunc)(void);
     void  DVDInit(void);
     void  VIInit(void);
@@ -35,7 +36,7 @@ extern "C" {
 extern "C" void plat_vi_create_window(int w, int h, const char* title);
 
 static int wait_for_controller_connection(void) {
-    fprintf(stderr, "[PAD] Waiting for physical controller connection...\n");
+    fprintf(stderr, "[PAD] Waiting for controller/keyboard input...\n");
     while (true) {
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
