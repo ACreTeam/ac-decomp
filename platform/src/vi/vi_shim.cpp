@@ -48,12 +48,12 @@ void VIWaitForRetrace(void) {
         exit(0);
     }
 
-    /* Stage 1: busy-sleep to ~60 FPS.
-     * Stage 4: replace with CVDisplayLink / CADisplayLink semaphore. */
+    /* Busy-sleep to ~60 FPS.
+     * GXCopyDisp is responsible for the actual Metal present each frame;
+     * do NOT call plat_metal_present_frame() here to avoid double-present. */
     SDL_Delay(16);
     s_retrace_count++;
     if (s_pre_retrace_cb)  s_pre_retrace_cb(s_retrace_count);
-    plat_metal_present_frame();
     if (s_post_retrace_cb) s_post_retrace_cb(s_retrace_count);
 }
 

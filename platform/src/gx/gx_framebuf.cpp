@@ -1,7 +1,8 @@
-/* GX framebuffer / copy operations.
- * Stage 1: stubs.  Stage 3: GXCopyDisp → present Metal drawable. */
+/* GX framebuffer / copy operations. */
 #include "gx_state.h"
 #include <dolphin/gx.h>
+
+extern "C" void plat_metal_present_frame(void);  /* metal_renderer.mm */
 
 extern "C" {
 
@@ -12,7 +13,8 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z) {
 
 void GXCopyDisp(void* dest, GXBool clear) {
     (void)dest; (void)clear;
-    /* TODO Stage 3: present current Metal drawable */
+    /* Render all accumulated draw calls and present the Metal drawable */
+    plat_metal_present_frame();
 }
 
 void GXCopyTex(void* dest, GXBool clear) {

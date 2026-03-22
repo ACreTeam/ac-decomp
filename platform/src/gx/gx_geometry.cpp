@@ -1,6 +1,6 @@
-/* GX geometry: vertex descriptor / format state.
- * Stage 1: store configuration; actual vertex buffer in Stage 7. */
+/* GX geometry: vertex descriptor / format state + GXBegin/GXEnd. */
 #include "gx_state.h"
+#include "gx_draw_internal.h"
 #include <dolphin/gx.h>
 #include <string.h>
 
@@ -57,18 +57,18 @@ void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list) {
 
 void GXSetArray(GXAttr attr, const void* data, u32 size, u8 stride) {
     (void)attr; (void)data; (void)size; (void)stride;
-    /* TODO Stage 7: store indexed array pointers */
+    /* Indexed array pointers — not yet used in direct-mode fast path */
 }
 
 void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts) {
     gx_state().primType  = type;
     gx_state().primFmt   = vtxfmt;
     gx_state().primCount = nverts;
-    /* TODO Stage 7: begin vertex buffer accumulation */
+    plat_gx_begin_draw(type);
 }
 
 void GXEnd(void) {
-    /* TODO Stage 7: flush accumulated vertices to Metal */
+    plat_gx_end_draw(gx_state().primType);
 }
 
 void GXSetLineWidth(u8 width, GXTexOffset off)  { (void)width; (void)off; }
