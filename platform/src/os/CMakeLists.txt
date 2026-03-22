@@ -5,6 +5,7 @@ add_library(platform_os OBJECT
     arena_shim.cpp
     alarm_shim.cpp
     rtc_shim.cpp
+    malloc_shim.c
 )
 target_include_directories(platform_os PRIVATE
     ${PLATFORM_INCLUDES}

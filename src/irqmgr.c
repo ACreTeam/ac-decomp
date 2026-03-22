@@ -192,8 +192,8 @@ extern void CreateIRQManager(void* stack, size_t stack_size, int priority, u8 re
 #define VI_STACK_SIZE 0x1000
 
 static u16 vc_retraceCount;
-static OSMessage vc_msg;
-static OSMessageQueue* vc_msgq;
+OSMessage vc_msg;          /* exported: platform vi_shim sends retrace events */
+OSMessageQueue* vc_msgq;   /* exported: platform vi_shim sends retrace events */
 static u8 viThreadStack[VI_STACK_SIZE];
 static OSThread viThread;
 

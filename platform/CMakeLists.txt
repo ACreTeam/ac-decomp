@@ -129,6 +129,13 @@ list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/xlitob\\.c$")
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/xldtob\\.c$")
 # libultra.c redefines bcopy/bcmp/bzero and conflicts with Apple secure string macros
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/ultra\\.c$")
+# libc64/malloc.c uses u32 pointer arithmetic incompatible with macOS 64-bit.
+# The platform provides malloc_shim.c which delegates to the system allocator.
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libc64/malloc\\.c$")
+# libultra/createthread.c casts the stack pointer to (int), truncating 64-bit
+# addresses and causing memset to write to an invalid address on macOS.
+# The platform thread_shim.cpp provides a correct 64-bit osCreateThread2.
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/createthread\\.c$")
 # nintendo_hi_0 depends on placeholder asset include content in this workspace state
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/nintendo_hi_0\\.c$")
 # Explicit removals for robustness across CMake generator/path normalization differences
@@ -136,6 +143,7 @@ list(REMOVE_ITEM GAME_SOURCES
     "${REPO_ROOT}/src/static/libultra/xlitob.c"
     "${REPO_ROOT}/src/static/libultra/xldtob.c"
     "${REPO_ROOT}/src/static/libultra/ultra.c"
+    "${REPO_ROOT}/src/static/libultra/createthread.c"
     "${REPO_ROOT}/src/static/nintendo_hi_0.c"
     "${REPO_ROOT}/src/data/model/obj_e_boat/obj_e_boat.c"
 )

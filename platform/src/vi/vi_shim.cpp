@@ -2,10 +2,18 @@
  * Stage 1: stubs.  Stage 3: SDL2 window + Metal layer. */
 #include "platform/platform.h"
 #include <dolphin/vi.h>
+#include <dolphin/os/OSMessage.h>
 #include <SDL2/SDL.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+
+/* vc_msgq / vc_msg: exported from irqmgr.c (static removed).
+ * VIWaitForRetrace dispatches the retrace event so irqmgr_Main unblocks. */
+extern "C" {
+    extern OSMessageQueue* vc_msgq;
+    extern OSMessage       vc_msg;
+}
 
 static VIRetraceCallback s_pre_retrace_cb  = nullptr;
 static VIRetraceCallback s_post_retrace_cb = nullptr;
@@ -44,9 +52,9 @@ void VISetBlack(BOOL black) {
 }
 
 void VIWaitForRetrace(void) {
-    if (plat_vi_pump_events()) {
-        exit(0);
-    }
+    /* SDL event pumping is handled exclusively by the main thread event loop
+     * (main_apple.mm).  This function may be called from any game thread
+     * (padmgr, graph, etc.) — never pump events here. */
 
     /* Busy-sleep to ~60 FPS.
      * GXCopyDisp is responsible for the actual Metal present each frame;
@@ -55,6 +63,12 @@ void VIWaitForRetrace(void) {
     s_retrace_count++;
     if (s_pre_retrace_cb)  s_pre_retrace_cb(s_retrace_count);
     if (s_post_retrace_cb) s_post_retrace_cb(s_retrace_count);
+
+    /* Dispatch VI retrace event to irqmgr so irqmgr_Main unblocks and
+     * distributes retrace messages to all registered clients (mainproc). */
+    if (vc_msgq) {
+        OSSendMessage(vc_msgq, vc_msg, OS_MESSAGE_NOBLOCK);
+    }
 }
 
 u32 VIGetRetraceCount(void) { return s_retrace_count; }

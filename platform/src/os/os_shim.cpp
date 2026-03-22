@@ -99,6 +99,23 @@ OSTick OSGetTick(void) {
     return (OSTick)(OSGetTime() & 0xFFFFFFFFu);
 }
 
+/* osGetCount / osSyncPrintf / osWritebackDCache / osAppNMIBuffer:
+ * from ultra.c which is excluded (redefines bcopy/bcmp/bzero conflicting with Apple libc). */
+u32 osGetCount(void) {
+    return (u32)(OSGetTime() & 0xFFFFFFFFu);
+}
+
+void osSyncPrintf(const char* fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+}
+
+void osWritebackDCache(void* buf, u32 len) { (void)buf; (void)len; }
+
+s32 osAppNMIBuffer[16];
+
 OSTime __OSGetSystemTime(void) {
     return OSGetTime();
 }

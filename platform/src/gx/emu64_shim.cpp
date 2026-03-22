@@ -134,6 +134,7 @@ static bool     s_tex_valid[NTILES];
 static void*    s_segs[16];   /* segment table: seg# → host pointer */
 
 static bool     s_init;
+static int      s_dbg_frame; /* frame counter for logging */
 
 /* ------------------------------------------------------------------ */
 /* Segment resolution                                                   */
@@ -566,6 +567,7 @@ void emu64_taskstart(Gfx* gfx) {
     if (!gfx) return;
     if (!s_init) emu64_init();
     run_dl(gfx);
+    s_dbg_frame++;
 }
 
 void emu64_refresh() {
