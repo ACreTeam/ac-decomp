@@ -66,9 +66,8 @@ void VIWaitForRetrace(void) {
 
     /* Dispatch VI retrace event to irqmgr so irqmgr_Main unblocks and
      * distributes retrace messages to all registered clients (mainproc). */
-    if (vc_msgq) {
+    if (vc_msgq)
         OSSendMessage(vc_msgq, vc_msg, OS_MESSAGE_NOBLOCK);
-    }
 }
 
 u32 VIGetRetraceCount(void) { return s_retrace_count; }

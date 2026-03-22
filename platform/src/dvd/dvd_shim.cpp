@@ -219,7 +219,11 @@ s32  DVDGetCommandBlockStatus(const DVDCommandBlock* b) {
     return b ? b->state : DVD_FILEINFO_READY;
 }
 s32  DVDGetDriveStatus(void) {
-    return s_disc_open ? DVD_STATE_END : DVD_STATE_NO_DISK;
+    /* Return DVD_STATE_END (0) whether or not a disc image is mounted.
+     * DVD_STATE_NO_DISK triggers the dvderr overlay which blocks all game
+     * rendering.  Without a real disc, we stub reads but let the game run. */
+    (void)s_disc_open;
+    return DVD_STATE_END;
 }
 BOOL DVDSetAutoInvalidation(BOOL v) { return v; }
 void* DVDGetFSTLocation(void) { return gcm_fs_get_fst_location(); }
