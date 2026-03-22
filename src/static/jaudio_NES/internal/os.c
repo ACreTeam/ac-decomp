@@ -22,7 +22,7 @@ extern void Z_osCreateMesgQueue(OSMesgQueue* mq, OSMesg* msg, s32 count) {
 }
 
 extern s32 Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 flags) {
-    int msgCount = mq->msgCount;
+    if (!mq) return -1;
     if (mq->validCount == mq->msgCount) {
         return -1;
     }
@@ -41,6 +41,7 @@ extern s32 Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 flags) {
 }
 
 extern s32 Z_osRecvMesg(OSMesgQueue* mq, OSMesg* msg, s32 flags) {
+    if (!mq) { if (msg) *msg = NULL; return -1; }
     if (flags == OS_MESG_BLOCK) {
         while (!mq->validCount) {};
     }
