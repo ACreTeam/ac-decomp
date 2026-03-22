@@ -424,7 +424,7 @@ static id<MTLRenderPipelineState> build_pipeline(id<MTLFunction> vs,
     pd.depthAttachmentPixelFormat        = MTLPixelFormatDepth32Float;
 
     if (blend) {
-        auto& att = pd.colorAttachments[0];
+        MTLRenderPipelineColorAttachmentDescriptor* att = pd.colorAttachments[0];
         att.blendingEnabled             = YES;
         att.sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
         att.destinationRGBBlendFactor   = MTLBlendFactorOneMinusSourceAlpha;

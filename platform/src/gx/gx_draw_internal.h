@@ -1,6 +1,7 @@
 #pragma once
 /* Internal draw-call interface shared between gx_geometry.cpp, gx_vert.cpp,
- * gx_texture.mm and metal_renderer.mm.  NOT part of the public GX API. */
+ * gx_texture.mm and metal_renderer.mm.  NOT part of the public GX API.
+ * All functions use C linkage so they are callable from .cpp and .mm alike. */
 #include <dolphin/gx.h>
 #include <stdint.h>
 
@@ -10,6 +11,10 @@ struct PlatVertex {
     float r, g, b, a;  /* vertex colour [0..1]  */
     float u, v;         /* texcoord 0            */
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* --- Vertex accumulation (gx_vert.cpp → metal_renderer.mm) --------- */
 /* Call at each GXPosition*: commits the previous vertex, starts a new one */
@@ -30,3 +35,7 @@ void  plat_metal_store_cached_tex(uintptr_t key, void* tex_ptr);
 /* Accessors for Metal objects needed by gx_texture.mm */
 void* plat_metal_device_ptr(void);     /* id<MTLDevice>  */
 void* plat_metal_white_tex_ptr(void);  /* 1×1 white fallback id<MTLTexture> */
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
