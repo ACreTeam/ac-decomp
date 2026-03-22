@@ -46,6 +46,7 @@ extern "C" {
     }
 
 extern "C" void plat_vi_create_window(int w, int h, const char* title);
+extern "C" void plat_audio_init(void);
 
 #if TARGET_OS_IPHONE
 static void configure_audio_session(void) {
@@ -125,6 +126,10 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "[Main] JW_Init done. Calling JW_Init2...\n");
     JW_Init2();
     fprintf(stderr, "[Main] JW_Init2 done.\n");
+
+    /* Initialise the audio stub: sets up AG queues and starts a background
+     * thread that ACKs spec-change commands so second_game can advance. */
+    plat_audio_init();
 
     /* Launch game on a background thread so the main thread stays free
      * to run the Cocoa/SDL event loop. */
