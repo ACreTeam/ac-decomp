@@ -709,6 +709,13 @@ def generate_build_ninja(
     )
     n.newline()
 
+    mwcc_pool: Optional[str] = None
+    if wrapper is not None and wrapper.name.startswith("wine"):
+        # Wine process startup can intermittently fail under parallel load on macOS.
+        # Serialize MWCC invocations to avoid ShellExecuteEx/Internal error failures.
+        n.pool("mwcc_wine", 1)
+        mwcc_pool = "mwcc_wine"
+
     n.comment("Generate DOL")
     n.rule(
         name="elf2dol",
@@ -722,6 +729,7 @@ def generate_build_ninja(
         name="mwcc",
         command=mwcc_cmd,
         description="MWCC $out",
+        pool=mwcc_pool,
         depfile="$basefile.d",
         deps="gcc",
     )
@@ -732,6 +740,7 @@ def generate_build_ninja(
         name="mwcc_sjis",
         command=mwcc_sjis_cmd,
         description="MWCC $out",
+        pool=mwcc_pool,
         depfile="$basefile.d",
         deps="gcc",
     )
@@ -742,6 +751,7 @@ def generate_build_ninja(
         name="mwcc_extab",
         command=mwcc_extab_cmd,
         description="MWCC $out",
+        pool=mwcc_pool,
         depfile="$basefile.d",
         deps="gcc",
     )
@@ -752,6 +762,7 @@ def generate_build_ninja(
         name="mwcc_sjis_extab",
         command=mwcc_sjis_extab_cmd,
         description="MWCC $out",
+        pool=mwcc_pool,
         depfile="$basefile.d",
         deps="gcc",
     )

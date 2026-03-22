@@ -50,7 +50,7 @@ f32 atanf2(f32 x, f32 y)
 f32 sinf2(f32 x)
 {
 	// @fabricated
-    return sinf(x);
+	return (f32)sin((double)x);
 }
 
 /*
@@ -61,7 +61,7 @@ f32 sinf2(f32 x)
 void Jac_InitSinTable()
 {
 	for (u32 i = 0; i < SINTABLE_LENGTH; i++) {
-		SINTABLE[i] = sinf(i * HALF_PI / 256.0f);
+		SINTABLE[i] = (f32)sin((double)(i * HALF_PI / 256.0f));
 	}
 }
 

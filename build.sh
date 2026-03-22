@@ -1,36 +1,147 @@
 #!/bin/bash
-# Animal Crossing Metal Port — build entry point
-# Usage: ./build.sh [macos|ios|ipados] [clean]
 set -euo pipefail
-
-PLATFORM="${1:-macos}"
-BUILD_DIR="platform/build_${PLATFORM}"
-
-if [[ "${2:-}" == "clean" && -d "$BUILD_DIR" ]]; then
-    echo "[build] Cleaning $BUILD_DIR"
-    rm -rf "$BUILD_DIR"
-fi
-
-mkdir -p "$BUILD_DIR"
 
 NCPU=$(sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 
-if [[ "$PLATFORM" == "ios" || "$PLATFORM" == "ipados" ]]; then
-    echo "[build] Configuring for $PLATFORM (Xcode generator)"
-    cmake -S platform -B "$BUILD_DIR" \
-        -DPLATFORM="$PLATFORM" \
-        -DCMAKE_TOOLCHAIN_FILE="$(pwd)/platform/toolchains/ios.cmake" \
-        -GXcode \
-        ${APPLE_TEAM_ID:+-DAPPLE_TEAM_ID="$APPLE_TEAM_ID"}
-    echo "[build] Building $PLATFORM"
-    cmake --build "$BUILD_DIR" --config Release -- -jobs "$NCPU"
-    echo "[build] Output: $BUILD_DIR/Release-iphoneos/AnimalCrossing.app"
-else
-    echo "[build] Configuring for macOS"
-    cmake -S platform -B "$BUILD_DIR" \
-        -DPLATFORM=macos \
-        -DCMAKE_BUILD_TYPE=Release
-    echo "[build] Building macOS"
-    cmake --build "$BUILD_DIR" -j"$NCPU"
-    echo "[build] Output: $BUILD_DIR/bin/AnimalCrossing.app"
-fi
+usage() {
+    cat <<'EOF'
+Usage:
+  ./build.sh decomp [full|dol|rel|target <ninja-target...>] [-j N] [--reconfigure]
+  ./build.sh platform [macos|ios|ipados] [clean]
+
+Backwards-compatible shortcuts:
+  ./build.sh macos [clean]
+  ./build.sh ios [clean]
+  ./build.sh ipados [clean]
+
+Decomp profiles:
+  full   Build everything (default)
+  dol    Build only static DOL output
+  rel    Build only REL output
+  target Build custom Ninja target(s)
+EOF
+}
+
+run_platform_build() {
+    local platform="${1:-macos}"
+    local maybe_clean="${2:-}"
+    local build_dir="platform/build_${platform}"
+
+    if [[ "$maybe_clean" == "clean" && -d "$build_dir" ]]; then
+        echo "[build] Cleaning $build_dir"
+        rm -rf "$build_dir"
+    fi
+
+    mkdir -p "$build_dir"
+
+    if [[ "$platform" == "ios" || "$platform" == "ipados" ]]; then
+        echo "[build] Configuring for $platform (Xcode generator)"
+        cmake -S platform -B "$build_dir" \
+            -DPLATFORM="$platform" \
+            -DCMAKE_TOOLCHAIN_FILE="$(pwd)/platform/toolchains/ios.cmake" \
+            -GXcode \
+            ${APPLE_TEAM_ID:+-DAPPLE_TEAM_ID="$APPLE_TEAM_ID"}
+        echo "[build] Building $platform"
+        cmake --build "$build_dir" --config Release -- -jobs "$NCPU"
+        echo "[build] Output: $build_dir/Release-iphoneos/AnimalCrossing.app"
+    elif [[ "$platform" == "macos" ]]; then
+        echo "[build] Configuring for macOS"
+        cmake -S platform -B "$build_dir" \
+            -DPLATFORM=macos \
+            -DCMAKE_BUILD_TYPE=Release
+        echo "[build] Building macOS"
+        cmake --build "$build_dir" -j"$NCPU"
+        echo "[build] Output: $build_dir/bin/AnimalCrossing.app"
+    else
+        echo "Unknown platform: $platform"
+        usage
+        exit 1
+    fi
+}
+
+run_decomp_build() {
+    local profile="full"
+    local jobs="$NCPU"
+    local reconfigure="0"
+    local -a custom_targets=()
+
+    if [[ $# -gt 0 ]]; then
+        profile="$1"
+        shift
+    fi
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -j)
+                jobs="$2"
+                shift 2
+                ;;
+            --reconfigure)
+                reconfigure="1"
+                shift
+                ;;
+            *)
+                custom_targets+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    if [[ "$reconfigure" == "1" || ! -f build.ninja ]]; then
+        echo "[build] Running configure.py"
+        python3 configure.py
+    fi
+
+    case "$profile" in
+        full)
+            echo "[build] Running full decomp build with -j$jobs"
+            ninja -j"$jobs"
+            ;;
+        dol)
+            echo "[build] Building static DOL target with -j$jobs"
+            ninja -j"$jobs" build/GAFE01_00/static.dol
+            ;;
+        rel)
+            echo "[build] Building REL target with -j$jobs"
+            ninja -j"$jobs" build/GAFE01_00/foresta/foresta.rel
+            ;;
+        target)
+            if [[ ${#custom_targets[@]} -eq 0 ]]; then
+                echo "No custom target specified for 'target' profile."
+                usage
+                exit 1
+            fi
+            echo "[build] Building custom target(s) with -j$jobs: ${custom_targets[*]}"
+            ninja -j"$jobs" "${custom_targets[@]}"
+            ;;
+        *)
+            echo "Unknown decomp profile: $profile"
+            usage
+            exit 1
+            ;;
+    esac
+}
+
+mode="${1:-decomp}"
+
+case "$mode" in
+    decomp)
+        shift || true
+        run_decomp_build "$@"
+        ;;
+    platform)
+        shift || true
+        run_platform_build "${1:-macos}" "${2:-}"
+        ;;
+    macos|ios|ipados)
+        run_platform_build "$mode" "${2:-}"
+        ;;
+    -h|--help|help)
+        usage
+        ;;
+    *)
+        # Backwards compatibility with prior behavior where first arg implied platform.
+        # If mode is not recognized, treat it as a decomp profile.
+        run_decomp_build "$mode" "${@:2}"
+        ;;
+esac
