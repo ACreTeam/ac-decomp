@@ -5,7 +5,7 @@ add_library(platform_gx OBJECT
     gx_vert.cpp
     gx_transform.cpp
     gx_tev.cpp
-    gx_texture.cpp
+    gx_texture.mm
     gx_lighting.cpp
     gx_pixel.cpp
     gx_framebuf.cpp
