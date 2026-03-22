@@ -120,8 +120,11 @@ int main(int argc, char* argv[]) {
     /* Initialise JSystem framework (normally called from boot.c).
      * JW_Init creates JFWSystem + JFWDisplay — required for GXCopyDisp.
      * JW_Init2 sets up the game heap (MallocInit). */
+    fprintf(stderr, "[Main] Calling JW_Init...\n");
     JW_Init();
+    fprintf(stderr, "[Main] JW_Init done. Calling JW_Init2...\n");
     JW_Init2();
+    fprintf(stderr, "[Main] JW_Init2 done.\n");
 
     /* Launch game on a background thread so the main thread stays free
      * to run the Cocoa/SDL event loop. */

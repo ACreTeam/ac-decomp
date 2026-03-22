@@ -13,6 +13,9 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z) {
 
 void GXCopyDisp(void* dest, GXBool clear) {
     (void)dest; (void)clear;
+    static int s_copydispcnt = 0;
+    if (s_copydispcnt < 5) fprintf(stderr, "[GX] GXCopyDisp #%d\n", s_copydispcnt);
+    s_copydispcnt++;
     /* Render all accumulated draw calls and present the Metal drawable */
     plat_metal_present_frame();
 }

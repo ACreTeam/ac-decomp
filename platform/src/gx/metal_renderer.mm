@@ -293,6 +293,15 @@ void* plat_metal_get_cmdqueue(void) { return (__bridge void*)g_cmdQueue; }
 void plat_metal_present_frame(void) {
     if (!g_cmdQueue || !g_pipeOpaque) return;
 
+    static int s_frame_num = 0;
+    {
+        std::lock_guard<std::mutex> lk(s_drawMtx);
+        if (s_frame_num < 10 || (s_frame_num % 60) == 0)
+            fprintf(stderr, "[Metal] frame %d: %zu draw cmds\n",
+                    s_frame_num, s_drawList.size());
+    }
+    s_frame_num++;
+
     id<CAMetalDrawable> drawable = [g_metalLayer nextDrawable];
     if (!drawable) return;
 
