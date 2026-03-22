@@ -39,6 +39,8 @@ extern "C" {
     GXFifoObj* GXInit(void* base, u32 size);
     void  AIInit(u8* stack);
     void  dvderr_init(void);   /* normally called from boot.c; we call it here */
+    void  JW_Init(void);       /* normally called from boot.c; creates JFWDisplay */
+    void  JW_Init2(void);      /* normally called from boot.c; sets up game heap */
     /* ac_main_entry is src/main.c:main() renamed via -Dmain=ac_main_entry in CMake */
     void  ac_main_entry(void);
     }
@@ -114,6 +116,12 @@ int main(int argc, char* argv[]) {
     /* Audio */
     static uint8_t ai_stack[4096];
     AIInit(ai_stack);
+
+    /* Initialise JSystem framework (normally called from boot.c).
+     * JW_Init creates JFWSystem + JFWDisplay — required for GXCopyDisp.
+     * JW_Init2 sets up the game heap (MallocInit). */
+    JW_Init();
+    JW_Init2();
 
     /* Launch game on a background thread so the main thread stays free
      * to run the Cocoa/SDL event loop. */
