@@ -580,4 +580,14 @@ void emu64_texture_cache_data_entry_set(void* begin, void* end) {
     (void)begin; (void)end;
 }
 
+/* emu64 animation flags (aflags_c replacement) */
+static int s_aflags[256];
+void emu64_set_aflags(int idx, int value) {
+    if (idx > 0 && idx < 256) s_aflags[idx] = value;
+}
+int emu64_get_aflags(int idx) {
+    if (idx > 0 && idx < 256) return s_aflags[idx];
+    return 0;
+}
+
 } /* extern "C" */
