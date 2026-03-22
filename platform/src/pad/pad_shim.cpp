@@ -8,6 +8,50 @@
 static PADSamplingCallback s_sampling_cb = nullptr;
 static SDL_GameController* s_controllers[PAD_MAX_CONTROLLERS] = {};
 
+static void fill_keyboard_pad(PADStatus* st) {
+    const Uint8* k = SDL_GetKeyboardState(nullptr);
+    memset(st, 0, sizeof(PADStatus));
+    st->err = PAD_ERR_NONE;
+
+    u16 buttons = 0;
+    if (k[SDL_SCANCODE_Z])      buttons |= PAD_BUTTON_A;
+    if (k[SDL_SCANCODE_X])      buttons |= PAD_BUTTON_B;
+    if (k[SDL_SCANCODE_C])      buttons |= PAD_BUTTON_X;
+    if (k[SDL_SCANCODE_V])      buttons |= PAD_BUTTON_Y;
+    if (k[SDL_SCANCODE_RETURN]) buttons |= PAD_BUTTON_START;
+    if (k[SDL_SCANCODE_LEFT])   buttons |= PAD_BUTTON_LEFT;
+    if (k[SDL_SCANCODE_RIGHT])  buttons |= PAD_BUTTON_RIGHT;
+    if (k[SDL_SCANCODE_DOWN])   buttons |= PAD_BUTTON_DOWN;
+    if (k[SDL_SCANCODE_UP])     buttons |= PAD_BUTTON_UP;
+    if (k[SDL_SCANCODE_Q])      buttons |= PAD_TRIGGER_L;
+    if (k[SDL_SCANCODE_E])      buttons |= PAD_TRIGGER_R;
+    if (k[SDL_SCANCODE_TAB])    buttons |= PAD_TRIGGER_Z;
+    st->button = buttons;
+
+    int sx = 0;
+    int sy = 0;
+    int cx = 0;
+    int cy = 0;
+
+    if (k[SDL_SCANCODE_A]) sx -= 96;
+    if (k[SDL_SCANCODE_D]) sx += 96;
+    if (k[SDL_SCANCODE_S]) sy -= 96;
+    if (k[SDL_SCANCODE_W]) sy += 96;
+
+    if (k[SDL_SCANCODE_J]) cx -= 96;
+    if (k[SDL_SCANCODE_L]) cx += 96;
+    if (k[SDL_SCANCODE_K]) cy -= 96;
+    if (k[SDL_SCANCODE_I]) cy += 96;
+
+    st->stickX = (s8)sx;
+    st->stickY = (s8)sy;
+    st->substickX = (s8)cx;
+    st->substickY = (s8)cy;
+
+    st->triggerLeft = k[SDL_SCANCODE_LSHIFT] ? 255 : 0;
+    st->triggerRight = k[SDL_SCANCODE_RSHIFT] ? 255 : 0;
+}
+
 static void open_controllers(void) {
     for (int c = 0; c < PAD_MAX_CONTROLLERS; c++) {
         if (s_controllers[c] && !SDL_GameControllerGetAttached(s_controllers[c])) {
@@ -63,7 +107,12 @@ u32 PADRead(PADStatus* status) {
         memset(&status[c], 0, sizeof(PADStatus));
         SDL_GameController* gc = s_controllers[c];
         if (!gc || !SDL_GameControllerGetAttached(gc)) {
-            status[c].err = PAD_ERR_NO_CONTROLLER;
+            if (c == 0) {
+                fill_keyboard_pad(&status[c]);
+                connected |= (1u << c);
+            } else {
+                status[c].err = PAD_ERR_NO_CONTROLLER;
+            }
             continue;
         }
         connected |= (1u << c);

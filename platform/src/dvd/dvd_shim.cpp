@@ -9,12 +9,56 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/stat.h>
 
 /* DiskID global (replaces the AT_ADDRESS(0x80000000) declaration) */
 DVDDiskID DiskID = {};
 
 static bool s_disc_open = false;
 static u32 s_last_transfer_size = 0;
+
+static bool get_user_settings_path(char* out, size_t out_size) {
+    const char* home = getenv("HOME");
+    if (!home || !out || out_size == 0) {
+        return false;
+    }
+    snprintf(out, out_size,
+             "%s/Library/Application Support/AnimalCrossing/settings.ini", home);
+    return true;
+}
+
+static void ensure_user_settings_template(void) {
+    char cfg_path[1024] = {};
+    char dir_path[1024] = {};
+    const char* home = getenv("HOME");
+    if (!home) {
+        return;
+    }
+
+    snprintf(dir_path, sizeof(dir_path),
+             "%s/Library/Application Support/AnimalCrossing", home);
+    mkdir(dir_path, 0755);
+
+    if (!get_user_settings_path(cfg_path, sizeof(cfg_path))) {
+        return;
+    }
+
+    FILE* f = fopen(cfg_path, "r");
+    if (f) {
+        fclose(f);
+        return;
+    }
+
+    f = fopen(cfg_path, "w");
+    if (!f) {
+        return;
+    }
+
+    fputs("# Animal Crossing macOS settings\n", f);
+    fputs("# Set a full path to your RVZ/ISO image\n", f);
+    fputs("disc=\n", f);
+    fclose(f);
+}
 
 /* Read the disc path from settings.ini */
 static const char* read_disc_path(void) {
@@ -29,10 +73,8 @@ static const char* read_disc_path(void) {
     /* Try to read from settings.ini next to the executable */
     FILE* f = fopen("settings.ini", "r");
     if (!f) {
-        const char* home = getenv("HOME");
-        if (home) {
-            snprintf(path, sizeof(path),
-                     "%s/Library/Application Support/AnimalCrossing/settings.ini", home);
+        ensure_user_settings_template();
+        if (get_user_settings_path(path, sizeof(path))) {
             f = fopen(path, "r");
         }
     }
@@ -63,7 +105,7 @@ void DVDInit(void) {
         fprintf(stderr, "[DVD] Disc opened: %.4s%.2s\n",
                 DiskID.gameName, DiskID.company);
     } else {
-        fprintf(stderr, "[DVD] No disc image — set disc= in settings.ini\n");
+        fprintf(stderr, "[DVD] No disc image. Set disc= in ./settings.ini or ~/Library/Application Support/AnimalCrossing/settings.ini\n");
     }
 }
 
