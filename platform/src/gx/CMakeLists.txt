@@ -15,6 +15,7 @@ add_library(platform_gx OBJECT
     texture_decode.cpp
     metal_renderer.mm
     tev_shader_gen.mm
+    emu64_shim.cpp
 )
 target_include_directories(platform_gx PRIVATE
     ${PLATFORM_INCLUDES}

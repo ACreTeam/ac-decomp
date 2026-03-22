@@ -8,6 +8,7 @@
 #include "gx_state.h"
 #include <dolphin/gx.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 

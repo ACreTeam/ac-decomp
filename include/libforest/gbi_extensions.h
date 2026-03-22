@@ -728,12 +728,12 @@ do { \
 }}
 
 #define gDPSetTextureImage_Dolphin(pkt, fmt, siz, h, w, img) \
-{{ \
+do { \
     Gfx* _gfx = (Gfx*)(pkt); \
-    _gfx->words.w0 = _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
+    _gfx->pwords.cmd = _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10); \
-    _gfx->words.w1 = (unsigned int)img; \
-}}
+    _gfx->pwords.ptr = (void*)(img); \
+} while(0)
 
 #define gDPSetTile_Dolphin(pkt, d_fmt, tile, tlut_name, wrap_s, wrap_t, shift_s, shift_t) \
 {{ \

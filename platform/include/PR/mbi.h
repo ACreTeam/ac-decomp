@@ -579,9 +579,8 @@ typedef union {
 
 #define gSPMatrix(pkt, m, p) do {               \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_MTX, 24, 8) | _SHIFTL((uint32_t)sizeof(int[4][4]), 0, 16)); \
-    _g->words.w1 = ((uint32_t)(p)) ^ 1;        \
-    (void)(m);                                  \
+    _g->pwords.cmd = (_SHIFTL(G_MTX, 24, 8) | _SHIFTL((uint32_t)sizeof(int[4][4]), 0, 16) | ((uint32_t)(p) & 0xFF)); \
+    _g->pwords.ptr = (void*)(m);               \
 } while(0)
 
 #define gSPPopMatrix(pkt, n) do {               \
@@ -590,21 +589,21 @@ typedef union {
     _g->words.w1 = (uint32_t)(n) * 64;         \
 } while(0)
 
-/* F3DZEX2: w0 = (G_VTX<<24)|(n<<12)|((v0+n)<<1), w1 = ptr */
+/* F3DZEX2: cmd = (G_VTX<<24)|(n<<12)|((v0+n)<<1), ptr = vertex buffer */
 #define gSPVertex(pkt, v, n, v0) do {           \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_VTX, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((n)+(v0), 1, 7)); \
-    _g->words.w1 = (uint32_t)(v);               \
+    _g->pwords.cmd = (_SHIFTL(G_VTX, 24, 8) | _SHIFTL((n), 12, 8) | _SHIFTL((n)+(v0), 1, 7)); \
+    _g->pwords.ptr = (void*)(v);               \
 } while(0)
 
-#define gSPDisplayList(pkt, dl) dma1p(pkt, G_DL, 0, 0, (uint32_t)(dl))
-#define gSPBranchList(pkt, dl)  dma1p(pkt, G_DL, 0, 1, (uint32_t)(dl))
+#define gSPDisplayList(pkt, dl) dma1p(pkt, G_DL, 0, 0, dl)
+#define gSPBranchList(pkt, dl)  dma1p(pkt, G_DL, 0, 1, dl)
 
 /* Helper (avoids name conflict with gDma1p) */
 #define dma1p(pkt, c, s, f, p) do {             \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(c, 24, 8) | _SHIFTL((s), 16, 8) | _SHIFTL((f), 0, 16)); \
-    _g->words.w1 = (uint32_t)(p);               \
+    _g->pwords.cmd = (_SHIFTL(c, 24, 8) | _SHIFTL((s), 16, 8) | _SHIFTL((f), 0, 16)); \
+    _g->pwords.ptr = (void*)(p);               \
 } while(0)
 
 #define gSPEndDisplayList(pkt) do {             \
@@ -615,8 +614,8 @@ typedef union {
 
 #define gSPSegment(pkt, seg, base) do {         \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_MOVEWORD, 24, 8) | _SHIFTL(G_MW_SEGMENT, 16, 8) | (uint32_t)((seg) * 4)); \
-    _g->words.w1 = (uint32_t)(base);            \
+    _g->pwords.cmd = (_SHIFTL(G_MOVEWORD, 24, 8) | _SHIFTL(G_MW_SEGMENT, 16, 8) | (uint32_t)((seg) * 4)); \
+    _g->pwords.ptr = (void*)(uintptr_t)(base); \
 } while(0)
 
 #define gSPNumLights(pkt, n) do {               \
@@ -627,20 +626,20 @@ typedef union {
 
 #define gSPViewport(pkt, v) do {                \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL((sizeof(Vp_t)-1), 16, 8) | _SHIFTL(G_MV_VIEWPORT, 8, 8)); \
-    _g->words.w1 = (uintptr_t)(v);              \
+    _g->pwords.cmd = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL((sizeof(Vp_t)-1), 16, 8) | _SHIFTL(G_MV_VIEWPORT, 8, 8)); \
+    _g->pwords.ptr = (void*)(v);               \
 } while(0)
 
 #define gSPLight(pkt, lp, n) do {               \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL(24-1, 16, 8) | _SHIFTL((n)-1, 8, 8) | 0x80); \
-    _g->words.w1 = (uint32_t)(lp);              \
+    _g->pwords.cmd = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL(24-1, 16, 8) | _SHIFTL((n)-1, 8, 8) | 0x80); \
+    _g->pwords.ptr = (void*)(lp);              \
 } while(0)
 
 #define gSPLookAt(pkt, l) do {                  \
     Gfx* _g = (Gfx*)(pkt);                     \
-    _g->words.w0 = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL(32-1, 16, 8) | _SHIFTL(0, 8, 8) | 0x00); \
-    _g->words.w1 = (uint32_t)(l);               \
+    _g->pwords.cmd = (_SHIFTL(G_MOVEMEM, 24, 8) | _SHIFTL(32-1, 16, 8) | _SHIFTL(0, 8, 8) | 0x00); \
+    _g->pwords.ptr = (void*)(l);               \
 } while(0)
 
 #define gSPFogPosition(pkt, min, max) do {      \
@@ -778,18 +777,18 @@ typedef union {
 
 #define gDPSetColorImage(pkt, fmt, siz, width, img) do { \
     Gfx* _g = (Gfx*)(pkt); \
-    _g->words.w0 = (_SHIFTL(G_SETCIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12)); \
-    _g->words.w1 = (uint32_t)(img); } while(0)
+    _g->pwords.cmd = (_SHIFTL(G_SETCIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12)); \
+    _g->pwords.ptr = (void*)(img); } while(0)
 
 #define gDPSetDepthImage(pkt, img) do { \
     Gfx* _g = (Gfx*)(pkt); \
-    _g->words.w0 = _SHIFTL(G_SETZIMG, 24, 8); \
-    _g->words.w1 = (uint32_t)(img); } while(0)
+    _g->pwords.cmd = _SHIFTL(G_SETZIMG, 24, 8); \
+    _g->pwords.ptr = (void*)(img); } while(0)
 
 #define gDPSetTextureImage(pkt, fmt, siz, width, img) do { \
     Gfx* _g = (Gfx*)(pkt); \
-    _g->words.w0 = (_SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12)); \
-    _g->words.w1 = (uint32_t)(img); } while(0)
+    _g->pwords.cmd = (_SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12)); \
+    _g->pwords.ptr = (void*)(img); } while(0)
 
 #define gDPSetCombineMode(pkt, a, b) do { \
     Gfx* _g = (Gfx*)(pkt); \
