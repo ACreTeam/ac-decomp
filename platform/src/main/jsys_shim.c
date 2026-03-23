@@ -20,7 +20,12 @@
 /* ------------------------------------------------------------------ */
 
 void  JW_BeginFrame(void)              {}
-void  JW_EndFrame(void)                {}
+void  JW_EndFrame(void)                {
+    /* On GC, JW_EndFrame → JC_JFWDisplay_endRender → GXCopyDisp.
+     * Call it directly so the Metal renderer presents each frame. */
+    extern void GXCopyDisp(void* dest, GXBool clear);
+    GXCopyDisp(NULL, 1);
+}
 void  JW_Init(void)                    {}
 void  JW_Init2(void)                   {}
 void  JW_Init3(void)                   {}

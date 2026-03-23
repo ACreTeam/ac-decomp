@@ -23,14 +23,16 @@ static void* audio_stub_thread_func(void* arg) {
     (void)arg;
     while (1) {
         OSMesg msg;
-        /* Block-wait for a command on thread_cmd_proc_mq (spin-loop — acceptable
-         * since this thread only wakes on real audio commands, ~once per scene). */
+        /* Block-wait for a command on thread_cmd_proc_mq. */
         Z_osRecvMesg(AG.thread_cmd_proc_mq_p, &msg, OS_MESG_BLOCK);
-        /* ACK the spec change with the current spec_id.
-         * Nap_CheckSpecChange checks: msg == AG.spec_id → returns 1 (ready). */
-        Z_osSendMesg(AG.spec_change_mq_p,
-                     (OSMesg)(intptr_t)AG.spec_id,
-                     OS_MESG_NOBLOCK);
+        /* Only ACK if spec_change_mq has room — avoids flooding the queue.
+         * The first ACK lets Nap_CheckSpecChange succeed; subsequent ones
+         * are harmless but filling the queue causes "Mesg Full" spam. */
+        if (AG.spec_change_mq_p && AG.spec_change_mq_p->validCount < AG.spec_change_mq_p->msgCount) {
+            Z_osSendMesg(AG.spec_change_mq_p,
+                         (OSMesg)(intptr_t)AG.spec_id,
+                         OS_MESG_NOBLOCK);
+        }
     }
     return NULL;
 }
