@@ -112,13 +112,11 @@ extern int mCoBG_RegistDecalCircle(const xyz_t* pos, f32 start_radius, f32 end_r
 }
 
 extern void mCoBG_InitDecalCircle(void) {
-    // @BUG - they incorrectly clear 3x the memory necessary.
-    // I'm guessing that they did 3 * sizeof(array) rather than
-    // 3 * sizeof(struct).
-#ifndef BUGFIXES
+#ifdef MUST_MATCH
+    // @BUG original overflows into mCoBG_decal_circle (3 * array size, not struct size)
     bzero(mCoBG_regist_circle_info, 3 * sizeof(mCoBG_regist_circle_info));
 #else
-    bzero(mCoBG_regist_circle_info, sizeof(mCoBG_regist_circle_info_c));
+    bzero(mCoBG_regist_circle_info, sizeof(mCoBG_regist_circle_info));
 #endif
     bzero(mCoBG_decal_circle, sizeof(mCoBG_decal_circle));
     mCoBG_regist_decal_circle_count = 0;
