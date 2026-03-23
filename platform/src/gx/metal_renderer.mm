@@ -118,6 +118,9 @@ static bool      s_inDraw      = false;
 static PlatVertex s_curVtx;
 static bool      s_vtxStarted  = false;
 
+/* Shutdown flag — set when the window is closing to avoid mutex use after teardown */
+static volatile bool s_shutdown = false;
+
 /* Active texture per GXTexMapID slot */
 static __strong id<MTLTexture> g_activeTextures[8];
 
@@ -142,6 +145,11 @@ static void convert_fan(std::vector<PlatVertex>& out,
 /* Public C API                                                         */
 /* ================================================================== */
 extern "C" {
+
+/* ---- Shutdown flag (call before tearing down the window/layer) ---- */
+void plat_metal_shutdown(void) {
+    s_shutdown = true;
+}
 
 /* ---- Initialise Metal (called from vi_shim.cpp once layer is ready) */
 void plat_metal_init(void* layer_ptr) {
@@ -260,6 +268,7 @@ void plat_gx_end_draw(GXPrimitive rawPrim) {
         s_cur.primType = MTLPrimitiveTypeTriangle;
     }
 
+    if (s_shutdown) return;
     std::lock_guard<std::mutex> lk(s_drawMtx);
     s_drawList.push_back(std::move(s_cur));
 }
@@ -291,7 +300,7 @@ void* plat_metal_get_cmdqueue(void) { return (__bridge void*)g_cmdQueue; }
 /* ---- Frame presentation (called from GXCopyDisp / VIWaitForRetrace) */
 
 void plat_metal_present_frame(void) {
-    if (!g_cmdQueue || !g_pipeOpaque) return;
+    if (!g_cmdQueue || !g_pipeOpaque || s_shutdown) return;
 
     static int s_frame_num = 0;
     {

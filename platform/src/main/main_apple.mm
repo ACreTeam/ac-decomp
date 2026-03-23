@@ -47,6 +47,7 @@ extern "C" {
 
 extern "C" void plat_vi_create_window(int w, int h, const char* title);
 extern "C" void plat_audio_init(void);
+extern "C" void plat_metal_shutdown(void);
 
 #if TARGET_OS_IPHONE
 static void configure_audio_session(void) {
@@ -150,6 +151,7 @@ int main(int argc, char* argv[]) {
          * game thread without needing explicit forwarding here. */
     }
 
+    plat_metal_shutdown();
     SDL_Quit();
     return 0;
 }
