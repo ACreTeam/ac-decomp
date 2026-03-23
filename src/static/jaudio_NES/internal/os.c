@@ -45,14 +45,14 @@ extern s32 Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 flags) {
 }
 
 extern s32 Z_osRecvMesg(OSMesgQueue* mq, OSMesg* msg, s32 flags) {
-    if (!mq) { if (msg) *msg = NULL; return -1; }
+    if (!mq) { if (msg) *(u32*)msg = 0; return -1; }
     if (flags == OS_MESG_BLOCK) {
         while (!mq->validCount) {};
     }
 
     if (mq->validCount == 0) {
         if (msg != NULL) {
-            *msg = NULL;
+            *(u32*)msg = 0;
         }
         return -1;
     }
