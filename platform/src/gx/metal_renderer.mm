@@ -350,6 +350,31 @@ void plat_metal_present_frame(void) {
         float proj[4][4];
     };
 
+    /* Diagnostic: dump first draw command on early frames */
+    static int s_diag_frame = 0;
+    if (s_diag_frame < 3 && !local.empty()) {
+        for (size_t di = 0; di < local.size() && di < 3; di++) {
+            DrawCmd& d = local[di];
+            if (d.verts.empty()) continue;
+            fprintf(stderr, "[Diag] frame %d cmd %zu: %zu verts, prim=%d, blend=%d, depth=%d\n",
+                    s_diag_frame, di, d.verts.size(), (int)d.primType, d.blend, d.depthTest);
+            fprintf(stderr, "  model: [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+                    d.model[0][0], d.model[0][1], d.model[0][2], d.model[0][3],
+                    d.model[1][0], d.model[1][1], d.model[1][2], d.model[1][3],
+                    d.model[2][0], d.model[2][1], d.model[2][2], d.model[2][3]);
+            fprintf(stderr, "  proj:  [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n"
+                            "         [%.3f %.3f %.3f %.3f] [%.3f %.3f %.3f %.3f]\n",
+                    d.proj[0][0], d.proj[0][1], d.proj[0][2], d.proj[0][3],
+                    d.proj[1][0], d.proj[1][1], d.proj[1][2], d.proj[1][3],
+                    d.proj[2][0], d.proj[2][1], d.proj[2][2], d.proj[2][3],
+                    d.proj[3][0], d.proj[3][1], d.proj[3][2], d.proj[3][3]);
+            PlatVertex& v = d.verts[0];
+            fprintf(stderr, "  v0: pos=(%.3f, %.3f, %.3f) col=(%.3f, %.3f, %.3f, %.3f) uv=(%.3f, %.3f)\n",
+                    v.x, v.y, v.z, v.r, v.g, v.b, v.a, v.u, v.v);
+        }
+        s_diag_frame++;
+    }
+
     for (DrawCmd& dc : local) {
         if (dc.verts.empty()) continue;
 
