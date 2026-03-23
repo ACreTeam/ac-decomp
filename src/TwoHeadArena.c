@@ -60,18 +60,18 @@ extern void* THA_alloc(TwoHeadArena* this, size_t siz) {
 */
 
 extern void* THA_alloc16(TwoHeadArena* this, size_t siz) {
-  const int mask = ~(16 - 1);
-  this->tail_p = (char*)((((u32)this->tail_p & mask) - siz) & mask);
+  const uintptr_t mask = ~(uintptr_t)(16 - 1);
+  this->tail_p = (char*)((((uintptr_t)this->tail_p & mask) - siz) & mask);
   return this->tail_p;
 }
 
 extern void* THA_allocAlign(TwoHeadArena* this, size_t siz, int mask) {
-  this->tail_p = (char*)((((u32)this->tail_p & mask) - siz) & mask);
+  this->tail_p = (char*)((((uintptr_t)this->tail_p & (uintptr_t)mask) - siz) & (uintptr_t)mask);
   return this->tail_p;
 }
 
 extern int THA_getFreeBytesAlign(TwoHeadArena* this, int mask) {
-  return (int)this->tail_p - (mask & (int)(this->head_p + ~mask));
+  return (intptr_t)this->tail_p - ((intptr_t)mask & (intptr_t)(this->head_p + ~mask));
 }
 
 extern int THA_getFreeBytes16(TwoHeadArena* this) {
