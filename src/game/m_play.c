@@ -405,9 +405,15 @@ extern void play_init(GAME* game) {
     int type;
     fbdemo_fade* fade;
     int freebytes;
+#ifdef MUST_MATCH
     u32 alloc;
     u32 aligned;
     u32 size;
+#else
+    uintptr_t alloc;
+    uintptr_t aligned;
+    uintptr_t size;
+#endif
 
     game_resize_hyral(game, -Game_play_HYRAL_SIZE); // reserve bytes from gamealloc
     Common_Set(rhythym_updated, 0);
@@ -471,7 +477,7 @@ extern void play_init(GAME* game) {
     play->fade_color_value.rgba8888 = 0;
 
     freebytes = game_getFreeBytes(game);
-    alloc = (u32)THA_alloc16(&game->tha, freebytes);
+    alloc = (uintptr_t)THA_alloc16(&game->tha, freebytes);
     aligned = ALIGN_NEXT(alloc, 16);
     size = aligned - alloc;
 
