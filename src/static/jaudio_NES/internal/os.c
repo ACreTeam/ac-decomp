@@ -33,7 +33,11 @@ extern s32 Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 flags) {
         count -= mq->msgCount;
     }
 
-    mq->msg[count] = msg;
+    /* Store as 32-bit: all jaudio messages are 32-bit integers, and callers
+     * receive via (OSMesg*)&s32_var.  Using u32* avoids an 8-byte write into
+     * a 4-byte slot that would corrupt adjacent stack/saved registers on
+     * 64-bit macOS (where OSMesg = void* = 8 bytes). */
+    ((u32*)mq->msg)[count] = (u32)(uintptr_t)msg;
 
     mq->validCount++;
 
@@ -56,7 +60,9 @@ extern s32 Z_osRecvMesg(OSMesgQueue* mq, OSMesg* msg, s32 flags) {
     mq->validCount -= 1;
 
     if (msg != NULL) {
-        *msg = mq->msg[mq->first];
+        /* Read as 32-bit and zero-extend; matches the 32-bit write in Z_osSendMesg
+         * and the s32 variables callers use to hold the received message. */
+        *(u32*)msg = ((u32*)mq->msg)[mq->first];
     }
 
     mq->first++;
