@@ -394,7 +394,7 @@ static u32 texture_cache_get_heap_size(texture_cache_t* cache) {
 
 static void* texture_cache_alloc(texture_cache_t* cache, u32 size) {
     cache->last_alloc_start = cache->buffer_current;
-    cache->last_alloc_end = (u8*)ALIGN_NEXT((u32)cache->buffer_current + size, 32);
+    cache->last_alloc_end = (u8*)ALIGN_NEXT((uintptr_t)cache->buffer_current + size, 32);
 
     if (cache->buffer_pos < cache->last_alloc_end - cache->buffer_start) {
         cache->buffer_pos = cache->last_alloc_end - cache->buffer_start;
@@ -3247,10 +3247,10 @@ void emu64::dirty_check(int tile, int n_tiles, int do_texture_matrix) {
                     img_addr = tex_info_p->img_addr;
 
                     dol_fmt.raw = cvtN64ToDol(tex_info_p->format, tex_info_p->size);
-                    if (((u32)img_addr & 0x1F) != 0) {
+                    if (((uintptr_t)img_addr & 0x1F) != 0) {
                         /* Translation: Texture (%08x) alignment isn't 32 bytes */
                         this->Printf0("テクスチャ(%08x)のアライメントが３２バイトになっていません\n", img_addr);
-                        img_addr = (void*)((u32)img_addr & ~0x1F);
+                        img_addr = (void*)((uintptr_t)img_addr & ~(uintptr_t)0x1F);
                     }
 
                     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 &&
@@ -3343,16 +3343,16 @@ void emu64::dl_G_DL(void) {
             }
 
             if (this->DL_stack_level < DL_MAX_STACK_LEVEL) {
-                this->DL_stack[this->DL_stack_level++] = (u32)(this->gfx_p + 1);
+                this->DL_stack[this->DL_stack_level++] = (uintptr_t)(this->gfx_p + 1);
             } else {
                 this->err_count++;
                 this->Printf0("*** DL stack overflow ***\n");
             }
 
-            this->gfx_p = (Gfx*)((int)this->work_ptr - sizeof(Gfx));
+            this->gfx_p = (Gfx*)((uintptr_t)this->work_ptr - sizeof(Gfx));
             break;
         case G_DL_NOPUSH:
-            this->gfx_p = (Gfx*)((u32)this->work_ptr - sizeof(Gfx));
+            this->gfx_p = (Gfx*)((uintptr_t)this->work_ptr - sizeof(Gfx));
             break;
         default:
             if (this->disable_polygons == false) {
@@ -3670,13 +3670,13 @@ void emu64::dl_G_LOADTLUT() {
 
                 this->tlut_addresses[tlut_name] = tlut_addr;
                 if (tlut_addr != nullptr) {
-                    if (((u32)tlut_addr & (0x1F)) != 0) {
+                    if (((uintptr_t)tlut_addr & (0x1F)) != 0) {
                         /* The alignment of the palette (%08x) is not 32 bytes. */
                         EMU64_PRINTF(
                             VT_COL(RED, WHITE) "パレット(%08x)のアライメントが３２バイトになっていません\n" VT_RST,
                             tlut_addr)
 
-                        aligned_addr = (void*)((u32)tlut_addr & (~0x1F));
+                        aligned_addr = (void*)((uintptr_t)tlut_addr & ~(uintptr_t)0x1F);
                     }
 
                     GXInitTlutObj(&this->tlut_objs[tlut_name], aligned_addr, GX_TL_RGB5A3, count);

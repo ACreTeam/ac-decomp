@@ -731,7 +731,11 @@ private:
     /* 0x0064 */ int ucode_type; // maybe?
     /* 0x0068 */ int _0068;      /* ??? */
     /* 0x006C */ u32 segments[EMU64_NUM_SEGMENTS];
+#ifdef MUST_MATCH
     /* 0x00AC */ u32 DL_stack[DL_MAX_STACK_LEVEL];
+#else
+    /* 0x00AC */ uintptr_t DL_stack[DL_MAX_STACK_LEVEL];
+#endif
     /* 0x00F4 */ s8 DL_stack_level;
     /* 0x00F8 */ u32 othermode_high;
     /* 0x00FC */ u32 othermode_low;
