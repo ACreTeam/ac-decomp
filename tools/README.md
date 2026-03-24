@@ -107,7 +107,7 @@ python tools/arc_tool.py orig/GAFE01_00/files/foresta.rel.szs extract
 Uses `tools/decompctx.py`:
 ```bash
 # Counts matched vs. unmatched functions
-./build.sh decomp target status
+ninja status
 ```
 
 ## Build Flow

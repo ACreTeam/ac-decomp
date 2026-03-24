@@ -6,7 +6,7 @@ NCPU=$(sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 usage() {
     cat <<'EOF'
 Usage:
-    ./build.sh decomp [full|dol|rel|target <ninja-target...>] [-j N] [--reconfigure] [--skip-sha]
+    ./build.sh decomp [full|dol|rel] [-j N] [--reconfigure] [--skip-sha]
   ./build.sh platform [macos|ios|ipados] [clean]
 
 Backwards-compatible shortcuts:
@@ -18,7 +18,6 @@ Decomp profiles:
   full   Build everything (default)
   dol    Build only static DOL output
   rel    Build only REL output
-  target Build custom Ninja target(s)
 
 Flags:
     --skip-sha   Avoid final build/GAFE01_00/ok checksum check (useful for long non-matching builds)
@@ -67,7 +66,6 @@ run_decomp_build() {
     local jobs="$NCPU"
     local reconfigure="0"
     local skip_sha="0"
-    local -a custom_targets=()
 
     if [[ $# -gt 0 ]]; then
         profile="$1"
@@ -89,8 +87,9 @@ run_decomp_build() {
                 shift
                 ;;
             *)
-                custom_targets+=("$1")
-                shift
+                echo "Unknown decomp option: $1"
+                usage
+                exit 1
                 ;;
         esac
     done
@@ -118,15 +117,6 @@ run_decomp_build() {
             echo "[build] Building REL target with -j$jobs"
             ninja -j"$jobs" build/GAFE01_00/foresta/foresta.rel
             ;;
-        target)
-            if [[ ${#custom_targets[@]} -eq 0 ]]; then
-                echo "No custom target specified for 'target' profile."
-                usage
-                exit 1
-            fi
-            echo "[build] Building custom target(s) with -j$jobs: ${custom_targets[*]}"
-            ninja -j"$jobs" "${custom_targets[@]}"
-            ;;
         *)
             echo "Unknown decomp profile: $profile"
             usage
@@ -153,8 +143,8 @@ case "$mode" in
         usage
         ;;
     *)
-        # Backwards compatibility with prior behavior where first arg implied platform.
-        # If mode is not recognized, treat it as a decomp profile.
-        run_decomp_build "$mode" "${@:2}"
+        echo "Unknown mode: $mode"
+        usage
+        exit 1
         ;;
 esac
