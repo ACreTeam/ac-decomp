@@ -1,7 +1,12 @@
-# IDE folders
+# IDE folders and session data
 .idea/
 .vs/
 .vscode/*
+.claude/
+.venv/
+venv/
+env/
+.env
 
 # Caches
 __pycache__
@@ -37,6 +42,10 @@ compile_commands.json
 /*.txt
 !requirements.txt
 *.exe
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
 
 # For saving work files into (like IDB)
 temp/
@@ -47,4 +56,3 @@ include/gcc/
 include/compiler/gcc/stdlib.h
 Animal Crossing (USA).rvz
 Animal Crossing (USA).iso
-.DS_Store
