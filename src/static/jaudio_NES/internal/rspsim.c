@@ -526,8 +526,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     *var_r21++ = var_r7_4;
                     if ((j & 3) == 3) {
                         envParam2_0 += envParam1_2;
-                        envParam2_1 += envParam1_1;
-                        envParam1_0 += envParam1_3;
+                        envParam2_1 += envParam1_3;
+                        envParam1_0 += envParam1_1;
                     }
                 }
                 break;
