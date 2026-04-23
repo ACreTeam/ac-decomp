@@ -1756,7 +1756,7 @@ static int mAGrw_CheckTree000(mActor_name_t item) {
            item == GOLD_TREE_SAPLING;
 }
 
-static mAGrw_CheckTree001(mActor_name_t item) {
+static int mAGrw_CheckTree001(mActor_name_t item) {
     return item == TREE_S0 || item == TREE_APPLE_S0 || item == TREE_ORANGE_S0 || item == TREE_PEACH_S0 ||
            item == TREE_PEAR_S0 || item == TREE_CHERRY_S0 || item == TREE_1000BELLS_S0 || item == TREE_10000BELLS_S0 ||
            item == TREE_30000BELLS_S0 || item == TREE_1000BELLS_S0 || item == TREE_10000BELLS_S0 ||
@@ -1764,7 +1764,7 @@ static mAGrw_CheckTree001(mActor_name_t item) {
            item == GOLD_TREE_S0;
 }
 
-static mAGrw_CheckTree002(mActor_name_t item) {
+static int mAGrw_CheckTree002(mActor_name_t item) {
     return item == TREE_S1 || item == TREE_APPLE_S1 || item == TREE_ORANGE_S1 || item == TREE_PEACH_S1 ||
            item == TREE_PEAR_S1 || item == TREE_CHERRY_S1 || item == TREE_1000BELLS_S1 || item == TREE_10000BELLS_S1 ||
            item == TREE_30000BELLS_S1 || item == TREE_1000BELLS_S1 || item == TREE_10000BELLS_S1 ||
@@ -1772,7 +1772,7 @@ static mAGrw_CheckTree002(mActor_name_t item) {
            item == GOLD_TREE_S1;
 }
 
-static mAGrw_CheckTree003(mActor_name_t item) {
+static int mAGrw_CheckTree003(mActor_name_t item) {
     return item == TREE_S2 || item == TREE_APPLE_S2 || item == TREE_ORANGE_S2 || item == TREE_PEACH_S2 ||
            item == TREE_PEAR_S2 || item == TREE_CHERRY_S2 || item == TREE_1000BELLS_S2 || item == TREE_10000BELLS_S2 ||
            item == TREE_30000BELLS_S2 || item == TREE_1000BELLS_S2 || item == TREE_10000BELLS_S2 ||
@@ -1780,7 +1780,7 @@ static mAGrw_CheckTree003(mActor_name_t item) {
            item == GOLD_TREE_S2;
 }
 
-static mAGrw_CheckTree004(mActor_name_t item) {
+static int mAGrw_CheckTree004(mActor_name_t item) {
     return item == TREE || item == TREE_APPLE_FRUIT || item == TREE_ORANGE_FRUIT || item == TREE_PEACH_FRUIT ||
            item == TREE_PEAR_FRUIT || item == TREE_CHERRY_FRUIT || item == TREE_1000BELLS || item == TREE_10000BELLS ||
            item == TREE_30000BELLS || item == TREE_100BELLS || item == TREE_PALM_FRUIT || item == CEDAR_TREE ||

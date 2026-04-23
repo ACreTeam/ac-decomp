@@ -907,7 +907,7 @@ static void aQMgr_actor_set_quest_info(QUEST_MANAGER_ACTOR* manager) {
     }
 }
 
-static aQMgr_actor_clear_client_quest_info(QUEST_MANAGER_ACTOR* manager) {
+static void aQMgr_actor_clear_client_quest_info(QUEST_MANAGER_ACTOR* manager) {
     mQst_ClearQuestInfo(&aQMgr_GET_CLIENT(manager)->npc_info.list->quest_info);
 }
 

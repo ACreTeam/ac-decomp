@@ -26,7 +26,7 @@ static int Player_actor_Check_able_request_main_hold(GAME* game) {
     }
 }
 
-static Player_actor_request_main_hold(GAME* game, int ftr_no, int index, const xyz_t* pos, f32 speed, int flags,
+static int Player_actor_request_main_hold(GAME* game, int ftr_no, int index, const xyz_t* pos, f32 speed, int flags,
                                       int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_HOLD, priority) &&
         Player_actor_Check_able_request_main_hold(game)) {
