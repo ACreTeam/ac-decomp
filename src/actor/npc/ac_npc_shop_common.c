@@ -1675,7 +1675,7 @@ static void aNSC_set_talk_info_start_wait(ACTOR* actorx) {
     shop_common->next_action = 1;
 }
 
-static void aNSC_set_talk_info_start_wait1() {
+static void aNSC_set_talk_info_start_wait1(ACTOR* actor) {
     int msg_no = 0;
 
     u8 player_no = Common_Get(player_no);
@@ -1987,7 +1987,7 @@ static void aNSC_present_balloon_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GA
 
 #endif
 
-static void aNSC_set_talk_info_request_Q_start_wait() {
+static void aNSC_set_talk_info_request_Q_start_wait(ACTOR* actor) {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_INTERACT_START));
     mDemo_Set_talk_turn(0x0);
 }
@@ -2822,7 +2822,7 @@ static void aNSC_turn(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     }
 }
 
-static void aNSC_set_talk_info_goodbye_wait() {
+static void aNSC_set_talk_info_goodbye_wait(ACTOR* actor) {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_SAY_GOODBYE));
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
 }

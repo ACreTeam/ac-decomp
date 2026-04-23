@@ -93,7 +93,7 @@ static void aHT1_actor_move(ACTOR* actorx, GAME* game) {
     NPC_CLIP->move_proc(actorx, game);
 }
 
-static s16 aHT1_GetDefaultAngle() {
+static s16 aHT1_GetDefaultAngle(NPC_HARVEST_NPC1_ACTOR* actor) {
     return 0;
 }
 

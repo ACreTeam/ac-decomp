@@ -111,7 +111,7 @@ static void aEMJ_schedule_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
     (*sche_proc[idx])(actor, play);
 }
 
-static void aEMJ_set_force_talk_info() {
+static void aEMJ_set_force_talk_info(ACTOR* actor) {
     int msg_num;
 
     switch (Common_Get(weather)) {

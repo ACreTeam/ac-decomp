@@ -189,7 +189,7 @@ static void aPOFF_setup_animation(STRUCTURE_ACTOR* office, f32 speed) {
                             end_idx[idx], start_idx[idx], speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
 }
 
-static void aPOFF_open_door_demo_ct() {
+static void aPOFF_open_door_demo_ct(ACTOR* actorx) {
     mDemo_Set_house_info(40.0f, 5);
     mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
 }

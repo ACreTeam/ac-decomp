@@ -728,12 +728,12 @@ static void aNM2_draw_menu_close_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLA
     mSM_open_submenu(&play->submenu, mSM_OVL_DESIGN, 0, 0);
 }
 
-static void aNM2_msg_win_open_wait_init() {
+static void aNM2_msg_win_open_wait_init(NPC_MASK_CAT2_ACTOR* actor, GAME_PLAY* play) {
     mPr_CopyPersonalID(&Save_Get(mask_cat.design.creator_pid), &Now_Private->player_ID);
     mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1();
 }
 
-static void aNM2_talk_end_wait_init() {
+static void aNM2_talk_end_wait_init(NPC_MASK_CAT2_ACTOR* actor, GAME_PLAY* play) {
     Common_Set(sunlight_flag, TRUE);
     sAdo_TrgSeEcho(FALSE);
     sAdo_LevSeEcho(FALSE);

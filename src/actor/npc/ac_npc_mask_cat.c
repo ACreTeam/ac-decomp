@@ -23,7 +23,7 @@ static void aNMC_actor_init(ACTOR* actorx, GAME* game);
 static void aNMC_actor_draw(ACTOR* actorx, GAME* game);
 
 static void aNMC_set_painter_name_str();
-static void aNMC_set_talk_info();
+static void aNMC_set_talk_info(ACTOR* actorx);
 static void aNMC_actor_move(ACTOR* actorx, GAME* game);
 static void aNMC_talk_request(ACTOR* actorx, GAME* game);
 static int aNMC_talk_init(ACTOR* actorx, GAME* game);

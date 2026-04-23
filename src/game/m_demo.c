@@ -875,7 +875,7 @@ static int check_speech_request() {
     return res;
 }
 
-static void emsg_set() {
+static void emsg_set(ACTOR* actor) {
     static rgba_t win_color = { 175, 255, 255, 255 };
 
     mDemo_Set_talk_window_color(&win_color);

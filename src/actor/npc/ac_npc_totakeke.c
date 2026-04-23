@@ -10,7 +10,7 @@
 #include "m_string_data.h"
 #include "m_ledit_ovl.h"
 
-void aNTT_schedule_proc();
+void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play, int schedule_id);
 int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR*, int);
 void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR*, GAME_PLAY*, u8);
 int aNTT_enso_init(NPC_TOTAKEKE_ACTOR*);
