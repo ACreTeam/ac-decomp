@@ -223,7 +223,7 @@ static void Camera2_SetView(GAME_PLAY* play) {
     setLookAtView(view, &final_eye, &final_center, &camera->lookat.up);
 }
 
-static f32 Camera2_BorderSize() {
+static f32 Camera2_BorderSize(GAME_PLAY* play) {
     int type = mFI_GET_TYPE(mFI_GetFieldId());
     f32 size = 110.0f;
 
