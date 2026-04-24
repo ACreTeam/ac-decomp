@@ -17,7 +17,7 @@ static void aHT1_wait(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play) {
 }
 
 static void aHT1_to_default(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play) {
-    if (actor->actor.actor_class.shape_info.rotation.y == aHT1_GetDefaultAngle(actor)) {
+    if (actor->actor.actor_class.shape_info.rotation.y == aHT1_GetDefaultAngle()) {
         actor->_998 = 0;
         actor->actor.action.step = -1;
     }
@@ -64,7 +64,7 @@ static void aHT1_think_main_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play)
                 actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
             } break;
             case aNPC_ACT_TALK: {
-                actor->actor.movement.mv_angl = aHT1_GetDefaultAngle(actor);
+                actor->actor.movement.mv_angl = aHT1_GetDefaultAngle();
                 aHT1_set_request_act(&actor->actor);
                 actor->actor.condition_info.demo_flg =
                     aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV;
