@@ -93,9 +93,10 @@ static void aHT1_actor_move(ACTOR* actorx, GAME* game) {
     NPC_CLIP->move_proc(actorx, game);
 }
 
-static s16 aHT1_GetDefaultAngle(NPC_HARVEST_NPC1_ACTOR* actor) {
+static s16 aHT1_GetDefaultAngle() {
     return 0;
 }
+#define aHT1_GetDefaultAngle(...) aHT1_GetDefaultAngle()
 
 static void aHT1_actor_draw(ACTOR* actorx, GAME* game) {
     NPC_CLIP->draw_proc(actorx, game);
