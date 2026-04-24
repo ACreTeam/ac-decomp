@@ -273,7 +273,7 @@ static int mBGM_check_ignore_collect_insects_volume(u8 bgm_num) {
     return FALSE;
 }
 
-static mBGMElem_default_set(mBGMElem* elem) {
+static void mBGMElem_default_set(mBGMElem* elem) {
     static mBGMElem default_data = { 127, 0, 0, 0x168, 0x168 };
 
     bcopy(&default_data, elem, sizeof(mBGMElem));
