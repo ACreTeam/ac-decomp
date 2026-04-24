@@ -281,7 +281,7 @@ static void aHWN_norm_talk_request(ACTOR* actorx, GAME* game) {
     mDemo_Request(mDemo_TYPE_TALK, actorx, (mDemo_REQUEST_PROC)aHWN_set_norm_talk_info);
 }
 
-static int aHWN_talk_init() {
+static int aHWN_talk_init(ACTOR* actorx, GAME* game) {
     mDemo_Set_ListenAble();
     return TRUE;
 }

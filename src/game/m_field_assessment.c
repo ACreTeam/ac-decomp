@@ -157,7 +157,7 @@ static int mFAs_CheckGrassOver(int tree_num, int grass_num) {
     return grass_num >= mFAs_GRASS_OVER_NUM;
 }
 
-static int mFAs_CheckNoCase() {
+static int mFAs_CheckNoCase(int tree_num, int grass_num) {
     return FALSE;
 }
 

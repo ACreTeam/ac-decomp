@@ -206,7 +206,7 @@ static void aNRTC_change_talk_proc(NPC_RTC_ACTOR* rtc, int idx) {
     rtc->talk_proc = process[idx];
 }
 
-static void aNRTC_set_talk_info_talk_request() {
+static void aNRTC_set_talk_info_talk_request(ACTOR* actor) {
     int msg;
 
     switch (Common_Get(save_error_type)) {

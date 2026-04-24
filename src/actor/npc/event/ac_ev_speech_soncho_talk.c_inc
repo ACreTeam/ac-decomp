@@ -142,7 +142,7 @@ void aESS_norm_talk_request(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
     mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)soncho, aESS_set_norm_talk_info);
 }
 
-void aESS_set_force_talk_info() {
+void aESS_set_force_talk_info(ACTOR* actor) {
     mDemo_Set_msg_num(mString_SPEECH_SONCHO_START);
     mDemo_Set_camera(CAMERA2_PROCESS_NUM);
 }

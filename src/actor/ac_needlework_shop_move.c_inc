@@ -189,12 +189,12 @@ static void aNW_setup_animation(STRUCTURE_ACTOR* shop, f32 speed) {
                             end_idx[idx], start_idx[idx], speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
 }
 
-static void aNW_open_door_demo_ct() {
+static void aNW_open_door_demo_ct(ACTOR* actorx) {
     mDemo_Set_house_info(40.0f, 5);
     mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
 }
 
-static void aNW_talk_door_demo_ct() {
+static void aNW_talk_door_demo_ct(ACTOR* actorx) {
     static rgba_t window_color = { 145, 60, 40, 255 };
 
     mDemo_Set_msg_num(MSG_2010);

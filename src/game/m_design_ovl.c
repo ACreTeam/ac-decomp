@@ -979,7 +979,7 @@ void mDE_paint(mDE_Ovl_c* design_ovl, int pal) {
     }
 }
 
-void mDE_print_texture() {
+void mDE_print_texture(mDE_Ovl_c* design_ovl) {
     return;
 }
 

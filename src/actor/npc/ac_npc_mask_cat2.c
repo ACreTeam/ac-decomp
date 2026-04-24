@@ -86,8 +86,8 @@ static void aNM2_sitdown_start_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY*
 static void aNM2_sitdown_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play);
 static void aNM2_draw_menu_open_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play);
 static void aNM2_draw_menu_close_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play);
-static void aNM2_msg_win_open_wait_init();
-static void aNM2_talk_end_wait_init();
+static void aNM2_msg_win_open_wait_init(NPC_MASK_CAT2_ACTOR* actor, GAME_PLAY* play);
+static void aNM2_talk_end_wait_init(NPC_MASK_CAT2_ACTOR* actor, GAME_PLAY* play);
 static void aNM2_scene_change_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play);
 static void aNM2_init_proc(ACTOR* actorx, GAME* game, int init_proc_idx);
 static void aNM2_setupAction(ACTOR* actorx, GAME* game, int process_idx);
