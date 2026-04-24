@@ -61,7 +61,7 @@ static void aNTT_actor_ct(ACTOR *actorx, GAME *game) {
         xyz_t wpos;
         NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
 
-        totakeke->npc_class.schedule.schedule_proc = aNTT_schedule_proc;
+        totakeke->npc_class.schedule.schedule_proc = (aNPC_SCHEDULE_PROC)aNTT_schedule_proc;
         CLIP(npc_clip)->ct_proc(actorx, game, &ct_data);
         totakeke->npc_class.palActorIgnoreTimer = -1;
         totakeke->npc_class.condition_info.hide_flg = FALSE;
