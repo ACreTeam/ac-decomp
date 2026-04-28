@@ -125,7 +125,7 @@ static void aNTT_talk_submenu2(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
         if (submenu_item->item == ITM_MINIDISK_END) {
             mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 6);
             totakeke->post_roll_think = 0xc;
-            totakeke->song = 0x37 + (int)RANDOM_F(3);
+            totakeke->song = 0x37 + RANDOM(3);
         } else {
             totakeke->song = submenu_item->item - ITM_MINIDISK_START;
             if (totakeke->song >= 0x34) {

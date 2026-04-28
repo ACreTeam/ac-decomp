@@ -15,10 +15,10 @@ static void Player_actor_Refuse_pickup_demo_ct(ACTOR* actor) {
 
     Player_actor_request_main_refuse_pickup_all(gamePT, 0x13);
 
-    msg = (Common_Get(field_type) == 0) ? 0x17AD : 0x17AE;
+    msg = (Common_Get(field_type) == 0) ? MSG_6061 : MSG_6062;
 
     if (player->refuse_pickup_knife_fork_flag != FALSE) {
-        msg = 0x3B59;
+        msg = MSG_15193;
     }
 
     mDemo_Set_msg_num(msg);

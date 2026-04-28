@@ -38,21 +38,17 @@ static int aEDSN_check_present(void) {
 }
 
 static int aEDSN_get_msg_no(EV_DESIGNER_ACTOR* designer, int idx) {
-    static int msg_no_0[27] = {
-        0x0721, 0x0722, 0x0723, 0x0724, 0x0725, 0x0726, 0x0727, 0x0728,
-        0x0729, 0x072A, 0x072B, 0x072C, 0x072D, 0x072E, 0x072F, 0x0730,
-        0x0731, 0x0732, 0x0733, 0x0747, 0x0748, 0x0749, 0x074A, 0x074B,
-        0x072B, 0x072C, 0x074C,
-    };
-        
-    static int msg_no_1[27] = {
-        0x0734, 0x0735, 0x0736, 0x0745, 0x0737, 0x0738, 0x0739, 0x0746,
-        0x073A, 0x073B, 0x073C, 0x073D, 0x073E, 0x073F, 0x0740, 0x0741,
-        0x0742, 0x0743, 0x0744, 0x0747, 0x0748, 0x0749, 0x074A, 0x074B,
-        0x073C, 0x073D, 0x074C,
-    };
-        
-    static int* msg_no[2] = {msg_no_0, msg_no_1};
+    static int msg_no_0[27] = { MSG_1825, MSG_1826, MSG_1827, MSG_1828, MSG_1829, MSG_1830, MSG_1831,
+                                MSG_1832, MSG_1833, MSG_1834, MSG_1835, MSG_1836, MSG_1837, MSG_1838,
+                                MSG_1839, MSG_1840, MSG_1841, MSG_1842, MSG_1843, MSG_1863, MSG_1864,
+                                MSG_1865, MSG_1866, MSG_1867, MSG_1835, MSG_1836, MSG_1868 };
+
+    static int msg_no_1[27] = { MSG_1844, MSG_1845, MSG_1846, MSG_1861, MSG_1847, MSG_1848, MSG_1849,
+                                MSG_1862, MSG_1850, MSG_1851, MSG_1852, MSG_1853, MSG_1854, MSG_1855,
+                                MSG_1856, MSG_1857, MSG_1858, MSG_1859, MSG_1860, MSG_1863, MSG_1864,
+                                MSG_1865, MSG_1866, MSG_1867, MSG_1852, MSG_1853, MSG_1868 };
+
+    static int* msg_no[2] = { msg_no_0, msg_no_1 };
 
     return msg_no[designer->wear_flag][idx];
 }
@@ -108,7 +104,8 @@ static void aEDSN_check_result_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game
     static int next_talk_proc_idx[] = { aEDSN_TALK_DEMO_START_WAIT, aEDSN_TALK_DEMO_START_WAIT, aEDSN_TALK_END_WAIT };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
-    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y,
+                0x800);
     if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
         mEv_designer_c* ev_save_p = &Save_Get(event_save_data).special.event.designer;
         aEv_designer_c* tmp_save_p = designer->tmp_save_p;
@@ -117,10 +114,12 @@ static void aEDSN_check_result_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game
 
         switch (result) {
             case 0:
-                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, FALSE);
+                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH,
+                                         mSP_LISTTYPE_EVENT, FALSE);
                 break;
             case 1:
-                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH, mSP_LISTTYPE_COMMON, FALSE);
+                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH,
+                                         mSP_LISTTYPE_COMMON, FALSE);
                 break;
             case 2:
                 mEv_set_status(mEv_EVENT_DESIGNER, mEv_STATUS_TALK);
@@ -148,7 +147,8 @@ static void aEDSN_demo_start_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* g
 }
 
 static void aEDSN_demo_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
-    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y,
+                0x800);
     if (aEDSN_check_present() == -1) {
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
@@ -167,7 +167,8 @@ static void aEDSN_demo_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* gam
 }
 
 static void aEDSN_talk_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
-    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y,
+                0x800);
 }
 
 static void aEDSN_change_talk_proc(EV_DESIGNER_ACTOR* designer, int talk_proc_idx) {
@@ -246,7 +247,8 @@ static void aEDSN_set_norm_talk_info(ACTOR* actorx) {
         msg_idx = 21 + RANDOM(3);
         designer->next_think_idx = aEDSN_THINK_TALK_START_WAIT;
     } else if (idx != -1) {
-        if (mSP_SearchItemCategoryPriority(ev_save_p->gifted_cloths[idx], mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, NULL) == TRUE) {
+        if (mSP_SearchItemCategoryPriority(ev_save_p->gifted_cloths[idx], mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, NULL) ==
+            TRUE) {
             msg_idx = 17;
         } else {
             msg_idx = 18;
