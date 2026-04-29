@@ -328,8 +328,10 @@ static int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game) {
     return 0;
 }
 
-static void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor) {
-    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+static void Player_actor_Item_draw_net_After_main4_sao(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe,
+                                                       Gfx** joint_shape, u8* joint_flags, s_xyz* joint_rot,
+                                                       xyz_t* joint_pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)arg;
 
     Matrix_Position_VecX(1050.0f, &player->item_rod_top_pos);
 }
@@ -341,7 +343,7 @@ static int Player_actor_Item_draw_rod_After(GAME* game, cKF_SkeletonInfo_R_c* ke
                                             Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot,
                                             xyz_t* joint_pos) {
     static const mPlayer_item_net_draw_proc proc[] = {
-        NULL, NULL, NULL, NULL, (mPlayer_item_rod_draw_proc)Player_actor_Item_draw_net_After_main4_sao,
+        NULL, NULL, NULL, NULL, Player_actor_Item_draw_net_After_main4_sao,
     };
 
     if (joint_idx >= 0 && joint_idx < 5) {

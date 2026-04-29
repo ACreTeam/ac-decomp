@@ -108,8 +108,10 @@ static int Player_actor_Item_main_windmill_normal(ACTOR* actor, GAME* game) {
     return 0;
 }
 
-static void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor) {
-    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+static void Player_actor_Item_draw_windmill_After_kaza1_fan(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe,
+                                                            Gfx** joint_shape, u8* joint_flags, s_xyz* joint_rot,
+                                                            xyz_t* joint_pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)arg;
     s_xyz* angle = &player->windmill_angle;
     xyz_t* item_end = &player->other_item_end_pos;
 
@@ -132,7 +134,7 @@ static int Player_actor_Item_draw_windmill_After(GAME* game, cKF_SkeletonInfo_R_
     static const mPlayer_item_windmill_draw_proc proc[] = {
         NULL,
         NULL,
-        (mPlayer_item_windmill_draw_proc)Player_actor_Item_draw_windmill_After_kaza1_fan,
+        Player_actor_Item_draw_windmill_After_kaza1_fan,
     };
 
     if (joint_idx >= 0 && joint_idx < 3) {
