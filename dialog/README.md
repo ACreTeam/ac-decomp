@@ -69,8 +69,10 @@ Each entry looks like:
   pause/prompt code can corrupt the text box or break the conversation flow.
 - Any entry with `"decode_error": true` could not be fully decoded; **do not
   edit it** — it is packed back byte-for-byte unchanged.
-- Entries whose `new` still equals `original` are packed byte-for-byte
-  unchanged, so an unedited JSON reproduces a **byte-identical** disc.
+- Only the lines you actually change are re-encoded; every entry whose `new`
+  still equals `original` keeps its exact original message bytes. (The
+  `forest_2nd.arc` container itself is repacked, so its internal layout differs
+  from the retail file, but the message content is preserved verbatim.)
 
 Keeping each visible line roughly the same length as the original avoids
 overflowing the in-game text window.
