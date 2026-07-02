@@ -126,15 +126,21 @@ class Gcm:
         }
 
     def replace_file(self, gf: GcmFile, new_data: bytes, out_path: Path) -> Dict[str, int]:
-        """Write a copy of the disc to ``out_path`` with ``gf`` replaced by
-        ``new_data`` and the FST updated accordingly.
+        """Convenience wrapper around :meth:`replace_files` for a single file."""
+        return self.replace_files([(gf, new_data)], out_path)[0]
 
-        Only the target file's data and its single FST entry are ever changed.
-        No other file moves. Two cases:
+    def replace_files(self, replacements, out_path: Path):
+        """Write a copy of the disc to ``out_path`` with several files replaced
+        at once and the FST updated accordingly.
+
+        ``replacements`` is a list of ``(GcmFile, new_data)`` pairs. Each target
+        file must be distinct. Only those files' data and their FST entries ever
+        change; no other file moves. For each file, two cases:
 
         * ``len(new_data) <= gf.size`` - patch in place and zero-pad the slack.
-        * otherwise - append the new data at an aligned position past the end
-          of the disc, zero the old region, and repoint the FST entry.
+        * otherwise - append the new data at an aligned position past the end of
+          the disc (a shared, advancing cursor so multiple appended files never
+          overlap), zero the old region, and repoint the FST entry.
 
         The huge region between the FST and the file cluster is *not* free space
         on this disc (the game reads it by absolute offset), so it is never used.
@@ -146,32 +152,51 @@ class Gcm:
             out_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(self.path, out_path)
 
-        old_size = gf.size
-        entry_abs = self.fst_offset + gf.entry_pos
-        result = {"old_offset": gf.offset, "old_size": old_size,
-                  "new_size": len(new_data)}
-
+        seen = set()
+        results = []
+        append_cursor = self.disc_size
         with open(out_path, "r+b") as f:
-            if len(new_data) <= old_size:
-                f.seek(gf.offset)
-                f.write(new_data)
-                pad = old_size - len(new_data)
-                if pad:
-                    f.write(b"\x00" * pad)
-                new_off = gf.offset
-                result["mode"] = "in-place"
-            else:
-                new_off = (self.disc_size + 0x1F) & ~0x1F
-                f.seek(new_off)
-                f.write(new_data)
-                # Zero the now-dead original region.
-                f.seek(gf.offset)
-                f.write(b"\x00" * old_size)
-                result["mode"] = "appended"
-            # Update the FST entry: [type|nameoff][offset][length].
-            f.seek(entry_abs + 4)
-            f.write(struct.pack(">II", new_off, len(new_data)))
+            for gf, new_data in replacements:
+                if gf.entry_pos in seen:
+                    raise GcmError(
+                        f"File {gf.path} was given more than once in a single "
+                        "replace_files call."
+                    )
+                seen.add(gf.entry_pos)
 
-        result["new_offset"] = new_off
-        result["out_disc_size"] = out_path.stat().st_size
-        return result
+                old_size = gf.size
+                entry_abs = self.fst_offset + gf.entry_pos
+                if len(new_data) <= old_size:
+                    f.seek(gf.offset)
+                    f.write(new_data)
+                    pad = old_size - len(new_data)
+                    if pad:
+                        f.write(b"\x00" * pad)
+                    new_off = gf.offset
+                    mode = "in-place"
+                else:
+                    new_off = (append_cursor + 0x1F) & ~0x1F
+                    f.seek(new_off)
+                    f.write(new_data)
+                    # Zero the now-dead original region.
+                    f.seek(gf.offset)
+                    f.write(b"\x00" * old_size)
+                    append_cursor = new_off + len(new_data)
+                    mode = "appended"
+                # Update the FST entry: [type|nameoff][offset][length].
+                f.seek(entry_abs + 4)
+                f.write(struct.pack(">II", new_off, len(new_data)))
+
+                results.append({
+                    "path": gf.path,
+                    "old_offset": gf.offset,
+                    "old_size": old_size,
+                    "new_size": len(new_data),
+                    "new_offset": new_off,
+                    "mode": mode,
+                })
+
+        self.disc_size = max(self.disc_size, out_path.stat().st_size)
+        for r in results:
+            r["out_disc_size"] = self.disc_size
+        return results

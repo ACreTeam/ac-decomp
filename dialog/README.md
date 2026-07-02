@@ -1,38 +1,71 @@
 # Dynamic villager / character dialog
 
-This folder drives a dialog rewrite pipeline. You edit a single JSON file, then
+This folder drives a text rewrite pipeline. You edit a single JSON file, then
 run **one command** to bake your rewritten text straight into a playable `.iso`.
+
+Two kinds of text are supported:
+
+- **`message`** — the main villager/character dialog (in `forest_2nd.arc`).
+  Lives in [dialog.json](dialog.json).
+- **`mail`** — the letters villagers send you (in `forest_1st.arc`). Lives in
+  [mail.json](mail.json).
+
+Both use the same commands and the same format; you pick which with
+`--resource message` (default) or `--resource mail`.
 
 ## Quick start (single command → patched .iso)
 
 ```sh
-# 1. Pull the editable dialog out of your game disc (run once):
+# Dialog:
 python tools/dialog_tool.py extract-iso \
   --iso "orig/GAFE01_00/Animal Crossing (USA).iso" \
-  --out dialog/dialog.json
+  --out dialog/dialog.json --resource message
 
-# 2. Edit the "new" fields in dialog/dialog.json (see below).
-
-# 3. Bake the changes into a new .iso in one shot:
 python tools/dialog_tool.py apply-iso \
   --iso "orig/GAFE01_00/Animal Crossing (USA).iso" \
   --json dialog/dialog.json \
   --out "build/GAFE01_00/Animal Crossing (USA) (dialog).iso"
+
+# Mail (letters):
+python tools/dialog_tool.py extract-iso \
+  --iso "orig/GAFE01_00/Animal Crossing (USA).iso" \
+  --out dialog/mail.json --resource mail
+
+python tools/dialog_tool.py apply-iso \
+  --iso "orig/GAFE01_00/Animal Crossing (USA).iso" \
+  --json dialog/mail.json \
+  --out "build/GAFE01_00/Animal Crossing (USA) (mail).iso"
 ```
 
-Load the produced `.iso` in Dolphin. Step 3 is the "single command" you re-run
-whenever you change dialog — it reads the original disc, rebuilds
-`forest_2nd.arc` with your text, and writes a patched disc. Only that one file
-(and its FST entry) ever changes; every other file on the disc is left
-byte-for-byte identical.
+Each `apply-iso` is the "single command" you re-run whenever you change that
+text. It reads the original disc, rebuilds the relevant archive, and writes a
+patched disc. Only that one archive (and its FST entry) ever changes; every
+other file on the disc is left byte-for-byte identical. The `--resource` is read
+automatically from the JSON, so you don't need to repeat it on `apply-iso`.
+
+### Applying dialog *and* mail into one .iso
+
+Pass multiple JSONs to a single `apply-iso` and all their changes are baked into
+**one** output disc:
+
+```sh
+python tools/dialog_tool.py apply-iso \
+  --iso "orig/GAFE01_00/Animal Crossing (USA).iso" \
+  --json dialog/dialog.json dialog/mail.json \
+  --out "build/GAFE01_00/Animal Crossing (USA) (modded).iso"
+```
+
+Each JSON declares its own resource, so the tool rebuilds `forest_2nd.arc`
+(dialog) and `forest_1st.arc` (mail) and writes them both into the single
+`(modded).iso`. Every other file on the disc stays byte-for-byte identical.
 
 ## How it works
 
-All in-game dialog lives inside `forest_2nd.arc` as two binary blobs:
-
-- `message_data.bin` — raw concatenated message text
-- `message_data_table.bin` — cumulative end offsets that split the text into
-  individual messages
+Each resource is one or more `*_data.bin` / `*_data_table.bin` blob pairs inside
+an archive: the data blob is concatenated text, and the table holds cumulative
+end offsets that split it into individual entries. `mail` has four blobs
+(`mail`, `maila`, `mailb`, `mailc`); each entry in `mail.json` is tagged with
+its `group`.
 
 The tool [`tools/dialog_tool.py`](../tools/dialog_tool.py) reads and rewrites
 those blobs for you; you never touch the binaries directly. The disc itself is
@@ -48,21 +81,23 @@ editing is a single **message index**. Each JSON entry carries a best-effort
 `label` (derived from known message-table ranges) to help you orient yourself,
 but there is no reliable one-to-one "this line belongs to villager X" mapping.
 
-## Editing `dialog/dialog.json`
+## Editing the JSON
 
-Each entry looks like:
+Each entry looks like this (mail entries also carry a `group`):
 
 ```json
 {
+  "group": "maila",
   "index": 1234,
-  "label": "MSG_...",
-  "original": "Original text with <<CONTROL>> codes<<MSGEND>>",
-  "new": "Original text with <<CONTROL>> codes<<MSGEND>>"
+  "label": "",
+  "original": "Original text with <<CONTROL>> codes",
+  "new": "Original text with <<CONTROL>> codes"
 }
 ```
 
-- Only change the **`new`** field. Leave `index`, `label`, and `original`
-  alone (they are how the tool maps text back and shows you what it was).
+- Only change the **`new`** field. Leave `group`, `index`, `label`, and
+  `original` alone (they are how the tool maps text back and shows you what it
+  was).
 - Keep every `<<...>>` **control code** intact — they drive text speed,
   colors, name/item substitution, line breaks, choices, message jumps, and
   termination. Removing `<<MSGEND>>`, `<<BTN>>`, `<<MSGCLEAR>>` or a
