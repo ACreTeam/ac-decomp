@@ -1,0 +1,229 @@
+========================================================================
+ANIMAL CROSSING (GameCube) DIALOG REWRITE — MODEL INSTRUCTIONS
+========================================================================
+
+YOUR TASK
+---------
+You are rewriting the in-game text of Animal Crossing. You are given a JSON
+file whose "entries" array holds every text entry in the game. For each entry
+you may rewrite the "new" field with your own version of the text. You must
+keep the game working: that means preserving every control code and the
+conversation wiring exactly, and only changing the human-readable words.
+
+Rewrite goals (unless the user says otherwise):
+  * Keep the same MEANING, INTENT, and TONE as the original line.
+  * Keep it natural, in-character, and consistent across connected messages.
+  * Keep roughly the same LENGTH and line structure so it fits the text box.
+
+Do NOT invent new mechanics, remove menus/choices, or change who a message
+jumps to. You are a translator/rewriter, not a game designer.
+
+Everything you need is in the JSON itself (see the "flow" field and the rules
+below): the text, how entries connect, and which entries are safe to edit. You
+also have access to the game's decompiled source and the tooling, so you may
+consult them for deeper context if useful (e.g. src/game/m_msg_main.c_inc and
+m_msg_cursol.c_inc describe how the flow codes are interpreted), but the JSON
+alone is sufficient to do the rewrite correctly.
+
+
+THE JSON YOU ARE EDITING
+------------------------
+The file is one of:
+  * dialog.json  — the main villager/character dialog (resource "message").
+  * mail.json    — the letters villagers mail you (resource "mail").
+
+Each element of "entries" looks like this:
+
+  {
+    "group": "maila",              // ONLY in mail.json; identifies the blob
+    "index": 2503,                 // stable numeric ID of this entry
+    "label": "",                   // optional human hint; may be ""
+    "original": "....<<MSGEND>>",  // the shipped text (DO NOT CHANGE)
+    "new": "....<<MSGEND>>",       // <-- THE ONLY FIELD YOU EDIT
+    "flow": { ... },               // optional; how this entry connects (read only)
+    "decode_error": true           // optional; see rule below
+  }
+
+RULES (these are hard requirements):
+  1. Edit ONLY the "new" field. Never change group, index, label, original,
+     flow, or decode_error.
+  2. If an entry has "decode_error": true, DO NOT edit it. Leave "new" exactly
+     equal to "original". It cannot be safely re-encoded.
+  3. If you are not changing an entry, leave "new" identical to "original".
+     Only entries whose "new" differs from "original" get rebuilt.
+  4. Preserve EVERY control code token (anything written as <<...>>) exactly:
+     same name, same [hex bytes], same order, same position relative to the
+     words. These codes are the game's wiring — deleting, reordering, or
+     altering one can corrupt the text box or break the conversation.
+  5. Keep "\n" line breaks sensible. A text line should be about the same
+     visible width as the original (~26-30 characters). Do not make lines much
+     longer or you will overflow the on-screen box.
+
+
+CONTROL CODES: WHAT THEY MEAN
+-----------------------------
+Control codes appear as <<NAME>> or <<NAME [HH HH ...]>> where HH are hex
+bytes. You must copy them verbatim. Here is what the common ones do so you can
+place your words correctly around them. (You never need to write new codes —
+just keep the existing ones.)
+
+Text pacing / layout (appear mid-text):
+  <<PAUSE [xx]>>   Pause for a moment (dramatic beat). Keep it where it was.
+  <<BTN>>          Wait for the player to press a button, then continue on a
+                   NEW PAGE of the SAME entry. Think of it as a page break.
+  <<MSGCLEAR>>     Clear the text box to start a fresh page (same entry).
+  <<SPACE>>        A literal space produced by a code.
+  <<TEXTCOLOR ..>>, <<COLORCHARS ..>>, <<LINEOFS ..>>, <<CHARSCALE ..>>,
+  <<LINESCALE ..>>, <<LINETYPE ..>>  Visual formatting. Leave as-is.
+
+Speaker portrait / emotion (usually at the start of a page):
+  <<DEMONPC0 [..]>>, <<DEMONPC1 [..]>>, <<DEMONPC2 [..]>>, <<DEMONPCQST [..]>>,
+  <<DEMOPLR [..]>>  Set the on-screen character pose/expression. The bytes pick
+                    the emotion/animation. Contiguous entries that share the
+                    same DEMONPCx tag+bytes are the same speaker in the same
+                    mood — keep your rewrite in that mood.
+  <<MSGCONTENTS_NORMAL/ANGRY/SAD/FUN/SLEEPY/GLOOMY>>  Voice/emotion of the line.
+  <<VOICETRUE>> / <<VOICEFALSE>>  Voice on/off.
+
+Substituted words (the game inserts real text at runtime — write around them,
+never inside them):
+  <<STR_PLAYERNAME>>   The player's name.
+  <<STR_TALKNAME>>     The name the speaker calls the player.
+  <<STR_TAIL>>         The villager's catchphrase (e.g. their signature word).
+  <<STR_FREE0>> .. <<STR_FREE19>>  Context words the game fills in (an item, a
+                       place, a name, etc.). Keep them; treat each as a noun/
+                       phrase placeholder in the sentence.
+  <<STR_ITEM0>>..<<STR_ITEM4>>   An item name.
+  <<STR_YEAR/MONTH/WEEK/DAY/HOUR/MIN/SEC/AMPM>>  Date/time pieces.
+  <<STR_COUNTRYNAME>>, <<STR_ISLANDNAME>>, <<STR_RNDNUM>>, <<STR_MAIL>>  etc.
+  Rule of thumb: any <<STR_...>> is a blank the game fills in. Keep it and make
+  the surrounding sentence read naturally with it in place.
+
+Conversation flow (appear at the END of an entry — DO NOT MOVE OR CHANGE):
+  <<MSGEND>>            The conversation ends here.
+  <<MSGCONTINUE>>       There is more; the game continues to another entry.
+  <<SETNEXTMSG0 [hi lo]>> .. <<SETNEXTMSG5 [hi lo]>>  Set the next entry index
+                       (the two bytes are a big-endian index, e.g. [09 C9] =
+                       decimal 2505). SETNEXTMSG0/1/... correspond to the
+                       player's menu choice 0/1/...
+  <<SETFORCEMSG [hi lo]>>  Force the next entry index regardless of choice.
+  <<SETNEXTMSGRND2/3/4 [...]>>  Randomly pick one of several next indices.
+  <<SETNEXTMSGRNDSECTION [b b m m]>>  Randomly pick an index in a range.
+  <<MALEFEMALECHK [.. ..]>>  Branch to a different index by player gender.
+  <<OPENCHOICE>>       Show a yes/no (or multi) menu.
+  <<SETSELSTR2/3/.. [ids]>>  The option labels for the menu.
+  <<FORCENEXT>>        Advance automatically without waiting for a button.
+
+
+HOW ENTRIES CONNECT (THIS IS THE IMPORTANT PART)
+------------------------------------------------
+Entries are NOT connected by being next to each other in the file. They are
+connected by the flow codes above. Use the "flow" field on each entry to
+navigate:
+
+  "flow": {
+    "continues": true,      // ends with <<MSGCONTINUE>>
+    "ends": true,           // ends with <<MSGEND>>
+    "choice": true,         // shows a menu (<<OPENCHOICE>>)
+    "next": [2505, 2523],   // explicit indices this entry jumps to
+    "next_range": [b, m]    // (rare) a random range of next indices
+  }
+
+Read it like this:
+  * flow.next present  -> this entry jumps to those exact indices. When the
+    entry is a CHOICE, next[0] is where option 0 goes, next[1] is where option
+    1 goes, and so on. To rewrite consistently, rewrite this entry AND all of
+    its next targets together so the question and every answer still match.
+  * flow.choice true   -> keep the branching intact. If you reword the question,
+    make sure both answer branches still make sense as replies.
+  * flow.continues true but NO flow.next -> this is a "runtime pool": the game
+    picks the successor in code, not from the text. Treat this entry as a
+    SELF-CONTAINED beat. It must read well on its own and match the tone of the
+    surrounding entries (look at neighbours with the same DEMONPCx tag).
+  * flow.ends true     -> a natural stopping point; wrap up the thought.
+
+Walking a full conversation:
+  Start at an entry, then follow flow.next repeatedly to visit every entry in
+  the conversation tree (mind that branches can rejoin or loop). Look each
+  "next" value up by matching it against another entry's "index" in the SAME
+  "entries" array — that is all the wiring you need; it is contained entirely in
+  this JSON. Rewrite the whole tree as one coherent scene.
+
+  You can also have the connected tree printed for you with:
+      python tools/dialog_tool.py trace --json dialog/dialog.json --index N
+  which lists the linked entries with CHOICE / END / CONTINUE markers. This is
+  optional — the flow.next fields already give you the same information.
+
+
+A WORKED EXAMPLE
+----------------
+Entry 2503 (K.K. / intro) ends with:
+   ...ready to hop on that train?<<SETSELSTR2 [00 6E 00 6F]>><<BTN>>
+   <<OPENCHOICE>><<SETNEXTMSG0 [09 C9]>><<SETNEXTMSG1 [09 DB]>><<FORCENEXT>>
+Its flow is: { "continues": true, "choice": true, "next": [2505, 2523] }
+Meaning: it asks a yes/no question; choosing option 0 goes to entry 2505,
+option 1 goes to entry 2523. So if you reword 2503's question, also reword
+2505 and 2523 so the two replies still fit the new question. Keep the
+<<SETSELSTR2>>, <<OPENCHOICE>>, <<SETNEXTMSG0/1>>, <<BTN>>, <<FORCENEXT>>
+codes exactly where they are.
+
+
+MAIL LETTERS (mail.json only)
+-----------------------------
+mail.json holds the letters villagers and the game mail you. It has four groups
+(the "group" field on each entry). Mail entries do NOT use the flow/menu codes;
+they are plain letter text that ends with newline(s) and uses <<STR_...>>
+substitutions (e.g. <<STR_FREE0>> = a name the game fills in). They are wired
+together differently than dialog:
+
+  * group "mail"  — complete letter BODIES used as-is (event/system/store mail,
+    birthday notes, etc.). Each entry is one whole body; rewrite it as a
+    self-contained letter.
+
+  * groups "maila", "mailb", "mailc" — INTERCHANGEABLE FRAGMENTS. To build a
+    villager's letter, the game concatenates exactly one "maila" + one "mailb" +
+    one "mailc", in that order, choosing each independently. So:
+        maila = opening line(s)      (e.g. "Hello, <<STR_FREE0>>. Thanks...")
+        mailb = middle line(s)       (e.g. "Somebody dumped this here...")
+        mailc = closing line(s)      (e.g. "That's all for me...")
+    Because the three are mixed and matched, EACH fragment must:
+      - read naturally on its own,
+      - flow smoothly after ANY maila / into ANY mailc (never reference a
+        specific other fragment),
+      - keep its trailing newline(s) so the next fragment starts on a new line,
+      - stay grammatically complete (don't end mid-sentence expecting a
+        specific continuation).
+
+  * SIZE LIMIT: each "maila", "mailb", and "mailc" entry must stay small — the
+    game only reserves 200 bytes per fragment and will fail to load a longer
+    one. Keep each fragment about the same length as its original (a few short
+    lines). The same "keep lines short" rule as dialog applies to mail bodies.
+
+Do not try to make maila/mailb/mailc into a single continuous sentence across
+groups; treat each as a standalone, tone-matching building block.
+
+
+PERSONALITY & CONSISTENCY
+-------------------------
+* Villager dialog is shared by personality type, not by a single character; the
+  specific name is injected via <<STR_...>> codes. Match the mood implied by the
+  emotion codes and the original wording (grumpy, cheerful, sleepy, etc.).
+* Keep a character's voice consistent across all entries in the same
+  conversation tree and across contiguous entries sharing the same speaker tag.
+* Preserve the function of each line: a greeting stays a greeting, a question
+  stays a question (with the same number of answers), a goodbye stays a goodbye.
+
+
+OUTPUT
+------
+Return the full JSON file with the same structure, with your rewritten "new"
+fields filled in. Follow all rules above. Specifically:
+  * Keep every entry; do not add, remove, reorder, or renumber.
+  * Change ONLY "new". Copy "index", "group", "label", "original", "flow", and
+    "decode_error" through unchanged.
+  * Leave "new" identical to "original" for any entry you are not rewriting and
+    for any entry with "decode_error": true.
+  * Output JSON only — no commentary, no markdown fences, no explanations.
+  * If you are unsure whether a token is a control code, leave it exactly as
+    written. When in doubt, preserve rather than change.
+========================================================================

@@ -112,6 +112,59 @@ Each entry looks like this (mail entries also carry a `group`):
 Keeping each visible line roughly the same length as the original avoids
 overflowing the in-game text window.
 
+## Understanding conversation flow
+
+Entries are **not** connected by being next to each other in the JSON — they're
+wired together by the control codes at the **end** of each entry:
+
+| Ending | Meaning |
+|---|---|
+| `<<MSGEND>>` | The conversation ends here. |
+| `<<SETNEXTMSGx [hi lo]>>` + `<<MSGCONTINUE>>` | Jump to the explicit index in the two bytes (`[09 C9]` = index 2505). |
+| `<<OPENCHOICE>>` + `<<SETNEXTMSG0>>` / `<<SETNEXTMSG1>>` | A menu; option 0 / option 1 go to different indices. |
+| `<<MSGCONTINUE>>` **alone** | There's more, but the **next index is chosen by the villager's code at runtime** — it isn't stored in the text. |
+
+Codes *inside* an entry (`<<BTN>>` = wait for button, `<<MSGCLEAR>>` = new page)
+are page breaks **within** one entry, not links between entries.
+
+### The `flow` field
+
+`extract` / `extract-iso` add a read-only **`flow`** summary to each entry so a
+model can see how conversations connect:
+
+```json
+"flow": { "continues": true, "choice": true, "next": [2505, 2523] }
+```
+
+- `next` — explicit target indices this entry can jump to (follow these to
+  rewrite a whole branch consistently).
+- `choice` — this entry shows a menu; the `next` list is the per-option targets.
+- `ends` — ends with `<<MSGEND>>`.
+- `continues` **without** `next` — a runtime-driven continuation: the successor
+  is picked by game code, so treat the entry as a self-contained beat that must
+  read well on its own and match the tone of its neighbours (contiguous entries
+  sharing the same `<<DEMONPCx [..]>>` tag are the same NPC/mood pool).
+
+`flow` is derived from `original`; don't hand-edit it. Run `annotate` to refresh
+it after pulling new data:
+
+```sh
+python tools/dialog_tool.py annotate --json dialog/dialog.json
+```
+
+### Tracing a conversation
+
+`trace` prints the whole tree reachable from a starting index (following
+`next`), with choice branches, `END` markers, cycle detection, and
+`CONTINUE→runtime` flags:
+
+```sh
+python tools/dialog_tool.py trace --json dialog/dialog.json --index 2503
+```
+
+Use it to gather the full context of a conversation before rewriting it, so the
+question and all of its answers stay coherent.
+
 ## Alternative: pack a loose `forest_2nd.arc` / wire into `ninja`
 
 If you'd rather work with an extracted archive instead of the `.iso`:

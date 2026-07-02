@@ -51,6 +51,7 @@ are preserved verbatim instead of being round-tripped.
 import argparse
 import json
 import os
+import re
 import struct
 import sys
 
@@ -260,6 +261,85 @@ def encode_message(text):
 
 
 # ---------------------------------------------------------------------------
+# Conversation flow analysis
+# ---------------------------------------------------------------------------
+# Which control codes carry an explicit "next message" index, and how their
+# argument bytes map to u16 indices. See src/game/m_msg_cursol.c_inc.
+_TOKEN_RE = re.compile(r"<<([A-Z0-9_]+)(?: \[([0-9A-Fa-f ]+)\])?>>")
+
+# Single u16 target (SETFORCEMSG maps to the "force" next-message handler).
+_FLOW_SINGLE = {
+    "SETFORCEMSG",
+    "SETNEXTMSG0", "SETNEXTMSG1", "SETNEXTMSG2",
+    "SETNEXTMSG3", "SETNEXTMSG4", "SETNEXTMSG5",
+}
+# Every 2 argument bytes is a candidate target (random pick / gender branch).
+_FLOW_MULTI = {
+    "SETNEXTMSGRND2", "SETNEXTMSGRND3", "SETNEXTMSGRND4",
+    "MALEFEMALECHK",
+}
+# base + max: the game picks a random index in [base, max].
+_FLOW_SECTION = {"SETNEXTMSGRNDSECTION"}
+
+
+def _hex_u16s(hex_args):
+    b = bytes(int(x, 16) for x in hex_args.split())
+    return [int.from_bytes(b[i:i + 2], "big") for i in range(0, len(b) - 1, 2)]
+
+
+def _analyze_flow(text):
+    """Summarise how a decoded message connects to others.
+
+    Returns a dict with any of ``continues`` / ``ends`` / ``choice`` (bools) and
+    ``next`` (list of explicit target indices), or ``None`` when the entry has
+    no flow-control codes. ``continues`` without ``next`` means the successor is
+    chosen by the villager's code at runtime, not stored in the text.
+    """
+    continues = ends = choice = False
+    section = None
+    nexts = []
+    for name, args in _TOKEN_RE.findall(text):
+        if name == "MSGCONTINUE":
+            continues = True
+        elif name == "MSGEND":
+            ends = True
+        elif name == "OPENCHOICE":
+            choice = True
+        elif name in _FLOW_SINGLE and args:
+            vals = _hex_u16s(args)
+            if vals and vals[0] != 0xFFFF:
+                nexts.append(vals[0])
+        elif name in _FLOW_MULTI and args:
+            nexts.extend(v for v in _hex_u16s(args) if v != 0xFFFF)
+        elif name in _FLOW_SECTION and args:
+            vals = _hex_u16s(args)
+            if len(vals) >= 2:
+                nexts.extend(vals[:2])
+                section = [vals[0], vals[1]]
+
+    # De-duplicate while preserving order.
+    seen = set()
+    ordered = []
+    for v in nexts:
+        if v not in seen:
+            seen.add(v)
+            ordered.append(v)
+
+    flow = {}
+    if continues:
+        flow["continues"] = True
+    if ends:
+        flow["ends"] = True
+    if choice:
+        flow["choice"] = True
+    if ordered:
+        flow["next"] = ordered
+    if section is not None:
+        flow["next_range"] = section
+    return flow or None
+
+
+# ---------------------------------------------------------------------------
 # extract
 # ---------------------------------------------------------------------------
 def _build_document(archive, resource_name, source_name, include_empty):
@@ -299,6 +379,9 @@ def _build_document(archive, resource_name, source_name, include_empty):
             entry["label"] = labels.get(index, "")
             entry["original"] = text
             entry["new"] = text
+            flow = _analyze_flow(text)
+            if flow:
+                entry["flow"] = flow
             if had_error:
                 entry["decode_error"] = True
             out_entries.append(entry)
@@ -572,6 +655,94 @@ def _default_out_iso(in_iso):
 
 
 # ---------------------------------------------------------------------------
+# annotate / trace (conversation flow)
+# ---------------------------------------------------------------------------
+def cmd_annotate(args):
+    """Add/refresh the per-entry ``flow`` field on an existing JSON in place.
+
+    Preserves your edits (``new`` is never touched); only recomputes ``flow``
+    from ``original`` and refreshes known ``label`` values.
+    """
+    document = _load_json(args.json)
+    resource_name = _resolve_resource_name(document, args.resource)
+    labels = RESOURCE_LABELS.get(resource_name, {})
+
+    annotated = 0
+    for entry in document["entries"]:
+        original = entry.get("original", "")
+        flow = _analyze_flow(original)
+        if flow:
+            entry["flow"] = flow
+            annotated += 1
+        elif "flow" in entry:
+            del entry["flow"]
+        if labels and "group" not in entry:
+            try:
+                lbl = labels.get(int(entry["index"]), "")
+            except (KeyError, TypeError, ValueError):
+                lbl = ""
+            if lbl:
+                entry["label"] = lbl
+
+    _write_document(document, args.json)
+    if not args.quiet:
+        print(f"Annotated {annotated} entries with flow info in {args.json}")
+
+
+def _strip_codes(text):
+    return re.sub(r"<<[^>]*>>", "", text).replace("\n", " ").strip()
+
+
+def cmd_trace(args):
+    """Print the conversation tree reachable from a starting index."""
+    document = _load_json(args.json)
+    by_index = {}
+    for entry in document["entries"]:
+        # Trace follows message indices; for multi-group JSONs the first entry
+        # for a given index wins (mail rarely uses cross-entry jumps).
+        by_index.setdefault(int(entry["index"]), entry)
+
+    lines = []
+    visited = set()
+
+    def snippet(entry):
+        s = _strip_codes(entry.get("original", ""))
+        return (s[:70] + "...") if len(s) > 70 else s
+
+    def walk(index, depth, prefix):
+        entry = by_index.get(index)
+        if entry is None:
+            lines.append(f"{prefix}[{index}] (empty / not in JSON)")
+            return
+        flow = entry.get("flow", {})
+        tags = []
+        if flow.get("choice"):
+            tags.append("CHOICE")
+        if flow.get("ends"):
+            tags.append("END")
+        if flow.get("continues") and not flow.get("next"):
+            tags.append("CONTINUE\u2192runtime")
+        tag = f" ({', '.join(tags)})" if tags else ""
+        lines.append(f"{prefix}[{index}]{tag} {snippet(entry)!r}")
+
+        if index in visited:
+            lines.append(f"{prefix}    \u21ba (already shown)")
+            return
+        visited.add(index)
+
+        nxt = flow.get("next", [])
+        if depth >= args.max_depth:
+            if nxt:
+                lines.append(f"{prefix}    ... (max depth {args.max_depth})")
+            return
+        for target in nxt:
+            walk(target, depth + 1, prefix + "    ")
+
+    walk(args.index, 0, "")
+    print("\n".join(lines))
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 def main(argv=None):
@@ -674,6 +845,32 @@ def main(argv=None):
         help="Archive compression (default: match the source archive).",
     )
     p_apply_iso.set_defaults(func=cmd_apply_iso)
+
+    p_annotate = sub.add_parser(
+        "annotate",
+        help="Add/refresh per-entry conversation 'flow' info in a JSON in place.",
+    )
+    p_annotate.add_argument("--json", required=True, help="Path to the JSON to annotate.")
+    p_annotate.add_argument(
+        "--resource", choices=sorted(RESOURCES), default=None,
+        help="Override the resource (default: read from the JSON, else message).",
+    )
+    p_annotate.set_defaults(func=cmd_annotate)
+
+    p_trace = sub.add_parser(
+        "trace",
+        help="Print the conversation tree reachable from a starting index.",
+    )
+    p_trace.add_argument("--json", required=True, help="Path to the dialog JSON.")
+    p_trace.add_argument(
+        "--index", required=True, type=lambda s: int(s, 0),
+        help="Starting message index (decimal or 0x hex).",
+    )
+    p_trace.add_argument(
+        "--max-depth", type=int, default=25,
+        help="Maximum tree depth to follow (default: 25).",
+    )
+    p_trace.set_defaults(func=cmd_trace)
 
     args = parser.parse_args(argv)
     try:
