@@ -5224,6 +5224,58 @@ config.progress_report_args = [
     # "--config functionRelocDiffs=data_value",
 ]
 
+###
+# Optional: dynamic villager/character dialog.
+#
+# If dialog/dialog.json exists and an original forest_2nd.arc can be found, wire
+# a post-build step that repacks the rewritten dialog into
+# build/<version>/forest_2nd.arc every time you run ninja. When either the JSON
+# or the source archive is missing, this is skipped entirely so the normal
+# matching build is never affected.
+###
+dialog_json = Path("dialog") / "dialog.json"
+dialog_tool = config.tools_dir / "dialog_tool.py"
+dialog_source_candidates = [
+    Path("dump") / "forest_2nd.arc",
+    Path("orig") / config.version / "forest_2nd.arc",
+    Path("orig") / config.version / "files" / "forest_2nd.arc",
+]
+dialog_source_arc = next((p for p in dialog_source_candidates if p.exists()), None)
+
+if dialog_json.exists() and dialog_source_arc is not None:
+    dialog_out_arc = Path(config.build_dir) / config.version / "forest_2nd.arc"
+    config.custom_build_rules = [
+        {
+            "name": "dialog_pack",
+            "command": (
+                f"$python {dialog_tool} --quiet build "
+                "--json $in --in-arc $dialog_src --out-arc $out"
+            ),
+            "description": "DIALOG $out",
+        }
+    ]
+    config.custom_build_steps = {
+        "post-build": [
+            {
+                "rule": "dialog_pack",
+                "outputs": dialog_out_arc,
+                "inputs": dialog_json,
+                "implicit": [
+                    dialog_tool,
+                    config.tools_dir / "msg_tool.py",
+                    dialog_source_arc,
+                ],
+                "variables": {"dialog_src": dialog_source_arc.as_posix()},
+            }
+        ]
+    }
+    print(f" INFO Dialog packing enabled -> {dialog_out_arc}")
+elif dialog_json.exists():
+    print(
+        " INFO dialog/dialog.json found but no source forest_2nd.arc "
+        "(looked in dump/ and orig/); dialog packing skipped."
+    )
+
 if args.mode == "configure":
     # Write build.ninja and objdiff.json
     generate_build(config)
