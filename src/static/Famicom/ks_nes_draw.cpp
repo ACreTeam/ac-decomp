@@ -371,7 +371,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_S, GX_U16, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 10);
     GXInitTexObj(&obj0, wp->draw_ctx.bg_palette_attr_texture, 40, 256, GX_TF_I4, GX_CLAMP, GX_REPEAT, 0);
     GXInitTexObjLOD(&obj0, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj0, GX_TEXMAP0);

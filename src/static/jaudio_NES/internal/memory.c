@@ -1010,13 +1010,13 @@ void __Nas_MemoryReconfig() {
     s32 tmp = AG.audio_params.updates_per_frame;
     /*0x28BC*/ AG.max_tempo = ((((60.0f * 1000.0f * AUDIO_TATUMS_PER_BEAT) * tmp) / AGC.timeBase) / AG._29D8) / 1.04613;
 
-    /*0x2894*/ AG._2894 = (f32)AG.refresh_rate * (f32)tmp / AG.audio_params.ai_sampling_frequency / AG.max_tempo;
+    /*0x2894*/ AG.sample_to_update_delay_scale = (f32)AG.refresh_rate * (f32)tmp / AG.audio_params.ai_sampling_frequency / AG.max_tempo;
 
     /*0x286C*/ AG.audio_params.spec = spec->_04;
-    /*0x2894*/ AG._2894 = AG.refresh_rate;
-    /*0x2894*/ AG._2894 *= tmp;
-    /*0x2894*/ AG._2894 /= AG.audio_params.ai_sampling_frequency;
-    /*0x2894*/ AG._2894 /= AG.max_tempo;
+    /*0x2894*/ AG.sample_to_update_delay_scale = AG.refresh_rate;
+    /*0x2894*/ AG.sample_to_update_delay_scale *= tmp;
+    /*0x2894*/ AG.sample_to_update_delay_scale /= AG.audio_params.ai_sampling_frequency;
+    /*0x2894*/ AG.sample_to_update_delay_scale /= AG.max_tempo;
     /*0x2876*/ AG.audio_params.num_samples_per_frame_min *= AG.audio_params.spec;
     /*0x2878*/ AG.audio_params.updates_per_frame *= AG.audio_params.spec;
     /*0x2872*/ AG.audio_params.num_samples_per_frame_target *= AG.audio_params.spec;

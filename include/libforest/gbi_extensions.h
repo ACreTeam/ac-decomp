@@ -741,6 +741,10 @@ do { \
     gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, pal, ws, wt, ss, st)
 
+#define gsDPLoadTextureBlock_8b_Dolphin(timg, fmt, w, h, pal, ws, wt, ss, st) \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_8b, w, h, timg), \
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, pal, ws, wt, ss, st)
+
 #define gDPLoadTextureBlock_4b_Dolphin(pkt, timg, fmt, w, h, pal, ws, wt, ss, st) \
 do { \
     gDPSetTextureImage_Dolphin(pkt, fmt, G_IM_SIZ_4b, w, h, timg); \
@@ -762,6 +766,22 @@ do { \
 #define gsDPLoadMultiBlock_4b_Dolphin(timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
     gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st)
+
+#define gsDPLoadMultiBlock_8b_Dolphin(timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_8b, w, h, timg), \
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st)
+
+#define gDPLoadMultiBlock_4b_Dolphin(pkt, timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
+do { \
+    gDPSetTextureImage_Dolphin(pkt, fmt, G_IM_SIZ_4b, w, h, timg); \
+    gDPSetTile_Dolphin(pkt, G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st); \
+} while (0)
+
+#define gDPLoadMultiBlock_8b_Dolphin(pkt, timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
+do { \
+    gDPSetTextureImage_Dolphin(pkt, fmt, G_IM_SIZ_8b, w, h, timg); \
+    gDPSetTile_Dolphin(pkt, G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st); \
+} while (0)
 
 #define gsSPNTriangles_Independ(n) \
 {{ \

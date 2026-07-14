@@ -588,6 +588,18 @@ u8 audiomemory[0x90000] ATTRIBUTE_ALIGN(32);
 s16* SOU_FIR_STATE;
 s16 SOU_FIR_STATE_COPY[12];
 
+#define KITEKI_BASE_VOLUME 1.15f
+#define KITEKI_MIN_DISTANCE 320.0f
+#define KITEKI_MAX_DISTANCE 6400.0f
+#define KITEKI_VOLUME_SCALE (KITEKI_BASE_VOLUME / (KITEKI_MAX_DISTANCE - KITEKI_MIN_DISTANCE))
+
+#define MD_BASE_VOLUME 1.15f
+#define MD_MIN_DISTANCE 0.0f
+#define MD_MAX_DISTANCE SOU_ONGEN_AREA2
+#define MD_VOLUME_SCALE (MD_BASE_VOLUME / SQ(MD_MAX_DISTANCE - MD_MIN_DISTANCE))
+#define MD_MIN_VOLUME 0.2f
+#define MD_MAX_VOLUME 0.8f
+
 void Sou_lev_ongen_data_struct_clear() {
     u8 i = 0;
     for (i = 0; i < ARRAY_COUNT(sou_lev_ongen_data); i++) {
@@ -765,32 +777,44 @@ f32 distance2vol(f32 distance) {
 }
 
 f32 distance2vol4KITEKI(f32 distance) {
-    f32 v2 = 0.f;
-    if (distance > 320.f) {
-        v2 = 1.15f;
+    f32 vol = 0.0f;
+
+    // @BUG - this should come after the volume calculation or it should return immediately.
+    // Also I think this check is entirely wrong. It should be 'if (distance < KITEKI_MIN_DISTANCE)'.
+    if (distance > KITEKI_MIN_DISTANCE) {
+        vol = KITEKI_BASE_VOLUME;
     }
-    if (distance < 0.f) {
-        v2 = 0.f;
+
+    // @BUG - this should come after the volume calculation or it should return immediately.
+    if (distance < 0.0f) {
+        vol = 0.0f;
     }
-    // idk about this constant
-    v2 = 1.15f - (1.f / (5287.f - 0.0435f)) * (distance - 320.f);
-    return v2;
+
+    // linear falloff
+    // @BUG - this can result in negative volume if the distance is more than 6400.
+    vol = KITEKI_BASE_VOLUME - KITEKI_VOLUME_SCALE * (distance - KITEKI_MIN_DISTANCE);
+    return vol;
 }
 
 f32 distance2vol4MD(f32 distance) {
-    f32 v2 = 0.f;
-    if (distance > SOU_ONGEN_AREA2) {
-        v2 = 0.f;
+    f32 vol = 0.0f;
+
+    if (distance > MD_MAX_DISTANCE) {
+        vol = 0.0f;
     } else {
-        v2 = 1.15f - (1.15f / SQ(SOU_ONGEN_AREA2)) * SQ(distance);
+        // quadratic falloff
+        vol = MD_BASE_VOLUME - MD_VOLUME_SCALE * SQ(distance - MD_MIN_DISTANCE);
     }
-    if (v2 > 0.8f) {
-        v2 = 0.8f;
+
+    if (vol > MD_MAX_VOLUME) {
+        vol = MD_MAX_VOLUME;
     }
-    if (v2 < 0.2f) {
-        v2 = 0.2f;
+
+    if (vol < MD_MIN_VOLUME) {
+        vol = MD_MIN_VOLUME;
     }
-    return v2;
+    
+    return vol;
 }
 
 void Sou_VoiceStart(u8 subtrack, u8 b) {
@@ -893,6 +917,14 @@ void Sou_TrgStart(u16 id, f32 volume, f32 optVolume, f32 freqScale, u8 pan, u8 r
         if (reverb) {
             sou_trg_se[subtrack].reverbVolume = reverb;
         } else {
+            // @BUG - if 'do_reverb' is TRUE, the reverb strength is calculated
+            // based on the distance from the mic position to the sound source.
+            // If 'do_echo' is also TRUE and echo is enabled on the sound effect,
+            // the reverb amount is overwritten.
+            // HOWEVER, if echo isn't enabled, then the reverb volume is STILL
+            // overwritten, being set back to 0. So reverb volume can never be
+            // applied properly.
+
             if (do_reverb) {
                 mask = (u16)(distance);
                 reverb = mask >> 3;
@@ -900,11 +932,13 @@ void Sou_TrgStart(u16 id, f32 volume, f32 optVolume, f32 freqScale, u8 pan, u8 r
                     reverb = 50;
                 }
             }
+
             if (do_echo && sou_trg_se[subtrack].echo) {
                 reverb = 40;
             } else {
                 reverb = 0;
             }
+            
             sou_trg_se[subtrack].reverbVolume = reverb;
         }
         NA_COMMAND_AUDIO_SUBTRACK_SET_PORT(SE_GROUP, subtrack, 0, se_idx_lo);
@@ -921,6 +955,11 @@ void Sou_TrgStart(u16 id, f32 volume, f32 optVolume, f32 freqScale, u8 pan, u8 r
         }
     }
 
+    // @BUG - 'se_idx_lo' is the lower 8 bits of the sound effect ID.
+    // That means that sound effects which share the same index into
+    // differing banks (se_idx_hi) will have the same priority.
+    // ALSO: there are no bounds check, so even though only indexes of
+    // 0x00-0x7F are valid, 0x80+ can be read from unrelated memory.
     if (TRGPRIO[se_idx_lo] >= sou_trg_se[subtrack].priority) {
         sou_trg_se[subtrack].id = id;
         sou_trg_se[subtrack].priority = TRGPRIO[se_idx_lo];
@@ -1346,6 +1385,11 @@ void Sou_Ongen_Lev_Cont() {
                         j = ARRAY_COUNT(sou_lev_ongen_data);
                     }
                 }
+
+                // @BUG - 'foundIndex' may never be set.
+                // It's initialized to 0, so if the entry isn't found,
+                // then sou_lev_ongen_data[0] and sou_lev_se[0] will be updated,
+                // even if they're unrelated (which they will be).
                 sou_lev_ongen_data[foundIndex].distance = sou_ongen_entry[i].distance;
                 sou_lev_se[foundIndex].pan = sou_ongen_entry[i].pan;
                 sou_lev_ongen_data[foundIndex]._00++;
@@ -1584,6 +1628,8 @@ void Sou_SeFadeoutRoutine() {
             sou_se_fade[i].volumeScale = 0.f;
             sou_se_fade[i]._0 = 0;
             if (i >= 8 && i <= 14) {
+                // @BUG - 'i' is out of range for sou_lev_se.
+                // Level sounds are given to subtracks 8-14, so this index should be i - 8.
                 sou_lev_se[i].volumeScale = 0.f;
             }
         } else if (sou_se_fade[i]._0 != 0) {
@@ -1609,6 +1655,8 @@ void Sou_SeFadeinRoutine() {
             sou_se_fade[i].volumeScale = 1.f;
             sou_se_fade[i]._4 = 0;
             if (i >= 8 && i <= 14) {
+                // @BUG - 'i' is out of range for sou_lev_se.
+                // Level sounds are given to subtracks 8-14, so this index should be i - 8.
                 sou_lev_se[i].volumeScale = 1.f;
             }
         } else if (sou_se_fade[i]._4 != 0) {
@@ -1616,6 +1664,9 @@ void Sou_SeFadeinRoutine() {
                 sou_se_fade[i].volumeScale = 1.f;
                 sou_se_fade[i]._4 = 0xffff;
             } else {
+                // @BUG - For a fade in, the volume scale should be current / duration.
+                // However, this uses (duration - current) / duration, which is the inverse,
+                // and is correctly used for fading out.
                 v1 = sou_se_fade[i]._6 - sou_se_fade[i]._4;
                 v2 = sou_se_fade[i]._6;
                 sou_se_fade[i].volumeScale = v1 / v2;
@@ -1725,7 +1776,7 @@ void Sou_InitAudio() {
     sou_ongenpos_kill_countdown = 0;
     sou_chime_volume = 0.f;
     sou_filter_status = 0;
-    sou_room_type = 0;
+    sou_room_type = ROOM_TYPE_OTHER;
     sou_museum_type = 0;
     SOU_ONGEN_AREA1 = 540.f;
     SOU_ONGEN_AREA2 = 533.f;
@@ -3123,7 +3174,7 @@ void Sou_PosTrgStart(u16 num, u16 angle, f32 distance, u8 reverb, f32 optVolume)
         case NA_SE_6F:
         case NA_SE_70:
         case NA_SE_71: {
-            if (num == 0 || distance > 6400.f) {
+            if (num == 0 || distance > KITEKI_MAX_DISTANCE) {
                 return;
             }
             volume = distance2vol4KITEKI(distance);
@@ -3287,6 +3338,9 @@ extern void Na_SysLevStart(u8 id) {
     for (i = 0; i < ARRAY_COUNT(sou_sys_lev); i++) {
         if (sou_sys_lev[i].id == 0) {
             for (j = 0; j < ARRAY_COUNT(sou_sys_lev); j++) {
+                // @BUG - the wrong index is used for incrementing here.
+                // It should be j, not i. This just increments the age counter
+                // for the free sound by ARRAY_COUNT(sou_sys_lev).
                 sou_sys_lev[i]._1++;
             }
             foundIndex = i;
@@ -3301,13 +3355,20 @@ extern void Na_SysLevStart(u8 id) {
         }
     }
     for (j = 0; j < ARRAY_COUNT(sou_sys_lev); j++) {
-        //! BUG: `i` will be ARRAY_COUNT(sou_sys_lev) if we get to this point,
+        //! @BUG: `i` will be ARRAY_COUNT(sou_sys_lev) if we get to this point,
         // and we will be incrementing out of bounds
         sou_sys_lev[i]._1++;
     }
 
 offset_jmp:
     sou_sys_lev[foundIndex].id = id;
+
+    // @BUG - sou_sys_lev[foundIndex]._1 is not reset to 0.
+    // _1 is an age counter used to find the sound that has
+    // existed for the longest time. By not resetting it,
+    // the new sound will be up first for replacement
+    // even though it may have been set after other sounds.
+
     sou_lev_se[foundIndex + 4].volumeScale = 1.f;
     sou_lev_se[foundIndex + 4]._0C = 1.f;
     if (id == NA_SE_TRAIN_RIDE && sou_kiteki_counter == 0) {
@@ -3340,6 +3401,10 @@ extern void Na_SysLevStop(u8 a) {
             i = ARRAY_COUNT(sou_sys_lev);
         }
     }
+
+    // @BUG - index will be 0 if no equivalent playing sound is found.
+    // This means that the first SysLev sound will be stopped,
+    // regardless of if it is the sound being requested to stop.
     Sou_LevStop(index + 4, a);
 }
 
@@ -3847,6 +3912,10 @@ extern u8 Na_RoomIncectPos(int insectID, u8 index, u16 angle, f32 distance) {
                 for (j = 0; j < ARRAY_COUNT(sou_room_ins); j++) {
                     if (r29 == sou_room_ins[j]._07) {
                         r29 = r29 + 1;
+                        // @BUG - this should be j = -1.
+                        // Setting it to 0 causes all subsequent loops to start at index 1.
+                        // The result is that duplicate variance can exist if entry 0 happens
+                        // to have the same variance as what is selected.
                         j = 0;
                         r26++;
                         if (r26 > ARRAY_COUNT(sou_room_ins)) {
@@ -3894,6 +3963,10 @@ extern u8 Na_RoomIncectPos(int insectID, u8 index, u16 angle, f32 distance) {
                         for (j = 0; j < ARRAY_COUNT(sou_room_ins); j++) {
                             if (r29 == sou_room_ins[j]._07) {
                                 r29 = r29 + 1;
+                                // @BUG - this should be j = -1.
+                                // Setting it to 0 causes all subsequent loops to start at index 1.
+                                // The result is that duplicate variance can exist if entry 0 happens
+                                // to have the same variance as what is selected.
                                 j = 0;
                                 r26++;
                                 if (r26 > ARRAY_COUNT(sou_room_ins)) {
@@ -3982,18 +4055,21 @@ extern void Na_BGMFilter(u8 filterStatus) {
 extern void Na_RoomType(u8 roomType) {
     if (sou_room_type != roomType) {
         switch (roomType) {
-            case 0: {
+            case ROOM_TYPE_OTHER: {
                 SOU_ONGEN_AREA1 = 540.f;
+                // @BUG - this should reset SOU_ONGEN_AREA2 to 533.f but it's not.
+                // Failure to do so causes MD (minidisk, aka music players) to have the
+                // incorrect max distance in other areas.
             } break;
-            case 1: {
+            case ROOM_TYPE_SMALL: {
                 SOU_ONGEN_AREA1 = 540.f;
                 SOU_ONGEN_AREA2 = 545.f;
             } break;
-            case 2: {
+            case ROOM_TYPE_MEDIUM: {
                 SOU_ONGEN_AREA1 = 470.f;
                 SOU_ONGEN_AREA2 = 520.f;
             } break;
-            case 3: {
+            case ROOM_TYPE_LARGE: {
                 SOU_ONGEN_AREA1 = 510.f;
                 SOU_ONGEN_AREA2 = 545.f;
             } break;

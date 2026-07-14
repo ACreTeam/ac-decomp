@@ -592,7 +592,7 @@ extern int mCoBG_CheckAirSwing(xyz_t pos) {
     return FALSE;
 }
 #else
-extern int mCoBG_CheckAirSwing(xyz_t pos) {
+extern int mCoBG_CheckSkySwing(xyz_t pos) {
     mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
     u32 attr = col->data.unit_attribute;
 

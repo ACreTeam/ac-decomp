@@ -2406,7 +2406,7 @@ extern int mFI_GetDigStatus(mActor_name_t* item, xyz_t wpos, int golden_shovel) 
 #if VERSION >= VER_GAFU01_00
         } else if (mCoBG_CheckAirSwing(wpos) == TRUE) {
 #else
-        } else if (mCoBG_CheckAirSwing(wpos) == TRUE) {
+        } else if (mCoBG_CheckSkySwing(wpos) == TRUE) {
 #endif
             status = mFI_DIGSTATUS_MISS;
         }

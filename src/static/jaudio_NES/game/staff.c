@@ -65,25 +65,25 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
                 if (channel != nullptr && channel->common_ch.enabled) {
                     /* Found our enabled note channel, get mouth type */
                     switch (i) {
-                        case 2:
-                        case 7:
-                        case 12:
+                        case 2: // subtrack 2
+                        case 7: // subtrack 7
+                        case 12: // subtrack 12
                             mouth_type = 4;
                             break;
-                        case 6:
+                        case 6: // subtrack 6
                             mouth_type = 1;
                             break;
-                        case 4:
-                        case 13:
+                        case 4: // subtrack 4
+                        case 13: // subtrack 13
                             mouth_type = 5;
                             break;
-                        case 10:
+                        case 10: // subtrack 10
                             mouth_type = 3;
                             break;
-                        case 11:
+                        case 11: // subtrack 11
                             mouth_type = 0;
                             break;
-                        default:
+                        default: // subtracks 3, 5, 8, 9, 14, 15
                             mouth_type = 2;
                             break;
                     }

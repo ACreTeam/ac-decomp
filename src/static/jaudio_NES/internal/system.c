@@ -346,7 +346,7 @@ void* Nas_PreLoadBank(s32 seq_id, s32* bank_id) {
     void* ctrl;
 
     l_bank_id = 0xFF;
-    idx = AG.map_header[seq_id];
+    idx = ((u16*)AG.map_header)[seq_id];
     for (i = ((u8*)AG.map_header)[idx++]; i > 0; i--) {
         l_bank_id = ((u8*)AG.map_header)[idx++];
         ctrl = __Load_Ctrl(l_bank_id);
@@ -452,7 +452,7 @@ s32 Nas_PreLoadBank_BG(s32 id, s32 param_2, s32 ret_data, OSMesgQueue* ret_queue
 
 // @unused
 u8* Nas_SeqToBank(s32 seq_id, s32* num_banks) {
-    s32 index = AG.map_header[seq_id];
+    s32 index =  ((u16*)AG.map_header)[seq_id];
 
     *num_banks = ((u8*)AG.map_header)[index++];
     if (*num_banks == 0) {
@@ -464,7 +464,7 @@ u8* Nas_SeqToBank(s32 seq_id, s32* num_banks) {
 void Nas_FlushBank(s32 seq_id) {
     s32 bank_id;
     s32 bank_count;
-    s32 index = AG.map_header[seq_id];
+    s32 index = ((u16*)AG.map_header)[seq_id];
 
     bank_count = ((u8*)AG.map_header)[index++];
     while (bank_count > 0) {
@@ -544,7 +544,7 @@ static s32 __Nas_StartSeq(s32 group_idx, s32 seq_id, s32 param) {
 
     Nas_ReleaseGroup(group);
     bank_id = 0xFF;
-    idx = AG.map_header[seq_id];
+    idx =  ((u16*)AG.map_header)[seq_id];
     for (i = ((u8*)AG.map_header)[idx++]; i > 0; i--) {
         bank_id = ((u8*)AG.map_header)[idx++];
         __Load_Ctrl(bank_id);

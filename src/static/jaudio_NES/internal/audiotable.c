@@ -1,4 +1,5 @@
 #include "jaudio_NES/audiotable.h"
+#include "jaudio_NES/audiocommon.h"
 
 u8 VELOCONV_TABLE[16][256] = {
     {0x00, 0x01, 0x03, 0x04, 0x06, 0x08, 0x09, 0x0B, 0x0C, 0x0E, 0x0F, 0x10, 0x12, 0x13, 0x15, 0x16, 0x17, 0x18, 0x1A, 0x1B, 0x1C, 0x1D, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x35, 0x36, 0x37, 0x38, 0x39, 0x39, 0x3A, 0x3B, 0x3C, 0x3C, 0x3D, 0x3E, 0x3E, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x41, 0x41, 0x42, 0x43, 0x43, 0x44, 0x45, 0x46, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x67, 0x68, 0x69, 0x6A, 0x6C, 0x6D, 0x6F, 0x70, 0x71, 0x73, 0x74, 0x76, 0x77, 0x79, 0x7B, 0x7C, 0x7E, 0x7F, 0x81, 0x82, 0x84, 0x85, 0x87, 0x89, 0x8A, 0x8C, 0x8D, 0x8F, 0x90, 0x91, 0x93, 0x94, 0x96, 0x97, 0x98, 0x99, 0x9B, 0x9C, 0x9D, 0x9E, 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xBA, 0xBB, 0xBC, 0xBD, 0xBD, 0xBE, 0xBF, 0xBF, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC0, 0xC1, 0xC1, 0xC1, 0xC1, 0xC1, 0xC1, 0xC2, 0xC2, 0xC3, 0xC4, 0xC4, 0xC5, 0xC6, 0xC7, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF, 0xE0, 0xE1, 0xE3, 0xE4, 0xE5, 0xE6, 0xE8, 0xE9, 0xEA, 0xEB, 0xED, 0xEE, 0xF0, 0xF1, 0xF2, 0xF4, 0xF5, 0xF7, 0xF8, 0xFA, 0xFC, 0xFD, 0xFF, 0x00},
@@ -191,71 +192,132 @@ s16 wm_sin[] = { 0x0,    0xC8B,  0x18F8, 0x2527, 0x30FB, 0x3C56, 0x471C, 0x5133,
 
 s16* WAVEMEM_TABLE[] = { wm_sin, wm_sin, wm_sin, wm_sin, wm_sin, wm_sin, wm_sin, wm_sin, wm_sin };
 
+/*
+ * PCENTTABLE - Cent-to-frequency-ratio lookup table
+ *
+ * This table converts musical cents to frequency ratios for pitch bending and frequency scaling.
+ * Values are generated using the formula: ratio = 2^(cents / 1200)
+ *
+ * Table structure:
+ *   - 256 entries covering approximately -1200 to +1200 cents (2 octaves down to 2 octaves up)
+ *   - Indexed with a +128 offset (e.g., PCENTTABLE[128] = 1.0f = 0 cents, no pitch change)
+ *   - Values range from 0.5f (2^-1 = -1200 cents) to 2.0f (2^1 = +1200 cents)
+ *
+ * Usage:
+ *   - Used for pitch bending via SUBTRACK_CMD_LARGE_BEND_PITCH (track.c)
+ *   - Used for frequency scaling in portamento/sweep effects (effect.c)
+ *   - Applied to subtrack->frequency_scale to modify playback pitch
+ */
+// clang-format off
 f32 PCENTTABLE[] = {
-    0.5f,        0.5f,        0.50273597f, 0.50548798f, 0.50825399f, 0.51103598f, 0.51383299f, 0.516645f,   0.519472f,
-    0.522315f,   0.525174f,   0.52804798f, 0.530938f,   0.53384298f, 0.53676498f, 0.539702f,   0.542656f,   0.54562598f,
-    0.548612f,   0.55161399f, 0.554633f,   0.55766898f, 0.56072098f, 0.563789f,   0.56687498f, 0.56997699f, 0.57309699f,
-    0.576233f,   0.579387f,   0.58255798f, 0.58574599f, 0.58895099f, 0.592175f,   0.595415f,   0.598674f,   0.60194999f,
-    0.60524499f, 0.60855699f, 0.61188799f, 0.61523598f, 0.61860299f, 0.621989f,   0.62539297f, 0.628815f,   0.63225698f,
-    0.63571697f, 0.63919598f, 0.642694f,   0.64621198f, 0.649748f,   0.65330398f, 0.65688f,    0.660475f,   0.664089f,
-    0.667724f,   0.671378f,   0.67505199f, 0.678747f,   0.682461f,   0.686196f,   0.689952f,   0.693727f,   0.697524f,
-    0.70134097f, 0.70517999f, 0.70903897f, 0.712919f,   0.716821f,   0.720744f,   0.724689f,   0.72865498f, 0.73264199f,
-    0.736652f,   0.74068397f, 0.744737f,   0.74881297f, 0.75291097f, 0.757031f,   0.76117498f, 0.76533997f, 0.76952899f,
-    0.77373999f, 0.777975f,   0.78223199f, 0.78651297f, 0.79081798f, 0.79514599f, 0.799497f,   0.803873f,   0.808272f,
-    0.81269598f, 0.81714398f, 0.82161599f, 0.82611197f, 0.83063298f, 0.83517897f, 0.83974999f, 0.84434599f, 0.848966f,
-    0.853613f,   0.858284f,   0.86298198f, 0.86770397f, 0.87245297f, 0.877228f,   0.882029f,   0.886856f,   0.891709f,
-    0.89658999f, 0.90149599f, 0.90643f,    0.911391f,   0.91637897f, 0.92139399f, 0.926436f,   0.93150699f, 0.936604f,
-    0.94173f,    0.94688398f, 0.952066f,   0.957277f,   0.962516f,   0.96778297f, 0.97307998f, 0.978405f,   0.98376f,
-    0.989144f,   0.994557f,   1.0f,        1.005473f,   1.010975f,   1.016508f,   1.022071f,   1.027665f,   1.033289f,
-    1.038944f,   1.04463f,    1.050347f,   1.056095f,   1.061875f,   1.067687f,   1.07353f,    1.079405f,   1.085312f,
-    1.091252f,   1.097224f,   1.103229f,   1.109267f,   1.115337f,   1.121441f,   1.127579f,   1.13375f,    1.139955f,
-    1.146193f,   1.152466f,   1.1587729f,  1.165115f,   1.171491f,   1.177903f,   1.1843489f,  1.1908309f,  1.197348f,
-    1.203901f,   1.210489f,   1.217114f,   1.223775f,   1.230473f,   1.237207f,   1.243978f,   1.2507859f,  1.2576309f,
-    1.264514f,   1.2714339f,  1.278392f,   1.2853889f,  1.292423f,   1.299497f,   1.306608f,   1.313759f,   1.320949f,
-    1.328178f,   1.335447f,   1.342756f,   1.350104f,   1.357493f,   1.364922f,   1.372392f,   1.379903f,   1.387455f,
-    1.395048f,   1.402683f,   1.41036f,    1.4180779f,  1.4258389f,  1.433642f,   1.441488f,   1.4493769f,  1.457309f,
-    1.4652849f,  1.473304f,   1.481367f,   1.489474f,   1.4976259f,  1.5058219f,  1.514063f,   1.522349f,   1.530681f,
-    1.539058f,   1.5474809f,  1.55595f,    1.564465f,   1.573027f,   1.581636f,   1.590292f,   1.598995f,   1.607746f,
-    1.616545f,   1.625392f,   1.634287f,   1.643231f,   1.6522239f,  1.661266f,   1.6703579f,  1.6795f,     1.688691f,
-    1.697933f,   1.707225f,   1.7165689f,  1.725963f,   1.735409f,   1.7449059f,  1.754456f,   1.764058f,   1.773712f,
-    1.783419f,   1.793179f,   1.802993f,   1.81286f,    1.822782f,   1.832757f,   1.842788f,   1.852873f,   1.863013f,
-    1.873209f,   1.883461f,   1.893768f,   1.904132f,   1.914553f,   1.9250309f,  1.935567f,   1.946159f,   1.95681f,
-    1.96752f,    1.978287f,   1.989114f,   2.0f,
+    0.5f,         0.5f,         0.50273597f,  0.50548798f,  0.50825399f,  0.51103598f,  0.51383299f,  0.516645f,
+    0.519472f,    0.522315f,    0.525174f,    0.52804798f,  0.530938f,    0.53384298f,  0.53676498f,  0.539702f,
+    0.542656f,    0.54562598f,  0.548612f,    0.55161399f,  0.554633f,    0.55766898f,  0.56072098f,  0.563789f,
+    0.56687498f,  0.56997699f,  0.57309699f,  0.576233f,    0.579387f,    0.58255798f,  0.58574599f,  0.58895099f,
+    0.592175f,    0.595415f,    0.598674f,    0.60194999f,  0.60524499f,  0.60855699f,  0.61188799f,  0.61523598f,
+    0.61860299f,  0.621989f,    0.62539297f,  0.628815f,    0.63225698f,  0.63571697f,  0.63919598f,  0.642694f,
+    0.64621198f,  0.649748f,    0.65330398f,  0.65688f,     0.660475f,    0.664089f,    0.667724f,    0.671378f,
+    0.67505199f,  0.678747f,    0.682461f,    0.686196f,    0.689952f,    0.693727f,    0.697524f,    0.70134097f,
+    0.70517999f,  0.70903897f,  0.712919f,    0.716821f,    0.720744f,    0.724689f,    0.72865498f,  0.73264199f,
+    0.736652f,    0.74068397f,  0.744737f,    0.74881297f,  0.75291097f,  0.757031f,    0.76117498f,  0.76533997f,
+    0.76952899f,  0.77373999f,  0.777975f,    0.78223199f,  0.78651297f,  0.79081798f,  0.79514599f,  0.799497f,
+    0.803873f,    0.808272f,    0.81269598f,  0.81714398f,  0.82161599f,  0.82611197f,  0.83063298f,  0.83517897f,
+    0.83974999f,  0.84434599f,  0.848966f,    0.853613f,    0.858284f,    0.86298198f,  0.86770397f,  0.87245297f,
+    0.877228f,    0.882029f,    0.886856f,    0.891709f,    0.89658999f,  0.90149599f,  0.90643f,     0.911391f,
+    0.91637897f,  0.92139399f,  0.926436f,    0.93150699f,  0.936604f,    0.94173f,     0.94688398f,  0.952066f,
+    0.957277f,    0.962516f,    0.96778297f,  0.97307998f,  0.978405f,    0.98376f,     0.989144f,    0.994557f,
+    1.0f,         1.005473f,    1.010975f,    1.016508f,    1.022071f,    1.027665f,    1.033289f,    1.038944f,
+    1.04463f,     1.050347f,    1.056095f,    1.061875f,    1.067687f,    1.07353f,     1.079405f,    1.085312f,
+    1.091252f,    1.097224f,    1.103229f,    1.109267f,    1.115337f,    1.121441f,    1.127579f,    1.13375f,
+    1.139955f,    1.146193f,    1.152466f,    1.1587729f,   1.165115f,    1.171491f,    1.177903f,    1.1843489f,
+    1.1908309f,   1.197348f,    1.203901f,    1.210489f,    1.217114f,    1.223775f,    1.230473f,    1.237207f,
+    1.243978f,    1.2507859f,   1.2576309f,   1.264514f,    1.2714339f,   1.278392f,    1.2853889f,   1.292423f,
+    1.299497f,    1.306608f,    1.313759f,    1.320949f,    1.328178f,    1.335447f,    1.342756f,    1.350104f,
+    1.357493f,    1.364922f,    1.372392f,    1.379903f,    1.387455f,    1.395048f,    1.402683f,    1.41036f,
+    1.4180779f,   1.4258389f,   1.433642f,    1.441488f,    1.4493769f,   1.457309f,    1.4652849f,   1.473304f,
+    1.481367f,    1.489474f,    1.4976259f,   1.5058219f,   1.514063f,    1.522349f,    1.530681f,    1.539058f,
+    1.5474809f,   1.55595f,     1.564465f,    1.573027f,    1.581636f,    1.590292f,    1.598995f,    1.607746f,
+    1.616545f,    1.625392f,    1.634287f,    1.643231f,    1.6522239f,   1.661266f,    1.6703579f,   1.6795f,
+    1.688691f,    1.697933f,    1.707225f,    1.7165689f,   1.725963f,    1.735409f,    1.7449059f,   1.754456f,
+    1.764058f,    1.773712f,    1.783419f,    1.793179f,    1.802993f,    1.81286f,     1.822782f,    1.832757f,
+    1.842788f,    1.852873f,    1.863013f,    1.873209f,    1.883461f,    1.893768f,    1.904132f,    1.914553f,
+    1.9250309f,   1.935567f,    1.946159f,    1.95681f,     1.96752f,     1.978287f,    1.989114f,    2.0f,
 };
+// clang-format on
 
+/*
+ * PCENTTABLE2 - Fine-resolution cent-to-frequency-ratio lookup table
+ *
+ * This table converts musical cents to frequency ratios for small pitch bends with higher
+ * precision than PCENTTABLE. Values are generated using the formula: ratio = 2^(cents / 1200)
+ *
+ * Table structure:
+ *   - 256 entries covering approximately -200 to +200 cents (1/6 octave down to 1/6 octave up)
+ *   - Indexed with a +128 offset (e.g., PCENTTABLE2[128] = 1.0f = 0 cents, no pitch change)
+ *   - Values range from 0.890899f (2^(-1/6) ≈ -200 cents) to 1.122462f (2^(1/6) ≈ +200 cents)
+ *   - Higher resolution than PCENTTABLE: ~1.5625 cents per entry vs ~9.375 cents per entry
+ *
+ * Usage:
+ *   - Used for pitch bending via SUBTRACK_CMD_SMALL_BEND_PITCH (track.c)
+ *   - Provides finer pitch control for subtle pitch variations
+ *   - Applied to subtrack->frequency_scale to modify playback pitch
+ */
+// clang-format off
 f32 PCENTTABLE2[] = {
-    0.890899f,   0.890899f,   0.89170998f, 0.892521f,   0.893333f,   0.894146f,   0.89495999f, 0.895774f,   0.89658999f,
-    0.89740598f, 0.898222f,   0.89903998f, 0.899858f,   0.900677f,   0.90149599f, 0.90231699f, 0.90313798f, 0.90395999f,
-    0.904783f,   0.90560597f, 0.90643f,    0.90725499f, 0.908081f,   0.908907f,   0.909734f,   0.91056198f, 0.911391f,
-    0.91222f,    0.91305f,    0.913881f,   0.914713f,   0.91554499f, 0.91637897f, 0.917213f,   0.918047f,   0.918883f,
-    0.91971898f, 0.920556f,   0.92139399f, 0.92223197f, 0.92307198f, 0.92391199f, 0.924752f,   0.92559397f, 0.926436f,
-    0.927279f,   0.928123f,   0.928968f,   0.929813f,   0.93066f,    0.93150699f, 0.93235397f, 0.93320298f, 0.93405199f,
-    0.934902f,   0.93575299f, 0.936604f,   0.937457f,   0.93831f,    0.93916398f, 0.940019f,   0.94087398f, 0.94173f,
-    0.942587f,   0.943445f,   0.94430399f, 0.945163f,   0.94602299f, 0.94688398f, 0.94774598f, 0.94860798f, 0.949472f,
-    0.95033598f, 0.951201f,   0.952066f,   0.952933f,   0.9538f,     0.95466799f, 0.955537f,   0.956406f,   0.957277f,
-    0.958148f,   0.95902f,    0.95989299f, 0.960766f,   0.961641f,   0.962516f,   0.963392f,   0.964268f,   0.965146f,
-    0.96602398f, 0.96690297f, 0.96778297f, 0.96866399f, 0.969546f,   0.97042799f, 0.97131097f, 0.972195f,   0.97307998f,
-    0.97396499f, 0.974852f,   0.975739f,   0.97662699f, 0.977516f,   0.978405f,   0.979296f,   0.980187f,   0.98107898f,
-    0.98197198f, 0.98286498f, 0.98376f,    0.984655f,   0.985551f,   0.98644799f, 0.98734599f, 0.988244f,   0.989144f,
-    0.990044f,   0.99094498f, 0.99184698f, 0.99274898f, 0.993653f,   0.994557f,   0.995462f,   0.99636799f, 0.99727499f,
-    0.998182f,   0.999091f,   1.0f,        1.00091f,    1.001821f,   1.002733f,   1.0036449f,  1.004559f,   1.005473f,
-    1.0063879f,  1.007304f,   1.00822f,    1.009138f,   1.010056f,   1.010975f,   1.011896f,   1.012816f,   1.013738f,
-    1.014661f,   1.015584f,   1.016508f,   1.017433f,   1.0183589f,  1.019286f,   1.020214f,   1.021142f,   1.022071f,
-    1.023002f,   1.023933f,   1.024864f,   1.025797f,   1.026731f,   1.027665f,   1.0286f,     1.029536f,   1.030473f,
-    1.031411f,   1.0323499f,  1.033289f,   1.03423f,    1.035171f,   1.036113f,   1.037056f,   1.038f,      1.038944f,
-    1.03989f,    1.040836f,   1.041783f,   1.042731f,   1.04368f,    1.04463f,    1.045581f,   1.046532f,   1.047485f,
-    1.048438f,   1.049392f,   1.050347f,   1.051303f,   1.05226f,    1.053217f,   1.054176f,   1.055135f,   1.056095f,
-    1.057056f,   1.058018f,   1.0589809f,  1.059945f,   1.06091f,    1.061875f,   1.062842f,   1.063809f,   1.064777f,
-    1.0657459f,  1.066716f,   1.067687f,   1.068658f,   1.069631f,   1.070604f,   1.071578f,   1.072554f,   1.07353f,
-    1.074507f,   1.075485f,   1.076463f,   1.077443f,   1.078424f,   1.079405f,   1.080387f,   1.08137f,    1.082355f,
-    1.08334f,    1.084325f,   1.085312f,   1.0863f,     1.087289f,   1.088278f,   1.089268f,   1.09026f,    1.091252f,
-    1.092245f,   1.0932389f,  1.094234f,   1.09523f,    1.096226f,   1.097224f,   1.098223f,   1.0992219f,  1.100222f,
-    1.1012239f,  1.102226f,   1.103229f,   1.104233f,   1.105238f,   1.106244f,   1.10725f,    1.108258f,   1.109267f,
-    1.110276f,   1.111287f,   1.112298f,   1.11331f,    1.114323f,   1.115337f,   1.116352f,   1.117368f,   1.118385f,
-    1.119403f,   1.120422f,   1.121441f,   1.122462f,
-
+    0.890899f,    0.890899f,    0.89170998f,  0.892521f,    0.893333f,    0.894146f,    0.89495999f,  0.895774f,
+    0.89658999f,  0.89740598f,  0.898222f,    0.89903998f,  0.899858f,    0.900677f,    0.90149599f,  0.90231699f,
+    0.90313798f,  0.90395999f,  0.904783f,    0.90560597f,  0.90643f,     0.90725499f,  0.908081f,    0.908907f,
+    0.909734f,    0.91056198f,  0.911391f,    0.91222f,     0.91305f,     0.913881f,    0.914713f,    0.91554499f,
+    0.91637897f,  0.917213f,    0.918047f,    0.918883f,    0.91971898f,  0.920556f,    0.92139399f,  0.92223197f,
+    0.92307198f,  0.92391199f,  0.924752f,    0.92559397f,  0.926436f,    0.927279f,    0.928123f,    0.928968f,
+    0.929813f,    0.93066f,     0.93150699f,  0.93235397f,  0.93320298f,  0.93405199f,  0.934902f,    0.93575299f,
+    0.936604f,    0.937457f,    0.93831f,     0.93916398f,  0.940019f,    0.94087398f,  0.94173f,     0.942587f,
+    0.943445f,    0.94430399f,  0.945163f,    0.94602299f,  0.94688398f,  0.94774598f,  0.94860798f,  0.949472f,
+    0.95033598f,  0.951201f,    0.952066f,    0.952933f,    0.9538f,      0.95466799f,  0.955537f,    0.956406f,
+    0.957277f,    0.958148f,    0.95902f,     0.95989299f,  0.960766f,    0.961641f,    0.962516f,    0.963392f,
+    0.964268f,    0.965146f,    0.96602398f,  0.96690297f,  0.96778297f,  0.96866399f,  0.969546f,    0.97042799f,
+    0.97131097f,  0.972195f,    0.97307998f,  0.97396499f,  0.974852f,    0.975739f,    0.97662699f,  0.977516f,
+    0.978405f,    0.979296f,    0.980187f,    0.98107898f,  0.98197198f,  0.98286498f,  0.98376f,     0.984655f,
+    0.985551f,    0.98644799f,  0.98734599f,  0.988244f,    0.989144f,    0.990044f,    0.99094498f,  0.99184698f,
+    0.99274898f,  0.993653f,    0.994557f,    0.995462f,    0.99636799f,  0.99727499f,  0.998182f,    0.999091f,
+    1.0f,         1.00091f,     1.001821f,    1.002733f,    1.0036449f,   1.004559f,    1.005473f,    1.0063879f,
+    1.007304f,    1.00822f,     1.009138f,    1.010056f,    1.010975f,    1.011896f,    1.012816f,    1.013738f,
+    1.014661f,    1.015584f,    1.016508f,    1.017433f,    1.0183589f,   1.019286f,    1.020214f,    1.021142f,
+    1.022071f,    1.023002f,    1.023933f,    1.024864f,    1.025797f,    1.026731f,    1.027665f,    1.0286f,
+    1.029536f,    1.030473f,    1.031411f,    1.0323499f,  1.033289f,    1.03423f,     1.035171f,    1.036113f,
+    1.037056f,    1.038f,       1.038944f,    1.03989f,     1.040836f,    1.041783f,    1.042731f,    1.04368f,
+    1.04463f,     1.045581f,    1.046532f,    1.047485f,    1.048438f,    1.049392f,    1.050347f,    1.051303f,
+    1.05226f,     1.053217f,    1.054176f,    1.055135f,    1.056095f,    1.057056f,    1.058018f,    1.0589809f,
+    1.059945f,    1.06091f,     1.061875f,    1.062842f,    1.063809f,    1.064777f,    1.0657459f,   1.066716f,
+    1.067687f,    1.068658f,    1.069631f,    1.070604f,    1.071578f,    1.072554f,    1.07353f,     1.074507f,
+    1.075485f,    1.076463f,    1.077443f,    1.078424f,    1.079405f,    1.080387f,    1.08137f,     1.082355f,
+    1.08334f,     1.084325f,    1.085312f,    1.0863f,      1.087289f,    1.088278f,    1.089268f,    1.09026f,
+    1.091252f,    1.092245f,    1.0932389f,  1.094234f,    1.09523f,     1.096226f,    1.097224f,    1.098223f,
+    1.0992219f,   1.100222f,    1.1012239f,  1.102226f,    1.103229f,    1.104233f,    1.105238f,    1.106244f,
+    1.10725f,     1.108258f,    1.109267f,    1.110276f,    1.111287f,    1.112298f,    1.11331f,     1.114323f,
+    1.115337f,    1.116352f,    1.117368f,    1.118385f,    1.119403f,    1.120422f,    1.121441f,    1.122462f,
 };
+// clang-format on
 
+/*
+ * PITCHTABLE - Semitone-to-frequency-ratio lookup table
+ *
+ * This table converts semitone indices (0-127) to frequency ratios for note playback.
+ * Values are generated using the formula: ratio = 2^((semitone - 48) / 12)
+ *
+ * Table structure:
+ *   - 128 entries covering semitones 0-127 (MIDI note range)
+ *   - Index 48 = 1.0f (middle C / C5, no pitch change)
+ *   - Index 36 = 0.5f (C4, one octave below middle C)
+ *   - Index 60 = 2.0f (C6, one octave above middle C)
+ *   - Each index represents one semitone (half-step) in the chromatic scale
+ *
+ * Usage:
+ *   - Used to calculate frequency_scale for notes: PITCHTABLE[semitone] * tuning (track.c)
+ *   - Used in portamento calculations to determine start and target frequencies
+ *   - Applied to note->frequency_scale to set the playback pitch of notes
+ */
+// clang-format off
 f32 PITCHTABLE[] = {
     0.105112f,    0.111362f,    0.117984f,   0.125f,      0.132433f,    0.14030799f, 0.148651f,    0.15749f,
     0.166855f,    0.176777f,    0.187288f,   0.19842499f, 0.210224f,    0.222725f,   0.235969f,    0.25f,
@@ -274,25 +336,192 @@ f32 PITCHTABLE[] = {
     67.80564f,    71.837578f,   76.10926f,   80.634956f,  85.42976f,    0.055681f,   0.058991998f, 0.0625f,
     0.066215999f, 0.070153996f, 0.074325f,   0.078745f,   0.083426997f, 0.088388f,   0.093644f,    0.099212997f,
 };
+// clang-format on
 
+/*
+ * DEFAULT_VTABLE - Default short note velocity lookup table
+ *
+ * This table provides velocity values for short notes (notes with brief durations).
+ * Values are indexed by the lower 4 bits of note commands 0xD0-0xDF.
+ *
+ * Table structure:
+ *   - 16 entries covering velocity values from 12 to 127 (MIDI velocity range)
+ *   - Indexed by note command: NOTE_CMD_SHORT_NOTE_VELOCITY_SQ0 (0xD0) through
+ *     NOTE_CMD_SHORT_NOTE_VELOCITY_SQ15 (0xDF)
+ *   - Values increase from 12 (quiet) to 127 (loudest)
+ *
+ * Usage:
+ *   - Used as default short_note_velocity_tbl for audio groups (track.c)
+ *   - Can be overridden per-group via GRP_CMD_SET_SHORT_NOTE_VELOCITY_TBL
+ *   - Velocity is squared and normalized: (velocity * velocity) / (127 * 127)
+ */
 u8 DEFAULT_VTABLE[] = {
-    0x0c, 0x19, 0x26, 0x33, 0x39, 0x40, 0x47, 0x4c, 0x53, 0x59, 0x60, 0x66, 0x6d, 0x73, 0x79, 0x7f
+    12, 25, 38, 51, 57, 64, 71, 76, 83, 89, 96, 102, 109, 115, 121, 127
 };
 
+/*
+ * DEFAULT_GTABLE - Default short note gate time lookup table
+ *
+ * This table provides gate time values (note duration) for short notes.
+ * Values are indexed by the lower 4 bits of note commands 0xE0-0xEF.
+ *
+ * Table structure:
+ *   - 16 entries covering gate time values from 229 down to 0
+ *   - Indexed by note command: NOTE_CMD_SET_SHORT_NOTE_GATE_TIME0 (0xE0) through
+ *     NOTE_CMD_SET_SHORT_NOTE_GATE_TIME15 (0xEF)
+ *   - Values decrease from 229 (longest) to 0 (shortest)
+ *
+ * Usage:
+ *   - Used as default short_note_gate_time_tbl for audio groups (track.c)
+ *   - Can be overridden per-group via GRP_CMD_SET_SHORT_NOTE_GATE_TIME_TBL
+ *   - Gate time determines how long a note plays before being released
+ */
 u8 DEFAULT_GTABLE[] = {
-    0xe5, 0xcb, 0xb1, 0x97, 0x8b, 0x7e, 0x71, 0x64, 0x57, 0x4a, 0x3d, 0x30, 0x24, 0x17, 0x0a, 0x00
+    229, 203, 177, 151, 139, 126, 113, 100, 87, 74, 61, 48, 36, 23, 10, 0
 };
 
+/*
+ * DEFAULT_ENV - Default ADSR envelope data
+ *
+ * This table provides a default ADSR (Attack-Decay-Sustain-Release) envelope for audio
+ * subtracks. The envelope controls volume over time during note playback.
+ *
+ * Table structure:
+ *   - 4 entries representing envelope phases:
+ *     [0] { 1, 32000 }     - Attack: 1 frame delay, value 32000 (max volume)
+ *     [1] { 1000, 32000 }  - Decay/Sustain: 1000 frame delay, value 32000 (max volume)
+ *     [2] { -1, 0 }        - HANG: Special value (-1) to hold envelope at current level
+ *     [3] { 0, 0 }         - DISABLE: Special value (0) to end envelope
+ *
+ * Special delay values:
+ *   - 0 (ADSR_DISABLE): Disables the envelope
+ *   - -1 (ADSR_HANG): Holds the envelope at current value indefinitely
+ *   - -2 (ADSR_GOTO): Jumps to envelope index specified by value field
+ *   - -3 (ADSR_RESTART): Restarts envelope from beginning
+ *
+ * Usage:
+ *   - Used as default envelope for subtrack ADSR (track.c)
+ *   - Applied to subtrack->adsr_env.envelope during initialization
+ *   - Provides a simple sustain envelope that holds at max volume
+ */
+ // clang-format off
 envdat DEFAULT_ENV[] = {
     { 1, 32000 },
     { 1000, 32000 },
-    { -1, 0 },
-    { 0, 0 },
+    { ADSR_HANG, 0 },
+    { ADSR_DISABLE, 0 },
 };
+// clang-format on
 
-commonch NA_CHINIT_TABLE[1] = { { FALSE } };
+/*
+ * NA_CHINIT_TABLE - Default common channel initialization data (disabled state)
+ *
+ * This table provides default initialization values for commonch structures when
+ * channels need to be reset or cleared. All fields are set to zero/FALSE to create
+ * a clean, disabled channel state.
+ *
+ * Table structure:
+ *   - Single entry containing a fully zeroed commonch structure
+ *   - enabled = FALSE, needs_init = FALSE (channel is disabled and doesn't need init)
+ *   - All other fields set to 0, FALSE, or NULL
+ *
+ * Usage:
+ *   - Used to reset all channels during system initialization (channel.c)
+ *   - Applied to chan->common_ch to clear channel state
+ *   - Provides a clean slate for channel allocation
+ */
+// clang-format off
+commonch NA_CHINIT_TABLE[1] = {
+    {
+        FALSE,
+        FALSE,
+        FALSE,
+        0,
+        FALSE,
+        FALSE,
+        FALSE,
+        FALSE,
 
-commonch NA_SVCINIT_TABLE[1] = { { TRUE, TRUE } };
+        0,
+        0,
+        FALSE,
+        FALSE,
+        FALSE,
+
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        0,
+        0,
+        0,
+        { 0, 0, 0, 0 },
+    },
+};
+// clang-format on
+
+/*
+ * NA_SVCINIT_TABLE - Default common channel initialization data (enabled state)
+ *
+ * This table provides default initialization values for commonch structures when
+ * channels are first created and need to be enabled. The channel is marked as
+ * enabled and requiring initialization.
+ *
+ * Table structure:
+ *   - Single entry containing a commonch structure with enabled flags set
+ *   - enabled = TRUE, needs_init = TRUE (channel is enabled and needs initialization)
+ *   - All other fields set to 0, FALSE, or NULL (will be set during channel setup)
+ *
+ * Usage:
+ *   - Used to initialize new channels during channel creation (channel.c)
+ *   - Applied to chan->common_ch when setting up a new channel
+ *   - Provides a starting point for channels that will be configured and used
+ */
+// clang-format off
+commonch NA_SVCINIT_TABLE[1] = {
+    {
+        TRUE,
+        TRUE,
+        FALSE,
+        0,
+        FALSE,
+        FALSE,
+        FALSE,
+        FALSE,
+
+        0,
+        0,
+        FALSE,
+        FALSE,
+        FALSE,
+
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        NULL,
+        NULL,
+        0,
+        0,
+        0,
+        { 0, 0, 0, 0 },
+    },
+};
+// clang-format on
 
 u16 CDELAYTABLE[] = { 0x3C, 0x3A, 0x38, 0x36, 0x34, 0x32, 0x30, 0x2E, 0x2C, 0x2A, 0x28, 0x26, 0x24, 0x22, 0x20, 0x1E,
                       0x1C, 0x1A, 0x18, 0x16, 0x14, 0x12, 0x10, 0x0E, 0x0C, 0x0A, 0x08, 0x06, 0x04, 0x02, 0x00, 0x00,
@@ -355,14 +584,130 @@ f32 StereoLeft[] = {
     0.086470999f, 0.074143f,   0.061802998f, 0.049454f,   0.037097f,   0.024734f,   0.012368f,   0.0f,
 };
 
-u8 BDB_SEQDATA[] = { 0xd3, 0x20, 0xd5, 0x3c, 0xda, 0x01, 0x00, 0x0a, 0xdb, 0x7f, 0xdd, 0xc8, 0xd7, 0xff, 0xff, 0x90,
-                     0x00, 0x18, 0xfd, 0x8c, 0x80, 0xf4, 0xfb, 0xff, 0xec, 0xe8, 0x00, 0x00, 0xff, 0x00, 0x40, 0x40,
-                     0x00, 0x00, 0xd0, 0x00, 0xdc, 0x00, 0xc3, 0xdf, 0x7f, 0xe0, 0x7f, 0xd8, 0x00, 0xd7, 0x60, 0xfe,
-                     0x60, 0xf2, 0xfc, 0xc7, 0x00, 0x00, 0xa4, 0xc7, 0x00, 0x00, 0x9a, 0x74, 0x61, 0xc7, 0x00, 0x00,
-                     0x47, 0x62, 0xc7, 0x00, 0x00, 0x49, 0xc6, 0x00, 0xc1, 0x00, 0xc8, 0x7e, 0xf3, 0x09, 0xc8, 0x01,
-                     0xf3, 0x21, 0x88, 0x00, 0x98, 0xf4, 0x1f, 0x88, 0x00, 0x9c, 0xcc, 0x00, 0xc7, 0x00, 0x00, 0xa4,
-                     0x64, 0xc7, 0x00, 0x00, 0xa5, 0xfe, 0x60, 0xf5, 0x00, 0x71, 0x64, 0xf5, 0x00, 0x65, 0x90, 0xf4,
-                     0xbe, 0xf4, 0xee, 0x88, 0x00, 0x9c, 0xcc, 0x00, 0xc7, 0x00, 0x00, 0xa5, 0xfe, 0x60, 0xf5, 0x00,
-                     0x88, 0x64, 0xf5, 0x00, 0x7c, 0x90, 0xf4, 0xa7, 0xc7, 0x00, 0x00, 0xa4, 0x74, 0xf4, 0xed, 0x42,
-                     0x6e, 0x6b, 0x50, 0x72, 0x67, 0x4f, 0x6e, 0x00, 0xc7, 0x05, 0x27, 0x08, 0xca, 0x40, 0xc1, 0x7f,
-                     0xc9, 0x00, 0xc4, 0xc2, 0x00, 0x00, 0x80, 0x04, 0xf4, 0xf9, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00 };
+/*
+ * BDB_SEQDATA - Default sequence data script for audio groups
+ *
+ * This is a default/fallback audio sequence script used when initializing audio groups.
+ * It provides a basic audio playback system with portamento/sweep functionality controlled
+ * via group ports (inter-process communication channels).
+ *
+ * Script structure:
+ *   - Group commands (0x00-0x17): Sets up group parameters (mute behavior, volume fade-in,
+ *     tempo, subtrack allocation) and starts subtrack 0 in a loop
+ *   - Subtrack 0 commands (0x18-0x8F): Initializes subtrack parameters, reads from ports
+ *     to get dynamic values (instrument bank, instrument ID, note transposition, sweep
+ *     target), and controls note 0 playback based on port values
+ *   - Note 0 commands (0x98-0xAA): Sets up a note with portamento/sweep (mode 5), continuous
+ *     playback, and loops playing note C-1 with dynamic transposition
+ *
+ * Key features:
+ *   - Reads from group ports 0, 1, 2, and 4 to get runtime values
+ *   - Uses macro register to process and transfer values between ports and sequence data
+ *   - Dynamically sets instrument bank, instrument ID, note transposition, and sweep target
+ *   - Implements conditional branching based on port values to control note playback
+ *   - Provides portamento/sweep effects for smooth pitch transitions
+ *
+ * Usage:
+ *   - Used as default sequence data when initializing audio groups (track.c)
+ *   - Set to grp->seq_data and grp->macro_player.pc during group initialization
+ *   - Provides a fallback sequence when no other sequence is loaded
+ *   - Allows external code to control audio playback by writing to group ports
+ */
+// clang-format off
+u8 BDB_SEQDATA[] = {
+    // ; group
+    /* 0x00 */ GRP_CMD_SET_MUTE_BEHAVIOR, 0x20,
+    /* 0x02 */ GRP_CMD_SET_MUTE_SCALE, 60,
+    /* 0x04 */ GRP_CMD_CHANGE_VOLUME, GROUP_STATE_FADE_IN, 0x00, 0x0a, // ; fade in for 10 frames
+    /* 0x08 */ GRP_CMD_SET_VOLUME, 127, // ; max volume
+    /* 0x0A */ GRP_CMD_SET_TEMPO, 200,
+    /* 0x0C */ GRP_CMD_ALLOC_SUBTRACKS, 0xff, 0xff, // ; allocate all subtracks
+    /* 0x0F */ GRP_CMD_START_SUBTRACK0, 0x00, 0x18, // ; start subtrack 0 at offset 0x18 in the sequence
+
+    /* 0x12 */ COMMON_CMD_DELAY_N_FRAMES, 0x8c, 0x80, // ; upper bit of byte is set, so 2 bytes, 0xC80 = 3200 frames
+    /* 0x15 */ COMMON_CMD_BRANCH_REL, 0xfb, // ; relative jump to -5 bytes back from end of command (0x17, so 0x12) (0xFB = -5)
+    /* 0x17 */ COMMON_CMD_STOP_SCRIPT,
+    
+    // ; subtrack 0
+    /* 0x18 */ SUBTRACK_CMD_RESET_VIBRATO,
+    /* 0x19 */ SUBTRACK_CMD_SET_ENV_PARAMS, 0, 0, 255,
+    /* 0x1D */ SUBTRACK_CMD_DELAY_CLEAR,
+    /* 0x1E */ SUBTRACK_CMD_READ_SUBTRACK0_PORT, 0x40, // ; read subtrack0 port 64?? this has to be bugged
+    /* 0x20 */ SUBTRACK_CMD_DELAY_CLEAR,
+    /* 0x21 */ SUBTRACK_CMD_DELAY_CLEAR,
+    /* 0x22 */ SUBTRACK_CMD_STEREO_PHASE_SET, 0x00, // ; stereo phase off, 0 phase
+    /* 0x24 */ SUBTRACK_CMD_SET_PAN_WEIGHT, 0x00, // ; pan weight 0
+    /* 0x26 */ SUBTRACK_CMD_LARGE_NOTE_OFF, // ; large notes off
+    /* 0x27 */ SUBTRACK_CMD_SET_VOL, 127, // ; max volume
+    /* 0x29 */ SUBTRACK_CMD_SET_VOL_SCALE, 127, // ; volume scale 100%
+    /* 0x2B */ SUBTRACK_CMD_SET_VIBRATO_DEPTH, 0, // ; vibrato depth 0
+    /* 0x2D */ SUBTRACK_CMD_SET_VIBRATO_RATE, 96, // ; vibrato rate 96
+
+    /* 0x2F */ COMMON_CMD_DELAY_1_FRAME,
+    /* 0x30 */ SUBTRACK_CMD_MACRO_READ_PORT0, // ; read port 0 into macro register
+    /* 0x31 */ COMMON_CMD_BRANCH_REL_NOT_EQ_ZERO, 0xfc, // ; relative jump to -4 bytes back from end of command when macro value is not zero (0x33, so 0x2F) (0xFC = -4)
+    /* 0x33 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0xa4, // ; write macro value (+ 0) to seq[0xA4], set note transposition
+    /* 0x37 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0x9a, // ; write macro value (+ 0) to seq[0x9A], set sweep target note
+    /* 0x3B */ SUBTRACK_CMD_PORT4_WRITE_MACRO_REG, // ; write back macro value read from port 0 to port 4
+    /* 0x3C */ SUBTRACK_CMD_MACRO_READ_PORT1, // ; read port 1 into macro register
+    /* 0x3D */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0x47, // ; write macro value (+ 0) to seq[0x47], set instrument bank
+    /* 0x41 */ SUBTRACK_CMD_MACRO_READ_PORT2, // ; read port 2 into macro register
+    /* 0x42 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0x49, // ; write macro value (+ 0) to seq[0x49], set instrument
+    /* 0x46 */ SUBTRACK_CMD_SET_INSTRUMENT_BANK, 0, // ; set instrument bank (dynamic value)
+    /* 0x48 */ SUBTRACK_CMD_VOICE_SET, 0, // ; select instrument (dynamic value)
+    /* 0x4A */ SUBTRACK_CMD_MACRO_SUBTRACT, 126, // ; subtract 126 from macro value
+    /* 0x4C */ COMMON_CMD_BRANCH_REL_EQ_ZERO, 0x09, // ; relative jump to 9 bytes forward from end of command when macro value is zero (0x4E, so 0x57) (0x09 = 9)
+    /* 0x4E */ SUBTRACK_CMD_MACRO_SUBTRACT, 1, // ; subtract 1 from macro value
+    /* 0x50 */ COMMON_CMD_BRANCH_REL_EQ_ZERO, 0x21, // ; relative jump to 33 bytes forward from end of command when macro value is zero (0x52, so 0x73) (0x21 = 33)
+    /* 0x52 */ SUBTRACK_CMD_NOTE0_SET_PC, 0x00, 0x98, // ; set note 0 pc to 0x98 (start note 0)
+    /* 0x55 */ COMMON_CMD_BRANCH_REL, 0x1f, // ; relative jump to 31 bytes forward from end of command (0x57, so 0x76) (0x1F = 31)
+
+    /* 0x57 */ SUBTRACK_CMD_NOTE0_SET_PC, 0x00, 0x9c, // ; set note 0 pc to 0x9c (start note 0)
+    /* 0x5A */ SUBTRACK_CMD_MACRO_SET, 0, // ; set macro value to 0
+    /* 0x5C */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0xa4, // ; write macro value (+ 0) to seq[0xA4] (write 0 to seq[0xA4], write 0 to note transposition)
+    /* 0x60 */ SUBTRACK_CMD_MACRO_READ_PORT4, // ; read port 4 into macro register
+
+    /* 0x61 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0xa5, // ; write macro value (+ 0) to seq[0xA5] (port 4 value to seq[0xA5], write to sweep target note)
+
+    /* 0x65 */ COMMON_CMD_DELAY_1_FRAME,
+    /* 0x66 */ SUBTRACK_CMD_MACRO_READ_PORT0, // ; read port 0 into macro register
+    /* 0x67 */ COMMON_CMD_BRANCH_ABS_GREQ_ZERO, 0x00, 0x71, // ; absolute jump to 0x71 when macro value is greater than or equal to zero
+    /* 0x6A */ SUBTRACK_CMD_MACRO_READ_PORT4, // ; read port 4 into macro register
+    /* 0x6B */ COMMON_CMD_BRANCH_ABS_GREQ_ZERO, 0x00, 0x65, // ; absolute jump to 0x65 when macro value is greater than or equal to zero
+    /* 0x6E */ SUBTRACK_CMD_NOTE0_STOP, // ; stop note 0
+    /* 0x6F */ COMMON_CMD_BRANCH_REL, 0xbe, // ; relative jump to -66 bytes back from end of command (0x71, so 0x2F) (0xBE = -66)
+    
+    /* 0x71 */ COMMON_CMD_BRANCH_REL, 0xee, // ; relative jump to -18 bytes back from end of command (0x73, so 0x61) (0xEE = -18)
+    /* 0x73 */ SUBTRACK_CMD_NOTE0_SET_PC, 0x00, 0x9c, // ; set note 0 pc to 0x9c (start note 0)
+
+    /* 0x76 */ SUBTRACK_CMD_MACRO_SET, 0, // ; set macro value to 0
+    /* 0x78 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0xa5, // ; write macro value (+ 0) to seq[0xA5] (write 0 to seq[0xA5], write 0 to sweep target note)
+    
+    /* 0x7C */ COMMON_CMD_DELAY_1_FRAME,
+    /* 0x7D */ SUBTRACK_CMD_MACRO_READ_PORT0, // ; read port 0 into macro register
+    /* 0x7E */ COMMON_CMD_BRANCH_ABS_GREQ_ZERO, 0x00, 0x88, // ; absolute jump to 0x88 when macro value is greater than or equal to zero
+    /* 0x81 */ SUBTRACK_CMD_MACRO_READ_PORT4, // ; read port 4 into macro register
+    /* 0x82 */ COMMON_CMD_BRANCH_ABS_GREQ_ZERO, 0x00, 0x7c, // ; absolute jump to 0x7c when macro value is greater than or equal to zero
+    /* 0x85 */ SUBTRACK_CMD_NOTE0_STOP, // ; stop note 0
+    /* 0x86 */ COMMON_CMD_BRANCH_REL, 0xa7, // ; relative jump to -89 bytes back from end of command (0x88, so 0x2F) (0xA7 = -89)
+    
+    /* 0x88 */ SUBTRACK_CMD_WRITE_GROUP_SEQ, 0x00, 0x00, 0xa4, // ; write macro value (+ 0) to seq[0xA4] (port0 to seq[0xA4], write to note transposition)
+    /* 0x8C */ SUBTRACK_CMD_PORT4_WRITE_MACRO_REG, // ; write macro value read from port 0 to port 4
+    /* 0x8D */ COMMON_CMD_BRANCH_REL, 0xed, // ; relative jump to -19 bytes back from end of command (0x8F, so 0x7C) (0xED = -19)
+    /* 0x8F */ 0x42, 0x6e, 0x6b, 0x50, 0x72, 0x67, 0x4f, 0x6e, 0x00, // garbage data
+    
+    // ; note 0
+    /* 0x98 */ NOTE_CMD_ENABLE_SWEEP, PORTAMENTO_MODE_5, 39, 8, // ; enable sweep mode 5, target note 39, time 8 (target note is dynamic)
+    
+    /* 0x9C */ NOTE_CMD_SET_PAN, 64, // ; set pan to 64 (center)
+    /* 0x9E */ NOTE_CMD_SET_VELOCITY_SQ, 127, // ; set velocity square to 127
+    /* 0xA0 */ NOTE_CMD_SET_GATE_TIME, 0, // ; set gate time to 0
+    /* 0xA2 */ NOTE_CMD_CONTINUOUS_ON,
+    
+    /* 0xA3 */ NOTE_CMD_SET_TRANSPOSITION, 0, // ; set transposition to 0 (0xA4 is a dynamic value)
+    /* 0xA5 */ 0x00, 0x80, 0x04, // ; play note C-1, delay 4 frames
+    /* 0xA8 */ COMMON_CMD_BRANCH_REL, 0xf9, // ; relative jump to -7 bytes back from end of command (0xAA, so 0xA3) (0xF9 = -7)
+    /* 0xAA */ COMMON_CMD_STOP_SCRIPT,
+    /* 0xAB */ 0x00, 0x00, 0x00, 0x00, 0x00, // ; padding
+};
+// clang-format on

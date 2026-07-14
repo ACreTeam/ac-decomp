@@ -11,6 +11,15 @@ extern "C" {
 #define VOICE_MODE_CLICK 1
 #define VOICE_MODE_SILENT 2
 
+enum {
+    ROOM_TYPE_OTHER,
+    ROOM_TYPE_SMALL,
+    ROOM_TYPE_MEDIUM,
+    ROOM_TYPE_LARGE,
+
+    ROOM_TYPE_NUM
+};
+
 /* audio is monophonic */
 #define MONO(id) ((id) | 0x1000)
 #define SE_DIST_REVERB(id) ((id) | 0x2000)

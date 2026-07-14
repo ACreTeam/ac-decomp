@@ -18,6 +18,8 @@ static void __SetSubParam(sub* subtrack, AudioPort* port);
 static void Nap_AudioSysProcess(AudioPort* port) {
     group* group = AG.groups_p[port->command.arg0];
     s32 i;
+    s32 idx;
+    s32 flags;
 
     switch (port->command.opcode) {
         case AUDIOCMD_PRELOAD_SEQ:
@@ -115,7 +117,7 @@ static void Nap_AudioSysProcess(AudioPort* port) {
             }
             break;
         case AUDIOCMD_MAIN_GROUP_SET_FREQ_SCALE:
-            s32 idx = 128 + port->param.asS32;
+            idx = 128 + port->param.asS32;
 
             AG.main_group.subtracks[0]->frequency_scale = PCENTTABLE2[idx];
             AG.main_group.subtracks[0]->changes.flags.frequency_scale = TRUE;
@@ -145,7 +147,7 @@ static void Nap_AudioSysProcess(AudioPort* port) {
                           port->param.asS32);
             break;
         case AUDIOCMD_FORCE_STOP_ALL_GROUPS:
-            s32 flags = port->param.asS32;
+            flags = port->param.asS32;
 
             if (flags == AUDIO_NOTE_RELEASE) {
                 for (i = 0; i < AG.audio_params.num_groups; i++) {

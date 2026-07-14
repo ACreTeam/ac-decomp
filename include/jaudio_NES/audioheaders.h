@@ -8,6 +8,6 @@ extern ArcHeader AudioseqHeaderStart;
 extern ArcHeader AudiobankHeaderStart;
 extern ArcHeader AudiowaveHeaderStart;
 extern ArcHeader AudiodataHeaderStart;
-extern u16 AudiomapHeaderStart[];
+extern u8 AudiomapHeaderStart[];
 
 #endif

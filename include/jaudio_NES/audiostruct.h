@@ -839,11 +839,11 @@ typedef struct AudioGlobals {
     /* 0x2854 */ ArcHeader* bank_header;
     /* 0x2858 */ ArcHeader* wave_header;
     /* 0x285C */ ArcHeader* data_header;
-    /* 0x2860 */ u16* map_header;
+    /* 0x2860 */ u8* map_header;
     /* 0x2864 */ u16 num_sequences;
     /* 0x2868 */ voiceinfo* voice_info;
     /* 0x286C */ audioparams audio_params;
-    /* 0x2894 */ f32 _2894; /* tempo scale? */
+    /* 0x2894 */ f32 sample_to_update_delay_scale; /* tempo scale? */
     /* 0x2898 */ s32 waveload_dma_buf0_size;
     /* 0x289C */ s32 waveload_dma_buf1_size;
     /* 0x28A0 */ u8 _28A0[16];

@@ -996,7 +996,7 @@ static s32 __SetVoice(note* n, s32 arg) {
         }
 
         time *= grp->tempo;
-        time *= AG._2894;
+        time *= AG.sample_to_update_delay_scale;
         time /= n->frequency_scale;
 
         if (time > (f32)0x7FFE) {
@@ -1151,6 +1151,7 @@ static void Nas_PriorityChanger(sub* subtrack, u8 prio) {
     }
 
     if (subtrack->priority2 < 1) {
+        // @BUG - should be subtrack->priority2 = 1;
         subtrack->note_priority = 1;
     }
 }
@@ -1287,8 +1288,9 @@ static void Nas_SubSeq(sub* subtrack) {
                             case SUBTRACK_CMD_INIT_INSTRUMENTS: // Load subtrack bank and set instruments
                                 cmdArgU8 = cmdArgs[0];
                                 if (grp->bank_id != 0xFF) {
-                                    cmdArgU16 = AG.map_header[grp->seq_id];
-                                    lo_bits = ((u8*)AG.map_header)[cmdArgU16];
+                                    cmdArgU16 = ((u16*)AG.map_header)[grp->seq_id];
+                                    lo_bits = ((u8*)AG.map_header)[cmdArgU16]; // load number of banks
+                                    // inverse lookup, 1 = last bank, 2 = second to last, ...
                                     cmdArgU8 = ((u8*)AG.map_header)[cmdArgU16 + lo_bits - cmdArgU8];
                                 }
 
@@ -1301,10 +1303,10 @@ static void Nas_SubSeq(sub* subtrack) {
                             case SUBTRACK_CMD_VOICE_SET: // Set subtrack voice
                                 Nas_SubVoiceSet(subtrack, cmdArgs[0]);
                                 break;
-                            case SUBTRACK_CMD_LARGE_NOTE_ON: // turn off large notes
+                            case SUBTRACK_CMD_LARGE_NOTE_OFF: // turn off large notes
                                 subtrack->large_notes = FALSE;
                                 break;
-                            case SUBTRACK_CMD_LARGE_NOTE_OFF: // turn on large notes
+                            case SUBTRACK_CMD_LARGE_NOTE_ON: // turn on large notes
                                 subtrack->large_notes = TRUE;
                                 break;
                             case SUBTRACK_CMD_SET_VOL: // set volume
@@ -1394,9 +1396,10 @@ static void Nas_SubSeq(sub* subtrack) {
                             case SUBTRACK_CMD_SET_INSTRUMENT_BANK: // set bank
                                 cmdArgU8 = cmdArgs[0];
                                 if (grp->bank_id != 0xFF) {
-                                    cmdArgU16 = AG.map_header[grp->seq_id]; // get offset for bank info for seq
+                                    cmdArgU16 = ((u16*)AG.map_header)[grp->seq_id]; // get offset for bank info for seq
                                     lo_bits = ((u8*)AG.map_header)[cmdArgU16]; // read number of banks
-                                    cmdArgU8 = ((u8*)AG.map_header)[cmdArgU16 + lo_bits - cmdArgU8]; // get bank id from inverse?
+                                    // inverse lookup, 1 = last bank, 2 = second to last, ...
+                                    cmdArgU8 = ((u8*)AG.map_header)[cmdArgU16 + lo_bits - cmdArgU8];
                                 }
 
                                 if (Nas_SzCacheCheck(BANK_TABLE, CACHE_EITHER, cmdArgU8)) {

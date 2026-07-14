@@ -460,7 +460,7 @@ extern int mCoBG_CheckHole(xyz_t pos);
 #if VERSION >= VER_GAFU01_00
 extern int mCoBG_CheckAirSwing(xyz_t pos);
 #else
-extern int mCoBG_CheckAirSwing(xyz_t pos);
+extern int mCoBG_CheckSkySwing(xyz_t pos);
 #endif
 extern int mCoBG_CheckGrassX_ClData(mCoBG_Collision_u* col);
 extern int mCoBG_CheckGrassX(const xyz_t* pos);
