@@ -62,7 +62,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_maps
-        path: build/${{ matrix.version }}/**/*.MAP
+        path: build/${{ matrix.version }}/**/*.map
 
     # Upload progress report
     - name: Upload report
