@@ -6,12 +6,15 @@ on:
 
 jobs:
   build:
+    # This is a *private* build container.
+    # See docs/github_actions.md for more information.
     container: ghcr.io/acreteam/ac-build:main
 
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        # Add game versions here
         version: [GAFE01_00] # GAFU01_00
 
     steps:
@@ -28,7 +31,9 @@ jobs:
 
     # Normalize file mod times
     - name: Restore timestamps
-      run: uv run https://raw.githubusercontent.com/MestreLion/git-tools/refs/tags/v2022.12/git-restore-mtime --merge --commit-time
+      run: |
+        uv run https://raw.githubusercontent.com/MestreLion/git-tools/refs/tags/v2025.08/git-restore-mtime \
+            --merge --commit-time
 
     # Copy the original files to the workspace
     - name: Prepare
@@ -42,12 +47,6 @@ jobs:
           build
           .ninja_deps
           .ninja_log
-          include/PR/abi.h
-          include/PR/gbi.h
-          include/PR/gs2dex.h
-          include/PR/mbi.h
-          include/PR/ultratypes.h
-          include/compiler/gcc/stdlib.h
         key: ${{ runner.os }}-${{ matrix.version }}-${{ github.sha }}
         restore-keys: ${{ runner.os }}-${{ matrix.version }}-
 
@@ -63,7 +62,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_maps
-        path: build/${{ matrix.version }}/**/*.map
+        path: build/${{ matrix.version }}/**/*.MAP
 
     # Upload progress report
     - name: Upload report
