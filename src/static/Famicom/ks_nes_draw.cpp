@@ -131,11 +131,11 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mmc3) {
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
             }
 
-            palette_bits = patternPtrBase[((u8)tile_byte >> 6) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & KS_NES_PPU_CTRL_BG_PATTERN) >> 2)];
+            palette_bits = patternPtrBase[((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl >> 2) & 4) | ((u8)tile_byte >> 6)];
 
             // issue is here
-            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
 
             if ((col & 1) != 0) {
                 wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
@@ -150,18 +150,18 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mmc3) {
 }
 
 void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
-    u32 banks_mask = sp->chr_banks & 0x1FC;
     u32 row;
     u32 col;
+    u32 scanline_ctrl1;
+    u32 tile_byte;
+    u32 banks_mask = sp->chr_banks & 0x1FC;
     
     for (row = 8; row < 236; row++) {
-        u32 tile_byte;
         u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_y;
-        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
+        scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
         u32 nibble_acc; // @bug - uninitialized
         u8* patternPtrBase = (u8*)&wp->draw_ctx.ppu_scanline_regs[row].chr_bank_bg;
         u32 palette_bits;
-        u32 tmp;
         u8* nametable_p;
 
         for (col = 0; col < 34; col++) {
@@ -177,11 +177,10 @@ void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
             // issue in this area too probably
             if (wp->draw_ctx.ppu_scanline_regs[row].mmc5_ext_mode & 0x20) {
                 // MMC5 extension ram
-                nibble_acc = (nibble_acc & 0xF0) | (sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] >> 6) & 0x0F;
+                nibble_acc = ((sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] >> 6) & 0x0F) | (nibble_acc & 0xF0);
                 palette_bits = ((sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] << 2) & banks_mask) | ((u8)tile_byte >> 6);
             } else {
-                tmp = ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2) | ((tile_byte >> 6) & 0x3);
-                palette_bits = ((wp->draw_ctx.ppu_scanline_regs[row].chr_bank_ext_upper_bg << (tmp + 1)) & 0x100) | (patternPtrBase[tmp]);
+                palette_bits = patternPtrBase[((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl >> 2) & 4) | ((u8)tile_byte >> 6)] | ((wp->draw_ctx.ppu_scanline_regs[row].chr_bank_ext_upper_bg << ((((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl >> 2) & 4) | ((u8)tile_byte >> 6)) + 1)) & 0x100);
             }
 
             // issue is here
@@ -205,19 +204,28 @@ void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 
 void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
     u32 CHR_flag_xor = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? (wp->chr_to_i8_buf_size >> 13) : 0x80;
-    u32 mmc2_bank = 0x02; // 0x02 = unset
+    ksNesCommonWorkObj* row_wp2;
+    u32 idx;
+    ksNesCommonWorkObj* row_wp;
+    u32 scanline_ctrl1;
     u32 row;
     u32 col;
     u32 i;
     int j;
+    u32 tile_byte;
+    u32 mask;
+    u32 nibble_acc; // @bug - uninitialized
+    u8* patternPtrBase;
+    u32 mmc2_bank = 0x02; // 0x02 = unset
 
     i = 239;
     do {
-        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_coarse_x;
-        u32 idx = (wp->draw_ctx.ppu_scanline_regs[i].vram_addr_y & 0xF8) * 4;
+        row_wp = (ksNesCommonWorkObj*)((u8*)wp + i * sizeof(ksNesPPUScanlineState));
+        idx = (row_wp->draw_ctx.ppu_scanline_regs[0].vram_addr_y & 0xF8) * 4;
+        u32 latch_ctrl = row_wp->draw_ctx.ppu_scanline_regs[0].vram_addr_coarse_x;
 
         for (j = 0; j < 34; j++) {
-            u32 val = (wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+            u32 val = (row_wp->draw_ctx.ppu_scanline_regs[0].nametable_ptrs[(latch_ctrl >> 8) & 1] + ((latch_ctrl >> 3) & 0x1F))[idx];
 
             if (val == ksNes_MMC2_LATCH_HI) {
                 mmc2_bank = 0x00;
@@ -225,7 +233,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 mmc2_bank = 0x01;
             }
 
-            scanline_ctrl1 += 8;
+            latch_ctrl += 8;
         }
     } while (i-- != 0 && mmc2_bank == 0x02);
 
@@ -234,12 +242,13 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
         mmc2_bank = default_bank;
     }
 
-    for (i = 0; i < 8; i++) {
-        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_coarse_x;
-        u32 idx = (wp->draw_ctx.ppu_scanline_regs[i].vram_addr_y & 0xF8) * 4;
+    for (row = 0; row < 8; row++) {
+        row_wp2 = (ksNesCommonWorkObj*)((u8*)wp + row * sizeof(ksNesPPUScanlineState));
+        idx = (row_wp2->draw_ctx.ppu_scanline_regs[0].vram_addr_y & 0xF8) * 4;
+        u32 latch_ctrl = row_wp2->draw_ctx.ppu_scanline_regs[0].vram_addr_coarse_x;
 
         for (j = 0; j < 34; j++) {
-            u32 val = (wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+            u32 val = (row_wp2->draw_ctx.ppu_scanline_regs[0].nametable_ptrs[(latch_ctrl >> 8) & 1] + ((latch_ctrl >> 3) & 0x1F))[idx];
 
             if (val == ksNes_MMC2_LATCH_HI) {
                 mmc2_bank = 0x00;
@@ -247,17 +256,14 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 mmc2_bank = 0x01;
             }
 
-            scanline_ctrl1 += 8;
+            latch_ctrl += 8;
         }
     }
 
-    for (row = 8; row < 236; row++) {
-        u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_y;
-        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
-        u32 mask;
-        u32 nibble_acc; // @bug - uninitialized
-        u8* patternPtrBase = wp->draw_ctx.ppu_scanline_regs[row].chr_bank_sprite;
-        u32 tile_byte;
+    for (i = 8; i < 236; i++) {
+        u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_y;
+        scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_coarse_x;
+        patternPtrBase = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite;
         u32 palette_bits;
         u32 dst_idx;
         u8* nametable_p;
@@ -265,7 +271,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
         mask = mask = (scanline_ctrl0 & 0x04) ? CHR_flag_xor : 0; // bruh
 
         for (col = 0; col < 34; col++) {
-            nametable_p = wp->draw_ctx.ppu_scanline_regs[row].nametable_ptrs[((scanline_ctrl1 >> 8) & 1)];
+            nametable_p = wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[((scanline_ctrl1 >> 8) & 1)];
             if (((s32)nametable_p) >= 0) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
                 tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
@@ -274,7 +280,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
 
                 if (tile_byte == ksNes_MMC2_LATCH_HI) {
-                    palette_bits = patternPtrBase[(mmc2_bank) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2)] | 0x03;
+                    palette_bits = patternPtrBase[((wp->draw_ctx.ppu_scanline_regs[i].ppu_ctrl >> 2) & 4) | mmc2_bank] | 0x03;
                     mmc2_bank = 0x00;
                     goto set;
                 } else if (tile_byte == ksNes_MMC2_LATCH_LO) {
@@ -282,15 +288,15 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 }
             }
 
-            palette_bits = ((u8)tile_byte >> 6) | patternPtrBase[((mmc2_bank) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2))];
+            palette_bits = patternPtrBase[((wp->draw_ctx.ppu_scanline_regs[i].ppu_ctrl >> 2) & 4) | mmc2_bank] | ((u8)tile_byte >> 6);
             
 set:
             // issue is here
-            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((i >> 2) * 288) + ((i & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((i >> 2) * 288) + ((i & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
 
             if ((col & 1) != 0) {
-                wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+                wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((i & 7) * 4 + (i >> 3) * 160)] = nibble_acc;
             }
 
             scanline_ctrl1 += 8;
@@ -304,9 +310,10 @@ set:
 void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     u32 i;
     u32 j;
-    u32 k;
+    u32 maxv;
+    u32 bank;
     
-    memset(wp->draw_ctx.mmc2_scanline_latch_tiles, 0, sizeof(wp->draw_ctx.mmc2_scanline_latch_tiles));
+    memset(wp->draw_ctx.mmc2_scanline_latch_tiles, 0, KS_NES_SCANLINE_COUNT * sizeof(u8));
     for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
         // ppu_scanline_regs is the scanline state, OAMTable is list of scanline triggers?
         if (wp->draw_ctx.OAMTable[i].y_pos >= 236 || (wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_HI && wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_LO)) {
@@ -314,22 +321,22 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
         }
 
         j = wp->draw_ctx.OAMTable[i].y_pos;
-        k = (((wp->draw_ctx.ppu_scanline_regs[j].ppu_ctrl >> 2) & 0x08) + 8) + j;
+        bank = j + 8 + ((wp->draw_ctx.ppu_scanline_regs[j].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) >> 2);
         do {
             wp->draw_ctx.mmc2_scanline_latch_tiles[j] = wp->draw_ctx.OAMTable[i].tile_index;
             j++;
-        } while(j < k);
+        } while(j < bank);
     }
 
     // _0200 is the scanline marker entries
-    for (i = 0, k = 0; i < ARRAY_COUNT(wp->draw_ctx.mmc2_scanline_latch_tiles); i++) {
+    for (i = 0, bank = 0; i < KS_NES_SCANLINE_COUNT; i++) {
         if (wp->draw_ctx.mmc2_scanline_latch_tiles[i] == ksNes_MMC2_LATCH_HI) {
-            k = 0;
+            bank = 0;
         } else if (wp->draw_ctx.mmc2_scanline_latch_tiles[i] == ksNes_MMC2_LATCH_LO) {
-            k = 1;
+            bank = 1;
         }
 
-        if (k) {
+        if (bank) {
             wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[0] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] - 1;
             wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[2] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] + 1;
             wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[3] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] + 2;
@@ -576,6 +583,9 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     
     // check the pass is for foreground sprites
     if (sprite_priority_pass == 0) {
+        u32 i;
+        u32 j;
+
         for (i = 0; i < KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT; i++) {
             wp->draw_ctx.sprite_scanline_limit[i] = i < KS_NES_SCANLINE_COUNT ? ((state->frame_flags & KS_NES_FLAG_NINES_OVER_MODE) ? 255 : KS_NES_SPRITES_PER_SCANLINE) : 0;
             
@@ -631,8 +641,8 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
             for (j = 0; j < _j; j++) {
                 u32 ypos = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos;
                 ypos += j;
-                if (wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j] != 0) {
-                    wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j]--;
+                if ((*(&wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos] + j)) != 0) {
+                    (*(&wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos] + j))--;
                     if ((a & 2) == 0) {
                         quad_p->y_and_v_pairs[a] = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j;
                         quad_p->y_and_v_pairs[a + 1] = b;
@@ -667,8 +677,8 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXSetVtxDesc(GX_VA_TEX1, GX_DIRECT);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_S, GX_U16, 10);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_S, GX_U16, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_ST, GX_U16, 10);
     GXInitTexObj(&GStack_7c, wp->chr_to_u8_bufp, 0x400, (u16)(size >> 10), GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
     GXInitTexObjLOD(&GStack_7c, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_7c, GX_TEXMAP0);
@@ -724,26 +734,35 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
-    u32 n_verts = 0;
-    u32 idx2 = 0;
-    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
-        // draw sprites
-        if (sprite_priority_pass == 0 || (((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx2))->attributes & KS_NES_OAM_ATTR_PRIORITY) != 0) {
-            n_verts += wp->draw_ctx.sprite_vertex_count[idx2 >> 2];
-        }
+    u32 t1_2, y1;
+    u32 s0, t1, y0, t0;
+    u32 color;
+    u32 x0, x1;
+    u32 s1, s1_2;
+    u32 oam_attrs;
+    u32 tile_index, flags2;
+    union { u32 value; u16 half[2]; } temp;
+    u8* quad_pairs;
 
-        idx2 += 4;
+    union { u32 value; u16 half[2]; } oam_offset;
+    i = 0;
+    oam_offset.value = i;
+    for (; oam_offset.value < sizeof(wp->draw_ctx.OAMTable); oam_offset.value += sizeof(ksNesOAMEntry)) {
+        // draw sprites
+        if (sprite_priority_pass == 0 || (((u8*)wp)[oam_offset.value + offsetof(ksNesCommonWorkObj, draw_ctx.OAMTable) + offsetof(ksNesOAMEntry, attributes)] & KS_NES_OAM_ATTR_PRIORITY) != 0) {
+            i += wp->draw_ctx.sprite_vertex_count[oam_offset.value >> 2];
+        }
     }
 
-    u32 idx = 0x100-4;
-    idx2 = ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1;
-    GXBegin(GX_QUADS, GX_VTXFMT0, n_verts);
+    u32 idx = sizeof(wp->draw_ctx.OAMTable) - sizeof(ksNesOAMEntry);
+    u32 idx2 = ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1;
+    GXBegin(GX_QUADS, GX_VTXFMT0, i);
     while (TRUE) {
         // ksNesSpriteQuadData* quad_p = &wp->draw_ctx.sprite_quad_data[idx2];
         // u32 scanline_idx = wp->draw_ctx.OAMTable[idx];
-        u8* quad_pairs = ((ksNesSpriteQuadData*)((u8*)wp->draw_ctx.sprite_quad_data + (idx << 3)))->y_and_v_pairs;
-        u32 tile_index = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->tile_index;
-        u32 flags2;
+        quad_pairs = wp->draw_ctx.sprite_quad_data[idx2].y_and_v_pairs;
+        tile_index = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->tile_index;
+
 
         if (wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
             // 8x16 sprite
@@ -755,10 +774,10 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
         }
 
         // u32 flags3 = wp->draw_ctx.OAMTable[idx + 2];
-        u32 oam_attrs = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->attributes;
-        u32 x0 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 128;
-        u32 x1 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 136;
-        u32 color = ((((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos & 3) * 16 + 4) * 0x01000000;
+        oam_attrs = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->attributes;
+        x0 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 128;
+        x1 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 136;
+        color = (((oam_attrs & KS_NES_OAM_ATTR_PALETTE_MASK) * 16 + 4) * 0x01000000);
 
         if (sprite_priority_pass != 0) {
             // We're in the BG pass so skip if the sprite is supposed to be drawn in front of the BG
@@ -772,31 +791,24 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
             }
         }
         
-        u32 s0;
-        u32 t0;
-        u32 s1;
-        u32 s1_2;
-        u32 t1;
-        u32 t1_2;
-        u32 temp;
         // u32 j;
 
         s0 = 0;
         t0 = (flags2 & 0xFE) * 2; // select chr bank offset
-        temp = ((tile_index & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800); // flags2 bit0 determines the pattern table
+        temp.value = ((tile_index & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800); // flags2 bit0 determines the pattern table
 
         if (((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->attributes & KS_NES_OAM_ATTR_FLIP_HORIZONTAL) {
-            s1 = temp + 32;
-            s1_2 = temp;
+            s1 = temp.value + 32;
+            s1_2 = temp.value;
         } else {
-            s1 = temp;
-            s1_2 = temp + 32;
+            s1 = temp.value;
+            s1_2 = temp.value + 32;
         }
 
         for (j = 0; j < wp->draw_ctx.sprite_vertex_count[idx >> 2]; j += 4) {
-            u32 y0 = -129 - quad_pairs[0];
+            y0 = -129 - quad_pairs[0];
             t1 = quad_pairs[1];
-            u32 y1 = -129 - quad_pairs[2];
+            y1 = -129 - quad_pairs[2];
             t1_2 = quad_pairs[3];
 
             quad_pairs += 4;
@@ -828,7 +840,7 @@ loop_condition:
         }
 
         idx -= 4;
-        // idx2--;
+        idx2--;
     }
 
     GXEnd();
