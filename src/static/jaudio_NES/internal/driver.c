@@ -396,7 +396,7 @@ static Acmd* Nas_SendLine(Acmd* cmd, delay* del_p, s32 update_idx) {
     if (mix_delay->downsample_rate == 1) {
         cmd = Nas_LoadAux2nd(cmd, mix_delay, update_idx);
         aMix(cmd++, 0x34, del_p->mix_reverb_strength, 0xC40, 0x3A0);
-        cmd = Nas_LoadAux2nd(cmd, mix_delay, update_idx);
+        cmd = Nas_SaveAux2nd(cmd, mix_delay, update_idx);
     }
 
     return cmd;
@@ -1298,11 +1298,12 @@ extern Acmd* Nas_Synth_Resample(Acmd* cmd, const driverch* driver, s32 size, u16
     return cmd;
 }
 
-// @non-matching - issues with aSetEnvParam2 macro
 extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s32 samples_per_update, u16 dmem, s32 haasEffectDelaySide, s32 flags) {
     s32 targetReverbVol = common->target_reverb_volume;
-    u32 curVolLeft = driver->current_volume_left & 0xFFFF;
-    u32 curVolRight = driver->current_volume_right & 0xFFFF;
+    s16* currentVolume = &driver->current_volume_left;
+    s16 curVolLeftTemp = *currentVolume++;
+    u16 curVolRight = *currentVolume & 0xFFFF;
+    u16 curVolLeft = curVolLeftTemp & 0xFFFF;
     u16 targetVolLeft = common->target_volume_left << 4;
     u16 targetVolRight = common->target_volume_right << 4;
     u32 dmemDests;
@@ -1382,10 +1383,7 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
 
         {
             cmd->words.w0 = _SHIFTL(A_CMD_SETENVPARAM2, 24, 8);
-            curVolLeft = _SHIFTL(curVolLeft, 16, 16);
-            curVolLeft |= _SHIFTL(curVolRight, 0, 16);
-            cmd->words.w1 = curVolLeft;
-            // cmd->words.w1 = ((curVolLeft & 0xFFFF) << 16) | (curVolRight & 0xFFFF);
+            cmd->words.w1 = _SHIFTL(curVolLeft, 16, 16) | _SHIFTL(curVolRight, 0, 16);
             cmd++;
         }
         // aSetEnvParam2(cmd++, curVolLeft & 0xFFFF, curVolRight & 0xFFFF);
