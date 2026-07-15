@@ -2852,349 +2852,362 @@ static u8 osc_table[] = { 0x01, 0x02, 0x08, 0x04, 0x10 };
  * Size:	0008C0
  * Note: (Roughly) Equivalent to `JASTrack::mainProc` in later JAudio.
  */
-s32 Jam_SeqmainNote(seqp_* track, u8 isMuted)
-{
-	BOOL var_r26;
-	u8 bVar9;
-	u8 velocity;
-	u32 uVar2;
-	s32 uVar5;
-	u8 bVar10_2;
-	f32 tempoProportion;
-	u8 opcode;
-	u8 uVar6;
-	u8 keyTarget;
-	u8 pitch;
-	u8 bVar10;
-	int local_64;
-	int iVar11;
-	int iVar11_2;
-	int iVar12;
-	u32 seqRes;
-	int duration;
-	jc_* pjVar3;
-	int iVar11_3;
-	u8 voice;
+#pragma opt_dead_assignments off // @HACK - necessary to remove a mr where NULL + 0 are used in the same loop.
+s32 Jam_SeqmainNote(seqp_* track, u8 isMuted) {
+    u32 pitch;
+    u32 uVar2;
+    BOOL var_r26;
+    u8 bVar9;
+    u8 velocity;
+    u32 noteMode;
+    int iVar11;
+    s32 uVar5;
+    u8 bVar10_2;
+    f32 tempoProportion;
+    u8 opcode;
+    u8 uVar6;
+    u32 keyTarget;
+    u8 bVar10;
+    int local_64;
+    int iVar11_2;
+    int iVar12;
+    u32 seqRes;
+    int duration;
+    jc_* pjVar3;
+    int iVar11_3;
+    u8 voice;
 
-	seqRes = 0;
-	if (track->parent && track->doChangeTempo == TRUE) {
-		tempoProportion = (float)track->tempo / (float)track->parent->tempo;
-		if (tempoProportion > 1.0f) {
-			tempoProportion = 1.0f;
-		}
-		track->tempoAccumulator += tempoProportion;
-		if (track->tempoAccumulator < 1.0f) {
-			return 0;
-		}
-		track->tempoAccumulator -= 1.0f;
-	}
+    seqRes = 0;
+    if (track->parent && track->doChangeTempo == TRUE) {
+        tempoProportion = (float)track->tempo / (float)track->parent->tempo;
+        if (tempoProportion > 1.0f) {
+            tempoProportion = 1.0f;
+        }
+        track->tempoAccumulator += tempoProportion;
+        if (track->tempoAccumulator < 1.0f) {
+            return 0;
+        }
+        track->tempoAccumulator -= 1.0f;
+    }
 
-	{ // This whole part is not present(?) in later JAudio.
-		if (track->parent) {
-			track->isMuted = isMuted;
-		}
-		if (track->parent && track->parentController.chanCount != 0) {
-			pjVar3 = List_GetChannel(&track->parentController.freeChannels);
-			if (pjVar3) {
-				List_AddChannel(&track->parent->parentController.freeChannels, pjVar3);
-				pjVar3->mMgr = &track->parent->parentController;
-				track->parentController.chanCount--;
-				track->parent->parentController.chanCount++;
-			}
-		}
-		// This resembles `JASTrack::getTranspose` of later JAudio.
-		if (track->parent) {
-			track->finalTranspose = track->transpose + track->parent->finalTranspose;
-		} else {
-			track->finalTranspose = track->transpose;
-		}
-	}
+    { // This whole part is not present(?) in later JAudio.
+        if (track->parent) {
+            track->isMuted = isMuted;
+        }
+        if (track->parent && track->parentController.chanCount != 0) {
+            pjVar3 = List_GetChannel(&track->parentController.freeChannels);
+            if (pjVar3) {
+                List_AddChannel(&track->parent->parentController.freeChannels, pjVar3);
+                pjVar3->mMgr = &track->parent->parentController;
+                track->parentController.chanCount--;
+                track->parent->parentController.chanCount++;
+            }
+        }
+        // This resembles `JASTrack::getTranspose` of later JAudio.
+        if (track->parent) {
+            track->finalTranspose = track->transpose + track->parent->finalTranspose;
+        } else {
+            track->finalTranspose = track->transpose;
+        }
+    }
 
-	Jam_SetInterrupt(track, 7);
-	{ // This resembles `JASIntrMgr::timerProcess` of later JAudio.
-		if (track->timer != 0) {
-			if (--track->timer == 0) {
-				Jam_SetInterrupt(track, 6);
-				if (track->timerCount != 0) {
-					if (--track->timerCount != 0) {
-						track->timer = track->maxTime;
-					}
-				} else {
-					track->timer = track->maxTime;
-				}
-			}
-		}
-	}
+    Jam_SetInterrupt(track, 7);
+    { // This resembles `JASIntrMgr::timerProcess` of later JAudio.
+        if (track->timer != 0) {
+            if (--track->timer == 0) {
+                Jam_SetInterrupt(track, 6);
+                if (track->timerCount != 0) {
+                    if (--track->timerCount != 0) {
+                        track->timer = track->maxTime;
+                    }
+                } else {
+                    track->timer = track->maxTime;
+                }
+            }
+        }
+    }
 
 try_interrupt:
-	Jam_TryInterrupt(track);
-	if (track->isPaused && (track->pauseStatus & 2)) {
-		goto LAB_800136e0;
-	}
-	track->tickCounter++;
-	if (track->waitTimer == -1) {
-		if ((u8)CheckNoteStop(track, 0)) { // TODO: CheckNoteStop should return u8 or C++ bool
-			track->waitTimer = 0;
-		} else {
-			goto timed;
-		}
-	}
+    Jam_TryInterrupt(track);
+    if (track->isPaused && (track->pauseStatus & 2)) {
+        goto LAB_800136e0;
+    }
+    track->tickCounter++;
+    if (track->waitTimer == -1) {
+        if ((u8)CheckNoteStop(track, 0)) { // TODO: CheckNoteStop should return u8 or C++ bool
+            track->waitTimer = 0;
+        } else {
+            goto timed;
+        }
+    }
 
-	if (track->waitTimer > 0) {
-		--track->waitTimer;
-		if (track->waitTimer != 0) {
-			goto timed;
-		}
-		if (track->_D0 != -1 && track->_D4 == 0) {
-			for (local_64 = 0; local_64 < (int)track->_90; local_64++) {
-				track->_94[local_64]      = -1;
-				track->channels[local_64] = NULL;
-			}
-		}
-	}
+    if (track->waitTimer > 0) {
+        --track->waitTimer;
+        if (track->waitTimer != 0) {
+            goto timed;
+        }
+        if (track->_D0 != -1 && track->_D4 == 0) {
+            for (int index = 0; index < (int)track->_90; index++) {
+                track->_94[index] = 0xff;
+                track->channels[index] = NULL;
+            }
+        }
+    }
 
-	while (TRUE) {
-		opcode = __ByteRead(track);
-		if (!(opcode & 0x80)) {
-			// MIDI pitch (0-127)
-			pitch = opcode;
-			pitch += track->finalTranspose;
+    while (TRUE) {
+        opcode = __ByteRead(track);
+        if (!(opcode & 0x80)) {
+            // MIDI pitch (0-127)
+            pitch = (u8)(opcode + track->finalTranspose);
 
-			if ((bVar10 = __ByteRead(track)) & 0x80) {
-				pitch = __ExchangeRegisterValue(track, pitch);
-				pitch += track->finalTranspose;
-			}
-
-			if (pitch >= 128) {
-                OSReport("♪Jam/Seq :: Error Note %d\n", pitch);
+            if ((bVar10 = __ByteRead(track)) & 0x80) {
+                u8 exchangedPitch = __ExchangeRegisterValue(track, pitch);
+                pitch = (u8)(exchangedPitch + track->finalTranspose);
             }
 
-			if (bVar10 >> 5 & 2) {
-				keyTarget = pitch;
-				pitch     = track->_D5;
-			}
+            if ((u8)pitch >= 128) {
+                OSReport("♪Jam/Seq :: Error Note %d\n", (u8)pitch);
+            }
 
-			velocity = __ByteRead(track);
-			if (velocity >= 0x80) {
-				velocity = __ExchangeRegisterValue(track, velocity - 0x80);
-			}
+            noteMode = bVar10;
+            noteMode &= 0x60;
+            noteMode >>= 5;
+            if (noteMode & 2) {
+                keyTarget = (u8)pitch;
+                pitch = *(s8*)((u8*)track + 0xD5) & 0xff;
+            }
 
-			u32 lowBits = bVar10;
-			lowBits &= 7;
-			if (lowBits == 0) {
-				voice = 0;
-				bVar9 = __ByteRead(track);
-				if (bVar9 >= 0x80) {
-					bVar9 = __ExchangeRegisterValue(track, bVar9 - 0x80);
-				}
-				uVar2 = 0;
-				for (iVar11 = 0; iVar11 < (bVar10 >> 3 & 3); iVar11++) {
-					uVar2 = uVar2 << 8 | __ByteRead(track);
-				}
-				if ((u32)(bVar10 >> 3 & 3) == 1 && uVar2 >= 0x80) {
-					uVar2 = __ExchangeRegisterValue(track, uVar2 - 0x80);
-				}
-			} else {
-				voice = lowBits;
-				// fake volatile for matching
-				if (*(volatile u8*)&bVar10 >> 3 & 3) {
-					voice = __ExchangeRegisterValue(track, voice - 1);
-					if (voice >= 8) {
-						break;
-					}
-				}
-				uVar2 = -1;
-				bVar9 = 100;
-			}
+            velocity = __ByteRead(track);
+            if (velocity >= 0x80) {
+                velocity = __ExchangeRegisterValue(track, velocity - 0x80);
+            }
 
-			track->_D4 = bVar10 >> 5 & 3;
+            u32 lowBits = bVar10;
+            lowBits &= 7;
+            if (lowBits == 0) {
+                voice = 0;
+                bVar9 = __ByteRead(track);
+                if (bVar9 >= 0x80) {
+                    bVar9 = __ExchangeRegisterValue(track, bVar9 - 0x80);
+                }
+                uVar2 = 0;
+                for (iVar11 = 0; iVar11 < (bVar10 >> 3 & 3); iVar11++) {
+                    uVar2 = uVar2 << 8 | __ByteRead(track);
+                }
+                if ((u32)(bVar10 >> 3 & 3) == 1 && uVar2 >= 0x80) {
+                    uVar2 = __ExchangeRegisterValue(track, uVar2 - 0x80);
+                }
+            } else {
+                voice = lowBits;
+                // fake volatile for matching
+                if (*(u8*)&bVar10 >> 3 & 3) {
+                    voice = __ExchangeRegisterValue(track, voice - 1);
+                    if (voice >= 8) {
+                        break;
+                    }
+                }
+                uVar2 = -1;
+                bVar9 = 100;
+            }
 
-			BOOL cond = track->_D6 ? TRUE : FALSE;
-			var_r26   = FALSE;
+            track->_D4 = noteMode;
 
-			for (int j = 0; j < 1; j++) {
+            BOOL cond = track->_D6 ? TRUE : FALSE;
+            int voiceArg = voice;
+            var_r26 = FALSE;
+
+            for (int j = 0; j < 1; j++) {
                 // u8* track_p = track->_94;
-				int unused = j * 2;
+                int unused = j * 2;
 
-				if (cond) {
-					duration = uVar2;
-					if (track->_D4 & 1) {
-						duration = -1;
-					}
-					if (duration != -1) {
-						duration = Jam_SEQtimeToDSPtime(track, duration, bVar9);
-					}
-					if (track->isPaused && (track->pauseStatus & 0x10)) {
-						iVar11_2 = -1;
-					} else {
-						iVar11_2 = GateON(track, voice, pitch, velocity, duration);
-					}
-				} else {
-					if ((duration = uVar2) != -1) {
-						duration = Jam_SEQtimeToDSPtime(track, duration, bVar9);
-					}
-					if (track->_D4 & 1) {
-						duration = -1;
-					}
-					if (track->isPaused && (track->pauseStatus & 0x10)) {
-						iVar11_2 = -1;
-					} else {
-						iVar11_2 = NoteON(track, voice, (u8)pitch, velocity, duration);
-					}
-				}
+                if (cond) {
+                    duration = uVar2;
+                    if (track->_D4 & 1) {
+                        duration = -1;
+                    }
+                    if (duration != -1) {
+                        duration = Jam_SEQtimeToDSPtime(track, duration, bVar9);
+                    }
+                    if (track->isPaused && (track->pauseStatus & 0x10)) {
+                        iVar11_2 = -1;
+                    } else {
+                        u32 gatePitch = pitch;
+                        gatePitch &= 0xff;
+                        iVar11_2 = GateON(track, voiceArg, gatePitch, velocity, duration);
+                    }
+                } else {
+                    if ((duration = uVar2) != -1) {
+                        duration = Jam_SEQtimeToDSPtime(track, duration, bVar9);
+                    }
+                    if (track->_D4 & 1) {
+                        duration = -1;
+                    }
+                    if (track->isPaused && (track->pauseStatus & 0x10)) {
+                        iVar11_2 = -1;
+                    } else {
+                        u32 notePitch = pitch;
+                        notePitch = (notePitch << 24) >> 24;
+                        iVar11_2 = NoteON(track, voiceArg, notePitch, velocity, duration);
+                    }
+                }
 
-				if (iVar11_2 != -1) {
-					track->_94[voice] = pitch;
-					var_r26           = TRUE;
-				}
-				!unused;
-			}
+                if (iVar11_2 != -1) {
+                    track->_94[voice + j] = pitch;
+                    var_r26 = TRUE;
+                }
+                !unused;
+            }
 
-			track->_90 = var_r26;
-			track->_CC = bVar9;
-			track->_CD = velocity;
-			track->_D0 = uVar2;
+            track->_90 = var_r26;
+            track->_CC = bVar9;
+            track->_CD = velocity;
+            track->_D0 = uVar2;
 
-			if (track->_D4 & 1) {
-				track->_D6 = TRUE;
-			} else {
-				track->_D6 = FALSE;
-			}
+            if (track->_D4 & 1) {
+                track->_D6 = TRUE;
+            } else {
+                track->_D6 = FALSE;
+            }
 
-			if (track->_D4 & 2) {
-				s32 steps = duration;
-				if (duration == -1) {
-					steps = Jam_SEQtimeToDSPtime(track, uVar2, track->_CC);
-				}
-				SetKeyTarget_1Shot(track->channels[0], keyTarget + track->finalTranspose, steps);
-				pitch = (u8)keyTarget;
-			}
+            if (track->_D4 & 2) {
+                s32 steps = duration;
+                if (duration == -1) {
+                    steps = Jam_SEQtimeToDSPtime(track, uVar2, track->_CC);
+                }
+                SetKeyTarget_1Shot(track->channels[0], (u8)keyTarget + track->finalTranspose, steps);
+                pitch = (u8)keyTarget;
+            }
 
-			track->_D5 = pitch;
+            track->_D5 = pitch;
 
-			if (uVar2 != -1) {
-				track->waitTimer = uVar2;
-				if (uVar2 == 0) {
-					track->waitTimer = -1;
-				}
-				break;
-			}
-		} else if ((opcode & 0xf0) == 0x80 || opcode == 0xf9) {
-			iVar11_3 = 1;
-			uVar5    = 0;
-			if (opcode == 0xf9) {
-				bVar10_2 = __ByteRead(track);
-				uVar6    = __ExchangeRegisterValue(track, bVar10_2 & 7);
-				if (uVar6 > 7 || uVar6 == 0) {
+            if (uVar2 != -1) {
+                track->waitTimer = uVar2;
+                if (uVar2 == 0) {
+                    track->waitTimer = -1;
+                }
+                break;
+            }
+        } else if ((opcode & 0xf0) == 0x80 || opcode == 0xf9) {
+            iVar11_3 = 1;
+            uVar5 = 0;
+            if (opcode == 0xf9) {
+                bVar10_2 = __ByteRead(track);
+                uVar6 = __ExchangeRegisterValue(track, bVar10_2 & 7);
+                if (uVar6 > 7 || uVar6 == 0) {
                     OSReport("♪Jam/main :: r-noteoff error\n");
-					if ((bVar10_2 & 0x80) != 0) {
-						__ByteRead(track);
-					}
-					continue;
-				}
-				opcode = uVar6 + 0x80;
-				if (bVar10_2 & 0x80) {
-					opcode += 8;
-				}
-			}
-			uVar6 = opcode & 0x0f;
-			if (uVar6 == 8) {
-				iVar11_3 = 2;
-				uVar6 -= 8;
-			}
-			if (uVar6 > 8) {
-				uVar6 -= 8;
-				uVar5 = __ByteRead(track);
-				if (uVar5 > 100) {
-					uVar5 = (uVar5 - 98) * 20;
-				}
-			}
-			if (uVar6 == 0) {
-				// This for loop init feels fake... but idk.  Check this again later.
-				for (track->waitTimer = iVar12 = 0; iVar12 < iVar11_3; iVar12++) {
-					track->waitTimer = track->waitTimer << 8 | __ByteRead(track);
-				}
-				if (track->waitTimer == 0) {
-					continue;
-				}
-				break;
-			}
-			if (uVar5 == 0) {
-				NoteOFF(track, uVar6);
-			} else {
-				NoteOFF_R(track, uVar6, uVar5);
-			}
-		} else {
-			// This portion is equivalent to `JASSeqParser::parseSeq` in later JAudio.
-			u32 cmdResult = 0;
-			if ((opcode & 0xf0) == 0x90) {
-				Jam_WriteTimeParam(track, opcode & 0x0f);
-			} else if ((opcode & 0xf0) == 0xa0) {
-				Jam_WriteRegParam(track, opcode & 0x0f);
-			} else if ((opcode & 0xf0) == 0xb0) {
-				u32 param_3 = opcode & 7;
-				cmdResult   = RegCmd_Process(track, (opcode & 8) ? TRUE : FALSE, param_3);
-			} else {
-				cmdResult = Cmd_Process(track, opcode, 0);
-			}
+                    if ((bVar10_2 & 0x80) != 0) {
+                        __ByteRead(track);
+                    }
+                    continue;
+                }
+                opcode = uVar6 + 0x80;
+                if (bVar10_2 & 0x80) {
+                    opcode += 8;
+                }
+            }
+            uVar6 = opcode & 0x0f;
+            if (uVar6 == 8) {
+                iVar11_3 = 2;
+                uVar6 -= 8;
+            }
+            if (uVar6 > 8) {
+                uVar6 -= 8;
+                uVar5 = __ByteRead(track);
+                if (uVar5 > 100) {
+                    uVar5 = (uVar5 - 98) * 20;
+                }
+            }
+            if (uVar6 == 0) {
+                // This for loop init feels fake... but idk.  Check this again later.
+                for (track->waitTimer = iVar12 = 0; iVar12 < iVar11_3; iVar12++) {
+                    track->waitTimer = track->waitTimer << 8 | __ByteRead(track);
+                }
+                if (track->waitTimer == 0) {
+                    continue;
+                }
+                break;
+            }
+            if (uVar5 == 0) {
+                NoteOFF(track, uVar6);
+            } else {
+                NoteOFF_R(track, uVar6, uVar5);
+            }
+        } else {
+            // This portion is equivalent to `JASSeqParser::parseSeq` in later JAudio.
+            u32 cmdResult = 0;
+            if ((opcode & 0xf0) == 0x90) {
+                Jam_WriteTimeParam(track, opcode & 0x0f);
+            } else if ((opcode & 0xf0) == 0xa0) {
+                Jam_WriteRegParam(track, opcode & 0x0f);
+            } else if ((opcode & 0xf0) == 0xb0) {
+                u32 param_3 = opcode & 7;
+                cmdResult = RegCmd_Process(track, (opcode & 8) ? TRUE : FALSE, param_3);
+            } else {
+                cmdResult = Cmd_Process(track, opcode, 0);
+            }
 
-			if (cmdResult == 0) {
-				continue;
-			} else if (cmdResult == 1) {
-				break;
-			} else if (cmdResult == 2) {
-				goto try_interrupt;
-			} else if (cmdResult == 3) {
-				return -1;
-			} else if (cmdResult == 0x80) {
-                OSReport("\x1b[4%dm", cmdResult);
+            if (cmdResult == 0) {
+                continue;
+            } else if (cmdResult == 1) {
+                break;
+            } else if (cmdResult == 2) {
+                goto try_interrupt;
+            } else if (cmdResult == 3) {
+                return -1;
+            } else if (cmdResult == 0x80) {
+                OSReport("\x1b[4%dm", 1);
                 OSReport("♪Jam/seq :: Sequence Error occerd... I try to continue\n");
                 OSReport("\x1b[m");
             }
-		}
-	}
+        }
+    }
 
 timed:
-	// This portion is equivalent to `JASTrack::updateTimedParam` in later JAudio.
-	for (int i = 0; i < 18; i++) {
-		MoveParam_* move = &track->timedParam.move[i];
-		if (move->duration > 0.0f) {
-			move->currentValue += move->stepSize;
-			move->duration -= 1.0f;
-			if (i <= 5 || i >= 11) {
-				seqRes |= (1 << i);
-			} else {
-				Osc_Update_Param(track, i, move->currentValue);
-			}
-		}
-	}
+    // This portion is equivalent to `JASTrack::updateTimedParam` in later JAudio.
+    for (int i = 0; i < 18; i++) {
+        MoveParam_* move = &track->timedParam.move[i];
+        if (move->duration > 0.0f) {
+            move->currentValue += move->stepSize;
+            move->duration -= 1.0f;
+            if (i <= 5 || i >= 11) {
+                seqRes |= (1 << i);
+            } else {
+                Osc_Update_Param(track, i, move->currentValue);
+            }
+        }
+    }
 
-	if (track->oscillatorRouting[0] == 0x0E) {
-		seqRes |= osc_table[track->oscillators[0].mode];
-	}
-	if (track->oscillatorRouting[1] == 0x0E) {
-		seqRes |= osc_table[track->oscillators[1].mode];
-	}
+    if (track->oscillatorRouting[0] == 0x0E) {
+        seqRes |= osc_table[track->oscillators[0].mode];
+    }
+    if (track->oscillatorRouting[1] == 0x0E) {
+        seqRes |= osc_table[track->oscillators[1].mode];
+    }
 
 LAB_800136e0:
-	track->updateFlags |= seqRes;
+    track->updateFlags |= seqRes;
 
-	for (int i = 0; i < 16; i++) {
-		if (track->children[i] && track->children[i]->trackState != 0) {
-            if (track != track->children[i]->parent) {
+    int childOffset;
+    int i;
+    i = 0;
+    childOffset = 0;
+    for (; i < 16; i++, childOffset += 4) {
+        if ((*(seqp_**)((u8*)track + 0x44 + childOffset)) &&
+            (*(seqp_**)((u8*)track + 0x44 + childOffset))->trackState != 0) {
+            if (track != (*(seqp_**)((u8*)track + 0x44 + childOffset))->parent) {
                 OSReport("##########Error:: Track %d の共有違反です\n", i);
             }
-			// Return of the worst bit extract extraction method known to man.
-			BOOL childIsMuted = track->isMuted | ((track->childMuteMask & (1 << i)) >> i);
-			if (Jam_SeqmainNote(track->children[i], childIsMuted) == -1) {
-				Jaq_CloseTrack(track->children[i]);
-				track->children[i] = NULL;
-			}
-		}
-	}
+            BOOL childIsMuted = track->isMuted | ((track->childMuteMask & (1 << i)) >> i);
+            if (Jam_SeqmainNote((*(seqp_**)((u8*)track + 0x44 + childOffset)), childIsMuted) == -1) {
+                Jaq_CloseTrack((*(seqp_**)((u8*)track + 0x44 + childOffset)));
+                (*(seqp_**)((u8*)track + 0x44 + childOffset)) = NULL;
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
+#pragma opt_dead_assignments reset
 
 /*
  * --INFO--

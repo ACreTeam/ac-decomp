@@ -809,7 +809,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/heapctrl.c"),
             Object(Matching, "jaudio_NES/internal/ipldec.c"),
             Object(Matching, "jaudio_NES/internal/ja_calc.c", extra_cflags=["-sym off"]),
-            Object(NonMatching, "jaudio_NES/internal/jammain_2.c", extra_cflags=["-sym on"]),
+            Object(Matching, "jaudio_NES/internal/jammain_2.c", extra_cflags=["-sym off"]),
             Object(Matching, "jaudio_NES/internal/jamosc.c"),
             Object(Matching, "jaudio_NES/internal/memory.c", extra_cflags=["-pragma \"scheduling 7400\""]),
             Object(Matching, "jaudio_NES/internal/midplay.c"),
