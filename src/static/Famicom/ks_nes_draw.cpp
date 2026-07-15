@@ -307,6 +307,9 @@ set:
     DCFlushRangeNoSync(wp->draw_ctx.bg_palette_attr_texture, sizeof(wp->draw_ctx.bg_palette_attr_texture));
 }
 
+// @HACK - necessary to match ksNesDrawOBJSetupMMC2, need to figure out the real solution... this can't be right
+#define ksNesGetOAMEntry(wp, i) (((ksNesCommonWorkObj*)((u8*)(wp) + (i)))->draw_ctx.OAMTable[0])
+
 void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     u32 i;
     u32 j;
@@ -314,18 +317,16 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     u32 bank;
     
     memset(wp->draw_ctx.mmc2_scanline_latch_tiles, 0, KS_NES_SCANLINE_COUNT * sizeof(u8));
-    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
+    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable) * sizeof(ksNesOAMEntry); i += sizeof(ksNesOAMEntry)) {
         // ppu_scanline_regs is the scanline state, OAMTable is list of scanline triggers?
-        if (wp->draw_ctx.OAMTable[i].y_pos >= 236 || (wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_HI && wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_LO)) {
-            continue;
+        if (ksNesGetOAMEntry(wp, i).y_pos < 236 && (ksNesGetOAMEntry(wp, i).tile_index == ksNes_MMC2_LATCH_HI || ksNesGetOAMEntry(wp, i).tile_index == ksNes_MMC2_LATCH_LO)) {
+            u32 j = ksNesGetOAMEntry(wp, i).y_pos;
+            u32 maxv = j + 8 + ((wp->draw_ctx.ppu_scanline_regs[j].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) >> 5) * 8;
+            do {
+                wp->draw_ctx.mmc2_scanline_latch_tiles[j] = ksNesGetOAMEntry(wp, i).tile_index;
+                j++;
+            } while(j < maxv);
         }
-
-        j = wp->draw_ctx.OAMTable[i].y_pos;
-        bank = j + 8 + ((wp->draw_ctx.ppu_scanline_regs[j].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) >> 2);
-        do {
-            wp->draw_ctx.mmc2_scanline_latch_tiles[j] = wp->draw_ctx.OAMTable[i].tile_index;
-            j++;
-        } while(j < bank);
     }
 
     // _0200 is the scanline marker entries
