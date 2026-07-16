@@ -836,7 +836,7 @@ config.libs = [
         "src_dir": "src/static",
         "objects": [
             Object(Matching, "Famicom/ks_nes_core.cpp"),
-            Object(NonMatching, "Famicom/ks_nes_draw.cpp"),
+            Object(Matching, "Famicom/ks_nes_draw.cpp"),
             Object(Matching, "Famicom/famicom.cpp"),
             Object(Matching, "Famicom/famicom_nesinfo.cpp"),
         ],
