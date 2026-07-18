@@ -7,7 +7,7 @@
 
 static u8 DMEM[0x1000] ATTRIBUTE_ALIGN(32);
 static u32 ADPCM_BOOKBUF_SIZE = 0;
-static s16 ADPCM_BOOKBUF[8][16] ATTRIBUTE_ALIGN(32);
+static s16 ADPCM_BOOKBUF[8 * 16] ATTRIBUTE_ALIGN(32);
 static s16 FINALR_STATE_BUF[16] ATTRIBUTE_ALIGN(32);
 
 static s16 RES_FILTER[64][4] ATTRIBUTE_ALIGN(32) = {
@@ -61,6 +61,7 @@ extern void RspStart2(u32* task, s32 tasks, s32 mode) {
 
 #define DMEM_OFS(ofs) ((s16*)&((u8*)DMEM)[(ofs)])
 
+#pragma scheduling 7400
 extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
     static BOOL init = TRUE;
     s32 i; // r30
@@ -70,8 +71,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
     u16 DMEMIn; // r27
     u16 DMEMOut; // r26
     s32 temp0;
-    u32 temp1;
-    u32 temp2;
+    u8 temp2;
+    u8 temp1;
     void* loop_point; // r1+0x134
     s16 envParam1_1;
     s16 envParam1_2;
@@ -117,19 +118,27 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     Jac_bcopy((void*)cmdLo, &DMEM[DMEMOut], 16 * sizeof(s16));
                 }
 
-                s16* var_r17 = (s16*)&DMEM[(u16)(DMEMOut + 32)];
+                s32 j;
+                s16 temp_r4;
+                s32 temp_r19;
+                u16 idx = DMEMOut + 32;
+                u8* var_r18;
+                s16* var_r17 = (s16*)&DMEM[idx];
+                s16* temp_r16;
                 s16 var_r5 = var_r17[-1];
                 s16 var_r0 = var_r17[-2];
-                u8* var_r18 = sp128 + DMEMIn - sp12C;
+                var_r18 = sp128 + DMEMIn - sp12C;
                 u16 sp13C = (DMEMCount + 31) / 32;
                 s32 var_r12;
-                s32 j;
                 s32 k;
-                s32 l;
+                s16* src;
                 for (j = 0; j < sp13C; j++) {
-                    s16 temp_r4 = *var_r18++;
-                    s32 temp_r19 = temp_r4 >> 4;
-                    s16* temp_r16 = ADPCM_BOOKBUF[temp_r4 & 0xF];
+                    temp_r16 = ADPCM_BOOKBUF;
+                    temp_r4 = (s16)*var_r18++;
+                    temp_r19 = (temp_r4 >> 4);
+
+                    temp_r4 &= 0xF;
+                    temp_r16 += temp_r4 * 16;
                     if (flags & 4) {
                         for (k = 0; k < 4; k++) {
                             s16 temp_r14_2 = *var_r18++;
@@ -147,7 +156,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     }
                     for (k = 0; k < 8; k++) {
                         sp7C[k] = sp9C[k] << temp_r19;
-                        var_r12 = sp7C[k] + (var_r5 * temp_r16[k + 8] / 0x800) + (var_r0 * temp_r16[k] / 0x800);
+                        s32 var_r12 = (var_r5 * temp_r16[k + 8] / 0x800) + (var_r0 * temp_r16[k] / 0x800) + sp7C[k];
+                        s32 l;
                         for (l = 0; l < k; l++) {
                             var_r12 += sp7C[l] * temp_r16[k - l + 7] / 0x800;
                         }
@@ -163,7 +173,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     var_r0 = sp9C[6];
                     for (k = 0; k < 8; k++) {
                         sp5C[k] = sp9C[k + 8] << temp_r19;
-                        var_r12 = (var_r5 * temp_r16[k + 8] / 0x800) + (var_r0 * temp_r16[k] / 0x800) + sp5C[k];
+                        s32 var_r12 = (var_r5 * temp_r16[k + 8] / 0x800) + (var_r0 * temp_r16[k] / 0x800) + sp5C[k];
+                        s32 l;
                         for (l = 0; l < k; l++) {
                             var_r12 += sp5C[l] * temp_r16[k - l + 7] / 0x800;
                         }
@@ -177,11 +188,12 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     }
                     var_r5 = sp9C[15];
                     var_r0 = sp9C[14];
-                    for (k = 0; k < 16; k++) {
+                    for (s32 k = 0; k < 16; k++) {
                         *var_r17++ = sp9C[k];
                     }
                 }
-                Jac_bcopy(var_r17 - 16, (void*)cmdLo, 16 * sizeof(s16));
+                src = var_r17 - 16;
+                Jac_bcopy(src, (void*)cmdLo, 16 * sizeof(s16));
                 break;
             }
 
@@ -194,15 +206,15 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
             case A_CMD_RESAMPLE: { // A_RESAMPLE
                 s16 spC[8];
                 s16* var_r4;
+                s32 j;
                 s16* var_r6;
                 u32 var_r7;
                 s32 var_r8;
+                s16* temp_r9_2;
                 s32 var_r9;
                 s32 var_r14;
                 s32 var_r15;
                 u16 count;
-                s16* temp_r9_2;
-                s32 j;
 
                 count = DMEMCount >> 1;
                 var_r14 = cmdHi & 0xFFFF;
@@ -271,10 +283,10 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
 
             case A_CMD_DUPLICATE: { // A_DUPLICATE
+                s32 j;
                 u16 src = cmdHi & 0xFFFF;
                 u16 dst = cmdLo >> 16;
                 s32 count = (cmdHi >> 16) & 0xFF;
-                s32 j;
 
                 for (j = 0; j < count; j++) {
                     Jac_bcopy(&DMEM[src], &DMEM[dst], 0x80);
@@ -283,7 +295,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 }
                 break;
             }
-            
+
             // case 3: // A_UNK3
             //     // not emulated
             //     break;
@@ -303,7 +315,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 Jac_bcopy((void*)cmdLo, ADPCM_BOOKBUF, cmdHi & 0xFFFF);
                 ADPCM_BOOKBUF_SIZE = cmdHi & 0xFFFF;
                 break;
-            
+
             case A_CMD_ADDMIXER: // A_ADDMIXER
             case A_CMD_MIXER: { // A_MIXER
                 s16* src = DMEM_OFS(cmdLo >> 16);
@@ -314,7 +326,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
 
                 for (j = 0; j < count * 8; j++) {
                     s16 v0 = *src++;
-                    s32 mixed = *dst + ((v0 * m) >> 15);
+                    s32 mixed = *dst;
+                    mixed += (v0 * m) >> 15;
                     if (mixed > 0x7FFF) {
                         mixed = 0x7FFF;
                     }
@@ -347,7 +360,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 pInL = DMEM_OFS(inL);
                 pInR = DMEM_OFS(inR);
                 pOut = DMEM_OFS(out);
-                Jac_Resample16(pInL, pInR, pOut, count, JAC_FRAMESAMPLES >> 2, finalr_state, &finalr_phase, flag);
+                Jac_Resample16(pInR, pInL, pOut, count, JAC_FRAMESAMPLES >> 2, finalr_state, &finalr_phase, flag);
                 flag = FALSE;
                 break;
             }
@@ -360,11 +373,15 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
 
             case A_CMD_UNK16: { // ???
-                u8 count = (cmdHi >> 16) & 0xFF;
-                u32 dst = cmdHi & 0xFFFF;
-                u32 src = cmdLo >> 16;
-                s32 stride = cmdLo & 0xFFFF;
+                s32 stride;
+                u32 dst;
+                u32 src;
                 s32 j;
+                s32 count;
+                dst = cmdHi & 0xFFFF;
+                src = cmdLo >> 16;
+                stride = cmdLo & 0xFFFF;
+                count = (cmdHi >> 16) & 0xFF;
                 for (j = 0; j < count; j++) {
                     Jac_bcopy(&DMEM[(u16)dst], &DMEM[(u16)src], stride);
                     dst += stride;
@@ -374,9 +391,9 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
             }
 
             case A_CMD_HALFCUT: { // A_INTERL
-                s32 count = cmdHi & 0xFFFF;
                 s16* src = (s16*)&DMEM[cmdLo >> 16];
                 s16* dst = (s16*)&DMEM[cmdLo & 0xFFFF];
+                s32 count = cmdHi & 0xFFFF;
                 s32 j;
 
                 for (j = 0; j < count; j++) {
@@ -420,12 +437,22 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 s16* var_r19;
                 s16* var_r20;
                 s16* var_r21;
-                u16 count;
                 s32 j;
+                s32 left_wet_mid_narrow;
+                s32 right_wet_2;
+                s32 right_wet_mid_narrow;
+                s32 var_r14_2;
+                s32 var_r4_7;
+                s32 left_wet_low;
+                s32 var_r16_3;
+                s32 left_wet_2;
+                s32 var_r12_2;
+                u16 count;
+                s32 right_wet_low;
 
                 temp1 = cmdHi & 2; // this should not be stored to stack
                 temp2 = cmdHi & 1;
-                temp0 = (cmdHi >> 8) & 0xFF;
+                temp0 = (u8)(cmdHi >> 8);
 
                 var_r16 = temp0 << 1;
                 var_r17 = (s16*)&DMEM[((cmdHi >> 16) & 0xFF) * 16];
@@ -433,19 +460,21 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 var_r19 = (s16*)&DMEM[((cmdLo >> 16) & 0xFF) * 16];
                 DCTouchRange(var_r18, var_r16);
                 DCTouchRange(var_r19, var_r16);
-                var_r20 = (s16*)&DMEM[((cmdLo >> 8) & 0xFF) * 16];
-                var_r21 = (s16*)&DMEM[(cmdLo & 0xFF) * 16];
+                var_r20 = (s16*)&DMEM[(cmdLo >> 4) & 0xFF0];
+                var_r21 = (s16*)&DMEM[(cmdLo << 4) & 0xFF0];
                 DCTouchRange(var_r20, var_r16);
                 DCTouchRange(var_r21, var_r16);
 
                 count = temp0 >> 1;
                 for (j = 0; j < count; j++) {
                     s16 temp_r0_6 = *var_r17++;
-                    s16 temp_r5_2 = *var_r17++;
-                    s32 var_r4_7 = (temp_r0_6 * envParam2_0) >> 16;
-                    s32 var_r12_2 = (temp_r0_6 * envParam2_1) >> 16;
-                    s32 var_r14_2 = (temp_r5_2 * envParam2_0) >> 16;
-                    s32 var_r16_3 = (temp_r5_2 * envParam2_1) >> 16;
+                    s32 temp_r5_2 = *var_r17++;
+
+
+                    var_r4_7 = (temp_r0_6 * envParam2_0) >> 16;
+                    var_r12_2 = (temp_r0_6 * envParam2_1) >> 16;
+                    var_r14_2 = (temp_r5_2 * envParam2_0) >> 16;
+                    var_r16_3 = (temp_r5_2 * envParam2_1) >> 16;
                     if (temp1) { // temp1 should not be stored to stack, needs r15
                         var_r4_7 = -var_r4_7;
                         var_r14_2 = -var_r14_2;
@@ -455,14 +484,29 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                         var_r16_3 = -var_r16_3;
                     }
                     // TODO: weird math
-                    s32 var_r0_3 = var_r18[0] + var_r4_7;
-                    s32 var_r3_2 = var_r18[1] + var_r14_2;
-                    s32 var_r4_8 = var_r19[0] + var_r12_2;
-                    s32 var_r5_6 = var_r19[1] + var_r16_3;
-                    f32 var_f2 = ((var_r4_7 * envParam1_0) >> 16) + ((var_r4_7 * envParam1_0) >> 18) + ((var_r4_7 * (u16)envParam1_0) >> 19);
-                    f32 var_f5 = ((var_r12_2 * envParam1_0) >> 16) + ((var_r12_2 * envParam1_0) >> 18) + ((var_r12_2 * (u16)envParam1_0) >> 19);
-                    f32 var_f4 = ((var_r14_2 * envParam1_0) >> 16) + ((var_r14_2 * envParam1_0) >> 18) + ((var_r14_2 * (u16)envParam1_0) >> 19);
-                    f32 var_f6 = ((var_r16_3 * envParam1_0) >> 16) + ((var_r16_3 * envParam1_0) >> 18) + ((var_r16_3 * (u16)envParam1_0) >> 19);
+                    f32 var_f2;
+                    f32 var_f4;
+                    f32 var_f5;
+                    f32 var_f6;
+                    s32 var_r0_3 = var_r18[0];
+                    s32 var_r3_2 = var_r18[1];
+                    s32 var_r4_8 = var_r19[0];
+                    s32 var_r5_6 = var_r19[1];
+                    right_wet_2 = var_r12_2 * envParam1_0;
+                    var_r0_3 += var_r4_7;
+                    var_r3_2 += var_r14_2;
+                    var_r4_8 += var_r12_2;
+                    var_r5_6 += var_r16_3;
+                    left_wet_mid_narrow = right_wet_2 >> 18;
+                    left_wet_low = right_wet_2 >> 19;
+                    left_wet_2 = right_wet_2 >> 16;
+                    var_f2 = ((var_r4_7 * envParam1_0) >> 16) + ((var_r4_7 * envParam1_0) >> 18) + ((var_r4_7 * envParam1_0) >> 19);
+                    var_f4 = left_wet_2 + left_wet_mid_narrow + left_wet_low;
+                    right_wet_mid_narrow = (var_r16_3 * envParam1_0) >> 18;
+                    right_wet_low = (var_r16_3 * envParam1_0) >> 19;
+                    right_wet_2 = ((var_r16_3 * envParam1_0) >> 16);
+                    var_f5 = ((var_r14_2 * envParam1_0) >> 16) + ((var_r14_2 * envParam1_0) >> 18) + ((var_r14_2 * envParam1_0) >> 19);
+                    var_f6 = right_wet_2 + right_wet_mid_narrow + right_wet_low;
                     if (var_r0_3 > 0x7FFF) {
                         var_r0_3 = 0x7FFF;
                     }
@@ -492,10 +536,14 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     *var_r19++ = var_r4_8;
                     *var_r19++ = var_r5_6;
 
-                    s32 var_r3_3 = var_r20[0] + var_f2;
-                    s32 var_r4_9 = var_r20[1] + var_f4;
-                    s32 var_r5_7 = var_r21[0] + var_f5;
-                    s32 var_r7_4 = var_r21[1] + var_f6;
+                    s32 var_r3_3 = var_r20[0];
+                    s32 var_r4_9 = var_r20[1];
+                    s32 var_r5_7 = var_r21[0];
+                    s32 var_r7_4 = var_r21[1];
+                    var_r3_3 += var_f2;
+                    var_r4_9 += var_f5;
+                    var_r5_7 += var_f4;
+                    var_r7_4 += var_f6;
                     if (var_r3_3 > 0x7FFF) {
                         var_r3_3 = 0x7FFF;
                     }
@@ -550,9 +598,10 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 u16 temp1 = DMEMOut + 32;
                 s16* dst = (s16*)&DMEM[temp1];
                 u8* src = sp128 + DMEMIn - sp12C;
+                u16 count = DMEMCount >> 1;
                 s32 j;
 
-                for (j = 0; j < DMEMCount >> 1; j++) {
+                for (j = 0; j < count; j++) {
                     *dst++ = (*src++) << 8;
                 }
 
