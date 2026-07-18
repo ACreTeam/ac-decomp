@@ -61,7 +61,7 @@ static void aES2_set_norm_talk_info(ACTOR* actorx) {
     switch (soncho->event) {
         case 0x65:
             if (mSC_LightHouse_Talk_After_Check()) {
-                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_1 + 6 + (int)RANDOM_F(3));
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_1 + 6 + RANDOM(3));
             } else {
                 mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_1);
                 aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_LIGHTHOUSE_QUEST_START_1);
@@ -69,7 +69,7 @@ static void aES2_set_norm_talk_info(ACTOR* actorx) {
             break;
         case 0x66:
             if (mSC_LightHouse_Talk_After_Check()) {
-                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_2 + 6 + (int)RANDOM_F(3));
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_2 + 6 + RANDOM(3));
             } else {
                 mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_2);
                 aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_LIGHTHOUSE_QUEST_START_1);
@@ -82,7 +82,7 @@ static void aES2_set_norm_talk_info(ACTOR* actorx) {
                 aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_2);
             } else if (mSC_trophy_get(soncho->event) != 0) {
                 if (mCD_calendar_event_check(soncho->year, soncho->month, soncho->day, -1, soncho->event)) {
-                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 6 + (int)RANDOM_F(3)));
+                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 6 + RANDOM(3)));
                 } else {
                     mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 0x5));
                 }

@@ -102,16 +102,16 @@ static int aESC_time_talk() {
   lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
 
   if (rtc_time.hour < 6 || rtc_time.hour >= 23) {
-    return 0x2F36;
+    return MSG_12086;
   }
   else if (rtc_time.hour < 10) {
-    return 0x2F33;
+    return MSG_12083;
   }
   else if (rtc_time.hour < 17) {
-    return 0x2F34;
+    return MSG_12084;
   }
   else {
-    return 0x2F35;
+    return MSG_12085;
   }
 }
 
@@ -121,11 +121,11 @@ static void aESC_set_talk_info_talk_request(ACTOR* actorx) {
 
   aEGH_change_talk_proc(soncho, 0);
   if (Save_Get(bridge).pending) {
-    msg_no = 0x2F44 + RANDOM(3);
+    msg_no = MSG_12100 + RANDOM(3);
     aESC_set_day();
   }
   else if (aESC_bitcheck_func()) {
-    msg_no = 0x2F3E;
+    msg_no = MSG_12094;
     aEGH_change_talk_proc(soncho, aESC_TALK_SELECT);
     soncho->first_talk = FALSE;
   }

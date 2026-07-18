@@ -218,9 +218,9 @@ static void aEBR2_set_talk_info_sell_item(ACTOR* actorx) {
         int msg_no;
 
         if (broker2->explain_flag & b) {
-            msg_no = 0x07A1;
+            msg_no = MSG_1953;
         } else {
-            msg_no = 0x793 + RANDOM(5);
+            msg_no = MSG_1939 + RANDOM(5);
             broker2->explain_flag |= b;
         }
 
@@ -235,13 +235,13 @@ static void aEBR2_set_talk_info_message_ctrl(ACTOR* actorx) {
     int msg_no;
 
     if (save_p->used == mEv_BROKER_ITEM_NUM) {
-        msg_no = 0x07A2;
+        msg_no = MSG_1954;
     } else if ((broker2->state & aEBR2_STATE_SOLD_CURRENT) && rnd == 0) {
-        msg_no = 0x078C;
+        msg_no = MSG_1932;
     } else if ((broker2->state & aEBR2_STATE_SOLD_OTHER) && rnd == 0) {
-        msg_no = 0x0790;
+        msg_no = MSG_1936;
     } else {
-        msg_no = 0x78D + RANDOM(3);
+        msg_no = MSG_1933 + RANDOM(3);
     }
 
     mDemo_Set_msg_num(msg_no);
@@ -391,7 +391,7 @@ static void aEBR2_talk_end_wait(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
 }
 
 static void aEBR2_set_talk_info_say_hello(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x078B);
+    mDemo_Set_msg_num(MSG_1931);
 }
 
 static void aEBR2_say_hello(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
@@ -472,9 +472,9 @@ static void aEBR2_set_talk_info_goodbye_wait(ACTOR* actorx) {
     int msg_no;
 
     if (broker2->sell_flag == TRUE) {
-        msg_no = 0x0792;
+        msg_no = MSG_1938;
     } else {
-        msg_no = 0x0791;
+        msg_no = MSG_1937;
     }
 
     mDemo_Set_msg_num(msg_no);

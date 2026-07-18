@@ -69,7 +69,7 @@ static void Player_actor_BGcheck_Notice_bee(ACTOR* actorx) {
 static void Player_actor_Notice_bee_demo_ct(ACTOR* actorx) {
     rgba_t window_color;
 
-    mDemo_Set_msg_num(0x17B4);
+    mDemo_Set_msg_num(MSG_6068);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
     mDemo_Set_ListenAble();

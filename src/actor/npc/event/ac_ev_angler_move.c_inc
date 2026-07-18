@@ -249,7 +249,7 @@ static void aEANG_demo_give_me(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
         int next_action = aEANG_TALK_END_WAIT;
 
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
-        
+
         switch (mChoice_GET_CHOSENUM()) {
             case mChoice_CHOICE0:
                 mPr_SetPossessionItem(Now_Private, angler->item_idx, angler->item, mPr_ITEM_COND_NORMAL);
@@ -283,9 +283,9 @@ static void aEANG_say_tureta(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
                 mMsg_Set_continue_msg_num(msg_p, msg_no);
                 break;
             }
-        case mChoice_CHOICE0:
-            (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MSG_TO_MENU);
-            break;
+            case mChoice_CHOICE0:
+                (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MSG_TO_MENU);
+                break;
         }
     }
 }
@@ -371,7 +371,8 @@ static void aEANG_menu_open_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) 
 static void aEANG_menu_close_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
     Submenu* submenu = &play->submenu;
 
-    mSM_open_submenu_new2(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_TAKE, 0, NULL, 2); // 2 = m_tag_ovl -> aHOI_REQUEST_GET_PULL_WAIT
+    mSM_open_submenu_new2(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_TAKE, 0, NULL,
+                          2); // 2 = m_tag_ovl -> aHOI_REQUEST_GET_PULL_WAIT
 }
 
 static void aEANG_msg_win_open_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
@@ -417,7 +418,7 @@ static void aEANG_init_proc(EV_ANGLER_ACTOR* angler, GAME_PLAY* play, int action
         (aEANG_INIT_PROC)none_proc1,
         (aEANG_INIT_PROC)none_proc1,
         (aEANG_INIT_PROC)none_proc1,
-        aEANG_demo_measure_init,  
+        aEANG_demo_measure_init,
         // clang-format on
     };
 
@@ -436,7 +437,7 @@ static void aEANG_setupAction(EV_ANGLER_ACTOR* angler, GAME_PLAY* play, int acti
         aEANG_demo_henkyaku,
         aEANG_demo_houbi,
         aEANG_msg_to_menu,
-        aEANG_demo_measure,  
+        aEANG_demo_measure,
         // clang-format on
     };
 
@@ -448,11 +449,11 @@ static void aEANG_set_talk_info(ACTOR* actorx) {
     int msg_no;
 
     if (time_over_check()) {
-        msg_no = 0x10EE;
+        msg_no = MSG_4334;
     } else if (entry_check()) {
-        msg_no = 0x10EF;
+        msg_no = MSG_4335;
     } else {
-        msg_no = 0x10E8;
+        msg_no = MSG_4328;
     }
 
     mDemo_Set_msg_num(msg_no);

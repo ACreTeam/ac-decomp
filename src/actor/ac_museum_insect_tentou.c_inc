@@ -34,8 +34,8 @@ void mi_tentou_kama_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
 
 void mi_tentou_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)(RANDOM_F(300.f)) + 100.f;
-    actor->_7C = (int)(RANDOM_F(20.f)) + 5.f;
+    actor->_6E = RANDOM(300.f) + 100.f;
+    actor->_7C = RANDOM(20.f) + 5.f;
     if (actor->_8E == 0 && actor->_00 != 32) {
         actor->_6E *= 10;
     }
@@ -47,7 +47,7 @@ void mi_tentou_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     if (actor->_7C < 0) {
         if (actor->_76 != 0) {
             actor->_76 = 0;
-            actor->_7C = (int)RANDOM_F(20.f) + 5.f;
+            actor->_7C = RANDOM(20.f) + 5.f;
         } else {
             actor->_76 = 910;
             actor->_72 = qrand();
@@ -65,7 +65,7 @@ void mi_tentou_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mi_tentou_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)RANDOM_F(300.f) + 30.f;
+    actor->_6E = RANDOM(300.f) + 30.f;
 }
 
 void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
@@ -103,7 +103,7 @@ void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     } else {
         if (actor->_40 > 0.0f) {
             actor->_40 = 0.0f;
-            actor->_6E = (int)RANDOM_F(300.f) + 100.f;
+            actor->_6E = RANDOM(300.f) + 100.f;
             if (actor->_8E == 0 && actor->_00 != 32) {
                 actor->_6E <<= 1;
             }
@@ -114,7 +114,7 @@ void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
                 return;
             }
             actor->_40 = actor->_58;
-            actor->_6E = (int)RANDOM_F(300.f) + 30.f;
+            actor->_6E = RANDOM(300.f) + 30.f;
             if (actor->_00 == 32) {
                 actor->_6E <<= 1;
             }
@@ -131,9 +131,9 @@ void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mi_tentou_menace_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)RANDOM_F(600.f) + 200.f;
+    actor->_6E = RANDOM(600.f) + 200.f;
     actor->_76 = DEG2SHORT_ANGLE(-40);
-    actor->_7C = (int)RANDOM_F(20.f) + 5.f;
+    actor->_7C = RANDOM(20.f) + 5.f;
     actor->_7E = (int)(RANDOM_F(2.f) * 60.f) + 67;
 }
 
@@ -144,7 +144,7 @@ void mi_tentou_menace(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_6E--;
     actor->_7C--;
     if (actor->_7C < 0) {
-        actor->_7C = (int)RANDOM_F(20.f) + 5.f;
+        actor->_7C = RANDOM(20.f) + 5.f;
         if (actor->_7A) {
             actor->_7A = 0;
         } else {

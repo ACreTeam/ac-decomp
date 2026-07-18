@@ -250,10 +250,10 @@ static int aCR_chk_fossil_parts_complete_sub(int type) {
 }
 
 static void aCR_chk_fossil_parts_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no_table[aCR_FOSSIL_TYPE_NUM] = { 0x2F78, 0x2F79, 0x2F7A, 0x2F7B, 0x2F7C, 0x2F7D, 0x2F7E };
+    static int msg_no_table[aCR_FOSSIL_TYPE_NUM] = { MSG_12152, MSG_12153, MSG_12154, MSG_12155, MSG_12156, MSG_12157, MSG_12158 };
 
     int fossil_type = aCR_get_fossil_type(play->submenu.item_p->item);
-    int msg_no = 0x2F84;
+    int msg_no = MSG_12164;
 
     if (fossil_type != -1 && aCR_chk_fossil_parts_complete_sub(fossil_type) == TRUE) {
         msg_no = msg_no_table[fossil_type];
@@ -265,7 +265,7 @@ static void aCR_chk_fossil_parts_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY*
 }
 
 static void aCR_chk_fossil_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no[] = { 0x2F73, 0x2F85 };
+    static int msg_no[] = { MSG_12147, MSG_12165 };
     static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
 
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
@@ -281,7 +281,7 @@ static void aCR_chk_fossil_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play)
 }
 
 static void aCR_chk_art_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no[] = { 0x2F73, 0x2F75 };
+    static int msg_no[] = { MSG_12147, MSG_12149 };
     static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
 
     int complete = FALSE;
@@ -296,7 +296,7 @@ static void aCR_chk_art_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
 }
 
 static void aCR_chk_fish_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no[] = { 0x2F73, 0x2F8A };
+    static int msg_no[] = { MSG_12147, MSG_12170 };
     static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
 
     int complete = FALSE;
@@ -311,7 +311,7 @@ static void aCR_chk_fish_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
 }
 
 static void aCR_chk_insect_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no[] = { 0x2F73, 0x2F88 };
+    static int msg_no[] = { MSG_12147, MSG_12168 };
     static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
 
     int complete = FALSE;
@@ -326,10 +326,14 @@ static void aCR_chk_insect_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play)
 }
 
 static void aCR_set_after_explain_insect(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
-    static int msg_no[] = { 0x3A56, 0x3A56, 0x3A56, 0x3A56, 0x3A57, 0x3A57, 0x3A5D, 0x3A57, 0x3A5E, 0x3A58,
-                            0x3A58, 0x3A58, 0x3A5F, 0x3A59, 0x3A59, 0x3A5A, 0x3A5A, 0x3A5A, 0x3A5A, 0x3A5B,
-                            0x3A5B, 0x3A5B, 0x3A61, 0x3A62, 0x3A5C, 0x3A5C, 0x3A63, 0x3A64, 0x3A56, 0x3A5B,
-                            0x3A5B, 0x3A60, 0x3A6B, 0x3A69, 0x3A65, 0x3A6C, 0x3A68, 0x3A6A, 0x3A66, 0x3A67 };
+    static int msg_no[] = { MSG_14934, MSG_14934, MSG_14934, MSG_14934, MSG_14935,
+                            MSG_14935, MSG_14941, MSG_14935, MSG_14942, MSG_14936,
+                            MSG_14936, MSG_14936, MSG_14943, MSG_14937, MSG_14937,
+                            MSG_14938, MSG_14938, MSG_14938, MSG_14938, MSG_14939,
+                            MSG_14939, MSG_14939, MSG_14945, MSG_14946, MSG_14940,
+                            MSG_14940, MSG_14947, MSG_14948, MSG_14934, MSG_14939,
+                            MSG_14939, MSG_14944, MSG_14955, MSG_14953, MSG_14949,
+                            MSG_14956, MSG_14952, MSG_14954, MSG_14950, MSG_14951 };
 
     int insect_type = curator->donated_item - ITM_INSECT_START;
 
@@ -361,7 +365,7 @@ static int aCR_countDisplayed() {
 }
 
 static int aCR_get_msg_no_after_talk() {
-    static int msg_no[] = { 0x2F58, 0x2F59, 0x2F5A, 0x2F5B };
+    static int msg_no[] = { MSG_12120, MSG_12121, MSG_12122, MSG_12123 };
     int displayed = aCR_countDisplayed();
     int idx;
 
@@ -617,34 +621,34 @@ typedef struct {
 
 static void aCR_msg_win_open_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
     static aCR_donate_act_c donate_act[] = {
-        { 0x2F63, aCR_TALK_END_WAIT },
-        { 0x3A83, aCR_TALK_RETURN_DEMO_START_WAIT },
-        { 0x2F64, aCR_TALK_RETURN_DEMO_START_WAIT },
-        { 0x2F65, aCR_TALK_RETURN_DEMO_START_WAIT },
-        { 0x2F6B, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F6C, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F6D, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F6E, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F67, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F68, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F69, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F6A, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F90, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F91, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F92, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F93, aCR_TALK_RETURN_DEMO_START_WAIT2 },
-        { 0x2F8F, aCR_TALK_PUTAWAY_DEMO_START_WAIT2 },
-        { 0x2F7F, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
-        { 0x2F80, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
-        { 0x2F81, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
-        { 0x2F82, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
-        { 0x2F83, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
-        { 0x2F70, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
-        { 0x2F71, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
-        { 0x2F72, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
-        { 0x2F86, aCR_TALK_PUTAWAY_DEMO_START_WAIT5 },
-        { 0x2F87, aCR_TALK_PUTAWAY_DEMO_START_WAIT4 },
-        { 0x2F89, aCR_TALK_PUTAWAY_DEMO_START_WAIT5_2 },
+        { MSG_12131, aCR_TALK_END_WAIT },
+        { MSG_14979, aCR_TALK_RETURN_DEMO_START_WAIT },
+        { MSG_12132, aCR_TALK_RETURN_DEMO_START_WAIT },
+        { MSG_12133, aCR_TALK_RETURN_DEMO_START_WAIT },
+        { MSG_12139, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12140, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12141, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12142, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12135, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12136, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12137, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12138, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12176, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12177, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12178, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12179, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+        { MSG_12175, aCR_TALK_PUTAWAY_DEMO_START_WAIT2 },
+        { MSG_12159, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+        { MSG_12160, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+        { MSG_12161, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+        { MSG_12162, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+        { MSG_12163, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+        { MSG_12144, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+        { MSG_12145, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+        { MSG_12146, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+        { MSG_12166, aCR_TALK_PUTAWAY_DEMO_START_WAIT5 },
+        { MSG_12167, aCR_TALK_PUTAWAY_DEMO_START_WAIT4 },
+        { MSG_12169, aCR_TALK_PUTAWAY_DEMO_START_WAIT5_2 },
     };
 
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
@@ -723,7 +727,7 @@ static void aCR_chk_continue_to_donate(NPC_CURATOR_ACTOR* curator, GAME_PLAY* pl
 
         if (mChoice_Get_ChoseNum(mChoice_Get_base_window_p()) == mChoice_CHOICE0) {
             talk_act = aCR_TALK_MENU_OPEN_WAIT;
-            msg_no = 0x2F62;
+            msg_no = MSG_12130;
         } else {
             msg_no = aCR_get_msg_no_after_talk();
         }
@@ -747,9 +751,11 @@ static void aCR_putaway_demo_start_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* p
 
 static void aCR_putaway_demo_start_wait5_2(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
     static int msg_no[FISH_NUM + 1] = {
-        0x3A6D, 0x3A6E, 0x3A6D, 0x3A80, 0x3A6D, 0x3A6D, 0x3A6E, 0x3A6F, 0x3A6D, 0x3A70, 0x3A71, 0x3A6D, 0x3A6E, 0x3A72,
-        0x3A6D, 0x3A6D, 0x3A6D, 0x3A73, 0x3A6E, 0x3A81, 0x3A6E, 0x3A74, 0x3A6D, 0x3A7D, 0x3A75, 0x3A76, 0x3A6E, 0x3A6E,
-        0x3A7E, 0x3A77, 0x3A7D, 0x3A79, 0x3A7C, 0x3A82, 0x3A77, 0x3A7F, 0x3A6D, 0x3A7A, 0x3A7B, 0x3A78
+        MSG_14957, MSG_14958, MSG_14957, MSG_14976, MSG_14957, MSG_14957, MSG_14958, MSG_14959, MSG_14957,
+        MSG_14960, MSG_14961, MSG_14957, MSG_14958, MSG_14962, MSG_14957, MSG_14957, MSG_14957, MSG_14963,
+        MSG_14958, MSG_14977, MSG_14958, MSG_14964, MSG_14957, MSG_14973, MSG_14965, MSG_14966, MSG_14958,
+        MSG_14958, MSG_14974, MSG_14967, MSG_14973, MSG_14969, MSG_14972, MSG_14978, MSG_14967, MSG_14975,
+        MSG_14957, MSG_14970, MSG_14971, MSG_14968
         // uninitialized entry here
     };
 
@@ -925,10 +931,10 @@ static void aCR_setupTalkAction(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play, int
 }
 
 static void aCR_set_talk_info(ACTOR* actorx) {
-    static int msg_no[2][2][2][3] = { { { { 0x2F8B, 0x2F8C, 0x2F8C }, { 0x2F8D, 0x2F95, 0x2F8E } },
-                                        { { 0x2F4E, 0x2F4F, 0x2F4F }, { 0x2F51, 0x2F96, 0x2F52 } } },
-                                      { { { 0x2F53, 0x2F54, 0x2F54 }, { 0x2F55, 0x2F94, 0x2F56 } },
-                                        { { 0x2F53, 0x2F54, 0x2F54 }, { 0x2F55, 0x2F94, 0x2F56 } } } };
+    static int msg_no[2][2][2][3] = { { { { MSG_12171, MSG_12172, MSG_12172 }, { MSG_12173, MSG_12181, MSG_12174 } },
+                                        { { MSG_12110, MSG_12111, MSG_12111 }, { MSG_12113, MSG_12182, MSG_12114 } } },
+                                      { { { MSG_12115, MSG_12116, MSG_12116 }, { MSG_12117, MSG_12180, MSG_12118 } },
+                                        { { MSG_12115, MSG_12116, MSG_12116 }, { MSG_12117, MSG_12180, MSG_12118 } } } };
 
     NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
 

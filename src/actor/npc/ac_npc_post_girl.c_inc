@@ -562,7 +562,7 @@ void aPG_setupAction(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play, int action) 
 }
 
 void aPG_set_talk_info(ACTOR *actorx) {
-    static int msg_no[8] = {0x31d3, 0x31d1, 0x08b1, 0x8ad, 0x8d1, 0x8cf, 0x8b1, 0x8ad};
+    static int msg_no[8] = { MSG_12755, MSG_12753, MSG_2225, MSG_2221, MSG_2257, MSG_2255, MSG_2225, MSG_2221 };
     NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
     int msg = 0;
     if (CLIP(aprilfool_control_clip) != NULL && CLIP(aprilfool_control_clip)->talk_chk_proc(actorx->npc_id) == FALSE) {

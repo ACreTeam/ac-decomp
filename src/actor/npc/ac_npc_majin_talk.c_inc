@@ -10,14 +10,14 @@ static void aMJN_set_zoomup_camera(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
     angle.x = DEG2SHORT_ANGLE2(-157.5f);
     angle.y = actorx->player_angle_y + DEG2SHORT_ANGLE(180.0f);
     angle.z = DEG2SHORT_ANGLE2(0.0f);
-    
+
     Camera2_change_priority(play, 0);
     Camera2_request_main_demo_fromNowPos(play, &pos, &angle, 182.0f, 28.0f, 10.0f, 10.0f, 9);
 }
 
 static void aMJN_set_default_camera(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
     ACTOR* playerx;
-    
+
     Camera2_change_priority(play, 0);
     playerx = GET_PLAYER_ACTOR_ACTOR(play);
     if (playerx != NULL) {
@@ -76,7 +76,7 @@ static void aMJN_chk_talk_demo_code(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
 }
 
 static void aMJN_set_force_talk_info(ACTOR* actorx) {
-    static int msg_no[] = { 0x1B3B, 0x3A38, 0x3A42, 0x3A4C, 0x3B05 };
+    static int msg_no[] = { MSG_6971, MSG_14904, MSG_14914, MSG_14924, MSG_15109 };
     NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)actorx;
 
     mDemo_Set_msg_num(msg_no[actor->talk_idx]);
@@ -93,7 +93,8 @@ static int aMJN_talk_init(ACTOR* actorx, GAME* game) {
     NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)actorx;
     int ret = FALSE;
 
-    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 && actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 &&
+        actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
         actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
         actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
         actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;

@@ -124,7 +124,7 @@ typedef struct {
 
 static void aMJN3_set_force_talk_info(ACTOR* actorx) {
     static aMJN3_talk_data_c dt_tbl[] = {
-        { 0x23E6, aMJN3_msg_win_close_wait_talk_proc },
+        { MSG_9190, aMJN3_msg_win_close_wait_talk_proc },
     };
     NPC_MAJIN3_ACTOR* actor = (NPC_MAJIN3_ACTOR*)actorx;
     aMJN3_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
@@ -144,7 +144,8 @@ static int aMJN3_talk_init(ACTOR* actorx, GAME* game) {
     NPC_MAJIN3_ACTOR* actor = (NPC_MAJIN3_ACTOR*)actorx;
     int ret = FALSE;
 
-    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 && actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 &&
+        actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
         u8 str[mString_DEFAULT_STR_SIZE];
 
         actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
@@ -156,7 +157,7 @@ static int aMJN3_talk_init(ACTOR* actorx, GAME* game) {
         mDemo_Set_ListenAble();
         ret = TRUE;
     }
-    
+
     return ret;
 }
 

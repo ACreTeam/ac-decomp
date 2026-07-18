@@ -28,7 +28,7 @@ extern "C" {
 // TODO: these should be in m_msg_data.h
 #define mString_CARPETPEDDLER_START 0x48a
 #define mString_TOTAKEKE_START 0x1b93
-#define mString_SPEECH_SONCHO_START 0x3db5
+#define mString_SPEECH_SONCHO_START MSG_15797
 
 #ifdef __cplusplus
 }

@@ -45,8 +45,8 @@ void aECPD_1st_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
 }
 
 void aECPD_2nd_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
-    static int next_msg[4] = { MSG_CARPETPEDDLER_START+ 1, MSG_CARPETPEDDLER_START + 4,
-                               MSG_CARPETPEDDLER_START + 3, MSG_CARPETPEDDLER_START + 5 };
+    static int next_msg[4] = { MSG_CARPETPEDDLER_START + 1, MSG_CARPETPEDDLER_START + 4, MSG_CARPETPEDDLER_START + 3,
+                               MSG_CARPETPEDDLER_START + 5 };
     static int next_act[4] = { eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_GRAD_MESSAGE };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {

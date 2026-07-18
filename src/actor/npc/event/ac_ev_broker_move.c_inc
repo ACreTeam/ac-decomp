@@ -261,13 +261,13 @@ static void aEBRK_set_talk_info_talk_request(ACTOR* actorx) {
         item = Save_Get(event_save_data).special.event.broker.sold_items[idx];
         mIN_copy_name_str(item_name, item);
         mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR2, item_name, mIN_ITEM_NAME_LEN, item);
-        msg_no = 0x078A;
+        msg_no = MSG_1930;
     } else {
         idx = aEBRK_check_pl_list(&Common_Get(special_event_common).broker.entered_pid, 1);
         if (idx != -1) {
-            msg_no = 0x0789;
+            msg_no = MSG_1929;
         } else {
-            msg_no = 0x788;
+            msg_no = MSG_1928;
         }
     }
 

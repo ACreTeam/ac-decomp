@@ -994,30 +994,31 @@ static int aNSC_check_same_month_ticket(mActor_name_t ticket) {
     return res;
 }
 
+// I tried my best to get these MSG_NUM to line up with what made sense in the message file
 static int aNSC_get_msg_no(int msg_no) {
 #ifndef aNSC_MAMEDANUKI
     if (msg_no < 0) {
-        msg_no = 0x082A;
+        msg_no = MSG_2090;
     } else if (msg_no < 100) {
-        msg_no += 0x107B;
+        msg_no += MSG_4219;
     } else if (msg_no < 200) {
-        msg_no += 0x2BAF;
+        msg_no += MSG_11283 - 100;
     } else if (msg_no < 300) {
-        msg_no += 0x2DE6;
+        msg_no += MSG_11950 - 200;
     } else {
-        msg_no += 0x3CD2;
+        msg_no += MSG_15870 - 300;
     }
 
     return msg_no;
 #else
     if (msg_no < 0) {
-        msg_no = 0x082A;
+        msg_no = MSG_2090;
     } else if (msg_no < 200) {
-        msg_no += 0x16FD;
+        msg_no += MSG_5885;
     } else if (msg_no < 300) {
-        msg_no += 0x2DE7;
+        msg_no += MSG_11951 - 200;
     } else {
-        msg_no += 0x3CF0;
+        msg_no += MSG_15900 - 300;
     }
 
     return msg_no;
@@ -1123,7 +1124,7 @@ static void aNSC_set_talk_info_message_ctrl_tokubai() {
 
 static void aNSC_set_talk_info_fukubiki(ACTOR* actorx) {
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
-    mDemo_Set_msg_num(0x10E2);
+    mDemo_Set_msg_num(MSG_4322);
 }
 
 static void aNSC_message_ctrl_force_talk_start_normal_day(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
@@ -1569,11 +1570,11 @@ static void aNSC_set_talk_info_start_wait(ACTOR* actorx) {
     int msg_no;
 
     if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
-        msg_no = 0x1722;
+        msg_no = MSG_5922;
     } else if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-        msg_no = 0x10E1;
+        msg_no = MSG_4321;
     } else {
-        msg_no = 0x1713;
+        msg_no = MSG_5907;
     }
 
     mDemo_Set_msg_num(msg_no);
@@ -1727,7 +1728,7 @@ static void aNSC_set_talk_info_start_wait3(ACTOR* actorx) {
 }
 
 static void aNSC_set_talk_info_start_wait4(ACTOR* actorx) {
-    mDemo_Set_msg_num(aNSC_get_msg_no(-1));
+    mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_WAIT));
 }
 
 static void aNSC_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {

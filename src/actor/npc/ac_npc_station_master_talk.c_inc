@@ -12,9 +12,9 @@ typedef struct {
 static void aSTM_set_force_talk_info(ACTOR* actorx) {
     // clang-format off
     static aSTM_talk_data_c dt_tbl[] = {
-        {0x07DD, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL},
-        {0x0966, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL},
-        {0x0965, aSTM_TALK_SAYONARA,   CAMERA2_PROCESS_TALK},
+        { MSG_2013, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL },
+        { MSG_2406, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL },
+        { MSG_2405, aSTM_TALK_SAYONARA,   CAMERA2_PROCESS_TALK },
     };
     // clang-format on
 
@@ -48,10 +48,10 @@ static void aSTM_force_talk_request(ACTOR* actorx, GAME* game) {
 static void aSTM_set_norm_talk_info(ACTOR* actorx) {
     // clang-format off
     static aSTM_talk_data_c dt_tbl[] = {
-        {0x0831,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
-        {0x07ED,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
-        {0x0943, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
-        {0x095C, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
+        { MSG_2097,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
+        { MSG_2029,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
+        { MSG_2371, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
+        { MSG_2396, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
     };
     // clang-format on
 
@@ -63,7 +63,7 @@ static void aSTM_set_norm_talk_info(ACTOR* actorx) {
         CLIP(station_clip)->change_talk_proc(actorx, aSTM_TALK_END_WAIT);
     } else {
         if (actor->talk_idx == 2 && !Save_Get(save_exist)) {
-            mDemo_Set_msg_num(0x0945);
+            mDemo_Set_msg_num(MSG_2373);
             actor->talk_proc = (aSTM_TALK_PROC)none_proc1;
         } else {
             mDemo_Set_msg_num(data_p->msg_no);

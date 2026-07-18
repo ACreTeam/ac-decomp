@@ -167,12 +167,12 @@ static int aPOL_check_player(void) {
 }
 
 static void aPOL_set_force_talk_info_talk_request(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x0771);
+    mDemo_Set_msg_num(MSG_1905);
     mDemo_Set_talk_turn(FALSE);
 }
 
 static void aPOL_set_norm_talk_info_talk_request(ACTOR* actorx) {
-    static int msg_table[] = { 0x0772, 0x0773, 0x0774, 0x0775, 0x18C6, 0x18C7, 0x18C8, 0x18C9 };
+    static int msg_table[] = { MSG_1906, MSG_1907, MSG_1908, MSG_1909, MSG_6342, MSG_6343, MSG_6344, MSG_6345 };
     int now_sec = Common_Get(time.now_sec);
     int idx = 0;
 

@@ -120,7 +120,7 @@ static void aPST_set_talk_info(ACTOR* actorx) {
     PRESENT_NPC_ACTOR* actor = (PRESENT_NPC_ACTOR*)actorx;
     ACTOR* demo_actorx;
     int looks = mNpc_GetNpcLooks(actorx);
-    int msg_no = 0x319F;
+    int msg_no = MSG_12703;
     aPST_TALK_PROC talk_proc = aPST_present_send_start_wait_talk_proc;
 
     if (CLIP(demo_clip2) != NULL && CLIP(demo_clip2)->type == mDemo_CLIP_TYPE_PRESENT_DEMO) {
@@ -131,47 +131,47 @@ static void aPST_set_talk_info(ACTOR* actorx) {
 
             switch (demo_actor->type) {
                 case aPRD_TYPE_BIRTHDAY:
-                    msg_no = 0x319F + looks * 6 + RANDOM(3);
+                    msg_no = MSG_12703 + looks * 6 + RANDOM(3);
                     break;
                 case aPRD_TYPE_GOLDEN_ROD:
                     if (aPST_check_first_present(aPST_PRESENT_TYPE_GOLDEN_ROD) == TRUE) {
-                        msg_no = 0x31C3;
+                        msg_no = MSG_12739;
                     } else {
-                        msg_no = 0x31C7;
+                        msg_no = MSG_12743;
                     }
                     break;
                 case aPRD_TYPE_GOLDEN_NET:
                     if (aPST_check_first_present(aPST_PRESENT_TYPE_GOLDEN_NET) == TRUE) {
-                        msg_no = 0x31C5;
+                        msg_no = MSG_12741;
                     } else {
-                        msg_no = 0x31C9;
+                        msg_no = MSG_12745;
                     }
                     break;
                 case aPRD_TYPE_SONCHO_VACATION0_CONTRIBUTED:
                     if (mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) == -1) {
-                        msg_no = 0x33FF;
+                        msg_no = MSG_13311;
                         talk_proc = (aPST_TALK_PROC)none_proc1;
                     } else {
-                        msg_no = 0x33FD;
+                        msg_no = MSG_13309;
                         mSC_LightHouse_Event_Clear(-1);
                     }
                     break;
                 case aPRD_TYPE_SONCHO_VACATION1_CONTRIBUTED:
                     if (mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) == -1) {
-                        msg_no = 0x3416;
+                        msg_no = MSG_13334;
                         talk_proc = (aPST_TALK_PROC)none_proc1;
                     } else {
-                        msg_no = 0x3414;
+                        msg_no = MSG_13332;
                         mSC_LightHouse_Event_Clear(-1);
                     }
                     break;
                 case aPRD_TYPE_SONCHO_VACATION0_STARTED:
-                    msg_no = 0x3400;
+                    msg_no = MSG_13312;
                     talk_proc = (aPST_TALK_PROC)none_proc1;
                     mSC_LightHouse_Event_Clear(-1);
                     break;
                 case aPRD_TYPE_SONCHO_VACATION1_STARTED:
-                    msg_no = 0x3417;
+                    msg_no = MSG_13335;
                     talk_proc = (aPST_TALK_PROC)none_proc1;
                     mSC_LightHouse_Event_Clear(-1);
                     break;

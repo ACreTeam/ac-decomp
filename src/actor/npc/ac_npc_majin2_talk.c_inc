@@ -23,9 +23,9 @@ typedef struct {
 
 static void aMJN2_set_force_talk_info(ACTOR* actorx) {
     static aMJN2_talk_data_c dt_tbl[] = {
-        { 0x235D, (aMJN2_TALK_PROC)none_proc1 },
-        { 0x235E, (aMJN2_TALK_PROC)none_proc1 },
-        { 0x235F, (aMJN2_TALK_PROC)none_proc1 },
+        { MSG_9053, (aMJN2_TALK_PROC)none_proc1 },
+        { MSG_9054, (aMJN2_TALK_PROC)none_proc1 },
+        { MSG_9055, (aMJN2_TALK_PROC)none_proc1 },
     };
     NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
     aMJN2_talk_data_c* data_p = &dt_tbl[actor->force_talk_idx];
@@ -47,7 +47,7 @@ static void aMJN2_force_talk_request(ACTOR* actorx, GAME* game) {
 
 static void aMJN2_set_norm_talk_info(ACTOR* actorx) {
     static aMJN2_talk_data_c dt_tbl[] = {
-        { 0x2360, aMJN2_wait_talk_proc },
+        { MSG_9056, aMJN2_wait_talk_proc },
     };
     NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
     aMJN2_talk_data_c* data_p = &dt_tbl[actor->norm_talk_idx];
@@ -84,7 +84,7 @@ static int aMJN2_talk_end_chk(ACTOR* actorx, GAME* game) {
                 mBGMPsComp_delete_ps_quietField();
                 break;
         }
-        
+
         Common_Set(reset_type, 0);
         aMJN2_setup_think_proc(actor, play, actor->next_think_idx);
         ret = TRUE;

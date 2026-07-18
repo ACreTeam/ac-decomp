@@ -5,8 +5,8 @@ typedef struct {
 
 static void aMJN4_set_force_talk_info(ACTOR* actorx) {
     static aMJN4_talk_data_c dt_tbl[] = {
-        { 0x250F, (aMJN4_TALK_PROC)none_proc1 },
-        { 0x2512, (aMJN4_TALK_PROC)none_proc1 },
+        { MSG_9487, (aMJN4_TALK_PROC)none_proc1 },
+        { MSG_9490, (aMJN4_TALK_PROC)none_proc1 },
     };
     NPC_MAJIN4_ACTOR* actor = (NPC_MAJIN4_ACTOR*)actorx;
     aMJN4_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
@@ -37,7 +37,8 @@ static int aMJN4_talk_init(ACTOR* actorx, GAME* game) {
     NPC_MAJIN4_ACTOR* actor = (NPC_MAJIN4_ACTOR*)actorx;
     int ret = FALSE;
 
-    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 && actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 &&
+        actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
 
         actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
         actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
@@ -45,7 +46,7 @@ static int aMJN4_talk_init(ACTOR* actorx, GAME* game) {
         aMJN4_talk_init2(actorx, game);
         ret = TRUE;
     }
-    
+
     return ret;
 }
 

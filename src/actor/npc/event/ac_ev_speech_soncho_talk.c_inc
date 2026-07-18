@@ -121,14 +121,14 @@ void aESS_set_norm_talk_info(ACTOR* actorx) {
     int msg_no;
     aGHC_Clip_c* clip = CLIP(groundhog_control_clip);
     if (clip != NULL && clip->now_term != aGHC_TERM_EVENT_TIME) {
-        msg_no = mString_SPEECH_SONCHO_START + 1 + (int)RANDOM_F(5);
+        msg_no = mString_SPEECH_SONCHO_START + 1 + RANDOM(5);
     } else {
         switch (Common_Get(weather)) {
             case mEnv_WEATHER_CLEAR:
-                msg_no = mString_SPEECH_SONCHO_START + 6 + (int)RANDOM_F(5);
+                msg_no = mString_SPEECH_SONCHO_START + 6 + RANDOM(5);
                 break;
             case mEnv_WEATHER_SNOW:
-                msg_no = mString_SPEECH_SONCHO_START + 11 + (int)RANDOM_F(5);
+                msg_no = mString_SPEECH_SONCHO_START + 11 + RANDOM(5);
                 break;
             default:
                 msg_no = mString_SPEECH_SONCHO_START + 6;
