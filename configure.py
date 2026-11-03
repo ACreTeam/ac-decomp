@@ -296,6 +296,28 @@ else:
 
 # Helper function for Dolphin libraries
 def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+    # TP has no GBA or OdemuExi2 implementation; keep the existing sources.
+    if config.version == "GAFU01_00" and lib_name not in ("gba", "OdemuExi2"):
+        # The Australian SDK has no GXStubs object.
+        objects = [obj for obj in objects if obj.name != "dolphin/gx/GXStubs.c"]
+        if lib_name == "dvd":
+            objects += [
+                Object(False, "dolphin/dvd/dvdidutils.c"),
+                Object(False, "dolphin/dvd/dvdFatal.c"),
+            ]
+        for obj in objects:
+            # Australia's splits retain archive names, unlike the US splits.
+            obj.options["source"] = obj.name.removeprefix("dolphin/")
+            obj.name = f"{lib_name}.a/{Path(obj.name).name}"
+            obj.completed = obj.name in dolphin26_matching_objects or Equivalent
+        return {
+            "lib": lib_name,
+            "mw_version": "GC/1.2.5n",
+            "cflags": cflags_dolphin26,
+            "progress_category": "sdk",
+            "src_dir": f"{dolphin26_src_dir}/src",
+            "objects": objects,
+        }
     return {
         "lib": lib_name,
         "mw_version": "GC/1.2.5n",
@@ -307,6 +329,10 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 
 
 def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+    if config.version == "GAFU01_00":
+        lib = DolphinLib(lib_name, objects)
+        lib["mw_version"] = "GC/1.2.5"
+        return lib
     return {
         "lib": lib_name,
         "mw_version": "GC/1.2.5",
@@ -427,6 +453,80 @@ runtime26_objects = [
     Object(Matching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
     Object(Matching, "Runtime.PPCEABI.H/__mem.c"),
     Object(Matching, "Runtime.PPCEABI.H/__va_arg.c"),
+]
+
+
+# TP's GameCube Dolphin SDK, isolated from the original US SDK headers.
+# The SDK itself uses GC/1.2.5n (GC/1.2.5 for mtx), not TP's GC/2.7 game compiler.
+dolphin26_src_dir = "src/static/dolphin/2.6"
+# Verified at 100% for code and data against GAFU01_00 in objdiff.
+# __start and dsp score 100% for target symbols but also emit extra functions
+# owned by other Australian objects, so they remain nonmatching.
+dolphin26_matching_objects = {
+    "base.a/PPCArch.c",
+    "os.a/OSAlarm.c",
+    "os.a/OSAlloc.c",
+    "os.a/OSArena.c",
+    "os.a/OSAudioSystem.c",
+    "os.a/OSCache.c",
+    "os.a/OSContext.c",
+    "os.a/OSError.c",
+    "os.a/OSInterrupt.c",
+    "os.a/OSLink.c",
+    "os.a/OSMessage.c",
+    "os.a/OSMemory.c",
+    "os.a/OSMutex.c",
+    "os.a/OSResetSW.c",
+    "os.a/OSRtc.c",
+    "os.a/OSSync.c",
+    "os.a/OSTime.c",
+    "db.a/db.c",
+    "mtx.a/mtxvec.c",
+    "mtx.a/mtx44.c",
+    "mtx.a/vec.c",
+    "dvd.a/dvdlow.c",
+    "dvd.a/dvdqueue.c",
+    "dvd.a/dvderror.c",
+    "dvd.a/dvdFatal.c",
+    "pad.a/Padclamp.c",
+    "card.a/CARDBlock.c",
+    "card.a/CARDDir.c",
+    "card.a/CARDCheck.c",
+    "card.a/CARDFormat.c",
+    "card.a/CARDCreate.c",
+    "card.a/CARDRead.c",
+    "card.a/CARDWrite.c",
+    "card.a/CARDDelete.c",
+    "card.a/CARDStat.c",
+    "card.a/CARDStatEx.c",
+    "card.a/CARDNet.c",
+    "gx.a/GXFrameBuf.c",
+    "gx.a/GXTexture.c",
+    "gx.a/GXBump.c",
+    "gx.a/GXTransform.c",
+    "gx.a/GXPerf.c",
+    "amcstubs.a/AmcExi2Stubs.c",
+    "odenotstub.a/odenotstub.c",
+}
+cflags_dolphin26 = [
+    f"-i {dolphin26_src_dir}/include",
+    f"-i {dolphin26_src_dir}/include/dolphin",
+    f"-i {mwcc26_src_dir}/include",
+    f"-i {mwcc26_src_dir}/include/MSL_C",
+    f"-i {mwcc26_src_dir}/include/Runtime",
+    f"-ir {dolphin26_src_dir}/src",
+    *[
+        flag for flag in cflags_base
+        if flag not in ("-i include/dolphin", "-i include/libc", "-i src/static/dolphin")
+    ],
+    "-O4,p",
+    "-inline auto",
+    "-RTTI off",
+    "-str reuse",
+    "-fp_contract off",
+    "-char unsigned",
+    "-D__GEKKO__",
+    "-DSDK_REVISION=2",
 ]
 
 
