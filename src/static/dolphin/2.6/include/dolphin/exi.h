@@ -74,6 +74,7 @@ typedef struct EXIControl {
     } queue[3];
 } EXIControl;
 
+u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 EXICallback EXISetExiCallback(s32 channel, EXICallback callback);
 
 void EXIInit(void);

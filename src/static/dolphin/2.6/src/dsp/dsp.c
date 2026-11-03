@@ -55,33 +55,7 @@ void DSPAssertInt(void) {
     OSRestoreInterrupts(old);
 }
 
-void DSPInit(void) {
-    BOOL old;
-    u16 tmp;
-
-    __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", BUILD_DATE, BUILD_TIME);
-
-    if (__DSP_init_flag == 1)
-        return;
-
-    OSRegisterVersion(__DSPVersion);
-
-    old = OSDisableInterrupts();
-    __OSSetInterruptHandler(7, __DSPHandler);
-    __OSUnmaskInterrupts(OS_INTERRUPTMASK_DSP_DSP);
-
-    tmp = __DSPRegs[5];
-    tmp = (tmp & ~0xA8) | 0x800;
-    __DSPRegs[5] = tmp;
-
-    tmp = __DSPRegs[5];
-    __DSPRegs[5] = tmp = tmp & ~0xAC;
-
-    __DSP_first_task = __DSP_last_task = __DSP_curr_task = __DSP_tmp_task = NULL;
-    __DSP_init_flag = 1;
-
-    OSRestoreInterrupts(old);
-}
+// Animal Crossing supplies DSPInit in jaudio_NES/internal/dspboot.c.
 
 BOOL DSPCheckInit(void) {
     return __DSP_init_flag;

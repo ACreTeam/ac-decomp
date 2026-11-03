@@ -121,7 +121,7 @@ do { \
     VERIF_RAS_REG(value); \
 } while (0)
 
-#if DEBUG
+// The Australian SDK retains indexed-array shadow state in release builds.
 #define GX_WRITE_SOME_REG2(a, b, c, addr) \
 do { \
     long regAddr; \
@@ -133,16 +133,7 @@ do { \
         __GXData->indexBase[regAddr] = c; \
     } \
 } while (0)
-#else
-#define GX_WRITE_SOME_REG2(a, b, c, addr) \
-do { \
-    GX_WRITE_U8(a); \
-    GX_WRITE_U8(b); \
-    GX_WRITE_U32(c); \
-} while (0)
-#endif
 
-#if DEBUG
 #define GX_WRITE_SOME_REG3(a, b, c, addr) \
 do { \
     long regAddr; \
@@ -154,14 +145,6 @@ do { \
         __GXData->indexStride[regAddr] = c; \
     } \
 } while (0)
-#else
-#define GX_WRITE_SOME_REG3(a, b, c, addr) \
-do { \
-    GX_WRITE_U8(a); \
-    GX_WRITE_U8(b); \
-    GX_WRITE_U32(c); \
-} while (0)
-#endif
 
 #define GX_WRITE_SOME_REG4(a, b, c, addr) \
 do { \

@@ -19,9 +19,9 @@ extern void __OSInitMemoryProtection(void);
 #define OS_DBJUMPPOINT_ADDR 0x60
 
 #if SDK_REVISION < 1
-#define BUILD_DATE  "Apr  5 2004"
+#define BUILD_DATE  "Jul 23 2003"
 #define DBUILD_TIME "03:55:13"
-#define RBUILD_TIME "04:13:58"
+#define RBUILD_TIME "11:27:16"
 #elif SDK_REVISION < 2
 #define BUILD_DATE  "May 21 2004"
 #define DBUILD_TIME "09:15:32"
@@ -38,9 +38,8 @@ const char* __OSVersion = "<< Dolphin SDK - OS\tdebug build: "BUILD_DATE" "DBUIL
 const char* __OSVersion = "<< Dolphin SDK - OS\trelease build: "BUILD_DATE" "RBUILD_TIME" (0x2301) >>";
 #endif
 
-static DVDDriveInfo DriveInfo;
+static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
-OSExecParams __OSRebootParams;
 
 extern u32 __DVDLongFileNameFlag;
 extern u32 __PADSpec;
@@ -54,13 +53,15 @@ static OSBootInfo* BootInfo;
 static u32* BI2DebugFlag;
 static u32 BI2DebugFlagHolder;
 
+BOOL __OSIsGcam = FALSE;
+static f64 ZeroF;
+static f32 ZeroPS[2];
+static BOOL AreWeInitialized;
+void (**OSExceptionTable)(u8, OSContext*) = NULL;
+static void* __OSSavedRegionEnd;
+static void* __OSSavedRegionStart;
 OSTime __OSStartTime;
 BOOL __OSInIPL;
-void (**OSExceptionTable)(u8, OSContext*);
-BOOL AreWeInitialized;
-f32 ZeroPS[2];
-f64 ZeroF;
-BOOL __OSIsGcam;
 
 // prototypes
 static void __OSInitFPRs(void);
@@ -188,32 +189,41 @@ u32 OSGetConsoleType(void) {
 // needed for assert
 #undef NULL
 #define NULL 0
+extern void* BOOT_REGION_START AT_ADDRESS(0x812FDFF0);
+extern void* BOOT_REGION_END AT_ADDRESS(0x812FDFEC);
 
-static void ClearArena(void) {
-    if (!((OSGetResetCode() & 0x80000000) ? TRUE : FALSE)) {
-        memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
-        return;
-    }
+static void ClearArena()
+{
+	if (OSGetResetCode() != -0x80000000) {
+		__OSSavedRegionStart = NULL;
+		__OSSavedRegionEnd   = NULL;
+		memset(OSGetArenaLo(), 0, (u8*)OSGetArenaHi() - (u8*)OSGetArenaLo());
+		return;
+	}
 
-    if (*(u32*)&__OSRebootParams.regionStart == 0) {
-        memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
-        return;
-    }
+	__OSSavedRegionStart = BOOT_REGION_START;
+	__OSSavedRegionEnd   = BOOT_REGION_END;
 
-    ASSERTLINE(683, __OSRebootParams.regionEnd != NULL);
+	if (BOOT_REGION_START == NULL) {
+		memset(OSGetArenaLo(), 0, (u8*)OSGetArenaHi() - (u8*)OSGetArenaLo());
+		return;
+	}
 
-    if ((u32)OSGetArenaLo() < *(u32*)&__OSRebootParams.regionStart) {
-        if ((u32)OSGetArenaHi() <= *(u32*)&__OSRebootParams.regionStart) {
-            memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
-            return;
-        }
+	if ((u8*)OSGetArenaLo() < (u8*)__OSSavedRegionStart) {
+		if ((u8*)OSGetArenaHi() <= (u8*)__OSSavedRegionStart) {
+			memset(OSGetArenaLo(), 0,
+			       (u8*)OSGetArenaHi() - (u8*)OSGetArenaLo());
+			return;
+		}
 
-        memset(OSGetArenaLo(), 0, *(u32*)&__OSRebootParams.regionStart - (u32)OSGetArenaLo());
+		memset(OSGetArenaLo(), 0,
+		       (u8*)__OSSavedRegionStart - (u8*)OSGetArenaLo());
 
-        if ((u32)OSGetArenaHi() > (u32)__OSRebootParams.regionEnd) {
-            memset(__OSRebootParams.regionEnd, 0, (u32)OSGetArenaHi() - (u32)__OSRebootParams.regionEnd);
-        }
-    }
+		if ((u8*)OSGetArenaHi() > (u8*)__OSSavedRegionEnd) {
+			memset(__OSSavedRegionEnd, 0,
+			       (u8*)OSGetArenaHi() - (u8*)__OSSavedRegionEnd);
+		}
+	}
 }
 
 static void InquiryCallback(s32, DVDCommandBlock* block) {
@@ -237,7 +247,6 @@ void OSInit(void) {
         __OSStartTime = __OSGetSystemTime();
         OSDisableInterrupts();
 
-        __OSGetExecParams(&__OSRebootParams);
         PPCMtmmcr0(0);
         PPCMtmmcr1(0);
         PPCMtpmc1(0);

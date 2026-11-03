@@ -35,7 +35,6 @@ void GXBeginDisplayList(void* list, u32 size) {
     GXSaveCPUFifo((GXFifoObj*)CPUFifo);
     OldCPUFifo = CPUFifo;
     GXSetCPUFifo((GXFifoObj*)&DisplayListFifo);
-    GXResetWriteGatherPipe();
 }
 
 u32 GXEndDisplayList(void) {
@@ -48,7 +47,9 @@ u32 GXEndDisplayList(void) {
 
     CHECK_GXBEGIN(195, "GXEndDisplayList");
     ASSERTMSGLINE(196, __GXData->inDispList == TRUE, "GXEndDisplayList: no display list in progress");
-    GXFlush();
+    if (__GXData->dirtyState != 0) {
+        __GXSetDirtyState();
+    }
 #if DEBUG
     reg = GX_GET_PI_REG(5);
     ov = (reg >> 26) & 1;

@@ -296,7 +296,7 @@ else:
 
 # Helper function for Dolphin libraries
 def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    # TP has no GBA or OdemuExi2 implementation; keep the existing sources.
+    # The imported SDKs have no GBA or OdemuExi2 implementation.
     if config.version == "GAFU01_00" and lib_name not in ("gba", "OdemuExi2"):
         # The Australian SDK has no GXStubs object.
         objects = [obj for obj in objects if obj.name != "dolphin/gx/GXStubs.c"]
@@ -309,7 +309,11 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
             # Australia's splits retain archive names, unlike the US splits.
             obj.options["source"] = obj.name.removeprefix("dolphin/")
             obj.name = f"{lib_name}.a/{Path(obj.name).name}"
-            obj.completed = obj.name in dolphin26_matching_objects or Equivalent
+            if obj.name in dolphin26_mkdd_objects:
+                obj.options["cflags"] = cflags_dolphin26_mkdd
+                obj.completed = Matching
+            else:
+                obj.completed = obj.name in dolphin26_matching_objects or Equivalent
         return {
             "lib": lib_name,
             "mw_version": "GC/1.2.5n",
@@ -331,7 +335,7 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     if config.version == "GAFU01_00":
         lib = DolphinLib(lib_name, objects)
-        lib["mw_version"] = "GC/1.2.5"
+        lib["mw_version"] = "GC/1.2.5n"
         return lib
     return {
         "lib": lib_name,
@@ -456,14 +460,17 @@ runtime26_objects = [
 ]
 
 
-# TP's GameCube Dolphin SDK, isolated from the original US SDK headers.
-# The SDK itself uses GC/1.2.5n (GC/1.2.5 for mtx), not TP's GC/2.7 game compiler.
+# Australian GameCube Dolphin SDK, isolated from the original US SDK headers.
+# The SDK itself uses GC/1.2.5n (GC/1.2.5 for mtx).
 dolphin26_src_dir = "src/static/dolphin/2.6"
 # Verified at 100% for code and data against GAFU01_00 in objdiff.
-# __start and dsp score 100% for target symbols but also emit extra functions
-# owned by other Australian objects, so they remain nonmatching.
 dolphin26_matching_objects = {
+    "ai.a/ai.c",
+    "ar.a/ar.c",
+    "card.a/CARDBios.c",
+    "dsp.a/dsp.c",
     "base.a/PPCArch.c",
+    "os.a/OS.c",
     "os.a/OSAlarm.c",
     "os.a/OSAlloc.c",
     "os.a/OSArena.c",
@@ -476,15 +483,20 @@ dolphin26_matching_objects = {
     "os.a/OSMessage.c",
     "os.a/OSMemory.c",
     "os.a/OSMutex.c",
+    "os.a/OSReboot.c",
     "os.a/OSResetSW.c",
     "os.a/OSRtc.c",
     "os.a/OSSync.c",
+    "os.a/OSThread.c",
     "os.a/OSTime.c",
+    "vi.a/vi.c",
     "db.a/db.c",
+    "mtx.a/mtx.c",
     "mtx.a/mtxvec.c",
     "mtx.a/mtx44.c",
     "mtx.a/vec.c",
     "dvd.a/dvdlow.c",
+    "dvd.a/dvdfs.c",
     "dvd.a/dvdqueue.c",
     "dvd.a/dvderror.c",
     "dvd.a/dvdFatal.c",
@@ -501,6 +513,15 @@ dolphin26_matching_objects = {
     "card.a/CARDStatEx.c",
     "card.a/CARDNet.c",
     "gx.a/GXFrameBuf.c",
+    "gx.a/GXAttr.c",
+    "gx.a/GXLight.c",
+    "gx.a/GXTev.c",
+    "gx.a/GXPixel.c",
+    "gx.a/GXInit.c",
+    "gx.a/GXFifo.c",
+    "gx.a/GXMisc.c",
+    "gx.a/GXGeometry.c",
+    "gx.a/GXDisplayList.c",
     "gx.a/GXTexture.c",
     "gx.a/GXBump.c",
     "gx.a/GXTransform.c",
@@ -508,13 +529,36 @@ dolphin26_matching_objects = {
     "amcstubs.a/AmcExi2Stubs.c",
     "odenotstub.a/odenotstub.c",
 }
-cflags_dolphin26 = [
+# These replacements from MKDD match both code and data in GAFU01_00.
+dolphin26_mkdd_objects = {
+    "ar.a/arq.c",
+    "card.a/CARDMount.c",
+    "card.a/CARDOpen.c",
+    "card.a/CARDRdwr.c",
+    "card.a/CARDRename.c",
+    "dvd.a/dvd.c",
+    "dvd.a/fstload.c",
+    "dvd.a/dvdidutils.c",
+    "exi.a/EXIBios.c",
+    "exi.a/EXIUart.c",
+    "os.a/__ppc_eabi_init.cpp",
+    "os.a/__start.c",
+    "os.a/OSFont.c",
+    "os.a/OSReset.c",
+    "pad.a/Pad.c",
+    "si.a/SIBios.c",
+    "si.a/SISamplingRate.c",
+}
+cflags_dolphin26_includes = [
     f"-i {dolphin26_src_dir}/include",
     f"-i {dolphin26_src_dir}/include/dolphin",
     f"-i {mwcc26_src_dir}/include",
     f"-i {mwcc26_src_dir}/include/MSL_C",
     f"-i {mwcc26_src_dir}/include/Runtime",
     f"-ir {dolphin26_src_dir}/src",
+]
+cflags_dolphin26 = [
+    *cflags_dolphin26_includes,
     *[
         flag for flag in cflags_base
         if flag not in ("-i include/dolphin", "-i include/libc", "-i src/static/dolphin")
@@ -524,9 +568,24 @@ cflags_dolphin26 = [
     "-RTTI off",
     "-str reuse",
     "-fp_contract off",
-    "-char unsigned",
+    "-char signed",
     "-D__GEKKO__",
-    "-DSDK_REVISION=2",
+    "-DSDK_REVISION=0",
+]
+# These TUs use different compiler options with the same consolidated headers.
+cflags_dolphin26_mkdd = [
+    *cflags_dolphin26_includes,
+    *[flag for flag in cflags_base if not flag.startswith("-i ")],
+    "-O4,p",
+    "-inline auto",
+    "-RTTI off",
+    "-str reuse",
+    "-fp_contract off",
+    "-char signed",
+    "-use_lmw_stmw on",
+    "-common off",
+    "-fp fmadd",
+    "-DMATCHING=1",
 ]
 
 

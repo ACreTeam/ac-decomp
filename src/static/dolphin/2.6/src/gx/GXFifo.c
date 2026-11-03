@@ -284,7 +284,6 @@ static void __GXSaveFifoPIStat(__GXFifoObj* realFifo) {
 void GXSaveCPUFifo(GXFifoObj* fifo) {
     __GXFifoObj* realFifo = (__GXFifoObj*)fifo;
     ASSERTMSGLINE(LINE(835, 835, 900), realFifo == CPUFifo, "GXSaveCPUFifo: fifo is not attached to CPU");
-    GXFlush();
     __GXSaveCPUFifoAux(realFifo);
 }
 
@@ -292,6 +291,7 @@ void __GXSaveCPUFifoAux(__GXFifoObj* realFifo) {
     BOOL enabled = OSDisableInterrupts();
 
 #if SDK_REVISION < 2
+    GXFlush();
     realFifo->base = OSPhysicalToCached(GX_GET_PI_REG(3));
     realFifo->top = OSPhysicalToCached(GX_GET_PI_REG(4));
     realFifo->wrPtr = OSPhysicalToCached(GX_GET_PI_REG(5) & 0xFBFFFFFF);

@@ -108,16 +108,11 @@ void GXSetCullMode(GXCullMode mode) {
     GXCullMode hwMode;
 
     CHECK_GXBEGIN(557, "GXSetCullMode");
-#if DEBUG
     switch (mode) {
     case GX_CULL_FRONT: hwMode = GX_CULL_BACK;  break;
     case GX_CULL_BACK:  hwMode = GX_CULL_FRONT; break;
     default:            hwMode = mode;          break;
     }
-#else
-    hwMode = (mode >> 1) & 1;
-    __rlwimi(hwMode, mode, 1, 30, 30);
-#endif
 
     SET_REG_FIELD(570, __GXData->genMode, 2, 14, hwMode);
     __GXData->dirtyState |= 4;

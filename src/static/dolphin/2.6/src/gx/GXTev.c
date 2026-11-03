@@ -207,20 +207,20 @@ void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 }
 
 void GXSetTevColor(GXTevRegID id, GXColor color) {
-    u32 rgba;
     u32 regRA;
     u32 regBG;
 
     CHECK_GXBEGIN(740, "GXSetTevColor");
-    rgba = *(u32*)&color;
+    regRA = 0;
+    SET_REG_FIELD(745, regRA, 11, 0, color.r);
+    SET_REG_FIELD(746, regRA, 11, 12, color.a);
 
-    regRA = (0xE0 + id * 2) << 24;
-    SET_REG_FIELD(745, regRA, 8, 0, rgba >> 24);
-    SET_REG_FIELD(746, regRA, 8, 12, rgba & 0xFF);
+    regBG = 0;
+    SET_REG_FIELD(749, regBG, 11, 0, color.b);
+    SET_REG_FIELD(750, regBG, 11, 12, color.g);
 
-    regBG = (0xE1 + id * 2) << 24;
-    SET_REG_FIELD(749, regBG, 8, 0, (rgba >> 8) & 0xFF);
-    SET_REG_FIELD(750, regBG, 8, 12, (rgba >> 16) & 0xFF);
+    SET_REG_FIELD(751, regRA, 8, 24, 0xE0 + id * 2);
+    SET_REG_FIELD(752, regBG, 8, 24, 0xE1 + id * 2);
 
     GX_WRITE_RAS_REG(regRA);
     GX_WRITE_RAS_REG(regBG);

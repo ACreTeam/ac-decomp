@@ -23,7 +23,6 @@ void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor
     u32 c_hex;
     u32 fsel;
     u32 proj;
-    u32 rgba;
 
     fogclr = 0;
     fog0 = 0;
@@ -98,8 +97,9 @@ void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor
     SET_REG_FIELD(218, fog3, 3, 21, fsel);
     SET_REG_FIELD(218, fog3, 8, 24, 0xF1);
 
-    rgba = *(u32*)&color;
-    SET_REG_FIELD(222, fogclr, 24, 0, rgba >> 8);
+    SET_REG_FIELD(222, fogclr, 8, 0, color.b);
+    SET_REG_FIELD(222, fogclr, 8, 8, color.g);
+    SET_REG_FIELD(222, fogclr, 8, 16, color.r);
     SET_REG_FIELD(222, fogclr, 8, 24, 0xF2);
 
     GX_WRITE_RAS_REG(fog0);

@@ -40,3 +40,4 @@ compile_commands.json
 temp/
 docs/
 tools/mwcc/
+*.d

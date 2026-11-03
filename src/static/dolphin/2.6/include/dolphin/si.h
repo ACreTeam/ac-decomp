@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+#define SI_CHAN0_BIT 0x80000000u
+#define SI_MAX_COMCSR_INLNGTH 128
+#define SI_MAX_COMCSR_OUTLNGTH 128
 #define SI_MAX_CHAN 4
 #define SI_MAX_TYPE 4
 

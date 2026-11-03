@@ -5,7 +5,7 @@
 #if DEBUG
 const char* __CARDVersion = "<< Dolphin SDK - CARD\tdebug build: Apr  5 2004 03:56:53 (0x2301) >>";
 #else
-const char* __CARDVersion = "<< Dolphin SDK - CARD\trelease build: Apr  5 2004 04:15:35 (0x2301) >>";
+const char* __CARDVersion = "<< Dolphin SDK - CARD\trelease build: Apr 17 2003 12:34:19 (0x2301) >>";
 #endif
 
 u32 __CARDFreq = EXI_FREQ_16M;
@@ -294,11 +294,6 @@ static void SetupTimeoutAlarm(CARDControl* card) {
     case 0xF3:
         break;
     case 0xF4:
-        if (card->pageSize > 0x80) {
-            OSSetAlarm(&card->alarm, OSSecondsToTicks((OSTime)2) * (card->cBlock / 0x40),
-                       TimeoutHandler);
-            break;
-        }
     case 0xF1:
         OSSetAlarm(&card->alarm, OSSecondsToTicks((OSTime)2) * (card->sectorSize / 0x2000),
                    TimeoutHandler);
@@ -339,7 +334,7 @@ static s32 Retry(s32 chan) {
         return CARD_RESULT_READY;
     }
 
-    if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : card->pageSize), card->mode,
+    if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : 128), card->mode,
                 __CARDTxHandler))
     {
         EXIDeselect(chan);
@@ -487,13 +482,7 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
     ASSERTLINE(905, card->addr % card->pageSize == 0);
     ASSERTLINE(906, card->addr < (u32) card->size * 1024 * 1024 / 8);
     card->cmd[0] = 0xF2;
-
-    if (card->pageSize > 0x80) {
-        card->cmd[1] = AD1(card->addr) | 0x80;
-    } else {
-        card->cmd[1] = AD1(card->addr);
-    }
-
+    card->cmd[1] = AD1(card->addr);
     card->cmd[2] = AD2(card->addr);
     card->cmd[3] = AD3(card->addr);
     card->cmd[4] = BA(card->addr);
@@ -506,7 +495,7 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
         result = CARD_RESULT_READY;
     } else if (result >= 0) {
         if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE) ||
-            !EXIDma(chan, card->buffer, card->pageSize, card->mode, __CARDTxHandler))
+            !EXIDma(chan, card->buffer, 128, card->mode, __CARDTxHandler))
         {
             card->exiCallback = 0;
             EXIDeselect(chan);
@@ -560,13 +549,6 @@ s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback) {
     card = &__CARDBlock[chan];
     ASSERTLINE(1012, addr % card->sectorSize == 0);
     ASSERTLINE(1013, addr < (u32) card->size * 1024 * 1024 / 8);
-
-    if (card->pageSize > 0x80) {
-        if (callback) {
-            callback(chan, 0);
-        }
-        return 0;
-    }
 
     card->cmd[0] = 0xF1;
     card->cmd[1] = AD1(addr);
@@ -784,6 +766,8 @@ s32 CARDGetMemSize(s32 chan, u16* size) {
     return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
+// The Australian executable retains this unreferenced API entry point.
+#pragma force_active on
 s32 CARDGetSectorSize(s32 chan, u32* size) {
     CARDControl* card;
     s32 result;
@@ -796,6 +780,8 @@ s32 CARDGetSectorSize(s32 chan, u32* size) {
     *size = card->sectorSize;
     return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
+
+#pragma force_active reset
 
 s32 __CARDSync(s32 chan) {
     CARDControl* block;

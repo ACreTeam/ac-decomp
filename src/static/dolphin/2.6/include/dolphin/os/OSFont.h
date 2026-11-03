@@ -8,6 +8,7 @@
 extern "C" {
 #endif
 
+#define OS_FONT_ENCODE_NULL 0xFFFFu
 #define OS_FONT_ENCODE_ANSI 0u
 #define OS_FONT_ENCODE_SJIS 1u
 #define OS_FONT_ENCODE_MAX  5u

@@ -54,19 +54,33 @@ add_relocations:
   type: l
   target: __ArenaHi
 
+# OSExceptionInit: the interrupt-vector end aliases the debug jump start.
+- source: .text:0x8007ED14
+  type: ha
+  target: __OSDBINTEND
+- source: .text:0x8007ED18
+  type: l
+  target: __OSDBINTEND
+- source: .text:0x8007ED4C
+  type: ha
+  target: __OSDBJUMPSTART
+- source: .text:0x8007ED54
+  type: l
+  target: __OSDBJUMPSTART
+
 # OSThread.c
-# - source: .text:0x8007DC18
-#   type: ha
-#   target: _stack_addr
-# - source: .text:0x8007DC1C
-#   type: l
-#   target: _stack_addr
-# - source: .text:0x8007DC20
-#   type: ha
-#   target: _stack_end
-# - source: .text:0x8007DC28
-#   type: l
-#   target: _stack_end
+- source: .text:0x80084484
+  type: ha
+  target: _stack_addr
+- source: .text:0x80084488
+  type: l
+  target: _stack_addr
+- source: .text:0x8008448C
+  type: ha
+  target: _stack_end
+- source: .text:0x80084494
+  type: l
+  target: _stack_end
 
 # emu64
 # - source: .text:0x8004F4F4 # setup_texture_tile (inlined texture_cache_select)

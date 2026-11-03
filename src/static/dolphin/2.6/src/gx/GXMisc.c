@@ -98,13 +98,7 @@ void __GXAbort(void) {
 
 void GXAbortFrame(void) {
     __GXAbort();
-
-    if (GXGetGPFifo() != (GXFifoObj*)NULL) {
-        __GXCleanGPFifo();
-        __GXInitRevisionBits();
-        __GXData->dirtyState = 0;
-        GXFlush();
-    }
+    __GXCleanGPFifo();
 }
 
 void GXSetDrawSync(u16 token) {
