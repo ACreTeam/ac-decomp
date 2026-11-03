@@ -38,3 +38,4 @@ compile_commands.json
 
 # For saving work files into (like IDB)
 temp/
+docs/

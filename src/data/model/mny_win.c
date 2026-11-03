@@ -10,15 +10,15 @@ u8 mny_win_money_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/mny_win_money_tex.inc"
 };
 
-static u8 fri_win_bell_tex[] = {
+static u8 fri_win_bell_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/mny_win/fri_win_bell_tex.inc"
 };
 
-u8 mny_win_u_tex[] = {
+u8 mny_win_u_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/mny_win_u_tex.inc"
 };
 
-Vtx mny_win_v[] = {
+Vtx mny_win_v[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/mny_win_v.inc"
 };
 

@@ -2,12 +2,12 @@
 
 void mi_tentou_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
-    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    f32 dist = search_position_distance(&actor->position, &player->actor_class.world.position);
     if (dist < 80.f) {
         if (player->actor_class.speed > 1.4f) {
-            actor->_80 += (s16)((dist / 80.f) * 8.f);
+            actor->work_s[8] += (s16)((dist / 80.f) * 8.f);
         } else if (player->actor_class.speed > 5.f) {
-            actor->_80 += (s16)((dist / 80.f) * 20.f);
+            actor->work_s[8] += (s16)((dist / 80.f) * 20.f);
         }
     }
 }
@@ -21,238 +21,238 @@ xyz_t tentou_flower_pos[4] = {
 
 void mi_tentou_kama_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
     static f32 scaleX_table[7] = { 1.f, 0.95f, 1.15f, 0.95f, 1.15f, 0.95f, 1.15f };
-    if (actor->_7E < 7) {
-        if (chase_f(&actor->_5C, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_7E], 0.115f) == 1) {
-            actor->_7E--;
-            if (actor->_7E < 0) {
-                actor->_7E = (s16)(RANDOM_F(2.0F) * 60.0f) + 67;
+    if (actor->work_s[7] < 7) {
+        if (chase_f(&actor->params.work_f[1], (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->work_s[7]], 0.115f) == 1) {
+            actor->work_s[7]--;
+            if (actor->work_s[7] < 0) {
+                actor->work_s[7] = (s16)(RANDOM_F(2.0F) * 60.0f) + 67;
             }
         }
     } else {
-        actor->_7E--;
+        actor->work_s[7]--;
     }
 }
 
 void mi_tentou_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)(RANDOM_F(300.f)) + 100.f;
-    actor->_7C = (int)(RANDOM_F(20.f)) + 5.f;
-    if (actor->_8E == 0 && actor->_00 != 32) {
-        actor->_6E *= 10;
+    actor->process_timer = (int)(RANDOM_F(300.f)) + 100.f;
+    actor->work_s[6] = (int)(RANDOM_F(20.f)) + 5.f;
+    if (actor->is_active == 0 && actor->insect_type != 32) {
+        actor->process_timer *= 10;
     }
 }
 
 void mi_tentou_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E--;
-    actor->_7C--;
-    if (actor->_7C < 0) {
-        if (actor->_76 != 0) {
-            actor->_76 = 0;
-            actor->_7C = (int)RANDOM_F(20.f) + 5.f;
+    actor->process_timer--;
+    actor->work_s[6]--;
+    if (actor->work_s[6] < 0) {
+        if (actor->work_s[3] != 0) {
+            actor->work_s[3] = 0;
+            actor->work_s[6] = (int)RANDOM_F(20.f) + 5.f;
         } else {
-            actor->_76 = 910;
-            actor->_72 = qrand();
+            actor->work_s[3] = 910;
+            actor->work_s[1] = qrand();
         }
     }
-    if (actor->_6E < 0 && actor->_74 == 0) {
+    if (actor->process_timer < 0 && actor->work_s[2] == 0) {
         mi_tentou_setupAction(actor, 1, game);
     }
-    add_calc_short_angle2(&actor->_68.y, actor->_72, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.25f), DEG2SHORT_ANGLE(0.125f));
-    if (actor->_00 != 32) {
-        add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(0.8f), DEG2SHORT_ANGLE(1.f), DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->rotation.y, actor->work_s[1], CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.25f), DEG2SHORT_ANGLE(0.125f));
+    if (actor->insect_type != 32) {
+        add_calc_short_angle2(&actor->work_s[2], actor->work_s[3], CALC_EASE2(0.8f), DEG2SHORT_ANGLE(1.f), DEG2SHORT_ANGLE(0.25f));
     } else {
-        add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.25f));
+        add_calc_short_angle2(&actor->work_s[2], actor->work_s[3], CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.25f));
     }
 }
 
 void mi_tentou_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)RANDOM_F(300.f) + 30.f;
+    actor->process_timer = (int)RANDOM_F(300.f) + 30.f;
 }
 
 void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    xyz_t* tentou_pos = &tentou_flower_pos[actor->_70];
-    if (actor->_6E-- > 0 && actor->_40 > 0.0f) {
-        if (actor->_74 == actor->_76) {
-            if (actor->_76 != 0) {
-                actor->_76 = 0;
+    xyz_t* tentou_pos = &tentou_flower_pos[actor->work_s[0]];
+    if (actor->process_timer-- > 0 && actor->speed > 0.0f) {
+        if (actor->work_s[2] == actor->work_s[3]) {
+            if (actor->work_s[3] != 0) {
+                actor->work_s[3] = 0;
             } else {
-                actor->_76 = 910;
+                actor->work_s[3] = 910;
             }
         }
-        if (actor->_8C & 2) {
+        if (actor->flags & 2) {
             xyz_t p;
             s16 ang;
-            xyz_t_sub(tentou_pos, &actor->_1C, &p);
+            xyz_t_sub(tentou_pos, &actor->position, &p);
             ang = atans_table(p.z, p.x);
-            if ((s16)(ang - actor->_68.y) > 0) {
-                actor->_72 = ang - DEG2SHORT_ANGLE2(90);
+            if ((s16)(ang - actor->rotation.y) > 0) {
+                actor->work_s[1] = ang - DEG2SHORT_ANGLE2(90);
             } else {
-                actor->_72 = ang + DEG2SHORT_ANGLE2(90);
+                actor->work_s[1] = ang + DEG2SHORT_ANGLE2(90);
             }
         } else {
-            if (ABS((s16)(actor->_68.y - actor->_72)) < 3640) {
-                actor->_72 = qrand();
+            if (ABS((s16)(actor->rotation.y - actor->work_s[1])) < 3640) {
+                actor->work_s[1] = qrand();
             }
         }
-        if (actor->_00 != 32) {
-            add_calc_short_angle2(&actor->_68.y, actor->_72, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(2.125),
+        if (actor->insect_type != 32) {
+            add_calc_short_angle2(&actor->rotation.y, actor->work_s[1], CALC_EASE2(0.5f), DEG2SHORT_ANGLE(2.125),
                                   DEG2SHORT_ANGLE(0.25));
         } else {
-            add_calc_short_angle2(&actor->_68.y, actor->_72, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(0.25),
+            add_calc_short_angle2(&actor->rotation.y, actor->work_s[1], CALC_EASE2(0.2f), DEG2SHORT_ANGLE(0.25),
                                   DEG2SHORT_ANGLE(0.125));
         }
     } else {
-        if (actor->_40 > 0.0f) {
-            actor->_40 = 0.0f;
-            actor->_6E = (int)RANDOM_F(300.f) + 100.f;
-            if (actor->_8E == 0 && actor->_00 != 32) {
-                actor->_6E <<= 1;
+        if (actor->speed > 0.0f) {
+            actor->speed = 0.0f;
+            actor->process_timer = (int)RANDOM_F(300.f) + 100.f;
+            if (actor->is_active == 0 && actor->insect_type != 32) {
+                actor->process_timer <<= 1;
             }
         }
-        if (actor->_6E-- < 0) {
+        if (actor->process_timer-- < 0) {
             if (RANDOM_F(1.0f) > 0.9f) {
                 mi_tentou_setupAction(actor, 0, game);
                 return;
             }
-            actor->_40 = actor->_58;
-            actor->_6E = (int)RANDOM_F(300.f) + 30.f;
-            if (actor->_00 == 32) {
-                actor->_6E <<= 1;
+            actor->speed = actor->params.work_f[0];
+            actor->process_timer = (int)RANDOM_F(300.f) + 30.f;
+            if (actor->insect_type == 32) {
+                actor->process_timer <<= 1;
             }
         }
     }
     mID_insect_moveF(actor);
-    actor->_34.y += actor->_44.y;
+    actor->velocity.y += actor->_44.y;
     minsect_flower_BGCheck(actor, tentou_pos);
-    if (actor->_00 != 32) {
-        add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(0.8f), DEG2SHORT_ANGLE(1.0f), DEG2SHORT_ANGLE(0.25f));
+    if (actor->insect_type != 32) {
+        add_calc_short_angle2(&actor->work_s[2], actor->work_s[3], CALC_EASE2(0.8f), DEG2SHORT_ANGLE(1.0f), DEG2SHORT_ANGLE(0.25f));
     } else {
-        add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.25f));
+        add_calc_short_angle2(&actor->work_s[2], actor->work_s[3], CALC_EASE2(0.3f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.25f));
     }
 }
 
 void mi_tentou_menace_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    actor->_6E = (int)RANDOM_F(600.f) + 200.f;
-    actor->_76 = DEG2SHORT_ANGLE(-40);
-    actor->_7C = (int)RANDOM_F(20.f) + 5.f;
-    actor->_7E = (int)(RANDOM_F(2.f) * 60.f) + 67;
+    actor->process_timer = (int)RANDOM_F(600.f) + 200.f;
+    actor->work_s[3] = DEG2SHORT_ANGLE(-40);
+    actor->work_s[6] = (int)RANDOM_F(20.f) + 5.f;
+    actor->work_s[7] = (int)(RANDOM_F(2.f) * 60.f) + 67;
 }
 
 void mi_tentou_menace(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
-    s16 target = search_position_angleY(&actor->_1C, &player->actor_class.world.position);
+    s16 target = search_position_angleY(&actor->position, &player->actor_class.world.position);
     mi_tentou_kama_anime(actor);
-    actor->_6E--;
-    actor->_7C--;
-    if (actor->_7C < 0) {
-        actor->_7C = (int)RANDOM_F(20.f) + 5.f;
-        if (actor->_7A) {
-            actor->_7A = 0;
+    actor->process_timer--;
+    actor->work_s[6]--;
+    if (actor->work_s[6] < 0) {
+        actor->work_s[6] = (int)RANDOM_F(20.f) + 5.f;
+        if (actor->work_s[5]) {
+            actor->work_s[5] = 0;
         } else {
-            actor->_7A = 1274;
+            actor->work_s[5] = 1274;
         }
     }
-    if (actor->_76) {
-        add_calc(&actor->_60, GETREG(NMREG, 0xf) * 0.01f + 5.0f, CALC_EASE(0.1f), 0.25f, 0.05f);
+    if (actor->work_s[3]) {
+        add_calc(&actor->params.work_f[2], GETREG(NMREG, 0xf) * 0.01f + 5.0f, CALC_EASE(0.1f), 0.25f, 0.05f);
     } else {
-        add_calc(&actor->_60, 0.0f, CALC_EASE(0.1f), 0.25f, 0.05f);
+        add_calc(&actor->params.work_f[2], 0.0f, CALC_EASE(0.1f), 0.25f, 0.05f);
     }
-    if (actor->_6E < 0) {
-        actor->_76 = 0;
-        if (actor->_74 == 0) {
+    if (actor->process_timer < 0) {
+        actor->work_s[3] = 0;
+        if (actor->work_s[2] == 0) {
             mi_tentou_setupAction(actor, 1, game);
             return;
         }
     }
-    if ((int)((actor->_68.y * (180.f / 0x8000)) - (target * (180.f / 0x8000))) % 5 == 0) {
-        if (actor->_7A) {
-            actor->_7A = 0;
+    if ((int)((actor->rotation.y * (180.f / 0x8000)) - (target * (180.f / 0x8000))) % 5 == 0) {
+        if (actor->work_s[5]) {
+            actor->work_s[5] = 0;
         } else {
-            actor->_7A = 1274;
+            actor->work_s[5] = 1274;
         }
     }
-    add_calc_short_angle2(&actor->_78, actor->_7A, CALC_EASE2(GETREG(NMREG, 0x5c) * 0.01f + 0.8f),
+    add_calc_short_angle2(&actor->work_s[4], actor->work_s[5], CALC_EASE2(GETREG(NMREG, 0x5c) * 0.01f + 0.8f),
                           (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 0x5b) * 0.01f + 4.0f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
-    add_calc_short_angle2(&actor->_68.y, target, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.125f));
-    add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(GETREG(NMREG, 0x5e) * 0.01f + 0.8f),
+    add_calc_short_angle2(&actor->rotation.y, target, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.125f));
+    add_calc_short_angle2(&actor->work_s[2], actor->work_s[3], CALC_EASE2(GETREG(NMREG, 0x5e) * 0.01f + 0.8f),
                           (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 0x5f) * 0.01f + 8.0f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
 }
 
 void mi_tentou_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
     static PRIV_INSECT_PROCESS init_proc[3] = { mi_tentou_wait_init, mi_tentou_move_init, mi_tentou_menace_init };
     static PRIV_INSECT_PROCESS move_proc[3] = { mi_tentou_wait, mi_tentou_move, mi_tentou_menace };
-    actor->_04 = move_proc[r4];
+    actor->process = move_proc[r4];
     init_proc[r4](actor, game);
 }
 
 void minsect_tentou_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    switch (actor->_00) {
+    switch (actor->insect_type) {
         case 0x18: {
-            actor->_70 = 0;
-            actor->_1C = tentou_flower_pos[actor->_70];
+            actor->work_s[0] = 0;
+            actor->position = tentou_flower_pos[actor->work_s[0]];
         } break;
         case 0x19: {
-            actor->_70 = 1;
-            actor->_1C = tentou_flower_pos[actor->_70];
+            actor->work_s[0] = 1;
+            actor->position = tentou_flower_pos[actor->work_s[0]];
         } break;
         case 0x1a: {
-            actor->_70 = 2;
-            actor->_1C = tentou_flower_pos[actor->_70];
+            actor->work_s[0] = 2;
+            actor->position = tentou_flower_pos[actor->work_s[0]];
         } break;
         default:
         case 0x20: {
-            actor->_70 = 3;
-            actor->_1C = tentou_flower_pos[actor->_70];
+            actor->work_s[0] = 3;
+            actor->position = tentou_flower_pos[actor->work_s[0]];
         } break;
     }
-    actor->_80 = 0;
-    actor->_74 = 0;
-    actor->_76 = 0;
-    actor->_68 = ZeroSVec;
-    actor->_34 = ZeroVec;
+    actor->work_s[8] = 0;
+    actor->work_s[2] = 0;
+    actor->work_s[3] = 0;
+    actor->rotation = ZeroSVec;
+    actor->velocity = ZeroVec;
     actor->_44 = ZeroVec;
     actor->_44.y = -0.125f;
-    actor->_68 = ZeroSVec;
-    actor->_68.y = qrand();
-    actor->_40 = 0.0f;
+    actor->rotation = ZeroSVec;
+    actor->rotation.y = qrand();
+    actor->speed = 0.0f;
     mi_tentou_setupAction(actor, 1, game);
-    if (actor->_00 != 32) {
-        actor->_58 = 0.125f;
+    if (actor->insect_type != 32) {
+        actor->params.work_f[0] = 0.125f;
     } else {
-        actor->_58 = 0.025f;
+        actor->params.work_f[0] = 0.025f;
     }
-    actor->_78 = 0;
-    actor->_7A = 0;
-    actor->_5C = 1.0f;
-    actor->_6E = (s16)(RANDOM_F(100.f) + 20.f);
+    actor->work_s[4] = 0;
+    actor->work_s[5] = 0;
+    actor->params.work_f[1] = 1.0f;
+    actor->process_timer = (s16)(RANDOM_F(100.f) + 20.f);
 }
 
 void minsect_tentou_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    if (actor->_00 == 0x1a) {
+    if (actor->insect_type == 0x1a) {
         mi_tentou_check_player(actor, game);
-        actor->_80--;
-        if (actor->_80 < 0) {
-            actor->_80 = 0;
+        actor->work_s[8]--;
+        if (actor->work_s[8] < 0) {
+            actor->work_s[8] = 0;
         }
-        if (actor->_80 > 900) {
-            actor->_80 = 900;
+        if (actor->work_s[8] > 900) {
+            actor->work_s[8] = 900;
         }
-        if (actor->_80 > 500) {
+        if (actor->work_s[8] > 500) {
             mi_tentou_setupAction(actor, 2, game);
         }
     }
-    actor->_04(actor, game);
+    actor->process(actor, game);
 }
 
 void minsect_tentou_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     _texture_z_light_fog_prim(game->graph);
     OPEN_DISP(game->graph);
-    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_60, actor->_1C.z, MTX_LOAD);
-    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, MTX_MULT);
-    Matrix_rotateXYZ(actor->_74 + actor->_78, 0, 0, MTX_MULT);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
-    Matrix_scale(actor->_5C, 1.0f, 1.0f, MTX_MULT);
+    Matrix_translate(actor->position.x, actor->position.y + actor->params.work_f[2], actor->position.z, MTX_LOAD);
+    Matrix_rotateXYZ(actor->rotation.x, actor->rotation.y, actor->rotation.z, MTX_MULT);
+    Matrix_rotateXYZ(actor->work_s[2] + actor->work_s[4], 0, 0, MTX_MULT);
+    Matrix_scale(actor->scale, actor->scale, actor->scale, MTX_MULT);
+    Matrix_scale(actor->params.work_f[1], 1.0f, 1.0f, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
-    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->insect_type][0]);
     CLOSE_DISP(game->graph);
 }

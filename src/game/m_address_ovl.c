@@ -567,7 +567,7 @@ static void mAD_set_addressSel_tag_character(Submenu* submenu, GAME* game, f32 p
             FALSE, TRUE,
             0.75f, 0.75f,
             mFont_MODE_POLY
-            // clang--format on
+            // clang-format on
         );
 
         if (adrs_ovl->show_museum_address && i == count - 2 && idx == mAD_PAGE_PLAYER) {

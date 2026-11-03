@@ -694,8 +694,8 @@ MUSEUM_INSECT_ACTOR* MI_Control_Actor = NULL;
 int Museum_Insect_GetMsgNo(ACTOR* actorx) {
     static u8 item_name[mIN_ITEM_NAME_LEN];
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
-    int insect_caught_by = actor->_2F80[actor->_2F7C].insectInfo;
-    s16 insect_no = ITM_INSECT_START + actor->_2F80[actor->_2F7C].insectName;
+    int insect_caught_by = actor->sign_entries[actor->sign_entry_index].insectInfo;
+    s16 insect_no = ITM_INSECT_START + actor->sign_entries[actor->sign_entry_index].insectName;
     int msgNo;
     mIN_copy_name_str(item_name, insect_no);
     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item_name, ARRAY_COUNT(item_name),
@@ -706,7 +706,7 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
                           common_data.save.save.private_data[insect_caught_by - 1].player_ID.player_name, 8);
     }
 
-    if (actor->_2F7C < actor->_2F78 - 1) {
+    if (actor->sign_entry_index < actor->sign_entry_count - 1) {
         if (insect_caught_by >= 1 && insect_caught_by <= 4) {
             msgNo = MSG_12194;
         } else {
@@ -755,15 +755,15 @@ void Museum_Insect_Set_MsgInsectInfo(ACTOR* actorx, int groupNum) {
     static int group_6_insect_name[7] = { 15, 16, 18, 17, 13, 14, 36 };
     static int* group_insect_name[6] = { group_1_insect_name, group_2_insect_name, group_3_insect_name,
                                          group_4_insect_name, group_5_insect_name, group_6_insect_name };
-    actor->_2F78 = 0;
-    actor->_2F7C = 0;
+    actor->sign_entry_count = 0;
+    actor->sign_entry_index = 0;
     for (i = 0; i < group_max_num[groupNum]; i++) {
         s16 insectName = group_insect_name[groupNum][i];
         s16 s = mMmd_InsectInfo(insectName);
         if (s) {
-            actor->_2F80[actor->_2F78].insectName = insectName;
-            actor->_2F80[actor->_2F78].insectInfo = s;
-            actor->_2F78++;
+            actor->sign_entries[actor->sign_entry_count].insectName = insectName;
+            actor->sign_entries[actor->sign_entry_count].insectInfo = s;
+            actor->sign_entry_count++;
         }
     }
 }
@@ -771,9 +771,9 @@ void Museum_Insect_Set_MsgInsectInfo(ACTOR* actorx, int groupNum) {
 void Museum_Insect_set_talk_info(ACTOR* actorx) {
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
     int msg_no;
-    if (actor->_2F78 > 0) {
+    if (actor->sign_entry_count > 0) {
         msg_no = Museum_Insect_GetMsgNo(actorx);
-        actor->_2F7C++;
+        actor->sign_entry_index++;
     } else {
         msg_no = MSG_12193;
     }
@@ -797,7 +797,7 @@ void Museum_Insect_Talk_process(ACTOR* actorx, GAME* game) {
             if (choice != -1) {
                 if (choice == 0) {
                     int msgNum = Museum_Insect_GetMsgNo(actorx);
-                    actor->_2F7C++;
+                    actor->sign_entry_index++;
                     mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msgNum);
                     mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
                 } else {
@@ -822,13 +822,13 @@ void Museum_Insect_Actor_ct(ACTOR* actorx, GAME* game) {
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
     MI_Control_Actor = actor;
     for (i = 0; i < 5; i++) {
-        actor->_2F9C[i] = 0;
+        actor->perch_occupancy_masks[i] = 0;
     }
     for (i = 0; i < aINS_INSECT_TYPE_NUM; i++) {
         if (mMmd_InsectInfo(i)) {
-            actor->privInsects[i]._8C |= 1;
-            actor->privInsects[i]._00 = i;
-            actor->privInsects[i]._14 = minsect_scale_tbl[i];
+            actor->privInsects[i].flags |= 1;
+            actor->privInsects[i].insect_type = i;
+            actor->privInsects[i].scale = minsect_scale_tbl[i];
             set_relax_active_time(&actor->privInsects[i], game);
             minsect_ct[i](&actor->privInsects[i], game);
         }
@@ -845,7 +845,7 @@ void Museum_Insect_Actor_move(ACTOR* actorx, GAME* game) {
     actorx->world.position.y = 4000.f;
     Museum_Insect_Talk_process(actorx, game);
     for (i = 0; i < aINS_INSECT_TYPE_NUM; i++) {
-        if (actor->privInsects[i]._8C & 1) {
+        if (actor->privInsects[i].flags & 1) {
             minsect_mv[i](&actor->privInsects[i], game);
         }
     }
@@ -871,13 +871,13 @@ void Museum_Insect_Actor_draw(ACTOR* actorx, GAME* game) {
     CLOSE_DISP(game->graph);
     
     for (i = 0; i < aINS_INSECT_TYPE_NUM; i++) {
-        if (actor->privInsects[i]._8C & 1) {
+        if (actor->privInsects[i].flags & 1) {
             if (GETREG(TAKREG, 0) == i + 1) {
-                actor->privInsects[i]._14 = (GETREG(TAKREG, 1) * 0.0001f) + minsect_scale_tbl[i];
+                actor->privInsects[i].scale = (GETREG(TAKREG, 1) * 0.0001f) + minsect_scale_tbl[i];
             }
             minsect_dw[i](&actor->privInsects[i], game);
             if (GETREG(TAKREG, 0) == i + 1) {
-                actor->privInsects[i]._14 = minsect_scale_tbl[i];
+                actor->privInsects[i].scale = minsect_scale_tbl[i];
             }
         }
     }

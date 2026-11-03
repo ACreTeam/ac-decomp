@@ -14,8 +14,6 @@
 extern "C" {
 #endif
 
-#define artificial_padding(lastOffset, currentOffset, typeOfLastMember) \
-    u8 __##currentOffset##padding[currentOffset - lastOffset - sizeof(typeOfLastMember)]
 #define CALC_EASE(x) (1.0f - sqrtf(1.0f - (x)))
 #define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
 
@@ -24,60 +22,54 @@ struct _MUSEUM_INSECT_PRIVATE_DATA;
 typedef void (*PRIV_INSECT_PROCESS)(struct _MUSEUM_INSECT_PRIVATE_DATA*, GAME*);
 
 typedef struct _MUSEUM_INSECT_SKELETON {
-    cKF_SkeletonInfo_R_c _00;
-    Mtx _70;
-    artificial_padding(0x70, 0x170, Mtx);
-    Mtx _170;
-    artificial_padding(0x170, 0x270, Mtx);
-    s_xyz _270;
-    artificial_padding(0x270, 0x288, s_xyz);
-    s_xyz _288;
-    artificial_padding(0x288, 0x2A8, s_xyz);
-    cKF_Skeleton_R_c* _2A8;
-    cKF_Animation_R_c* _2AC;
-} MUSEUM_INSECT_SKELETON;
-
-typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
-    int _00;
-    PRIV_INSECT_PROCESS _04;
-    MUSEUM_INSECT_SKELETON* _08;
-    f32 _0C;
-    f32 _10;
-    f32 _14; // scale
-    f32 _18;
-    xyz_t _1C;
-    xyz_t _28;
-    xyz_t _34;
-    f32 _40;
-    xyz_t _44;
-    int _50;
-    int _54;
-    f32 _58;
+    cKF_SkeletonInfo_R_c keyframe;
+    Mtx matrices[2][4];
+    // The joint data overlaps morph storage; stag animations never enable morphing.
     union {
-        f32 _5C;
+        s_xyz joint[6];
         struct {
-            s16 _5C_s16;
-            s16 _5E_s16;
+            s_xyz joint_prefix[4];
+            s_xyz morph[5];
         };
     };
-    f32 _60;
-    artificial_padding(0x60, 0x68, f32);
-    s_xyz _68;
-    s16 _6E;
-    s16 _70;
-    s16 _72;
-    s16 _74;
-    s16 _76;
-    s16 _78;
-    s16 _7A;
-    s16 _7C;
-    s16 _7E;
-    s16 _80;
-    s16 _82;
-    artificial_padding(0x82, 0x8C, s16);
-    s16 _8C;
-    s16 _8E;
-    int _90;
+    cKF_Skeleton_R_c* skeleton;
+    cKF_Animation_R_c* animation;
+} MUSEUM_INSECT_SKELETON;
+
+typedef struct {
+    f32 glow_height;
+    s16 fuwafuwa_phase;
+    s16 target_angle; // Yaw in flight, roll while perched.
+} minsect_genji_params_c;
+
+typedef union {
+    f32 work_f[4];
+    minsect_genji_params_c genji;
+} minsect_params_u;
+
+typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
+    int insect_type;
+    PRIV_INSECT_PROCESS process;
+    MUSEUM_INSECT_SKELETON* skeleton_state;
+    f32 _0C;
+    f32 _10;
+    f32 scale;
+    f32 _18;
+    xyz_t position;
+    xyz_t _28;
+    xyz_t velocity;
+    f32 speed;
+    xyz_t _44;
+    int active_start_sec;
+    int rest_start_sec;
+    minsect_params_u params; // 0x58-0x67
+    s_xyz rotation;
+    s16 process_timer;
+    s16 work_s[10]; // 0x70-0x83
+    u8 _84[0x8C - 0x84];
+    s16 flags;
+    s16 is_active;
+    int point_light_id;
 } MUSEUM_INSECT_PRIVATE_DATA;
 
 typedef struct _INSECT_DISPLAY_MSG_INFO {
@@ -86,15 +78,15 @@ typedef struct _INSECT_DISPLAY_MSG_INFO {
 } INSECT_DISPLAY_MSG_INFO;
 
 typedef struct _MUSEUM_INSECT_ACTOR {
-    ACTOR actor;                                                  // offset: 0x0
-    MUSEUM_INSECT_PRIVATE_DATA privInsects[aINS_INSECT_TYPE_NUM]; // offset: 0x174
-    MUSEUM_INSECT_PRIVATE_DATA _1894[6];                          // offset: 0x1894
-    MUSEUM_INSECT_PRIVATE_DATA _1CA0[15];                         // offset: 0x1CA0
-    MUSEUM_INSECT_SKELETON _24B8[4];                              // offset: 0x24B8
-    int _2F78;                                                    // offset: 0x2F78
-    int _2F7C;                                                    // offset: 0x2F7C
-    INSECT_DISPLAY_MSG_INFO _2F80[7];                             // offset: 0x2F82
-    s16 _2F9C[5];                                                 // offset: 0x2F9C
+    ACTOR actor;                                                            // offset: 0x0
+    MUSEUM_INSECT_PRIVATE_DATA privInsects[aINS_INSECT_TYPE_NUM];           // offset: 0x174
+    MUSEUM_INSECT_PRIVATE_DATA firefly_particles[6];                        // offset: 0x1894
+    MUSEUM_INSECT_PRIVATE_DATA ants[15];                                    // offset: 0x1CA0
+    MUSEUM_INSECT_SKELETON stag_skeletons[4];                               // offset: 0x24B8
+    int sign_entry_count;                                                   // offset: 0x2F78
+    int sign_entry_index;                                                   // offset: 0x2F7C
+    INSECT_DISPLAY_MSG_INFO sign_entries[7];                                // offset: 0x2F82
+    s16 perch_occupancy_masks[5];                                           // offset: 0x2F9C
 } MUSEUM_INSECT_ACTOR;
 
 // bss
