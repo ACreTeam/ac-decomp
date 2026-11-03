@@ -5727,13 +5727,6 @@ static int mCD_CheckStation_check_foreigner(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
     return ret;
 }
 
-#ifdef MUST_MATCH
-static inline int mCD_check_card_inline_hack(s32* result_p, s32 req_sector_size, int chan) {
-    return mCD_check_card(result_p, req_sector_size, chan);
-}
-#endif
-
-// @non-matching - equivalent (missing mr instruction)
 static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     Private_c* priv;
     Private_c* passport_priv;
@@ -5748,14 +5741,11 @@ static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
 
     chan = mgr->chan;
     if (mgr->workArea != NULL && chan != -1 && Now_Private != NULL) {
+        int check_chan = chan;
+
         priv = Now_Private;
         card = &mgr->cards[chan];
-        // issue - changing mCD_check_card's `chan` parameter to be s32 fixes this func but breaks several others
-#ifdef MUST_MATCH
-        if (card->workArea != NULL && mCD_check_card_inline_hack(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
-#else
-        if (card->workArea != NULL && mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
-#endif
+        if (card->workArea != NULL && mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, check_chan) == mCD_RESULT_SUCCESS) {
             card->result = CARDMount(chan, card->workArea, NULL);
             if (card->result == CARD_RESULT_READY || card->result == CARD_RESULT_BROKEN) {
                 card->result = CARDCheck(chan);

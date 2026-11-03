@@ -179,7 +179,7 @@ static void aHOI_calc_trans(HANDOVERITEM_ACTOR* handOverItem) {
   
   if (i >= max_idx) {
     i = max_idx - 1;
-    f = data[max_idx].frame;
+    f = data[(size_t)max_idx].frame;
   }
 
   xyz_t_move(&trans0, &data[i + 1].trans);
@@ -301,7 +301,7 @@ static void aHOI_calc_scale(HANDOVERITEM_ACTOR* handOverItem) {
   
   if (i >= max_idx) {
     i = max_idx - 1;
-    f = data[max_idx].frame;
+    f = data[(size_t)max_idx].frame;
   }
 
   /* Apply linear interpolation to scale */

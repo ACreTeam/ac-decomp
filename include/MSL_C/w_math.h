@@ -10,6 +10,27 @@
 #define SQRTF_LINKAGE static
 #endif
 
+#if defined(IS_REL) && VERSION >= 1
+SQRTF_LINKAGE inline float sqrtf(float x) {
+    static const double _half = 0.5f;
+    static const double _three = 3.0f;
+
+    if (x > 0.0f) {
+        double xd = (double)x;
+        double guess = __frsqrte(xd);
+        guess = _half * guess * (_three - guess * guess * xd);
+        guess = _half * guess * (_three - guess * guess * xd);
+        guess = _half * guess * (_three - guess * guess * xd);
+        return (float)(xd * guess);
+    } else if (x < 0.0) {
+        return NAN;
+    } else if (isnan(x)) {
+        return NAN;
+    } else {
+        return x;
+    }
+}
+#else
 /**
  * Float square root implementation.
  *
@@ -36,6 +57,8 @@ SQRTF_LINKAGE inline float sqrtf(float x) {
 
     return x;
 }
+
+#endif
 
 #ifdef SQRTF_LINKAGE
 #undef SQRTF_LINKAGE

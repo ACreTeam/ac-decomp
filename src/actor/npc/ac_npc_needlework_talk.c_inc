@@ -163,20 +163,18 @@ static void aNNW_trend_delete_cloth(int cloth_idx) {
 }
 
 static int aNNW_trend_check_umbrella(int umbrella_idx) {
-    int idx;
     Animal_c* animals;
     Animal_c* animal;
     int i;
     int count;
 
     animals = Save_Get(animals);
-    idx = (umbrella_idx & 3) + UMBRELLA_NUM;
-    umbrella_idx += UMBRELLA_NUM;
     
     for (i = 0, count = 0; i < ANIMAL_NUM_MAX; i++) {
         animal = &animals[i];
         if (!mNpc_CheckFreeAnimalPersonalID(&animal->id)) {
-            if (animal->umbrella_id == umbrella_idx || animal->umbrella_id == idx) {
+            if (animal->umbrella_id == umbrella_idx + UMBRELLA_NUM ||
+                animal->umbrella_id == (umbrella_idx & 3) + UMBRELLA_NUM) {
                 count++;
             }
         }
@@ -186,20 +184,18 @@ static int aNNW_trend_check_umbrella(int umbrella_idx) {
 }
 
 static void aNNW_trend_delete_umbrella(int umbrella_idx) {
-    int idx;
     Animal_c* animals;
     Animal_c* animal;
     int i;
 
     animals = Save_Get(animals);
     i = 0;
-    idx = (umbrella_idx & 3) + UMBRELLA_NUM;
-    umbrella_idx += UMBRELLA_NUM;
 
     for (i; i < ANIMAL_NUM_MAX; i++) {
         animal = &animals[i];
         if (!mNpc_CheckFreeAnimalPersonalID(&animal->id)) {
-            if (animal->umbrella_id == umbrella_idx || animal->umbrella_id == idx) {
+            if (animal->umbrella_id == umbrella_idx + UMBRELLA_NUM ||
+                animal->umbrella_id == (umbrella_idx & 3) + UMBRELLA_NUM) {
                 mNpc_SetDefAnimalUmbrella(animal);
             }
         }

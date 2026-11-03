@@ -1505,8 +1505,8 @@ static void mEnv_ChangeRGBLight(u8* dst, u8* src_nxt_w0, u8* src_nxt_w1, u8* src
 
     for (i = 0; i < 3; i++) {
         *dst =
-            weather_change_bias * (f1 * (*src_nxt_w0 + f0 * ((f32)*src_nxt_w1 - (f32)*src_nxt_w0))) +
-            inverse_weather_change_bias * (f1 * (*src_now_w0 + f0 * ((f32)*src_now_w1 - (f32)*src_now_w0)));
+            (int)(weather_change_bias * (f1 * (*src_nxt_w0 + f0 * ((f32)*src_nxt_w1 - (f32)*src_nxt_w0))) +
+                  inverse_weather_change_bias * (f1 * (*src_now_w0 + f0 * ((f32)*src_now_w1 - (f32)*src_now_w0))));
 
         dst++;
         src_nxt_w0++;

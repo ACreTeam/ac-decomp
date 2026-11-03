@@ -1043,7 +1043,7 @@ config.libs = [
             Object(Matching, "evw_anime.c"),
             Object(Matching, "executor.c"),
             Object(Matching, "f_furniture.c"),
-            Object(MatchingFor("GAFE01_00"), "famicom_emu.c"),
+            Object(Matching, "famicom_emu.c"),
             Object(Matching, "first_game.c"),
             Object(Matching, "game.c"),
             Object(Matching, "gamealloc.c"),
@@ -1108,10 +1108,10 @@ config.libs = [
             Object(Matching, "actor/ac_groundhog_control.c"),
             Object(Matching, "actor/ac_gyo_kage.c"),
             Object(Matching, "actor/ac_gyo_kaseki.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/ac_gyo_release.c"),
+            Object(Matching, "actor/ac_gyo_release.c"),
             Object(Matching, "actor/ac_gyo_test.c"),
             Object(Matching, "actor/ac_gyoei.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/ac_handOverItem.c"),
+            Object(Matching, "actor/ac_handOverItem.c"),
             Object(Matching, "actor/ac_haniwa.c"),
             Object(Matching, "actor/ac_hatumode_control.c"),
             Object(Matching, "actor/ac_house.c"),
@@ -1155,7 +1155,7 @@ config.libs = [
             Object(Matching, "actor/ac_museum_picture.c"),
             Object(Matching, "actor/ac_my_house.c"),
             Object(Matching, "actor/ac_my_indoor.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/ac_my_room.c"),
+            Object(Matching, "actor/ac_my_room.c"),
             Object(Matching, "actor/ac_nameplate.c"),
             Object(Matching, "actor/ac_needlework_indoor.c"),
             Object(Matching, "actor/ac_needlework_shop.c"),
@@ -1207,7 +1207,7 @@ config.libs = [
             Object(Matching, "actor/ac_tunahiki_control.c"),
             Object(Matching, "actor/ac_turi.c"),
             Object(Matching, "actor/ac_uki.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/ac_weather.c"),
+            Object(Matching, "actor/ac_weather.c"),
             Object(Matching, "actor/ac_weather_fine.c"),
             Object(Matching, "actor/ac_weather_leaf.c"),
             Object(Matching, "actor/ac_weather_rain.c"),
@@ -1235,7 +1235,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_kamakura_npc0.c"),
             Object(Matching, "actor/npc/ac_normal_npc.c"),
             Object(Matching, "actor/npc/ac_npc.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/npc/ac_npc2.c"),
+            Object(Matching, "actor/npc/ac_npc2.c"),
             Object(Matching, "actor/npc/ac_npc_conv_master.c"),
             Object(Matching, "actor/npc/ac_npc_curator.c"),
             Object(Matching, "actor/npc/ac_npc_depart_master.c"),
@@ -1251,7 +1251,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_npc_mamedanuki.c"),
             Object(Matching, "actor/npc/ac_npc_mask_cat.c"),
             Object(Matching, "actor/npc/ac_npc_mask_cat2.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/npc/ac_npc_needlework.c"),
+            Object(Matching, "actor/npc/ac_npc_needlework.c"),
             Object(Matching, "actor/npc/ac_npc_p_sel.c"),
             Object(Matching, "actor/npc/ac_npc_p_sel2.c"),
             Object(Matching, "actor/npc/ac_npc_police.c"),
@@ -1344,12 +1344,12 @@ config.libs = [
     Rel(
         "bg_item",
         [
-            Object(MatchingFor("GAFE01_00"), "bg_item/bg_cherry_item.c"),
-            Object(MatchingFor("GAFE01_00"), "bg_item/bg_item.c"),
+            Object(Matching, "bg_item/bg_cherry_item.c"),
+            Object(Matching, "bg_item/bg_item.c"),
             Object(Matching, "bg_item/bg_police_item.c"),
             Object(Matching, "bg_item/bg_post_item.c"),
-            Object(MatchingFor("GAFE01_00"), "bg_item/bg_winter_item.c"),
-            Object(MatchingFor("GAFE01_00"), "bg_item/bg_xmas_item.c"),
+            Object(Matching, "bg_item/bg_winter_item.c"),
+            Object(Matching, "bg_item/bg_xmas_item.c"),
         ],
     ),
     Rel(
@@ -1495,9 +1495,9 @@ config.libs = [
             Object(Matching, "game/m_actor_shadow.c"),
             Object(Matching, "game/m_address_ovl.c"),
             Object(Matching, "game/m_all_grow.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_all_grow_ovl.c"),
+            Object(Matching, "game/m_all_grow_ovl.c"),
             Object(Matching, "game/m_bank_ovl.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_banti.c"),
+            Object(Matching, "game/m_banti.c"),
             Object(Matching, "game/m_bg_item.c"),
             Object(Matching, "game/m_bg_tex.c"),
             Object(Matching, "game/m_bgm.c"),
@@ -1506,7 +1506,7 @@ config.libs = [
             Object(Matching, "game/m_calendar.c"),
             Object(Matching, "game/m_calendar_ovl.c"),
             Object(Matching, "game/m_camera2.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_card.c"),
+            Object(Matching, "game/m_card.c"),
             Object(Matching, "game/m_catalog_ovl.c"),
             Object(Matching, "game/m_choice.c"),
             Object(Matching, "game/m_clip.c"),
@@ -1524,7 +1524,7 @@ config.libs = [
             Object(Matching, "game/m_cpwarning_ovl.c"),
             Object(Matching, "game/m_debug.c"),
             Object(Matching, "game/m_debug_display.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_debug_hayakawa.c"),
+            Object(Matching, "game/m_debug_hayakawa.c"),
             Object(Matching, "game/m_debug_mode.c"),
             Object(Matching, "game/m_demo.c"),
             Object(Matching, "game/m_design_ovl.c"),
@@ -1533,7 +1533,7 @@ config.libs = [
             Object(Matching, "game/m_eappli.c"),
             Object(Matching, "game/m_editEndChk_ovl.c"),
             Object(Matching, "game/m_editor_ovl.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_event.c"),
+            Object(Matching, "game/m_event.c"),
             Object(Matching, "game/m_event_map_npc.c"),
             Object(Matching, "game/m_fbdemo.c"),
             Object(Matching, "game/m_fbdemo_fade.c"),
@@ -1541,7 +1541,7 @@ config.libs = [
             Object(Matching, "game/m_fbdemo_wipe1.c"),
             Object(Matching, "game/m_field_assessment.c"),
             Object(Matching, "game/m_field_info.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_field_make.c"),
+            Object(Matching, "game/m_field_make.c"),
             Object(Matching, "game/m_fishrecord.c"),
             Object(Matching, "game/m_flashrom.c"),
             Object(Matching, "game/m_font.c"),
@@ -1558,10 +1558,10 @@ config.libs = [
             Object(Matching, "game/m_huusui_room.c"),
             Object(Matching, "game/m_huusui_room_ovl.c"),
             Object(Matching, "game/m_inventory_ovl.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_island.c"),
+            Object(Matching, "game/m_island.c"),
             Object(Matching, "game/m_item_name.c"),
             Object(Matching, "game/m_kabu_manager.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_kankyo.c"),
+            Object(Matching, "game/m_kankyo.c"),
             Object(Matching, "game/m_land.c"),
             Object(Matching, "game/m_ledit_ovl.c"),
             Object(Matching, "game/m_lib.c"),
@@ -1569,7 +1569,7 @@ config.libs = [
             Object(Matching, "game/m_mail.c"),
             Object(Matching, "game/m_mail_check.c"),
             Object(Matching, "game/m_mail_check_ovl.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_mail_password_check.c"),
+            Object(Matching, "game/m_mail_password_check.c"),
             Object(Matching, "game/m_mailbox_ovl.c"),
             Object(Matching, "game/m_malloc.c"),
             Object(Matching, "game/m_map_ovl.c"),
@@ -1600,7 +1600,7 @@ config.libs = [
             Object(Matching, "game/m_player_lib.c"),
             Object(Matching, "game/m_police_box.c"),
             Object(Matching, "game/m_post_office.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_prenmi.c"),
+            Object(Matching, "game/m_prenmi.c"),
             Object(Matching, "game/m_private.c"),
             Object(Matching, "game/m_quest.c"),
             Object(Matching, "game/m_random_field.c"),
@@ -1621,7 +1621,7 @@ config.libs = [
             Object(Matching, "game/m_string.c"),
             Object(Matching, "game/m_submenu.c"),
             Object(Matching, "game/m_submenu_ovl.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_tag_ovl.c"),
+            Object(Matching, "game/m_tag_ovl.c"),
             Object(Matching, "game/m_time.c"),
             Object(Matching, "game/m_timeIn_ovl.c"),
             Object(Matching, "game/m_titledemo.c"),
@@ -3677,9 +3677,13 @@ config.libs = [
             Object(Matching, "data/model/crw_zinnia2.c"),
             Object(Matching, "data/model/log_win_logo3_tex.c"),
             Object(Matching, "data/model/log_win_logo4_tex.c"),
-            Object(Matching, "data/model/log_win_nintendo1_tex.c"),
-            Object(Matching, "data/model/log_win_nintendo2_tex.c"),
-            Object(Matching, "data/model/log_win_nintendo3_tex.c"),
+            *([
+                Object(Matching, "data/model/logo_nin_copy.c"),
+            ] if config.version == "GAFU01_00" else [
+                Object(Matching, "data/model/log_win_nintendo1_tex.c"),
+                Object(Matching, "data/model/log_win_nintendo2_tex.c"),
+                Object(Matching, "data/model/log_win_nintendo3_tex.c"),
+            ]),
             Object(Matching, "data/model/cKF_ba_r_logo_us_animal.c"),
             Object(Matching, "data/model/logo_us_animal.c"),
             Object(Matching, "data/model/logo_us_back.c"),
@@ -5123,6 +5127,24 @@ config.custom_build_rules = [
     },
 ]
 config.custom_build_steps = {}
+
+# Australia's REL keeps the asset objects combined as dataobject.obj. Rebuild
+# that object for objdiff, using the individual asset order recorded by US.
+if config.version == "GAFU01_00":
+    dataobject_lib = next(lib for lib in config.libs if lib["lib"] == "dataobject")
+    dataobject_splits = Path("config/GAFE01_00/foresta/splits.txt")
+    dataobject_order = {
+        name: index
+        for index, name in enumerate(
+            re.findall(r"^([^\s][^:]*):", dataobject_splits.read_text(), re.MULTILINE)
+        )
+    }
+    dataobject_order["data/model/logo_nin_copy.c"] = dataobject_order["data/model/log_win_nintendo1_tex.c"]
+    config.objdiff_partial_links["dataobject.obj"] = sorted(
+        [obj.name for obj in dataobject_lib["objects"]],
+        key=lambda name: dataobject_order.get(name, len(dataobject_order)),
+    )
+    config.reconfig_deps = [*(config.reconfig_deps or []), dataobject_splits]
 
 # Grab the specific GameID so we can format our strings properly
 version = VERSIONS[version_num]

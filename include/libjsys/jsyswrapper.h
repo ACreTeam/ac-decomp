@@ -22,6 +22,7 @@ typedef struct {
 } CSDIFileEntry;
 
 extern void* JC_JUTVideo_getManager();
+extern GXRenderModeObj* JC_JUTVideo_getRenderMode(void* manager);
 extern u32 JC_JUTVideo_getFbWidth(void* manager);
 extern u32 JC_JUTVideo_getEfbHeight(void* manager);
 extern void JC_JUTVideo_setRenderMode(void* manager, GXRenderModeObj* renderMode);
@@ -116,6 +117,7 @@ extern void* JC_JUTFader_new(int ul_x, int ul_y, int br_x, int br_y, u32* color)
 extern void JC_JUTFader_delete(void* fader);
 
 extern void* JC__JKRGetResource(const char* resourceName);
+extern int JC__JKRReadResource(void* dst, size_t dst_size, const char* src, int expandSwitch);
 
 extern void JC__JKRRemoveResource(void* res);
 

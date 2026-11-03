@@ -645,8 +645,8 @@ static void mFM_SetFieldPal(mFM_field_pal_c* pal) {
 static void mFM_SetFgDepositP(mFM_block_info_c* block_info, mActor_name_t field_id, int bx_max, int bz_max,
                               int* island_x_blocks) {
     mFM_block_info_c* block_info_p;
-    int total_block;
     int scene;
+    int total_block;
     u16* deposit_p;
     int bz;
     int bx;
@@ -671,7 +671,8 @@ static void mFM_SetFgDepositP(mFM_block_info_c* block_info, mActor_name_t field_
                     }
 
                     if (bx > 0 && bx < bx_max - 1 && bz > 0 && bz < bz_max - 3) {
-                        block_info->fg_info.deposit_p = Save_GetPointer(deposit[fg_blocks++][0]);
+                        block_info->fg_info.deposit_p = Save_GetPointer(deposit[fg_blocks][0]);
+                        fg_blocks++;
                     }
 
                     block_info++;
@@ -696,7 +697,8 @@ static void mFM_SetFgDepositP(mFM_block_info_c* block_info, mActor_name_t field_
                         break;
                     }
 
-                    block_info->fg_info.deposit_p = Save_GetPointer(deposit[fg_blocks++][0]);
+                    block_info->fg_info.deposit_p = Save_GetPointer(deposit[fg_blocks][0]);
+                    fg_blocks++;
                     block_info++;
                 }
             }

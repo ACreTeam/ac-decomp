@@ -164,6 +164,7 @@ static void mMpswd_bit_shift(u8* pswd, int shift) {
     u8 shifted_buf[mMpswd_PASSWORD_DATA_LEN - 1];
     int bytes_shifted;
     int bits_shifted;
+    int i;
 
     /* copy password data into work buffer while skipping key index byte */
     memcpy(buf, pswd, 1);
@@ -183,7 +184,6 @@ static void mMpswd_bit_shift(u8* pswd, int shift) {
         int dst;
         int byte;
         int shift_mask = 0;
-        int i;
         for (i = 0; i < bits_shifted; i++) {
             shift_mask = shift_mask * 2 + 1;
         }
@@ -191,38 +191,27 @@ static void mMpswd_bit_shift(u8* pswd, int shift) {
         byte = (buf[bits_shifted == 0 ? 0 : mMpswd_PASSWORD_DATA_LEN - 2] >> (8 - bits_shifted)) & shift_mask;
         dst = bytes_shifted;
         for (i = 0; i < mMpswd_PASSWORD_DATA_LEN - 1; i++) {
-            u8 now_byte = buf[i];
-
-            shifted_buf[dst] = byte | (now_byte << bits_shifted);
-            byte = (now_byte >> (8 - bits_shifted)) & shift_mask;
+            shifted_buf[dst] = byte | (buf[i] << bits_shifted);
+            byte = (buf[i] >> (8 - bits_shifted)) & shift_mask;
             dst = (dst + 1) % (mMpswd_PASSWORD_DATA_LEN - 1);
         }
     } else if (shift < 0) {
         /* negative shift */
         int shift_idx;
-        int shift;
         int shift_mask = 0;
         int byte;
-        int i;
 
         for (i = 0; i < bits_shifted; i++) {
             shift_mask = shift_mask * 2 + 1;
         }
 
-        // fakematch?
-        byte = 0;
-        byte += (buf[bits_shifted == 0 ? mMpswd_PASSWORD_DATA_LEN - 2 : 0]); // start byte
-
-        shift = 8 - bits_shifted;                                                                    // invert shift
-        shift_idx = (mMpswd_PASSWORD_DATA_LEN - 2 - bytes_shifted) % (mMpswd_PASSWORD_DATA_LEN - 1); // dst index
-        byte &= shift_mask;
-        byte <<= shift; // move bits into position
+        byte = buf[bits_shifted == 0 ? mMpswd_PASSWORD_DATA_LEN - 2 : 0];
+        byte = (byte & shift_mask) << (8 - bits_shifted);
+        shift_idx = (mMpswd_PASSWORD_DATA_LEN - 2 - bytes_shifted) % (mMpswd_PASSWORD_DATA_LEN - 1);
 
         for (i = mMpswd_PASSWORD_DATA_LEN - 2; i >= 0; i--) {
-            int now_byte = buf[i];
-
-            shifted_buf[shift_idx] = byte | (now_byte >> bits_shifted); // save shifted byte
-            byte = (now_byte & shift_mask) << shift;                    // update initial bits
+            shifted_buf[shift_idx] = byte | (buf[i] >> bits_shifted); // save shifted byte
+            byte = (buf[i] & shift_mask) << (8 - bits_shifted); // update initial bits
 
             shift_idx--;
             if (shift_idx < 0) {
@@ -549,7 +538,6 @@ static void mMpswd_decode_RSA_cipher(u8* pswd) {
     int r;
     int p;
     int q;
-    int pq_1;
     int* select_idx_table;
     int decrypted;
     int i;
@@ -561,27 +549,16 @@ static void mMpswd_decode_RSA_cipher(u8* pswd) {
 
     mMpswd_get_RSA_key_code(&p, &q, &r, &select_idx_table, pswd);
     pq = p * q;
-    pq_1 = (p - 1) * (q - 1);
     pow = 1;
 
     /* Calculate exponent d for decryption */
     for (pow = 1; ; pow++) {
-        n = pow * pq_1 + 1;
+        n = pow * ((p - 1) * (q - 1)) + 1;
         if (n % r == 0) {
-            r = n / r;
+            r = (pow * ((p - 1) * (q - 1)) + 1) / r;
             break;
         }
     }
-    // do {
-    //     n = pow * pq_1 + 1;
-    //     if (n % r == 0) {
-    //         r = n / r;
-    //         break;
-    //     }
-
-    //     pow++;
-    // } while (TRUE);
-
     rsa_keysave = pswd[mMpswd_RSA_KEYSAVE_IDX];
     for (i = 0; i < 8; i++) {
         b = pswd[select_idx_table[0]] | (((rsa_keysave >> i) & 1) << 8);
@@ -929,16 +906,18 @@ extern int mMpswd_password_zuru_check(mMpswd_password_c* password) {
     int cheated = TRUE;
 
     if (password->type < mMpswd_CODETYPE_NUM) {
-        u8* str_p;
+        u8 b;
         int checksum = 0;
         int i;
 
         for (i = 0; i < PLAYER_NAME_LEN; i++) {
-            checksum += password->str0[i];
+            b = password->str0[i];
+            checksum += b;
         }
 
         for (i = 0; i < PLAYER_NAME_LEN; i++) {
-            checksum += password->str1[i];
+            b = password->str1[i];
+            checksum += b;
         }
 
         checksum += password->item;

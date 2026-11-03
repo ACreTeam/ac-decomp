@@ -114,7 +114,7 @@ static void aNPC_make_unitInfo(NPC_CONTROL_ACTOR* ctrl) {
     
     for (z = 0; z < aNPC2_UNIT_Z_NUM; z++) {
         for (x = 0; x < aNPC2_UNIT_X_NUM; x++) {
-            table[z][x] = *fg_p != RSV_NO;
+            *((int*)table + x + z * aNPC2_UNIT_X_NUM) = *fg_p != RSV_NO;
             fg_p++;
         }
 

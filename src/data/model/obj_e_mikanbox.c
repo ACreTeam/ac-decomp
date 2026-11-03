@@ -17,7 +17,11 @@ Gfx obj_e_mikanbox_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 64, 32, obj_e_mikanbox_tex),
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+#if VERSION == VER_GAFU01_00
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+#else
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+#endif
     gsSPVertex(obj_e_mikanbox_v, 24, 0),
     gsSPNTrianglesInit_5b(12, 0, 1, 2, 0, 2, 3, 4, 5, 6),
     gsSPNTriangles_5b(4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14),
@@ -26,6 +30,64 @@ Gfx obj_e_mikanbox_model[] = {
     gsSPEndDisplayList(),
 };
 
+#if VERSION == VER_GAFU01_00
+u8 end_pp_nin1_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/end_pp_nin1_tex.inc"
+};
+
+u8 end_pp_nin2_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/end_pp_nin2_tex.inc"
+};
+
+Vtx end_pp_nin_v[] = {
+#include "assets/end_pp_nin_v.inc"
+};
+
+Gfx obj_e_mikanbox_copyrightT_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCycleType(G_CYC_2CYCLE),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPLoadTextureBlock_4b_Dolphin(end_pp_nin2_tex, G_IM_FMT_I, 64, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH),
+    gsSPVertex(end_pp_nin_v, 8, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 3, 0, 2, 0, 0, 0),
+    gsDPLoadTextureBlock_4b_Dolphin(end_pp_nin1_tex, G_IM_FMT_I, 128, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPNTrianglesInit_5b(2, 4, 5, 6, 5, 7, 6, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+u8 end_notice_pp1_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/end_notice_pp1_tex.inc"
+};
+
+u8 end_notice_pp2_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/end_notice_pp2_tex.inc"
+};
+
+u8 end_notice_pp3_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/end_notice_pp3_tex.inc"
+};
+
+Vtx end_notice_v[] = {
+#include "assets/end_notice_v.inc"
+};
+
+Gfx obj_e_mikanbox_copyrightT_model2[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
+    gsDPLoadTextureBlock_4b_Dolphin(end_notice_pp3_tex, G_IM_FMT_I, 256, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH),
+    gsSPVertex(end_notice_v, 12, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsDPLoadTextureBlock_4b_Dolphin(end_notice_pp2_tex, G_IM_FMT_I, 256, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPNTrianglesInit_5b(2, 4, 5, 6, 4, 6, 7, 0, 0, 0),
+    gsDPLoadTextureBlock_4b_Dolphin(end_notice_pp1_tex, G_IM_FMT_I, 256, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPNTrianglesInit_5b(2, 8, 9, 10, 8, 10, 11, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 u8 copyright_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/copyright_tex.inc"
 };
@@ -74,3 +136,4 @@ Gfx obj_e_mikanbox_copyrightT_model2[] = {
     gsSPNTrianglesInit_5b(2, 8, 9, 10, 8, 10, 11, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif

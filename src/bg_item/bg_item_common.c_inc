@@ -711,7 +711,7 @@ static void bIT_actor_drop_move_plant(bg_item_drop_c* drop);
 static void bIT_actor_drop_move_fly(bg_item_drop_c* drop);
 static void bIT_actor_drop_move_wait(bg_item_drop_c* drop);
 
-static int bIT_actor_drop_entry_main(bg_item_drop_table_c* drop_info, bg_item_drop_c* src_drop) {
+static int bIT_actor_drop_entry_main(const bg_item_drop_table_c* drop_info, bg_item_drop_c* src_drop) {
     mActor_name_t* fg_item_p;
     bg_item_drop_c* drop = drop_info->drop_p;
     int res = FALSE;

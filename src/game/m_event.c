@@ -364,9 +364,9 @@ static int last_day_of_month(lbRTC_month_t month) {
 
 static void init_weekday1st() {
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
-    lbRTC_month_t month;
     lbRTC_month_t temp;
     lbRTC_month_t i;
+    lbRTC_month_t month;
     int weekday;
 
     month = rtc_time->month & 0xF;
@@ -391,9 +391,9 @@ static void init_weekday1st() {
     }
 
     for (temp = month - 1, i = month; temp >= lbRTC_JANUARY; i--, temp--) {
-        lbRTC_day_t last_day = last_day_of_month(temp);
+        int last_day = last_day_of_month(temp);
 
-        weekday = (weekday1st[i] - last_day) % lbRTC_WEEK;
+        weekday = (weekday1st[i] - (u8)last_day) % lbRTC_WEEK;
         if (weekday < 0) {
             weekday += lbRTC_WEEK;
         }
@@ -852,8 +852,9 @@ static int init_special_event(int new_event) {
     mEv_ymdh_u special_end_ymdh;
     mEv_save_common_data_c* ev_save_common;
     u16* dates_p;
+    u16 start_date;
+    u16 end_date;
     s16 event_year;
-    int t;
 
     switch (Common_Get(last_scene_no)) {
         case SCENE_BUGGY:
@@ -887,6 +888,8 @@ static int init_special_event(int new_event) {
     dates_p = ev_save_common->dates;
     event_year = Save_Get(event_year);
     type = ev_save_common->special_event.type;
+    start_date = dates_p[mEv_SAVE_DATE_SPECIAL0];
+    end_date = dates_p[mEv_SAVE_DATE_SPECIAL2];
 
     rtc_sched.raw = 0;
     rtc_sched.d.month = rtc_time->month;
@@ -894,31 +897,21 @@ static int init_special_event(int new_event) {
 
     special_monthday[0].raw = dates_p[mEv_SAVE_DATE_SPECIAL1];
 
-    special_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL0] << 8) & 0x000FFFF00;
+    special_ymdh.raw = (start_date << 8) & 0x000FFFF00;
     special_ymdh.year = event_year % 100;
 
-    
-    
+    rtc_ymdh.raw = (rtc_sched.md) << 8;
+    rtc_ymdh.year = rtc_time->year % 100;
+    rtc_ymdh.hour = rtc_time->hour;
+    special_end_ymdh.raw = (end_date << 8) & 0x000FFFF00;
 #if VERSION >= VER_GAFU01_00
-    rtc_ymdh.raw = (rtc_sched.md) << 8;
-    rtc_ymdh.year = rtc_time->year % 100;
-    rtc_ymdh.hour = rtc_time->hour;
-    special_end_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL2] << 8) & 0x000FFFF00;
-    t = event_year % 100;
-    if (dates_p[mEv_SAVE_DATE_SPECIAL0] > dates_p[mEv_SAVE_DATE_SPECIAL2]) {
-        t++;
+    special_end_ymdh.year = (u8)(event_year % 100);
+    if (start_date > end_date) {
+        special_end_ymdh.year++;
     }
-
-    special_end_ymdh.year = t;
 #else
-    rtc_ymdh.raw = (rtc_sched.md) << 8;
-    rtc_ymdh.year = rtc_time->year % 100;
-    rtc_ymdh.hour = rtc_time->hour;
-    special_end_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL2] << 8) & 0x000FFFF00;
-    special_end_ymdh.year = (event_year % 100) + ((dates_p[mEv_SAVE_DATE_SPECIAL0] > dates_p[mEv_SAVE_DATE_SPECIAL2] &&
-                                                   dates_p[mEv_SAVE_DATE_SPECIAL0] > rtc_sched.md)
-                                                      ? 1
-                                                      : 0);
+    special_end_ymdh.year =
+        (event_year % 100) + ((start_date > end_date && start_date > rtc_sched.md) ? 1 : 0);
 #endif
 
     special_end_ymdh.hour = get_special_event_end_time(type);
@@ -2806,7 +2799,7 @@ extern int mEv_someone_died() {
 }
 
 extern void mEv_special_event_soldout(int type) {
-    GAME_PLAY* play = (GAME_PLAY*)gamePT;
+    Event_c* event = &((GAME_PLAY*)gamePT)->event;
     mEv_event_today_c* ev_today = event_today;
     int i;
 
@@ -2816,7 +2809,7 @@ extern void mEv_special_event_soldout(int type) {
         if (ev_today->type != -1 && index_today[ev_today->type] != 0xFF &&
             mEv_check_status(ev_today->type, mEv_STATUS_ERROR) == FALSE && ev_today->type == type) {
             if (clear_active(ev_today->type)) {
-                play->event.changed_num++;
+                event->changed_num++;
             }
 
             ev_today->active_hours = mEv_EVENT_HOUR_CLEAR_EVENT;

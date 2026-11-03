@@ -30,6 +30,9 @@ extern unsigned long __float_huge[];
 extern unsigned long __float_max[];
 extern unsigned long __float_epsilon[];
 
+#if defined(IS_REL) && VERSION >= 1
+extern int __fpclassifyf(float __value);
+#else
 inline int __fpclassifyf(float __value)
 {
 	unsigned long integer = *(unsigned long*)&__value;
@@ -50,6 +53,8 @@ inline int __fpclassifyf(float __value)
 
 	return FP_NORMAL;
 }
+
+#endif
 
 inline int __fpclassifyd(double __value)
 {

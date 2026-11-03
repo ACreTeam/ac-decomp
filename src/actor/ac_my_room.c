@@ -1403,8 +1403,8 @@ static void aMR_SecureFurnitureBank(MY_ROOM_ACTOR* my_room, GAME* game) {
     bank_p = (u8*)zelda_malloc_align(size, 32);
     my_room->bank0_p = bank_p;
     for (i = 0; i < my_room->bank_count0; i++) {
-        int size = i * aMR_FTR_BANK_SIZE;
-        l_bank_address_table[i] = bank_p + (int)size;
+        size_t size = (size_t)i * aMR_FTR_BANK_SIZE;
+        l_bank_address_table[i] = bank_p + size;
     }
 
     if (my_room->bank_count1 > 0) {

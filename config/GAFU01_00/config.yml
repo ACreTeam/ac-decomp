@@ -44182,7 +44182,7 @@ modules:
 
   - symbol: obj_e_mikanbox_v
     binary: assets/obj_e_mikanbox_v.bin
-    header: assets/obj_e_mikanbox_v.inc
+    header: assets/obj_e_mikanbox/obj_e_mikanbox_v.inc
     header_type: none
     custom_type: vtx
 

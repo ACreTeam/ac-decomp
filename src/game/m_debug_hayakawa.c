@@ -42,18 +42,22 @@
  * @param reg The index of the Hayakawa register to set or retrieve bits from.
  */
 static void debug_hayakawa_bitset(const int n, const int reg) {
+    int value;
+    int bit;
+    int i;
+
     // Check if the current Hayakawa state matches the given state.
     if (GETREG(HREG, HREG_STATE_IDX) == n) {
         // If the Hayakawa register has been initialized, set its bits.
         if (hreg_init_check(n)) {
             int set;
-            int i;
-            int setbit = GETREG(HREG, reg);
-            int bit = 1;
+
+            value = GETREG(HREG, reg);
+            bit = 1;
 
             // Loop through each bit in the register, setting the corresponding flag.
             for (i = 0; i < HREG_STATE_ARGS_COUNT; i++) {
-                set = (setbit & bit) != 0;
+                set = (value & bit) != 0;
                 bit <<= 1;
 
                 SETREG(HREG, HREG_STATE_ARGS_START + i, set);
@@ -61,20 +65,19 @@ static void debug_hayakawa_bitset(const int n, const int reg) {
         }
         // If the Hayakawa register hasn't been initialized, save its bits.
         else {
-            int savebit = 0;
-            int bit = 1;
-            int i;
+            value = 0;
+            bit = 1;
 
             // Loop through each bit in the register, saving the corresponding flag.
             for (i = 0; i < HREG_STATE_ARGS_COUNT; i++) {
                 if (GETREG(HREG, HREG_STATE_ARGS_START + i) != 0) {
-                    savebit |= bit;
+                    value |= bit;
                 }
 
                 bit <<= 1;
             }
 
-            SETREG(HREG, reg, savebit);
+            SETREG(HREG, reg, value);
         }
     }
 }
@@ -451,8 +454,8 @@ static void pad_disp(u8 pad, u16 button, Gfx** gfx_pp) {
     for (i = 0; i < 16; i++) {
         if (button & (1 << i)) {
             gDPSetColor(gfx++, G_SETPRIMCOLOR, pad_color2[i].raw);
-            x0 = pad_start_x + (int)(i * 4);
-            x1 = pad_start_x + (int)((i + 1) * 4);
+            x0 = pad_start_x + (int)(i * 4U);
+            x1 = pad_start_x + (int)((i + 1) * 4U);
             gfx = gfx_gDPFillRectangle1(gfx, x0, 226, x1 - 1, 229);
         }
     }

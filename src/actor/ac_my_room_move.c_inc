@@ -1667,6 +1667,7 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
         mActor_name_t item;
         int ftrID;
         mActor_name_t item2;
+        mActor_name_t layer1_item;
         int ftrID2;
         int ut;
         int i;
@@ -1678,7 +1679,6 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
         FTR_ACTOR* ftr_actor;
         u8 exists2;
         FTR_ACTOR* ftr_actor2;
-        mActor_name_t layer1_item;
 
         aMR_Wpos2PlaceNumber(&ut_x, &ut_z, playerx->world.position, 0);
         ut = ut_x + ut_z * UT_X_NUM;
@@ -1721,7 +1721,7 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
                 my_room->pickup_info.leaf_pos.y =
                     mCoBG_GetBgY_AngleS_FromWpos(NULL, my_room->pickup_info.leaf_pos, 0.0f);
                 my_room->pickup_info.layer = mCoBG_LAYER1;
-                return (mActor_name_t)layer1_item;
+                return layer1_item;
             }
 
             if (aMR_UnitNum2FtrItemNoFtrID(&item2, &ftrID2, target_ut_x, target_ut_z, mCoBG_LAYER0) &&

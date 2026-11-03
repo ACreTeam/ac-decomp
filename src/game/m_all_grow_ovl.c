@@ -1946,6 +1946,7 @@ static void mAGr_GrowIslandFgItem(lbRTC_time_c* now_time, lbRTC_time_c* grow_tim
     mFM_fg_c* island_block = Save_Get(island).fgblock[0];
     mCoBG_Collision_u* col;
     int bx;
+    int bz;
 
     mAGrw_ClearGrowInfo(&grow_info);
     grow_info.spoil_kabu = spoil_kabu;
@@ -1964,28 +1965,30 @@ static void mAGr_GrowIslandFgItem(lbRTC_time_c* now_time, lbRTC_time_c* grow_tim
     mFI_GetIslandBlockNumX(island_block_x_nums);
     grow_info.ocean_row = TRUE;
 
-    for (bx = 0; bx < mISL_FG_BLOCK_X_NUM; bx++) {
-        u8 normal_trees = 0;
-        u8 other_trees = 0;
+    for (bz = 0; bz < mISL_FG_BLOCK_Z_NUM; bz++) {
+        for (bx = 0; bx < mISL_FG_BLOCK_X_NUM; bx++) {
+            u8 normal_trees = 0;
+            u8 other_trees = 0;
 
-        mAGrw_SetTree0Info(tree0_info, island_block->items[0]);
-        grow_info.block_x = island_block_x_nums[bx];
-        grow_info.block_z = mISL_BLOCK_Z;
-        col = mFI_GetBkNum2ColTop(grow_info.block_x, mISL_BLOCK_Z);
+            mAGrw_SetTree0Info(tree0_info, island_block->items[0]);
+            grow_info.block_x = island_block_x_nums[bx];
+            grow_info.block_z = mISL_BLOCK_Z;
+            col = mFI_GetBkNum2ColTop(grow_info.block_x, mISL_BLOCK_Z);
 
-        if (col != NULL) {
-            if (proc_type == mAGrw_GROW) {
-                mAGrw_SetAroundBlockInfoIsland(&grow_info, bx);
+            if (col != NULL) {
+                if (proc_type == mAGrw_GROW) {
+                    mAGrw_SetAroundBlockInfoIsland(&grow_info, bx);
+                }
+
+                mAGrw_GrowBlockFgItem(island_block->items[0], col, Save_Get(island.deposit[bx]), &grow_info,
+                                      proc_type + mAGrw_GROW_ISLAND_FIRST);
             }
 
-            mAGrw_GrowBlockFgItem(island_block->items[0], col, Save_Get(island.deposit[bx]), &grow_info,
-                                  proc_type + mAGrw_GROW_ISLAND_FIRST);
+            mAGrw_ResetTree0Info(tree0_info, &normal_trees, &other_trees, island_block->items[0]);
+            mAGrw_ThinTree(island_block->items[0], tree0_info, normal_trees, other_trees, mAGrw_ISL_MAX_TREES_PER_BLOCK);
+
+            island_block++;
         }
-
-        mAGrw_ResetTree0Info(tree0_info, &normal_trees, &other_trees, island_block->items[0]);
-        mAGrw_ThinTree(island_block->items[0], tree0_info, normal_trees, other_trees, mAGrw_ISL_MAX_TREES_PER_BLOCK);
-
-        island_block++;
     }
 
     mAGrw_LimitTreeLineIsland(Save_Get(island).fgblock[0]);

@@ -2,6 +2,7 @@
 #include "famicom_emu.h"
 
 #include "Famicom/famicomPriv.h"
+#include "MSL_C/printf.h"
 #include "_mem.h"
 #include "dolphin/gx.h"
 #include "jsyswrap.h"
@@ -119,7 +120,14 @@ extern void famicom_emu_init(GAME* game) {
     u8 player;
     int debug;
     void* manager;
+#if VERSION == VER_GAFU01_00
+    GXRenderModeObj* render;
+    u32 fbWidth;
+    u32 efbHeight;
+    u16 numXfbLines;
+#else
     const GXRenderModeObj* render;
+#endif
 
     famicom_done = FALSE;
     famicom_done_countdown = 0;
@@ -144,9 +152,21 @@ extern void famicom_emu_init(GAME* game) {
     }
 
     manager = JC_JFWDisplay_getManager();
+#if VERSION == VER_GAFU01_00
+    render = JC_JUTVideo_getRenderMode(JC_JUTVideo_getManager());
+#else
     render = JC_JFWDisplay_getRenderMode(manager);
+#endif
     freeXfbBase = JC_JFWDisplay_changeToSingleXfb(manager, 1);
+#if VERSION == VER_GAFU01_00
+    fbWidth = render->fbWidth;
+    efbHeight = render->efbHeight;
+    numXfbLines = GXGetNumXfbLines(efbHeight, GXGetYScaleFactor(efbHeight, render->xfbHeight));
+    freeXfbSize = (u16)ALIGN_NEXT(fbWidth, 16) * numXfbLines * sizeof(u16);
+    DCInvalidateRange(freeXfbBase, freeXfbSize);
+#else
     freeXfbSize = render->fbWidth * render->xfbHeight * sizeof(u16);
+#endif
 
     my_alloc_init(game, freeXfbBase, freeXfbSize);
 
@@ -163,9 +183,20 @@ extern void famicom_emu_cleanup(GAME* game) {
         Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 2);
     }
 
+#if VERSION == VER_GAFU01_00
+    {
+        static GXColor black_color = { 0, 0, 0, 0 };
+        void* manager = JC_JFWDisplay_getManager();
+
+        JC_JFWDisplay_clearEfb(manager, black_color);
+    }
+#endif
     my_alloc_cleanup();
 
     if (freeXfbBase != NULL) {
+#if VERSION == VER_GAFU01_00
+        DCInvalidateRange(freeXfbBase, freeXfbSize);
+#endif
         JC_JFWDisplay_changeToDoubleXfb(JC_JFWDisplay_getManager());
         freeXfbBase = NULL;
         freeXfbSize = 0;
@@ -183,6 +214,9 @@ extern void* famicom_gba_getImage(u32 rom_id, size_t* size) {
     char buf[256];
     void* resource;
     char* rom;
+#if VERSION == VER_GAFU01_00
+    size_t loaded_size;
+#endif
 
     if (rom_id > 19) {
         return 0;
@@ -190,6 +224,28 @@ extern void* famicom_gba_getImage(u32 rom_id, size_t* size) {
 
     rom = names[(rom_id == 0) ? 0 : rom_id - 1];
 
+#if VERSION == VER_GAFU01_00
+    if (rom == NULL) {
+        return NULL;
+    }
+
+    snprintf(buf, sizeof(buf), "/FAMICOM/GBA/jb_%s.bin.szs", rom);
+    resource = zelda_malloc_align(0x10000, 32);
+    if (resource == NULL) {
+        return NULL;
+    }
+
+    loaded_size = JC__JKRReadResource(resource, 0x10000, buf, EXPAND_SWITCH_DECOMPRESS);
+    if (loaded_size == 0) {
+        zelda_free(resource);
+        return NULL;
+    }
+
+    if (size != NULL) {
+        *size = loaded_size;
+    }
+
+#else
     if (rom == NULL) {
         return 0;
     } else {
@@ -199,9 +255,16 @@ extern void* famicom_gba_getImage(u32 rom_id, size_t* size) {
             *size = JC__JKRGetMemBlockSize(0, resource);
         }
     }
+#endif
     return resource;
 }
 
 extern void famicom_gba_removeImage(void* p) {
+#if VERSION == VER_GAFU01_00
+    if (p != NULL) {
+        zelda_free(p);
+    }
+#else
     JC__JKRRemoveResource(p);
+#endif
 }

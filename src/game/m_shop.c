@@ -2374,95 +2374,14 @@ static void mSP_SelectRandomItemToAGB_Unit(mActor_name_t* item, xyz_t* wpos, int
     }
 }
 
-#if VERSION == VER_GAFE01_00
-// @fakematch
-// @HACK - we shouldn't have to force propagation off, nor access the Save_t* struct directly
-#pragma opt_propagation off
 extern void mSP_SelectRandomItemToAGB() {
-    int i;
+    int block_x;
+    int block_z;
     int ut_x;
     int ut_z;
-    xyz_t* wpos_p;
     mActor_name_t* start_p;
     mActor_name_t* item_p;
-    Save_t* save;
-    xyz_t tpos;
-
-    xyz_t wpos = { 0.0f, 0.0f, 0.0f };
-    int bx = 0;
-    int bz = 0;
-
-    mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_ISLAND_LEFT);
-    save = &Common_Get(save.save);
-
-    /* convert all unit island items to valid items */
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        item_p = &save->island.fgblock[0][i].items[0][0];
-
-        mFI_BkNum2WposXZ(&wpos.x, &wpos.z, bx + i, bz);
-        wpos.x += mFI_UT_WORLDSIZE_HALF_X_F;
-        wpos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
-        tpos.x = wpos.x;
-
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            wpos.x = tpos.x;
-
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                mSP_SelectRandomItemToAGB_Unit(item_p, &wpos, ut_x, ut_z);
-                wpos.x += mFI_UT_WORLDSIZE_X_F;
-                item_p++;
-            }
-
-            wpos.z += mFI_UT_WORLDSIZE_Z_F;
-        }
-    }
-
-    /* add correctly placed signboard actor */
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        save = Common_GetPointer(save.save);
-        start_p = &save->island.fgblock[0][i].items[0][0];
-        item_p = &save->island.fgblock[0][i].items[0][0];
-
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                if (item_p[0] == COTTAGE_NPC) {
-                    start_p[((ut_x - 1) & 15) + (((ut_z + 1) & 0xF) << 4)] = ACTOR_PROP_VILLAGER_SIGNBOARD;
-                }
-
-                item_p++;
-            }
-        }
-    }
-
-    /* remove incorrectly placed signboard actors */
-    save = Common_GetPointer(save.save);
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        start_p = &save->island.fgblock[0][i].items[0][0];
-        item_p = &save->island.fgblock[0][i].items[0][0];
-
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                if (item_p[0] == ACTOR_PROP_VILLAGER_SIGNBOARD &&
-                    start_p[((ut_x + 1) & 15) + (((ut_z - 1) & 0xF) << 4)] != COTTAGE_NPC) {
-                    item_p[0] = EMPTY_NO;
-                }
-
-                item_p++;
-            }
-        }
-    }
-    wpos.z = wpos.z;
-}
-#pragma opt_propagation reset
-#else
-extern void mSP_SelectRandomItemToAGB() {
-    int i;
-    int ut_x;
-    int ut_z;
-    xyz_t* wpos_p;
-    mActor_name_t* start_p;
-    mActor_name_t* item_p;
-    xyz_t tpos;
+    f32 start_x;
 
     xyz_t wpos = { 0.0f, 0.0f, 0.0f };
     int bx = 0;
@@ -2471,62 +2390,66 @@ extern void mSP_SelectRandomItemToAGB() {
     mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_ISLAND_LEFT);
 
     /* convert all unit island items to valid items */
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+    for (block_z = 0; block_z < mISL_FG_BLOCK_Z_NUM; block_z++) {
+        for (block_x = 0; block_x < mISL_FG_BLOCK_X_NUM; block_x++) {
+            item_p = &Save_Get(island).fgblock[block_z][block_x].items[0][0];
 
-        mFI_BkNum2WposXZ(&wpos.x, &wpos.z, bx + i, bz);
-        wpos.x += mFI_UT_WORLDSIZE_HALF_X_F;
-        wpos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
-        tpos.x = wpos.x;
+            mFI_BkNum2WposXZ(&wpos.x, &wpos.z, bx + block_x, bz + block_z);
+            wpos.x += mFI_UT_WORLDSIZE_HALF_X_F;
+            wpos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
+            start_x = wpos.x;
 
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            wpos.x = tpos.x;
+            for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+                wpos.x = start_x;
 
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                mSP_SelectRandomItemToAGB_Unit(item_p, &wpos, ut_x, ut_z);
-                wpos.x += mFI_UT_WORLDSIZE_X_F;
-                item_p++;
+                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                    mSP_SelectRandomItemToAGB_Unit(item_p, &wpos, ut_x, ut_z);
+                    wpos.x += mFI_UT_WORLDSIZE_X_F;
+                    item_p++;
+                }
+
+                wpos.z += mFI_UT_WORLDSIZE_Z_F;
             }
-
-            wpos.z += mFI_UT_WORLDSIZE_Z_F;
         }
     }
 
     /* add correctly placed signboard actor */
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
-        
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                start_p = &Save_Get(island).fgblock[0][i].items[0][0];
-                if (item_p[0] == COTTAGE_NPC) {
-                    start_p[(((ut_x - 1) & 15) + (((ut_z + 1) & 0xF) << 4))] = ACTOR_PROP_VILLAGER_SIGNBOARD;
-                }
+    for (block_z = 0; block_z < mISL_FG_BLOCK_Z_NUM; block_z++) {
+        for (block_x = 0; block_x < mISL_FG_BLOCK_X_NUM; block_x++) {
+            item_p = &Save_Get(island).fgblock[block_z][block_x].items[0][0];
 
-                item_p++;
+            for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                    if (item_p[0] == COTTAGE_NPC) {
+                        start_p = &Save_Get(island).fgblock[block_z][block_x].items[0][0];
+                        start_p[((ut_x - 1) & 15) + (((ut_z + 1) & 0xF) << 4)] = ACTOR_PROP_VILLAGER_SIGNBOARD;
+                    }
+
+                    item_p++;
+                }
             }
         }
     }
 
     /* remove incorrectly placed signboard actors */
-    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
-        start_p = &Save_Get(island).fgblock[0][i].items[0][0];
+    for (block_z = 0; block_z < mISL_FG_BLOCK_Z_NUM; block_z++) {
+        for (block_x = 0; block_x < mISL_FG_BLOCK_X_NUM; block_x++) {
+            item_p = &Save_Get(island).fgblock[block_z][block_x].items[0][0];
+            start_p = &Save_Get(island).fgblock[block_z][block_x].items[0][0];
 
-        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                if (item_p[0] == ACTOR_PROP_VILLAGER_SIGNBOARD &&
-                    start_p[((ut_x + 1) & 15) + (((ut_z - 1) & 0xF) << 4)] != COTTAGE_NPC) {
-                    item_p[0] = EMPTY_NO;
+            for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                    if (item_p[0] == ACTOR_PROP_VILLAGER_SIGNBOARD &&
+                        start_p[((ut_x + 1) & 15) + (((ut_z - 1) & 0xF) << 4)] != COTTAGE_NPC) {
+                        item_p[0] = EMPTY_NO;
+                    }
+
+                    item_p++;
                 }
-
-                item_p++;
             }
         }
     }
-    wpos.z = wpos.z;
 }
-#endif
 
 extern const char* mSP_ShopStatus2String(int status) {
     static char dummy[] = "hahaha";

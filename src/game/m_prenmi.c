@@ -19,9 +19,10 @@ static void prenmi_move(GAME_PRENMI* prenmi) {
 
 static void prenmi_draw(GAME_PRENMI* prenmi) {    
   GRAPH* graph;
-  Gfx* gfx;
+  u32 alpha;
   f32 timer;
   f32 y_pos;
+  Gfx* gfx;
   
   graph = prenmi->game.graph;
   OPEN_DISP(graph);
@@ -37,10 +38,11 @@ static void prenmi_draw(GAME_PRENMI* prenmi) {
   
   // set opacity
   y_pos = (1.0f - (timer / (f32)PRENMI_TIMER)) * -240.0f + 250.0f;
-  gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, (u8)y_pos);
+  alpha = (u8)y_pos;
 
   // adjust size
   y_pos = (1.0f - (timer / (f32)PRENMI_TIMER)) * -15.0f + 127.0f;
+  gDPSetPrimColor(gfx++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
   gfx = gfx_gSPTextureRectangle1(gfx, 0, (u32)(y_pos * 4.0f), 0x500, (u32)((y_pos + 1.0f) * 4.0f), 0, 0, 0, 0, 0);
   
   gDPPipeSync(gfx++);

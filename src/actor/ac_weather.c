@@ -708,7 +708,9 @@ static void Weather_Actor_move(ACTOR* actor, GAME* game) {
 #else
         if (umbrella != weather->umbrella_flag) {
 #endif
-            aWeather_ChangeEnvSE(actor, game, weather->current_status, weather->current_level);
+            int status = weather->current_status;
+            int level = weather->current_level;
+            aWeather_ChangeEnvSE(actor, game, status, level);
         }
 
         weather->umbrella_flag = umbrella;

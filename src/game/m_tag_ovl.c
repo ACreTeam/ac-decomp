@@ -1543,7 +1543,8 @@ static void mTG_get_col_width_and_line_select(mTG_tag_c* tag, mTG_tag_data_c* ta
     }
 }
 
-static Mail_c* mTG_get_mail_pointer(Submenu* submenu, mHD_Ovl_c* hand_ovl) {
+// @HACK - __restrict is needed for GAFU01
+static Mail_c* mTG_get_mail_pointer(Submenu* __restrict submenu, mHD_Ovl_c* hand_ovl) {
     mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
     int table;
     int idx;
@@ -5495,7 +5496,9 @@ static void mTG_cpack_change_mail_mark_move(Submenu* submenu, mIV_Ovl_c* inv_ovl
 static void mTG_cpack_change_mail_mark_decide(Submenu* submenu, mIV_Ovl_c* inv_ovl, mCM_Ovl_c* cpmail_ovl,
                                               int mark_idx) {
     static int table_no[] = { mTG_TABLE_MAIL, mTG_TABLE_CPMAIL };
+#if VERSION != VER_GAFU01_00
     int k;
+#endif
     int j;
     mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
     s16 inv_move_idx;
@@ -5510,13 +5513,19 @@ static void mTG_cpack_change_mail_mark_decide(Submenu* submenu, mIV_Ovl_c* inv_o
     Mail_c* cpmail_move_mail;
     Mail_c* inv_free_mail;
     Mail_c* cpmail_free_mail;
-    mTG_cpmail_mark_c* cpmail_mark; // = &tag_ovl->cpmail_mark[mark_idx];
+#if VERSION != VER_GAFU01_00
+    mTG_cpmail_mark_c* cpmail_mark;
+#endif
     s16 mail_idx1[2];
     s16 mail_idx0[2];
     Mail_c* mail_tbl1[2];
     Mail_c* mail_tbl0[2];
     mSM_MenuInfo_c* inv_menu;
     mSM_MenuInfo_c* cpmail_menu;
+#if VERSION == VER_GAFU01_00
+    int k;
+    mTG_cpmail_mark_c* cpmail_mark;
+#endif
 
     inv_mail = Now_Private->mail;
     inv_move_idx = -1;

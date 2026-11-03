@@ -39,9 +39,7 @@ static int aGYR_empty_area(ACTOR* actorx);
 static void aGYR_actor_ct(ACTOR* actorx, GAME* game) {
     GYO_RELEASE_ACTOR* gyo_release = (GYO_RELEASE_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
-    f32 dx;
-    f32 dy;
-    f32 dz;
+    xyz_t delta;
     f32 dist;
     f32 water_y;
     f32 speed_xz;
@@ -60,15 +58,15 @@ static void aGYR_actor_ct(ACTOR* actorx, GAME* game) {
     actorx->scale.y = 0.0126f;
     actorx->scale.z = 0.0126f;
 
-    dx = play->submenu.water_pos.x - actorx->world.position.x;
-    dz = play->submenu.water_pos.z - actorx->world.position.z;
+    delta.x = play->submenu.water_pos.x - actorx->world.position.x;
+    delta.z = play->submenu.water_pos.z - actorx->world.position.z;
     water_y = mCoBG_GetWaterHeight_File(play->submenu.water_pos, __FILE__, 213);
-    dy = water_y - actorx->world.position.y;
-    dist = sqrtf(SQ(dx) + SQ(dz));
+    delta.y = water_y - actorx->world.position.y;
+    dist = sqrtf(SQ(delta.x) + SQ(delta.z));
 
     if (dist > mFI_UNIT_BASE_SIZE_F) {
         speed_xz = (dist / 60.0f) / 0.5f;
-        speed_y = (dy - -450.0f) / 60.0f;
+        speed_y = (delta.y - -450.0f) / 60.0f;
         if (speed_y < 0.0f) {
             speed_y = 0.0f;
         }
@@ -77,7 +75,7 @@ static void aGYR_actor_ct(ACTOR* actorx, GAME* game) {
         speed_y = ABS(dist) * 0.18f;
     }
 
-    angle_y = atans_table(dz, dx);
+    angle_y = atans_table(delta.z, delta.x);
     actorx->world.angle.y = angle_y;
     actorx->shape_info.rotation.y = angle_y;
     actorx->position_speed.y = speed_y;

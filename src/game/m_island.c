@@ -174,7 +174,8 @@ static void mISL_int(u32* dst, u32* src, int n) {
     int i;
 
     for (i = n; i != 0; i--) {
-        u32 v = ((src[0] & 0xFF) << 24) | ((src[0] & 0xFF00) << 8) | ((src[0] >> 8) & 0xFF00) | ((src[0] >> 24) & 0xFF);
+        u32 v = ((src[0] & 0xFF) << 24) | ((src[0] & 0xFF00) << 8) |
+                ((src[0] & 0xFF0000) >> 8) | ((src[0] & 0xFF000000) >> 24);
         src++;
         *dst++ = v;
     }
@@ -751,7 +752,8 @@ static void mISL_toHole(mActor_name_t* fg, u16* deposit, int bx, int bz) {
 
 extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
     int island_x_blocks[mISL_FG_BLOCK_X_NUM];
-    int i;
+    int bx;
+    int bz;
 
     if (agb != NULL) {
         bcopy(agb->name, gc->name, mISL_ISLAND_NAME_LEN);
@@ -770,12 +772,11 @@ extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
             bzero(island_x_blocks, sizeof(island_x_blocks));
             mFI_GetIslandBlockNumX(island_x_blocks);
 
-            for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-                /* This may be fakematch */
-                int x = i + 1;
-
-                mISL_toHole((mActor_name_t*)&gc->fgblock[0][i], gc->deposit[--x], (i) + island_x_blocks[0],
-                            mISL_BLOCK_Z);
+            for (bz = 0; bz < mISL_FG_BLOCK_Z_NUM; bz++) {
+                for (bx = 0; bx < mISL_FG_BLOCK_X_NUM; bx++) {
+                    mISL_toHole((mActor_name_t*)&gc->fgblock[bz][bx], gc->deposit[bz * mISL_FG_BLOCK_X_NUM + bx],
+                                bx + island_x_blocks[0], bz + mISL_BLOCK_Z);
+                }
             }
         }
     }
