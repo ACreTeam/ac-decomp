@@ -423,21 +423,32 @@ static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
     }
 }
 
-// TODO: There's probably no difference between this and US.
-// The inlines used to match US are fake.
 #if VERSION >= VER_GAFU01_00
 extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
-    int i;
-    int j;
-    u8* flagTable;
-    int keyTableIndex = 0;
-    int fixedTableIndex = 0;
-    int dataIndex = 0;
-    s16* jointValuePtr;
-    s16* fixedTable;
+    // Cursor lifetimes and declaration order are significant for MWCC register allocation.
     s16* dataTable;
+    u8* flagTable;
+    s16* jointFixed;
+    s16* rootKey;
+    s16* rootFixed;
     s16* keyTable;
-    u32 jointFlag; // Check translation (xyz)
+    s_xyz* currentJointPtr;
+    s16* fixedTable;
+    s16* nextKey;
+    s16* nextFixed;
+    u32 rootFlag;
+    u32 jointFlag;
+    int component;
+    int keyTableIndex;
+    int fixedTableIndex;
+    int i;
+    int dataIndex;
+    s16* jointValuePtr;
+    int rootComponent;
+
+    keyTableIndex = 0;
+    fixedTableIndex = 0;
+    dataIndex = 0;
 
     // Choose between current and target joint based on morph counter
     if (F32_IS_ZERO(keyframe->morph_counter)) {
@@ -446,7 +457,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
         jointValuePtr = &keyframe->target_joint->x;
     }
 
-    jointFlag = cKF_ANIMATION_BIT_TRANS_X;
+    rootFlag = cKF_ANIMATION_BIT_TRANS_X;
 
     // Retrieve animation tables
     fixedTable = keyframe->animation->fixed_table;
@@ -454,70 +465,76 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     dataTable = keyframe->animation->data_table;
     flagTable = keyframe->animation->flag_table;
 
-    
+    rootKey = keyTable;
+    rootFixed = fixedTable;
 
     // Process root translation x -> y -> z
-    for (j = 0; j < 3; j++) {
-        if (*flagTable & jointFlag) {
+    for (rootComponent = 0; rootComponent < 3; rootComponent++) {
+        if (*flagTable & rootFlag) {
             // Apply joint translation
-            *jointValuePtr =
-                cKF_KeyCalc(dataIndex, keyTable[keyTableIndex], dataTable, keyframe->frame_control.current_frame);
-            dataIndex += keyTable[keyTableIndex];
+            *jointValuePtr = cKF_KeyCalc(dataIndex, *rootKey, dataTable, keyframe->frame_control.current_frame);
+            dataIndex += *rootKey++;
             keyTableIndex++;
         } else {
             // Use fixed value if not flagged for keyframe animation
-            *jointValuePtr = fixedTable[fixedTableIndex];
+            *jointValuePtr = *rootFixed;
+            rootFixed++;
             fixedTableIndex++;
         }
 
-        jointFlag >>= 1; // Shift x -> y -> z
+        rootFlag >>= 1; // Shift x -> y -> z
         jointValuePtr++; // Move to next joint
     }
 
-    // Process remaining joint rotations
-    for (i = 0; i < keyframe->skeleton->num_joints; i++) {
+    nextKey = keyTable + keyTableIndex;
+    nextFixed = fixedTable + fixedTableIndex;
+
+    // Keep the next-joint table positions separate from the component cursors.
+    for (i = 0; i < keyframe->skeleton->num_joints; i++, flagTable++) {
+        keyTable = nextKey;
+        jointFixed = nextFixed;
         jointFlag = cKF_ANIMATION_BIT_ROT_X; // Reset flag for new joint
 
         // Process each joint x -> y -> z
-        for (j = 0; j < 3; j++) {
+        for (component = 0; component < 3; component++) {
             f32 adjustedJointValue;
             f32 mod;
 
             // Similar logic to above, but for each joint in the skeleton
-            if (jointFlag & flagTable[i]) {
-                *jointValuePtr =
-                    cKF_KeyCalc(dataIndex, keyTable[keyTableIndex], dataTable, keyframe->frame_control.current_frame);
-                dataIndex += keyTable[keyTableIndex];
-                keyTableIndex++;
+            if (jointFlag & *flagTable) {
+                *jointValuePtr = cKF_KeyCalc(dataIndex, *keyTable, dataTable, keyframe->frame_control.current_frame);
+                dataIndex += *keyTable++;
+                nextKey++;
             } else {
-                *jointValuePtr = fixedTable[fixedTableIndex];
-                fixedTableIndex++;
+                *jointValuePtr = *jointFixed;
+                jointFixed++;
+                nextFixed++;
             }
 
-            // Reduce the value by 90% and clamp to [0, 360) degrees converted back to binangle (s16)
-            // This effectively limits any joint's maximum rotation to be in the range of [-36.8, 36.7] degrees
+            // Stored rotations are in tenths of a degree. Wrap before converting to a binary angle.
             adjustedJointValue = *jointValuePtr * 0.1f;
             mod = MOD_F(adjustedJointValue, 360.0f);
             *jointValuePtr = DEG2SHORT_ANGLE(mod);
             jointValuePtr++;
 
-
             jointFlag >>= 1; // Shift flag for next component x -> y -> z
         }
-
-        // flagTable++;
     }
 
     // Apply rotation differences if available
     if (keyframe->rotation_diff_table != NULL) {
-        s_xyz* currentJointPtr = (F32_IS_ZERO(keyframe->morph_counter)) ? keyframe->current_joint : keyframe->target_joint;
+        if (F32_IS_ZERO(keyframe->morph_counter)) {
+            currentJointPtr = keyframe->current_joint;
+        } else {
+            currentJointPtr = keyframe->target_joint;
+        }
 
         currentJointPtr++; // Skip first joint, usually root, which is handled separately
-        for (j = 0; j < keyframe->skeleton->num_joints; j++) {
+        for (i = 0; i < keyframe->skeleton->num_joints; i++) {
             // Apply rotation differences to each joint
-            currentJointPtr->x += keyframe->rotation_diff_table[j].x;
-            currentJointPtr->y += keyframe->rotation_diff_table[j].y;
-            currentJointPtr->z += keyframe->rotation_diff_table[j].z;
+            currentJointPtr->x += keyframe->rotation_diff_table[i].x;
+            currentJointPtr->y += keyframe->rotation_diff_table[i].y;
+            currentJointPtr->z += keyframe->rotation_diff_table[i].z;
 
             currentJointPtr++; // Move to next joint
         }

@@ -238,8 +238,6 @@ static void aIHT_light_proc(aINS_INSECT_ACTOR* insect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     if (insect->tools_actor.init_matrix == TRUE || insect->insect_flags.bit_1 == TRUE) {
-        s16 radius;
-
         if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PUTAWAY_NET) {
             if ((play->game_frame & 1) == 0 && (int)insect->_1E0 > 0) {
                 insect->_1E0 -= 1.0f;
@@ -250,8 +248,6 @@ static void aIHT_light_proc(aINS_INSECT_ACTOR* insect, GAME* game) {
 
         switch (insect->light_flag) {
             case 0:
-                radius = fabsf(sin_s(insect->light_counter)) * 15.0f + 25.0f;
-
                 // clang-format off
                 Light_point_ct(
                     &insect->point_light,
@@ -259,7 +255,7 @@ static void aIHT_light_proc(aINS_INSECT_ACTOR* insect, GAME* game) {
                     insect->tools_actor.actor_class.world.position.y - 35.0f,
                     insect->tools_actor.actor_class.world.position.z,
                     120, 255, 180,
-                    radius
+                    fabsf(sin_s(insect->light_counter)) * 15.0f + 25.0f
                 );
                 // clang-format on
                 insect->light_list = Global_light_list_new(game, &play->global_light, &insect->point_light);
@@ -271,8 +267,6 @@ static void aIHT_light_proc(aINS_INSECT_ACTOR* insect, GAME* game) {
                 insect->light_flag++;
                 break;
             case 2:
-                radius = fabsf(sin_s(insect->light_counter)) * 15.0f + 25.0f;
-
                 // clang-format off
                 Light_point_ct(
                     &insect->point_light,
@@ -280,7 +274,7 @@ static void aIHT_light_proc(aINS_INSECT_ACTOR* insect, GAME* game) {
                     insect->tools_actor.actor_class.world.position.y - 35.0f,
                     insect->tools_actor.actor_class.world.position.z,
                     120, 255, 180,
-                    radius
+                    fabsf(sin_s(insect->light_counter)) * 15.0f + 25.0f
                 );
                 // clang-format on
                 break;

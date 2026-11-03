@@ -515,7 +515,7 @@ typedef struct sub_ {
     /* 0xE4 */ u8 _unk[0x100 - 0x0E4];
 } sub;
 
-/* sizeof(group) == 0x160 */
+/* sizeof(group): US 0x160, Australia 0x164 */
 struct group_ {
     struct flags_ {
         /* 0x000 */ u8 enabled : 1;
@@ -531,6 +531,37 @@ struct group_ {
     /* 0x001 */ u8 state;
     /* 0x002 */ u8 note_alloc_policy;
     /* 0x003 */ u8 mute_flags;
+#if VERSION == VER_GAFU01_00
+    /* 0x004 */ u16 seq_id;
+    /* 0x006 */ u8 bank_id;
+    /* 0x007 */ u8 unk007;
+    /* 0x008 */ s8 group_idx;
+    /* 0x00A */ u16 tempo;
+    /* 0x00C */ u16 tempo_acceleration;
+    /* 0x00E */ s16 tempo_change;
+    /* 0x010 */ s16 transposition;
+    /* 0x012 */ u16 delay;
+    /* 0x014 */ u16 fade_timer;
+    /* 0x016 */ u16 stored_fade_timer;
+    /* 0x018 */ u16 counter;
+    /* 0x01C */ u8* seq_data;
+    /* 0x020 */ f32 fade_volume;
+    /* 0x024 */ f32 fade_velocity;
+    /* 0x028 */ f32 volume;
+    /* 0x02C */ f32 mute_volume_scale;
+    /* 0x030 */ f32 fade_volume_scale;
+    /* 0x034 */ f32 applied_fade_volume;
+    /* 0x038 */ f32 bend;
+    /* 0x03C */ sub* subtracks[AUDIO_SUBTRACK_NUM];
+    /* 0x07C */ macro macro_player;
+    /* 0x098 */ u8* short_note_velocity_tbl;
+    /* 0x09C */ u8* short_note_gate_time_tbl;
+    /* 0x0A0 */ chnode channel_node;
+    /* 0x0E0 */ s32 skip_ticks;
+    /* 0x0E4 */ s32 script_counter; /* is u32 in MM decomp */
+    /* 0x0E8 */ u8 unkE8[0x15C - 0x0E8];
+    /* 0x15C */ s8 port[8];
+#else
     /* 0x004 */ u8 seq_id;
     /* 0x005 */ u8 bank_id;
     /* 0x006 */ u8 unk006;
@@ -560,6 +591,7 @@ struct group_ {
     /* 0x0E0 */ s32 script_counter; /* is u32 in MM decomp */
     /* 0x0E4 */ u8 unkE4[0x158 - 0x0E4];
     /* 0x158 */ s8 port[8];
+#endif
 };
 
 /* sizeof(note) == 0x90 */
@@ -792,7 +824,7 @@ typedef struct SZHeap_ {
 
 typedef u32 (*SequenceCallback)(s8, sub*);
 
-/* sizeof(AudioGlobals) == 0x92b0 */
+/* sizeof(AudioGlobals): US 0x92B0, Australia 0x9340 */
 typedef struct AudioGlobals {
     /* 0x0000 */ u8 _0000;
     /* 0x0001 */ s8 num_synth_reverbs;
@@ -892,9 +924,15 @@ typedef struct AudioGlobals {
     /* 0x34FC */ DataHeapstrc cache_heap;
     /* 0x3504 */ StayHeapstrc persistent_common_heap_info;
     /* 0x3510 */ StayHeapstrc temporary_common_heap_info;
+#if VERSION == VER_GAFU01_00
+    /* 0x351C */ u8 wave_load_status[178];
+    /* 0x35CE */ u8 bank_load_status[178];
+    /* 0x3680 */ u8 sequence_load_status[360];
+#else
     /* 0x351C */ u8 wave_load_status[172];
     /* 0x35C8 */ u8 bank_load_status[172];
     /* 0x3674 */ u8 sequence_load_status[252];
+#endif
     /* 0x3770 */ volatile u8 reset_status;
     /* 0x3771 */ u8 spec_id;
     /* 0x3774 */ s32 audio_reset_fadeout_frames_left;

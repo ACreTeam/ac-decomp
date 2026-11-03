@@ -90,7 +90,7 @@ jaudio_NES/game/emusound.c:
 
 jaudio_NES/game/game64.c:
 	.text       start:0x8000BBC0 end:0x8000BBC0
-	.text       start:0x8000BBC0 end:0x8000BD48
+	.text       start:0x8000BBC0 end:0x8000BD48 align:32
 	.text       start:0x8000BD48 end:0x8001560C
 	.rodata     start:0x800B35F8 end:0x800B3958
 	.data       start:0x800D9280 end:0x800DA2C8
@@ -981,7 +981,7 @@ JUtility.a/JUTResFont.cpp:
 	.sdata      start:0x80229F00 end:0x80229F18
 	.sdata2     start:0x8022B270 end:0x8022B288
 
-JUtility.a/JUTFontData_Ascfont_fix12.s: comment:0
+JSystem/JUtility/JUTFontData_Ascfont_fix12.s: comment:0
 	.rodata     start:0x800B5020 end:0x800B9180
 
 JUtility.a/JUTDbPrint.cpp:

@@ -21,14 +21,14 @@ extern int mCoBG_JudgeMoveBgGroundCheck(f32* point, f32* goal, f32 dist) {
     return FALSE;
 }
 
-static void mCoBG_SetLinePos(f32* line, f32 x, f32 z) {
-    line[0] = x;
-    line[1] = z;
-}
-
 static void mCoBG_PlusLinePos(f32* line, f32 x, f32 z) {
     line[0] += x;
     line[1] += z;
+}
+
+static void mCoBG_SetLinePos(f32* line, f32 x, f32 z) {
+    line[0] = x;
+    line[1] = z;
 }
 
 extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p) {

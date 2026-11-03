@@ -355,8 +355,10 @@ static void mTM_disp_time(int unused) {
  * @return TRUE if the time step control is active, FALSE otherwise.
  */
 static int mTM_TimestepControl() {
+#if VERSION < VER_GAFU01_00
   // Define time step values and an index for tracking the current time step
   static int timestep[mTM_TIMESTEP_NUM] = {2, 4, 120, 240};
+#endif
   static int id;
 
   int add_sec;

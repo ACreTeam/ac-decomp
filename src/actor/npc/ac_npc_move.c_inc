@@ -646,7 +646,11 @@ static void aNPC_actor_move_show_before(ACTOR* actorx, GAME* game) {
     aNPC_position_move(actorx);
     aNPC_BGcheck(nactorx, actorx);
     aNPC_entranceCheck(nactorx);
+#if VERSION >= VER_GAFU01_00
+    aNPC_moveRangeRevice(nactorx);
+#else
     aNPC_circleRangeRevice(nactorx);
+#endif
     aNPC_set_condition_info(nactorx);
 }
 

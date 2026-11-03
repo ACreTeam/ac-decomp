@@ -12,6 +12,15 @@ fill_gaps: false
 ldscript_template: config/GAFU01_00/ldscript.tpl
 
 block_relocations:
+# Texture pixels mistaken for pointers into seq.
+# dvd_keikoku_moji6_new1_tex
+- source: 0x800C0ED4
+- source: 0x800C0ED8
+# dvd_keikoku_moji10_tex
+- source: 0x800C2234
+- source: 0x800C2238
+# nintendo_hi_0
+- source: 0x800D1A20
 # emu64
 - source: 0x8004D784
 - source: 0x8004D788

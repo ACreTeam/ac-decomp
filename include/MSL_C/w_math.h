@@ -57,6 +57,10 @@ inline float fabsf(float x) {
 #define NAN (*(float*)__float_nan)
 #define HUGE_VALF (*(float*)__float_huge)
 
+/* The Australian REL imports sqrt from the DOL. */
+#if defined(IS_REL) && VERSION >= 1
+extern double sqrt(double x);
+#else
 extern inline double sqrt(double x) {
     if (x > 0.0) {
         double guess = __frsqrte(x);
@@ -72,6 +76,7 @@ extern inline double sqrt(double x) {
     }
     return INFINITY;
 }
+#endif
 
 #ifdef __cplusplus
 extern "C" {

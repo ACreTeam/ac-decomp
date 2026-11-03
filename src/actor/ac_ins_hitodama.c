@@ -177,12 +177,9 @@ static void aIHD_light_proc(ACTOR* actorx, GAME* game) {
 
         switch (insect->light_flag) {
             case 0: {
-                s16 power = 15.0f * fabsf(sin_s(insect->light_counter)) + 25.0f;
-                s16 x = actorx->world.position.x;
-                s16 y = actorx->world.position.y - 35.0f;
-                s16 z = actorx->world.position.z;
-
-                Light_point_ct(&insect->point_light, x, y, z, 120, 255, 180, power);
+                Light_point_ct(&insect->point_light, (s16)actorx->world.position.x,
+                               (s16)(actorx->world.position.y - 35.0f), (s16)actorx->world.position.z,
+                               120, 255, 180, 15.0f * fabsf(sin_s(insect->light_counter)) + 25.0f);
                 insect->light_list = Global_light_list_new(game, &play->global_light, &insect->point_light);
                 insect->light_flag++;
                 break;
@@ -194,12 +191,9 @@ static void aIHD_light_proc(ACTOR* actorx, GAME* game) {
                 break;
             }
             case 2: {
-                s16 power = 15.0f * fabsf(sin_s(insect->light_counter)) + 25.0f;
-                s16 x = actorx->world.position.x;
-                s16 y = actorx->world.position.y - 35.0f;
-                s16 z = actorx->world.position.z;
-
-                Light_point_ct(&insect->point_light, x, y, z, 120, 255, 180, power);
+                Light_point_ct(&insect->point_light, (s16)actorx->world.position.x,
+                               (s16)(actorx->world.position.y - 35.0f), (s16)actorx->world.position.z,
+                               120, 255, 180, 15.0f * fabsf(sin_s(insect->light_counter)) + 25.0f);
                 break;
             }
         }

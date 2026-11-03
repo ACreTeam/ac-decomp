@@ -381,14 +381,6 @@ extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t pos) {
     return col->data.unit_attribute;
 }
 
-static u32 mCoBG_SelectBiggerUnint(u32 a, u32 b) {
-    if (a > b) {
-        return a;
-    } else {
-        return b;
-    }
-}
-
 static u32 mCoBG_SelectSmallerUnint(u32 a, u32 b) {
     if (a < b) {
         return a;
@@ -397,16 +389,24 @@ static u32 mCoBG_SelectSmallerUnint(u32 a, u32 b) {
     }
 }
 
-static u32 mCoBG_GetMaxOffset(u32 p0, u32 p1, u32 p2, u32 p3, u32 p4) {
-    return mCoBG_SelectBiggerUnint(
-        mCoBG_SelectBiggerUnint(mCoBG_SelectBiggerUnint(p0, p1), mCoBG_SelectBiggerUnint(p2, p3)),
-        p4
-    );
+static u32 mCoBG_SelectBiggerUnint(u32 a, u32 b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
 }
 
 static u32 mCoBG_GetMinOffset(u32 p0, u32 p1, u32 p2, u32 p3, u32 p4) {
     return mCoBG_SelectSmallerUnint(
         mCoBG_SelectSmallerUnint(mCoBG_SelectSmallerUnint(p0, p1), mCoBG_SelectSmallerUnint(p2, p3)),
+        p4
+    );
+}
+
+static u32 mCoBG_GetMaxOffset(u32 p0, u32 p1, u32 p2, u32 p3, u32 p4) {
+    return mCoBG_SelectBiggerUnint(
+        mCoBG_SelectBiggerUnint(mCoBG_SelectBiggerUnint(p0, p1), mCoBG_SelectBiggerUnint(p2, p3)),
         p4
     );
 }
