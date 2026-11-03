@@ -598,6 +598,49 @@ cflags_jaudio_order = [
     "-i src/static/jaudio_NES/internal",
 ]
 
+# Australian MetroTRK uses the GameCube sources imported from Twilight Princess.
+trk26_root = "src/static/TRK_MINNOW_DOLPHIN/2.6"
+cflags_trk26 = [
+    *[flag for flag in cflags_base if not flag.startswith("-i ")],
+    f"-i {trk26_root}/include",
+    *cflags_dolphin26_includes,
+    "-O4,p", "-use_lmw_stmw on", "-rostr", "-str reuse",
+    "-gccinc", "-common off", "-inline deferred,auto", "-char signed",
+    "-sdata 0", "-sdata2 0", "-D__GEKKO__", "-DSDK_REVISION=0",
+]
+trk26_objects = [
+    Object(Matching, "TRK_Minnow_Dolphin.a/mainloop.c", source="mainloop.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/nubevent.c", source="nubevent.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/nubinit.c", source="nubinit.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/msg.c", source="msg.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/msgbuf.c", source="msgbuf.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/serpoll.c", source="serpoll.c", extra_cflags=["-sdata 8"]),
+    Object(Matching, "TRK_Minnow_Dolphin.a/usr_put.c", source="usr_put.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/dispatch.c", source="dispatch.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/msghndlr.c", source="msghndlr.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/support.c", source="support.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/mutex_TRK.c", source="mutex_TRK.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/notify.c", source="notify.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/flush_cache.c", source="flush_cache.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/mem_TRK.c", source="mem_TRK.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/targimpl.c", source="targimpl.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/targsupp.s", source="targsupp.s"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/mpc_7xx_603e.c", source="mpc_7xx_603e.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/__exception.s", source="__exception.s"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/dolphin_trk.c", source="dolphin_trk.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/main_TRK.c", source="main_TRK.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/dolphin_trk_glue.c", source="dolphin_trk_glue.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/targcont.c", source="targcont.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/target_options.c", source="target_options.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/mslsupp.c", source="mslsupp.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/UDP_Stubs.c", source="UDP_Stubs.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/ddh_main.c", source="ddh_main.c", extra_cflags=["-sdata 8"]),
+    Object(Matching, "TRK_Minnow_Dolphin.a/CircleBuffer.c", source="CircleBuffer.c"),
+    Object(Matching, "TRK_Minnow_Dolphin.a/gdev_main.c", source="gdev_main.c", extra_cflags=["-sdata 8"]),
+    Object(Matching, "TRK_Minnow_Dolphin.a/MWTrace.c", source="MWTrace.c", extra_cflags=["-sdata 8"]),
+    Object(Matching, "TRK_Minnow_Dolphin.a/MWCriticalSection_gc.cpp", source="MWCriticalSection_gc.cpp"),
+]
+
 config.libs = [
     {
         "lib": "boot",
@@ -1153,8 +1196,8 @@ config.libs = [
     },
     {
         "lib": "TRK_MINNOW_DOLPHIN",
-        "mw_version": "GC/1.3",
-        "cflags": [
+        "mw_version": "GC/2.6" if use_mwcc26_libs else "GC/1.3",
+        "cflags": cflags_trk26 if use_mwcc26_libs else [
             *cflags_static,
             "-O4,p",
             "-sdata 0",
@@ -1165,8 +1208,8 @@ config.libs = [
             "-use_lmw_stmw on"
         ],
         "progress_category": "sdk",
-        "src_dir": "src/static",
-        "objects": [
+        "src_dir": f"{trk26_root}/src" if use_mwcc26_libs else "src/static",
+        "objects": trk26_objects if use_mwcc26_libs else [
             Object(Matching, "TRK_MINNOW_DOLPHIN/__exception.s"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/dispatch.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),

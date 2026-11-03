@@ -28,6 +28,23 @@ block_relocations:
 - source: 0x800DF5D8
 
 add_relocations:
+# MetroTRK stack and reset-vector references.
+- source: .text:0x800B1348
+  type: hi
+  target: _db_stack_addr
+- source: .text:0x800B134C
+  type: l
+  target: _db_stack_addr
+- source: .text:0x800B13DC
+  type: hi
+  target: _db_stack_addr
+- source: .text:0x800B13E0
+  type: l
+  target: _db_stack_addr
+- source: .init:0x800036E4
+  type: rel24
+  target: __TRK_reset
+
 # OS.c
 - source: .init:0x80003324
   type: hi

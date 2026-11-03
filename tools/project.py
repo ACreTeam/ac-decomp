@@ -443,6 +443,9 @@ def generate_build_ninja(
     out = io.StringIO()
     n = ninja_syntax.Writer(out)
     n.variable("ninja_required_version", "1.3")
+    # Compaction drops dependency records for outputs absent from the active
+    # graph. Keep each version's Ninja logs separate when switching versions.
+    n.variable("builddir", config.out_path())
     n.newline()
 
     configure_script = Path(os.path.relpath(os.path.abspath(sys.argv[0])))
