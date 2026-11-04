@@ -5301,6 +5301,17 @@ config.libs = [
     },
 ]
 
+# Australia uses newer revisions of these libraries. Keep their sources and
+# headers separate so work on them does not change the US build.
+if config.version == "GAFU01_00":
+    for lib in config.libs:
+        if lib["lib"] in {"libc64", "libjsys", "Famicom"} or lib.get("progress_category") == "jsystem":
+            lib["src_dir"] = "src/AUS/static"
+            lib["mw_version"] = config.linker_version
+            lib["cflags"] = ["-i include/AUS", "-i src/AUS/static", *lib["cflags"]]
+            if lib["lib"] in {"libc64", "Famicom"}:
+                lib["cflags"] += ["-inline off", "-sym on"]
+
 config.add_objects = {
     # module_id => object names
     # module_id 0 is DOL
