@@ -20,8 +20,10 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets);
 void GXEnableTexOffsets(GXTexCoordID coord, GXBool line_enable, GXBool point_enable);
 #ifdef TARGET_PC
 void GXSetArray(GXAttr attr, const void* data, u32 size, u8 stride);
+extern void GXEnd(void);
 #else
 void GXSetArray(GXAttr attr, const void* data, u8 stride);
+static inline void GXEnd(void) {}
 #endif
 void GXInvalidateVtxCache(void);
 

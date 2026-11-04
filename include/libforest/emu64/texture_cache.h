@@ -36,7 +36,7 @@ typedef struct {
     void* converted; /* Converted RAM address */
 } texture_cache_entry_t;
 
-typedef struct texture_cache_s texture_cache_t;
+typedef struct texture_cache_t texture_cache_t;
 
 typedef void* (*texture_cache_search_func)(void* addr);
 typedef int (*texture_cache_entry_func)(void* original, void* converted);
@@ -48,7 +48,7 @@ typedef struct {
     texture_cache_alloc_func alloc;
 } texture_cache_funcs;
 
-typedef struct texture_cache_s {
+typedef struct texture_cache_t {
     texture_cache_funcs* funcs; /* Pointer to texture cache funcs */
     u8* buffer_start;           /* Start address of cache buffer */
     u8* buffer_end;             /* End address of cache buffer */

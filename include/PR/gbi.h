@@ -1620,7 +1620,7 @@ typedef struct {
 		unsigned int	shifts:4;
 } Gsettile;
 
-typedef struct {
+typedef struct _Gloadtile {
 		int		cmd:8;
 		unsigned int	sl:12;
 		unsigned int	tl:12;
@@ -1630,7 +1630,15 @@ typedef struct {
 		unsigned int	th:12;
 } Gloadtile;
 
-typedef Gloadtile Gloadblock;
+typedef struct _Gloadblock {
+		int		cmd:8;
+		unsigned int	sl:12;
+		unsigned int	tl:12;
+		int		pad:5;
+		unsigned int	tile:3;
+		unsigned int	sh:12;
+		unsigned int	th:12;
+} Gloadblock;
 
 typedef Gloadtile Gsettilesize;
 

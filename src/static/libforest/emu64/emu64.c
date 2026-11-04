@@ -7,17 +7,175 @@
 #include "boot.h"
 #include "libc64/sprintf.h"
 #include "dolphin/mtx.h"
+#define MTXInvXpose PSMTXInvXpose
+extern "C" u32 PSMTXInvXpose(const float src[3][4], float invX[3][4]);
 #include "dolphin/os/OSFastCast.h"
 #include "dolphin/os.h"
 // #include "va_args.h"
 #include "jsyswrap.h"
 #include "dolphin/PPCArch.h"
+#include "PowerPC_EABI_Support/msl/MSL_C/PPC_EABI/cmath_gcn.h" // for std::sqrtf
 
-// this pragma may be unnecessary
+#if VERSION == VER_GAFE01_00
 #pragma inline_depth(1024)
-
-// this one is absolutely necessary for a ton of function calls to be inlined
 #pragma inline_max_size(10000)
+#endif
+
+class aflags_c {
+public:
+#ifdef AFLAGS_DEBUG
+    u32 getMaxArray() {
+        return AFLAGS_MAX;
+    }
+    void set(unsigned int idx, u8 val) {
+        this->flags[idx] = val;
+    } /* @fabricated */
+    u8 operator[](unsigned int idx) {
+        return this->flags[idx];
+    } /* @fabricated */
+
+#else
+    u32 getMaxArray() {
+        return AFLAGS_MAX;
+    }
+    void set(unsigned int idx, u8 val) {
+    }
+    u8 operator[](unsigned int idx) {
+        return 0;
+    }
+#endif
+
+private:
+    int flags[AFLAGS_MAX];
+};
+
+class Texture {
+public:
+    /* @weak */
+    Texture(void* img_p, u16 w, u16 h, u8 fmt, u8 bpp) {
+        this->img_p = img_p;
+        this->width = w;
+        this->height = h;
+        this->n64_bpp = bpp;
+        this->n64_fmt = fmt;
+        this->blockX_size = EMU64_TEX_BLOCK_SIZE_X;
+        this->blockY_size = EMU64_TEX_BLOCK_SIZE_Y;
+    }
+
+    /* @??? (maybe not weak?) */
+    ~Texture() {};
+
+    /* @weak */
+    u32 getOffset(int x, int y) {
+        const int size_x = sizeof(u16) * EMU64_TEX_BLOCK_SIZE_X;
+        const int size_y = sizeof(u16) * EMU64_TEX_BLOCK_SIZE_Y;
+
+        return ((((u32)x / 8) + ((u32)(((u32)y / 8) * this->width) / 8)) * (size_x * size_y)) + ((u32)y & 7) * size_x +
+                ((u32)x & 7);
+    }
+
+    /* @weak */
+    u32 getTexel(int block_x, int block_y) {
+        int x = (1 << this->blockX_size) - 1;
+        int y = (1 << this->blockY_size) - 1;
+
+        block_x &= x;
+        block_y &= y;
+
+        u32 ofs = this->getOffset(block_x, block_y);
+
+        switch (this->n64_bpp) {
+            case G_IM_SIZ_4b: {
+                u8* img_p = ((u8*)this->img_p) + ofs / 2;
+                if ((block_x & 1) == 0) {
+                    return *img_p >> 4;
+                } else {
+                    return *img_p & 0xF;
+                }
+            }
+
+            case G_IM_SIZ_8b: {
+                return ((u8*)this->img_p)[ofs];
+            }
+
+            case G_IM_SIZ_16b: {
+                return ((u16*)this->img_p)[ofs];
+            }
+
+            default: {
+                return ((u32*)this->img_p)[ofs];
+            }
+        }
+    }
+
+    /* @weak */
+    void putTexel(int block_x, int block_y, u32 texel) {
+        int x = (1 << this->blockX_size) - 1;
+        int y = (1 << this->blockY_size) - 1;
+
+        block_x &= x;
+        block_y &= y;
+
+        u32 ofs = this->getOffset(block_x, block_y);
+
+        switch (this->n64_bpp) {
+            case G_IM_SIZ_4b: {
+                u8* img_p = ((u8*)this->img_p) + ofs / 2;
+                if ((block_x & 1) == 0) {
+                    *img_p = (*img_p & 0x0F) | (texel << 4);
+                } else {
+                    *img_p = (*img_p & 0xF0) | (texel & 0xF);
+                }
+            }
+
+            case G_IM_SIZ_8b: {
+                ((u8*)this->img_p)[ofs] = texel;
+            }
+
+            case G_IM_SIZ_16b: {
+                ((u16*)this->img_p)[ofs] = texel;
+            }
+
+            case G_IM_SIZ_32b: {
+                ((u32*)this->img_p)[ofs] = texel;
+            }
+        }
+    }
+
+    /* Member variables */
+    void* img_p;
+    u16 width;
+    u16 height;
+    u8 blockX_size;
+    u8 blockY_size;
+    u8 n64_fmt;
+    u8 n64_bpp;
+};
+
+inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
+    unsigned int rgb5a3;
+
+    switch (rgba5551 & 1) {
+        default:
+            rgb5a3 = 0x8000 | (rgba5551 >> 1); // no transparency so simply swap
+            break;
+        case 0:
+            rgb5a3 = ((rgba5551 >> 4) & ~0xFF) | ((rgba5551 >> 3) & 0xF0) | ((rgba5551 >> 2) & 0x0F);
+            break;
+    }
+
+    return rgb5a3;
+}
+
+inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd, unsigned int in_ht) {
+    unsigned int wd;
+    unsigned int ht;
+
+    get_dol_wd_ht(siz, in_wd, in_ht, &wd, &ht);
+    return ((wd * ht) << siz) / 2;
+}
+
+unsigned int get_dol_tlut_siz(unsigned int count);
 
 static void guMtxXFM1F_dol(MtxP mtx, float x, float y, float z, float* ox, float* oy, float* oz);
 static void guMtxXFM1F_dol7(MtxP mtx, float x, float y, float z, float* ox, float* oy, float* oz);
@@ -32,7 +190,11 @@ void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float 
 
 static aflags_c aflags;
 u8 emu64::nChans = 0;
+#if VERSION == VER_GAFU01_00
+u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE] ATTRIBUTE_ALIGN(32);
+#else
 static u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE] ATTRIBUTE_ALIGN(32);
+#endif
 static u8 texture_buffer_bss[TEX_BUFFER_BSS_SIZE] ATTRIBUTE_ALIGN(32);
 
 static tmem_t tmem_map[TMEM_ENTRIES];
@@ -64,7 +226,7 @@ static texture_cache_funcs texture_cache_bss_func = {
 static texture_cache_t texture_cache_data = {
     &texture_cache_data_func,
     &texture_buffer_data[0],
-    &texture_buffer_data[sizeof(texture_buffer_data)],
+    &texture_buffer_bss[0], // TODO: I don't know why this is necessary over the old method
     &texture_buffer_data[0],
     nullptr,
     nullptr,
@@ -75,7 +237,7 @@ static texture_cache_t texture_cache_data = {
 static texture_cache_t texture_cache_bss = {
     &texture_cache_bss_func,
     &texture_buffer_bss[0],
-    &texture_buffer_bss[sizeof(texture_buffer_bss)],
+    (u8*)&tmem_map[0], // TODO: I don't know why this is necessary over the old method
     &texture_buffer_bss[0],
     nullptr,
     nullptr,
@@ -363,7 +525,11 @@ static texture_cache_t* texture_cache_select(void* addr) {
     return &texture_cache_bss;
 }
 
+#if VERSION == VER_GAFE01_00
 static bool texture_cache_is_overflow(texture_cache_t* cache) {
+#else
+static int texture_cache_is_overflow(texture_cache_t* cache) {
+#endif
     return cache->is_overflow;
 }
 
@@ -450,6 +616,11 @@ extern void emu64_refresh() {
     texture_cache_list_clear();
 }
 
+extern void texture_cache_data_and_bss_clear() {
+    texture_cache_clear(&texture_cache_data);
+    texture_cache_clear(&texture_cache_bss);
+}
+
 static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
     u16 dol = emu64::fmtxtbl[n64_fmt][n64_bpp];
     if (dol == 0xFFFF) {
@@ -459,46 +630,39 @@ static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
     return dol;
 }
 
-// @FAKE - necessary for matching
 f32 PsendoArcSinConvert(f32 arcsin) {
-    return 2.0f * (int)(0.5f * arcsin);
+    float f = (arcsin - 0.5f) * 2.0f;
+    return 0.5f + (f * 0.4623f * f * f + f * 0.5377f) * 0.5f;
 }
 
-// MATCH_FORCESTRIP static f32 PsendoArcSinConvert(f32 arcsin) {
-//     f32 g = 2.0f * (arcsin - 0.5f);
-//     g = g * 0.4623f * g * g + g * 0.5377f;
+static void TextureLinearConvert1(Texture* src, Texture* dst) {
+    int y;
+    int x;
 
-//     return 0.5f + g * 0.5f;
-// }
+    for (y = 0; y < dst->height; y++) {
+        for (x = 0; x < dst->width; x++) {
+            f32 arcsin_x = (f32)x / (f32)(dst->width - 1);
+            f32 arcsin_y = (f32)y / (f32)(dst->height - 1);
 
-// MATCH_FORCESTRIP static void TextureLinearConvert1(Texture* src, Texture* dst) {
-//     int y;
-//     int x;
+            f32 sin_x = PsendoArcSinConvert(arcsin_x);
+            f32 sin_y = PsendoArcSinConvert(arcsin_y);
 
-//     for (y = 0; y < dst->height; y++) {
-//         for (x = 0; x < dst->width; x++) {
-//             f32 arcsin_x = (f32)x / (f32)(dst->width - 1);
-//             f32 arcsin_y = (f32)y / (f32)(dst->height - 1);
+            dst->putTexel(x, y, src->getTexel(sin_x * (src->width - 1), sin_y * (src->height - 1)));
+        }
+    }
+}
 
-//             f32 sin_x = PsendoArcSinConvert(arcsin_x);
-//             f32 sin_y = PsendoArcSinConvert(arcsin_y);
+static void* TextureLinearConvert(void* img_p, unsigned int width, unsigned int height,
+                                                   unsigned int fmt, unsigned int bpp) {
+    texture_cache_t* tex_cache = texture_cache_select(NULL);
+    void* conv_img_p = tex_cache->funcs->alloc(tex_cache, 0x1000);
+    Texture src(img_p, width, height, fmt, bpp);
+    Texture dst(conv_img_p, width, height, fmt, bpp);
 
-//             dst->putTexel(x, y, src->getTexel(sin_x * (src->width - 1), sin_y * (src->height - 1)));
-//         }
-//     }
-// }
+    TextureLinearConvert1(&src, &dst);
 
-// MATCH_FORCESTRIP static void* TextureLinearConvert(void* img_p, unsigned int width, unsigned int height,
-//                                                    unsigned int fmt, unsigned int bpp) {
-//     texture_cache_t* tex_cache = texture_cache_select(NULL);
-//     void* conv_img_p = tex_cache->funcs->alloc(tex_cache, 0x1000);
-//     Texture src(img_p, width, height, fmt, bpp);
-//     Texture dst(conv_img_p, width, height, fmt, bpp);
-
-//     TextureLinearConvert1(&src, &dst);
-
-//     return conv_img_p;
-// }
+    return conv_img_p;
+}
 
 
 
@@ -506,7 +670,7 @@ static void emu64_init2(GXRenderModeObj* render_mode) {
     GC_Mtx m;
     int i;
 
-    // __GXSetIndirectMask(0);
+
 
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY);
@@ -638,8 +802,13 @@ void emu64::emu64_init() {
     GXSetNumChans(1);
     GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_REG, GX_SRC_REG, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
     GXSetNumTexGens(2);
+#if VERSION == VER_GAFE01_00
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
     GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+#else
+    GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+#endif
     GXSetNumTevStages(2);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
     GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
@@ -665,24 +834,27 @@ void emu64::emu64_init() {
     static u8 line_width = 6;
     static GXTexOffset tex_offsets = GX_TO_ZERO;
 
-    GXSetLineWidth(line_width - 1, tex_offsets);
+    GXSetLineWidth(line_width + aflags[AFLAGS_WIREFRAME] - 1, tex_offsets);
 
     static u8 black_texture[] ATTRIBUTE_ALIGN(32) = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88 };
 
     for (u32 i = GX_TEXMAP0; i < GX_MAX_TEXMAP; i++) {
-        GXInitTexObj(&this->tex_objs[i], black_texture, 8, 4, GX_TF_I8, GX_CLAMP, GX_CLAMP, GX_FALSE);
-        GXLoadTexObj(&this->tex_objs[i], (GXTexMapID)i);
+        int mask = aflags[AFLAGS_DISABLED_TEXOBJS];
+
+        if (((1 << i) & mask) == 0) {
+            GXInitTexObj(&this->tex_objs[i], black_texture, 8, 4, GX_TF_I8, GX_CLAMP, GX_CLAMP, GX_FALSE);
+            GXLoadTexObj(&this->tex_objs[i], (GXTexMapID)i);
+        }
     }
 
-    texture_cache_bss.is_overflow = false;
-    texture_cache_bss.buffer_current = texture_cache_bss.buffer_start;
+    texture_cache_is_overflow(&texture_cache_bss);
+    texture_cache_clear(&texture_cache_bss);
 
-    int overflow = texture_cache_data.is_overflow;
-    if (overflow) {
-        texture_cache_data.is_overflow = false;
-        texture_cache_data.buffer_current = texture_cache_data.buffer_start;
+    int overflow = texture_cache_is_overflow(&texture_cache_data);
+    if (overflow || aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 2) {
+        texture_cache_clear(&texture_cache_data);
         texture_cache_num = 0;
     }
 
@@ -894,6 +1066,13 @@ void emu64::texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned
     this->texconv_cnt++;
 }
 
+#if VERSION != VER_GAFE01_00
+unsigned int emu64::tmem_swap(unsigned int ofs, unsigned int blk_siz) {
+    u16 block = ofs / blk_siz;
+    return ofs ^ ((block >> 1) & 4);
+}
+#endif
+
 void emu64::tlutconv_rgba5551(u16* rgba5551_p, u16* rgb5a3_p, unsigned int count) {
     for (unsigned int i = 0; i < count; i++) {
         *rgb5a3_p++ = rgba5551_to_rgb5a3(*rgba5551_p++);
@@ -982,6 +1161,11 @@ void emu64::tlutconv(u16* src_tlut, u16* dst_tlut, unsigned int count, unsigned 
     } else {
         this->tlutconv_ia16(src_tlut, dst_tlut, count);
     }
+}
+
+unsigned int get_dol_tlut_siz(unsigned int count) {
+    unsigned int siz = count * sizeof(u16);
+    return ALIGN_NEXT(siz, 32);
 }
 
 /* TODO: @nonmatching */
@@ -1223,7 +1407,7 @@ int emu64::combine_auto() {
     }
 
     tevstages = alpha_stages;
-    for (stage; stage < alpha_stages; stage++) {
+    for (; stage < alpha_stages; stage++) {
         GXSetTevOrder((GXTevStageID)stage, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     }
 
@@ -1283,7 +1467,7 @@ int emu64::combine_auto() {
             }
 
             tevstages = alpha_stages;
-            for (stage; stage < alpha_stages; stage++) {
+            for (; stage < alpha_stages; stage++) {
                 GXSetTevOrder((GXTevStageID)stage, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
             }
         }
@@ -1303,10 +1487,10 @@ int emu64::combine_tev() {
 
         if (aflags[AFLAGS_FORCE_TEV_COMBINE_MODE] != 0) {
             if (aflags[AFLAGS_FORCE_TEV_COMBINE_MODE] == 1) {
-                static u32 c = TEV_SHADE;
-                static u32 c1 = TEV_SHADE;
-                static u32 a = TEV_ALPHA_SHADE;
-                static u32 a1 = TEV_ALPHA_SHADE;
+                static int c = TEV_SHADE;
+                static int c1 = TEV_SHADE;
+                static int a = TEV_ALPHA_SHADE;
+                static int a1 = TEV_ALPHA_SHADE;
 
                 if (combine_tev.a0 == c) {
                     combine_tev.a0 = c1;
@@ -1374,7 +1558,7 @@ int emu64::combine_tev() {
             }
 
             if (aflags[AFLAGS_FORCE_TEV_COMBINE_MODE] == 2) {
-                combine_tev.d1 = TEV_ENVIRONMENT;
+                combine_tev.d1 = TEV_HALF;
                 combine_tev.Ad1 = TEV_ALPHA_ONE;
             }
         }
@@ -1895,6 +2079,11 @@ void emu64::combine_manual() {
     }
 }
 
+inline u8* emu64::texconv_block_new(u8* addr, unsigned int wd, unsigned int ht, unsigned int fmt, unsigned int size,
+    unsigned int line_siz) {
+    return this->texconv_tile_new(addr, wd, fmt, size, 0, 0, wd - 1, ht - 1, line_siz);
+}
+
 void emu64::combine() {
     if ((u8)this->combine_gfx.setcombine.cmd == G_SETCOMBINE_TEV) {
         this->combine_tev();
@@ -2087,7 +2276,7 @@ void emu64::setup_texture_tile(int tile) {
     }
 
     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 && aflags[AFLAGS_DO_TEXTURE_LINEAR_CONVERT] != 0) {
-        // converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, settile->fmt, settile->siz);
+        converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, settile->fmt, settile->siz);
     }
 
     /* TODO: Go back and rename a lot of these variables */
@@ -3255,7 +3444,7 @@ void emu64::dirty_check(int tile, int n_tiles, int do_texture_matrix) {
 
                     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 &&
                         aflags[AFLAGS_DO_TEXTURE_LINEAR_CONVERT] != 0) {
-                        // img_addr = TextureLinearConvert(img_addr, width, height, tex_info_p->format, tex_info_p->size);
+                        img_addr = TextureLinearConvert(img_addr, width, height, tex_info_p->format, tex_info_p->size);
                     }
 
                     if (tex_info_p->format == G_IM_FMT_CI) {
@@ -3381,13 +3570,9 @@ void emu64::dl_G_TEXRECT() {
     if (this->disable_polygons == false) {
         this->dirty_check(texrect_p->tile, 0, 0);
 
-#ifdef EMU64_DEBUG
         if (aflags[AFLAGS_SKIP_DRAW_RECTANGLE] == 0) {
-#endif
             this->draw_rectangle(texrect_p);
-#ifdef EMU64_DEBUG
         }
-#endif
     }
 
     this->gfx_p += 2; /* Increment by two here, the emulator will increment by another for the full Gtexrect2 size */
@@ -3406,8 +3591,7 @@ void emu64::dl_G_LOAD_UCODE() {
     }
 #endif
 
-    void* k0 = (void*)this->seg2k0(this->gfx.words.w1);
-    this->emu64_change_ucode(k0);
+    this->emu64_change_ucode((void*)this->seg2k0(this->gfx.words.w1));
     this->load_ucode_calls++;
 }
 
@@ -4166,7 +4350,7 @@ void emu64::dl_G_RDPFULLSYNC() {
 void emu64::dl_G_RDPPIPESYNC() {
     EMU64_LOG("gsDPPipeSync(),");
 
-    if (aflags[AFLAGS_FORCE_PIPE_SYNC] == 1 || (aflags[AFLAGS_FORCE_PIPE_SYNC] == 0 && this->rdp_pipe_sync_needed)) {
+    if ((this->rdp_pipe_sync_needed && aflags[AFLAGS_FORCE_PIPE_SYNC] == 0) || aflags[AFLAGS_FORCE_PIPE_SYNC] == 1) {
         this->rdp_pipe_sync_needed = false;
     }
 }
@@ -4264,10 +4448,10 @@ void emu64::dl_G_MTX() {
         Mtx44 mtx44; /* float-based matrix */
 
         /* Convert our s16.u16 matrix into a f32 matrix. */
-        N64Mtx_to_DOLMtx((Mtx*)mtx, mtx34);
+        N64Mtx_to_DOLMtx((N64Mtx*)mtx, mtx34);
 
         if ((mtx_gfx->type & G_MTX_PROJECTION) != G_MTX_MODELVIEW) { /* Projection */
-            N64Mtx_to_DOLMtx((Mtx*)mtx, mtx44);
+            N64Mtx_to_DOLMtx((N64Mtx*)mtx, mtx44);
             if ((mtx_gfx->type & G_MTX_LOAD) != G_MTX_MUL) {
                 if ((u16)(*mtx)[1][3] == 0) { /* If the last entry is 0, this should be a perspective projection.
                                                  Otherwise, it's likely an orthographic projection. */
@@ -4324,13 +4508,17 @@ void emu64::dl_G_MTX() {
                     this->model_view_mtx[i][3] = 0.0f;
                 }
             } else {
-                MTXCopy(this->model_view_mtx_stack[this->mtx_stack_size], this->model_view_mtx);
-                this->model_view_mtx[0][3] = 0.0f;
-                this->model_view_mtx[1][3] = 0.0f;
-                this->model_view_mtx[2][3] = 0.0f;
+                if (aflags[25] == 1) {
+                    MTXCopy(this->model_view_mtx_stack[this->mtx_stack_size], this->model_view_mtx);
+                    this->model_view_mtx[2][3] = 0.0f;
+                    this->model_view_mtx[1][3] = 0.0f;
+                    this->model_view_mtx[0][3] = 0.0f;
+                } else {
+                    MTXInvXpose(this->model_view_mtx_stack[this->mtx_stack_size], this->model_view_mtx);
+                }
             }
 
-            if (aflags[AFLAGS_SKIP_MTX_NORMALIZATION] == 0 || this->geometry_mode & G_TEXTURE_GEN != 0) {
+            if (aflags[AFLAGS_SKIP_MTX_NORMALIZATION] == 0 || ((this->geometry_mode & G_TEXTURE_GEN) != 0 && aflags[23] == 1)) {
                 /* Normalize matrix */
                 guMtxNormalize(this->model_view_mtx);
             }
@@ -4387,10 +4575,12 @@ void emu64::dl_G_VTX() {
             OSs16tof32(&vtx_p->n.ob[2], &emu_vtx_p->position.z);
 
             /* Flag */
-            if (aflags[AFLAGS_FORCE_VTX_FLAG_COPY] == 0 && (this->geometry_mode & G_TEXTURE_GEN) != 0) {
+            if ((aflags[AFLAGS_FORCE_VTX_FLAG_COPY] == 0 && (this->geometry_mode & G_TEXTURE_GEN) != 0) || aflags[17] == 1) {
                 emu_vtx_p->flag = MTX_SHARED;
-            } else {
+            } else if (aflags[17] == 0) {
                 emu_vtx_p->flag = vtx_p->n.flag & MTX_NONSHARED;
+            } else {
+                emu_vtx_p->flag = MTX_NONSHARED;
             }
 
             /* Texture Coordinates */
@@ -4403,23 +4593,27 @@ void emu64::dl_G_VTX() {
             emu_vtx_p->normal.z = fastcast_float(&vtx_p->n.n[2]);
 
             /* Check vertex normal modification type. In AC/e+ only VECNormalize is utilized. */
-            if (aflags[AFLAGS_VTX_NORMAL_MODIFY_TYPE] == 0 && (this->geometry_mode & G_TEXTURE_GEN) != 0) {
-                PSVECNormalize(&emu_vtx_p->normal, &emu_vtx_p->normal);
-            } else if (aflags[AFLAGS_VTX_NORMAL_MODIFY_TYPE] == 2) {
-                emu_vtx_p->normal.x *= (1.0f / 120.0f);
-                emu_vtx_p->normal.y *= (1.0f / 120.0f);
-                emu_vtx_p->normal.z *= (1.0f / 120.0f);
-            } else if (aflags[AFLAGS_VTX_NORMAL_MODIFY_TYPE] == 3) {
-                emu_vtx_p->normal.x *= (1.0f / 128.0f);
-                emu_vtx_p->normal.y *= (1.0f / 128.0f);
-                emu_vtx_p->normal.z *= (1.0f / 128.0f);
+            if ((aflags[16] == 0 && (this->geometry_mode & G_TEXTURE_GEN) != 0) || aflags[16] == 1) {
+                if (aflags[26] != 0) {
+                    // normalize
+                    f32 inv_mag = 1.0f / std::sqrtf(emu_vtx_p->normal.x * emu_vtx_p->normal.x + emu_vtx_p->normal.y * emu_vtx_p->normal.y + emu_vtx_p->normal.z * emu_vtx_p->normal.z);
+                    emu_vtx_p->normal.x *= inv_mag;
+                    emu_vtx_p->normal.y *= inv_mag;
+                    emu_vtx_p->normal.z *= inv_mag;
+                } else {
+                    PSVECNormalize(&emu_vtx_p->normal, &emu_vtx_p->normal);
+                }
             }
 
             /* Convert vectors to correct space */
             if ((emu_vtx_p->flag & MTX_NONSHARED) == MTX_SHARED) {
-                PSMTXMultVec(position_mtx, &emu_vtx_p->position,
-                             &emu_vtx_p->position); /* Position -> Projection Matrix */
-                PSMTXMultVec(this->model_view_mtx, &emu_vtx_p->normal, &emu_vtx_p->normal); /* Normal -> View Matrix */
+                if (aflags[15] != 0) {
+                    guMtxXFM1F_dol(position_mtx, emu_vtx_p->position.x, emu_vtx_p->position.y, emu_vtx_p->position.z, &emu_vtx_p->position.x, &emu_vtx_p->position.y, &emu_vtx_p->position.z);
+                    guMtxXFM1F_dol(this->model_view_mtx, emu_vtx_p->normal.x, emu_vtx_p->normal.y, emu_vtx_p->normal.z, &emu_vtx_p->normal.x, &emu_vtx_p->normal.y, &emu_vtx_p->normal.z);
+                } else {
+                    PSMTXMultVec(position_mtx, &emu_vtx_p->position, &emu_vtx_p->position); /* Position -> Projection Matrix */
+                    PSMTXMultVec(this->model_view_mtx, &emu_vtx_p->normal, &emu_vtx_p->normal); /* Normal -> View Matrix */
+                }
             }
 
             /* Color */
@@ -4617,6 +4811,10 @@ void emu64::dl_G_TRIN() {
         }
     }
 
+    if (aflags[AFLAGS_WIREFRAME] == 0) {
+        GXEnd();
+    }
+
     this->gfx_p += (int)n_faces - 1; /* Should equate to gfx_p--, as the emulator will increment it once. */
     EMU64_TIMED_SEGMENT_END(polygons_time);
     this->rdp_pipe_sync_needed = true;
@@ -4704,6 +4902,10 @@ void emu64::dl_G_QUADN() {
                     break;
             }
         }
+    }
+
+    if (aflags[AFLAGS_WIREFRAME] == 0) {
+        GXEnd();
     }
 
     this->gfx_p += (int)n_faces - 1; /* Should equate to gfx_p--, as the emulator will increment it once. */
@@ -4807,6 +5009,10 @@ void emu64::dl_G_TRI2() {
             }
         }
 
+        if (aflags[AFLAGS_WIREFRAME] == 0) {
+            GXEnd();
+        }
+
         this->gfx_p += (commands - 1);
         EMU64_TIMED_SEGMENT_END(polygons_time);
     }
@@ -4843,6 +5049,10 @@ void emu64::dl_G_CULLDL() {
     f32 ox;
     f32 oy;
     f32 oz;
+    f32 ox2;
+    f32 oy2;
+    f32 oz2;
+    Vec o;
     u32 vstart = ((Gculldl*)&this->gfx)->vstart / 2;
     u32 vend = ((Gculldl*)&this->gfx)->vend / 2;
     u32 mask;
@@ -4872,12 +5082,14 @@ void emu64::dl_G_CULLDL() {
                             vtx->position.z, &ox, &oy, &oz);
         } else {
             /* MTX_NONSHARED */
-            Vec oVec;
-            if (aflags[AFLAGS_USE_GUVECMULT] == 0) {
-                PSMTXMultVec(this->position_mtx_stack[this->mtx_stack_size], &vtx->position, &oVec);
-            } else {
+            if (aflags[AFLAGS_USE_GUVECMULT] != 0) {
                 guMtxXFM1F_dol(this->position_mtx_stack[this->mtx_stack_size], vtx->position.x, vtx->position.y,
-                               vtx->position.z, &oVec.x, &oVec.y, &oVec.z);
+                    vtx->position.z, &ox2, &oy2, &oz2);
+            } else {
+                PSMTXMultVec(this->position_mtx_stack[this->mtx_stack_size], &vtx->position, &o);
+                ox2 = o.x;
+                oy2 = o.y;
+                oz2 = o.z;
             }
 
 #ifdef EMU64_DEBUG
@@ -4885,12 +5097,7 @@ void emu64::dl_G_CULLDL() {
                 this->print_guMtxXFM1F_dol2(this->projection_mtx, this->projection_type, oVec.x, oVec.y, oVec.z);
             }
 #endif
-
-            f32 x = oVec.x;
-            f32 y = oVec.y;
-            f32 z = oVec.z;
-
-            guMtxXFM1F_dol2(this->projection_mtx, this->projection_type, x, y, z, &ox, &oy, &oz);
+            guMtxXFM1F_dol2(this->projection_mtx, this->projection_type, ox2, oy2, oz2, &ox, &oy, &oz);
         }
 
         /* Assign culling flags to vertex */
@@ -5248,16 +5455,8 @@ void emu64::dl_G_MOVEMEM() {
                         this->lights[l_idx].attenuation.kc = fastcast_float(&light->p.kc) / 256.0f * 16.0f + 0.5f;
                         this->lights[l_idx].attenuation.k1 = fastcast_float(&light->p.kl) / 256.0f * 0.5f;
                         this->lights[l_idx].attenuation.kq = fastcast_float(&light->p.kq) / 256.0f * 0.000488f;
-
-                        if (aflags[AFLAGS_LIGHT_MOVE_TO_MODEL_SPACE] != 0) {
-                            PSMTXMultVec(this->position_mtx_stack[this->mtx_stack_size], &this->lights[l_idx].position,
-                                         &this->lights[l_idx].position);
-                        }
                     } else {
                         f32 position_mult = 10000.0f;
-                        if (aflags[AFLAGS_LIGHT_POSITION_MULTIPLIER] != 0) {
-                            position_mult = (f32)(aflags[AFLAGS_LIGHT_POSITION_MULTIPLIER]) / 100.0f;
-                        }
 
                         EMU64_INFOF(" normal=[%+4d %+4d %+4d] pad1=%d", light->l.dir[0], light->l.dir[1],
                                     light->l.dir[2], light->l.pad1);
@@ -5377,6 +5576,7 @@ static dl_func dl_func_tbl[NUM_COMMANDS] = {
 u32 emu64::emu64_taskstart_r(Gfx* dl_p) {
     this->gfx_p = dl_p;
     EMU64_INFO("*** emu64taskstart ***\n");
+    int some_flag = aflags[0];
     OSInitFastCast();
     this->end_dl = false;
 
@@ -5446,6 +5646,7 @@ void emu64::emu64_taskstart(Gfx* dl_p) {
         this->emu64_taskstart_r(dl_p);
         EMU64_TIMED_SEGMENT_END(rsprdp_time);
 
+        int some_flag2 = aflags[24];
         if (aflags[AFLAGS_JUTREPORT_SEGMENT_STATS] == TRUE) {
             JW_JUTReport(40, 100, 1, "%d/%d/%d/%d/%d", this->resolved_addresses, this->_2024, this->_2028, this->_202C,
                          this->abnormal_addresses);
@@ -5454,21 +5655,25 @@ void emu64::emu64_taskstart(Gfx* dl_p) {
         if (aflags[AFLAGS_PRINT_COMMAND_INFO] != 0) {
             aflags.set(AFLAGS_PRINT_COMMAND_INFO, 0);
 
-#ifdef EMU64_DEBUG_PRINTINFO
             this->Printf0("CMD TIMES CALLS TIMES/CALLS\n");
-#endif
 
             for (int i = 0; i < NUM_COMMANDS; i++) {
-                if (this->command_info[i].calls != 0) {
-                    this->Printf0("%02X %6d %4d %6d\n", (u8)(i + G_FIRST_CMD),            /* Command */
-                                  this->command_info[i].time,                             /* Total time */
-                                  this->command_info[i].calls,                            /* Total calls */
-                                  this->command_info[i].time / this->command_info[i].time /* Average command time */
+                const command_info_t& info = this->command_info[i];
+                const u32 total_calls = info.calls;
+                if (total_calls != 0) {
+                    const u32 total_time = info.time;
+                    const u32 avg_time = total_time / total_calls;
+                    int cmd = G_FIRST_CMD + i;
+                    this->Printf0("%02X %6d %4d %6d\n",
+                                   cmd & 0xFF,            /* Command */
+                                   total_time,                             /* Total time */
+                                   total_calls,                            /* Total calls */
+                                   avg_time /* Average command time */
                     );
                 }
             }
 
-#ifdef EMU64_DEBUG_PRINTINFO
+// #ifdef EMU64_DEBUG_PRINTINFO
             EMU64_PRINT_MEMBER(lookatx_cnt);
             EMU64_PRINT_MEMBER(lookaty_cnt);
             EMU64_PRINT_MEMBER(texconv_cnt);
@@ -5516,7 +5721,7 @@ void emu64::emu64_taskstart(Gfx* dl_p) {
             EMU64_PRINT_MEMBER(combine_auto_cnt[2]);
             EMU64_PRINT_MEMBER(combine_auto_cnt[3]);
             EMU64_PRINT_MEMBER(combine_auto_cnt[4]);
-#endif
+// #endif
         }
 
         if (emu64::displayWarning != false) {
@@ -5572,13 +5777,13 @@ extern void emu64_set_first_ucode(void* ucode_p) {
 }
 
 extern void emu64_set_aflags(int idx, int value) {
-    if (idx > 0 && idx < aflags_c::getMaxArray()) {
+    if (idx > 0 && idx < aflags.getMaxArray()) {
         aflags.set(idx, value);
     }
 }
 
 extern int emu64_get_aflags(int idx) {
-    if (idx > 0 && idx < aflags_c::getMaxArray()) {
+    if (idx > 0 && idx < aflags.getMaxArray()) {
         return aflags[idx];
     }
 

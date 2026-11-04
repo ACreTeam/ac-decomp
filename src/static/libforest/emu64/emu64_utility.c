@@ -4,6 +4,54 @@
 #include "terminal.h"
 #include "MSL_C/w_math.h"
 
+inline float fastcast_float(register unsigned char* s) {
+    register float f;
+
+#ifdef __MWERKS__ // clang-format off
+    asm {
+        psq_l f, 0(s), 1, 2
+    }
+#endif // clang-format on
+
+    return f;
+}
+
+inline float fastcast_float(register unsigned short* s) {
+    register float f;
+
+#ifdef __MWERKS__ // clang-format off
+    asm {
+        psq_l f, 0(s), 1, 3
+    }
+#endif // clang-format on
+
+    return f;
+}
+
+inline float fastcast_float(register signed char* s) {
+    register float f;
+
+#ifdef __MWERKS__ // clang-format off
+    asm {
+        psq_l f, 0(s), 1, 4
+    }
+#endif // clang-format on
+
+    return f;
+}
+
+inline float fastcast_float(register short* s) {
+    register float f;
+
+#ifdef __MWERKS__ // clang-format off
+    asm {
+        psq_l f, 0(s), 1, 5
+    }
+#endif // clang-format on
+
+    return f;
+}
+
 u32 emu64::seg2k0(u32 segadr) {
     u32 k0;
 
@@ -154,7 +202,7 @@ void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float 
 
 void guMtxNormalize(GC_Mtx mtx) {
     for (int i = 0; i < 3; i++) {
-        float magnitude = sqrtf(mtx[i][0] * mtx[i][0] + mtx[i][1] * mtx[i][1] + mtx[i][2] * mtx[i][2]);
+        float magnitude = std::sqrtf(mtx[i][0] * mtx[i][0] + mtx[i][1] * mtx[i][1] + mtx[i][2] * mtx[i][2]);
 
         mtx[i][0] *= 1.0f / magnitude;
         mtx[i][1] *= 1.0f / magnitude;
@@ -163,10 +211,10 @@ void guMtxNormalize(GC_Mtx mtx) {
 }
 
 /* TODO: Mtx -> N64Mtx, GC_Mtx -> Mtx */
-void N64Mtx_to_DOLMtx(const Mtx* n64, MtxP gc) {
+void N64Mtx_to_DOLMtx(const N64Mtx* n64, MtxP gc) {
+    int i;
     s16* fixed = ((s16*)n64) + 0;
     u16* frac = ((u16*)n64) + 16;
-    int i;
 
     for (i = 0; i < 4; i++) {
         gc[0][i] = fastcast_float(&fixed[0]) + fastcast_float(&frac[0]) * (1.0f / 65536.0f);

@@ -1,18 +1,27 @@
+#ifdef __INTELLISENSE__
+#include "libforest/emu64/emu64.hpp"
+#endif
 // #include "emu64.hpp"
 
 #include "boot.h"
-
-// __declspec(weak) void emu64_print::Vprintf(const char* fmt, std::__tag_va_List va_list) const {
-//     vprintf(fmt, va_list);
-// }
 
 __declspec(weak) void emu64_print::Printf0(const char* fmt, ...) {
     va_list list;
 
     va_start(list, fmt);
-    // this->Vprintf(fmt, list);
+#if VERSION == VER_GAFE01_00
     vprintf(fmt, list);
+#else
+    this->Vprintf(fmt, list);
+#endif
     va_end(list);
+}
+
+__declspec(weak) void emu64_print::Vprintf(const char* fmt,
+                                           va_list list
+
+) {
+    vprintf(fmt, list);
 }
 
 __declspec(weak) void emu64_print::Printf(const char* fmt, ...) {
@@ -20,8 +29,12 @@ __declspec(weak) void emu64_print::Printf(const char* fmt, ...) {
 
     if ((this->print_flags & EMU64_PRINTF_ENABLED_FLAG)) {
         va_start(list, fmt);
-        // this->Vprintf(fmt, list);
-        vprintf(fmt, list);
+    #if VERSION == VER_GAFE01_00
+    vprintf(fmt, list);
+#else
+    this->Vprintf(fmt, list);
+#endif
+        // vprintf(fmt, list);
         va_end(list);
     }
 }
@@ -44,8 +57,6 @@ void emu64::disp_matrix(MtxP mtx) {
     }
 }
 
-#pragma inline_depth(5)
-#pragma inline_max_size(1100)
 const char* emu64::segchk(u32 segment) {
     static char str[64];
     char buf[30];

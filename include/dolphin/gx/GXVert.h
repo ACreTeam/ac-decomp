@@ -77,8 +77,6 @@ void GXTexCoord1s8(s8 s, s8 t);
 void GXTexCoord1x16(u16 index);
 void GXTexCoord1x8(u8 index);
 
-extern void GXEnd(void);
-
 #else
 
 static inline void GXPosition2f32(f32 x, f32 y) {
@@ -151,8 +149,6 @@ static inline void GXTexCoord2u16(u16 s, u16 t) {
     GXWGFifo.u16 = s;
     GXWGFifo.u16 = t;
 }
-
-static inline void GXEnd(void) {}
 
 #endif
 

@@ -1,5 +1,6 @@
 #ifndef EMU64_HPP
 #define EMU64_HPP
+#include "libc/stdarg.h"
 
 #include "types.h"
 // #include "va_args.h"
@@ -130,60 +131,12 @@
 #define EMU64_TLUT_IA16 0x0000
 #define EMU64_TLUT_RGBA5551 0x8000
 
-/* TODO: figure out where this actually belongs */
-namespace std {
-typedef va_list __tag_va_List;
-}
-
-float fastcast_float(register unsigned char* s) {
-    register float f;
-
-#ifdef __MWERKS__ // clang-format off
-    asm {
-        psq_l f, 0(s), 1, 2
-    }
-#endif // clang-format on
-
-    return f;
-}
-
-float fastcast_float(register unsigned short* s) {
-    register float f;
-
-#ifdef __MWERKS__ // clang-format off
-    asm {
-        psq_l f, 0(s), 1, 3
-    }
-#endif // clang-format on
-
-    return f;
-}
-
-float fastcast_float(register signed char* s) {
-    register float f;
-
-#ifdef __MWERKS__ // clang-format off
-    asm {
-        psq_l f, 0(s), 1, 4
-    }
-#endif // clang-format on
-
-    return f;
-}
-
-float fastcast_float(register short* s) {
-    register float f;
-
-#ifdef __MWERKS__ // clang-format off
-    asm {
-        psq_l f, 0(s), 1, 5
-    }
-#endif // clang-format on
-
-    return f;
-}
-
 #define number(n) ARRAY_COUNT(n)
+
+typedef union {
+    Mtx_t		m;
+    long long int	force_structure_alignment;
+} N64Mtx;
 
 void guMtxNormalize(GC_Mtx mtx);
 void N64Mtx_to_DOLMtx(const Mtx* n64, MtxP gc);
@@ -265,165 +218,6 @@ void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht)
 
 extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_ht, unsigned int* wd, unsigned int* ht);
 
-inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
-    unsigned int rgb5a3;
-
-    switch (rgba5551 & 1) {
-        default:
-            rgb5a3 = 0x8000 | (rgba5551 >> 1); // no transparency so simply swap
-            break;
-        case 0:
-            rgb5a3 = ((rgba5551 >> 4) & ~0xFF) | ((rgba5551 >> 3) & 0xF0) | ((rgba5551 >> 2) & 0x0F);
-            break;
-    }
-
-    return rgb5a3;
-}
-
-inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd, unsigned int in_ht) {
-    unsigned int wd;
-    unsigned int ht;
-
-    get_dol_wd_ht(siz, in_wd, in_ht, &wd, &ht);
-    return ((wd * ht) << siz) / 2;
-}
-
-inline unsigned int get_dol_tlut_siz(unsigned int count) {
-    unsigned int siz = count * sizeof(u16);
-    return ALIGN_NEXT(siz, 32);
-}
-
-class aflags_c {
-  public:
-#ifdef AFLAGS_DEBUG
-    static u32 getMaxArray() {
-        return AFLAGS_MAX;
-    }
-    void set(unsigned int idx, u8 val) {
-        this->flags[idx] = val;
-    } /* @fabricated */
-    u8 operator[](unsigned int idx) {
-        return this->flags[idx];
-    } /* @fabricated */
-
-#else
-    static u32 getMaxArray() {
-        return AFLAGS_MAX;
-    }
-    void set(unsigned int idx, u8 val) {
-    }
-    u8 operator[](unsigned int idx) {
-        return 0;
-    }
-#endif
-
-  private:
-    int flags[AFLAGS_MAX];
-};
-
-class Texture {
-  public:
-    /* @weak */
-    Texture(void* img_p, u16 w, u16 h, u8 fmt, u8 bpp) {
-        this->img_p = img_p;
-        this->width = w;
-        this->height = h;
-        this->n64_bpp = bpp;
-        this->n64_fmt = fmt;
-        this->blockX_size = EMU64_TEX_BLOCK_SIZE_X;
-        this->blockY_size = EMU64_TEX_BLOCK_SIZE_Y;
-    }
-
-    /* @??? (maybe not weak?) */
-    ~Texture() {};
-
-    /* @weak */
-    u32 getOffset(int x, int y) {
-        const int size_x = sizeof(u16) * EMU64_TEX_BLOCK_SIZE_X;
-        const int size_y = sizeof(u16) * EMU64_TEX_BLOCK_SIZE_Y;
-
-        return ((((u32)x / 8) + ((u32)(((u32)y / 8) * this->width) / 8)) * (size_x * size_y)) + ((u32)y & 7) * size_x +
-               ((u32)x & 7);
-    }
-
-    /* @weak */
-    u32 getTexel(int block_x, int block_y) {
-        int x = (1 << this->blockX_size) - 1;
-        int y = (1 << this->blockY_size) - 1;
-
-        block_x &= x;
-        block_y &= y;
-
-        u32 ofs = this->getOffset(block_x, block_y);
-
-        switch (this->n64_bpp) {
-            case G_IM_SIZ_4b: {
-                u8* img_p = ((u8*)this->img_p) + ofs / 2;
-                if ((block_x & 1) == 0) {
-                    return *img_p >> 4;
-                } else {
-                    return *img_p & 0xF;
-                }
-            }
-
-            case G_IM_SIZ_8b: {
-                return ((u8*)this->img_p)[ofs];
-            }
-
-            case G_IM_SIZ_16b: {
-                return ((u16*)this->img_p)[ofs];
-            }
-
-            default: {
-                return ((u32*)this->img_p)[ofs];
-            }
-        }
-    }
-
-    /* @weak */
-    void putTexel(int block_x, int block_y, u32 texel) {
-        int x = (1 << this->blockX_size) - 1;
-        int y = (1 << this->blockY_size) - 1;
-
-        block_x &= x;
-        block_y &= y;
-
-        u32 ofs = this->getOffset(block_x, block_y);
-
-        switch (this->n64_bpp) {
-            case G_IM_SIZ_4b: {
-                u8* img_p = ((u8*)this->img_p) + ofs / 2;
-                if ((block_x & 1) == 0) {
-                    *img_p = (*img_p & 0x0F) | (texel << 4);
-                } else {
-                    *img_p = (*img_p & 0xF0) | (texel & 0xF);
-                }
-            }
-
-            case G_IM_SIZ_8b: {
-                ((u8*)this->img_p)[ofs] = texel;
-            }
-
-            case G_IM_SIZ_16b: {
-                ((u16*)this->img_p)[ofs] = texel;
-            }
-
-            case G_IM_SIZ_32b: {
-                ((u32*)this->img_p)[ofs] = texel;
-            }
-        }
-    }
-
-    /* Member variables */
-    void* img_p;
-    u16 width;
-    u16 height;
-    u8 blockX_size;
-    u8 blockY_size;
-    u8 n64_fmt;
-    u8 n64_bpp;
-};
-
 #define EMU64_PRINTF_ENABLED_FLAG (1 << 0)
 #define EMU64_PRINTF_FLAG (1 << 1)
 #define EMU64_PRINTF1_FLAG (1 << 2)
@@ -490,8 +284,9 @@ class emu64_print {
   protected:
     u8 print_flags;
 
-//   private:
-    // void Vprintf(const char* fmt, std::__tag_va_List va_list) const; // this is only in e+??
+  private:
+    void Vprintf(const char* fmt, va_list va_list); // this is only in e+??
+
 };
 
 #define EMU64_ASSERTLINE(cond, line)        \
@@ -571,7 +366,7 @@ class emu64_print {
 
 #define EMU64_CAN_DRAW_POLYGON()         \
     (aflags[AFLAGS_MAX_POLYGONS] == 0 || \
-     (aflags[AFLAGS_MIN_POLYGONS] <= this->polygons && this->polygons < aflags[AFLAGS_MAX_POLYGONS]))
+     (this->polygons >= aflags[AFLAGS_MIN_POLYGONS] && this->polygons < aflags[AFLAGS_MAX_POLYGONS]))
 
 class emu64 : public emu64_print {
   public:
@@ -584,19 +379,21 @@ class emu64 : public emu64_print {
     void texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned int fmt, unsigned int siz,
                       unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht,
                       unsigned int line_siz);
+#if VERSION == VER_GAFE01_00
     unsigned int tmem_swap(unsigned int ofs, unsigned int blk_siz) {
         u16 block = ofs / blk_siz;
         return ofs ^ ((block >> 1) & 4);
     }
+#else
+    unsigned int tmem_swap(unsigned int ofs, unsigned int blk_siz);
+#endif
     void tlutconv_rgba5551(u16* rgba5551_p, u16* rgb5a3_p, unsigned int count);
     void tlutconv_ia16(u16* src_ia16_p, u16* dst_ia16_p, unsigned int count);
     u8* texconv_tile_new(u8* addr, unsigned int wd, unsigned int fmt, unsigned int siz, unsigned int start_wd,
                          unsigned int start_ht, unsigned int end_wd, unsigned int end_ht, unsigned int line_siz);
     /* @weak */
     u8* texconv_block_new(u8* addr, unsigned int wd, unsigned int ht, unsigned int fmt, unsigned int size,
-                          unsigned int line_siz) {
-        return this->texconv_tile_new(addr, wd, fmt, size, 0, 0, wd - 1, ht - 1, line_siz);
-    }
+                          unsigned int line_siz);
     u16* tlutconv_new(u16* tlut, unsigned int tlut_fmt, unsigned int count);
     void tlutconv(u16* src_tlut, u16* dst_tlut, unsigned int count, unsigned int tlut_fmt);
     int replace_combine_to_tev(Gfx* g);
@@ -831,7 +628,7 @@ private:
     /* 0x0BEC */ u32 dirty_othermodel_time;
     /* 0x0BF0 */ u32 dirty_geometory_time; /* Yes, the devs misspelt this */
     /* 0x0BF4 */ u32 setuptex_time;
-    /* 0x0BF8 */ struct {
+    /* 0x0BF8 */ struct command_info_t {
         u32 time;
         u32 calls;
     } command_info[NUM_COMMANDS];

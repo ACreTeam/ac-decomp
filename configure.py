@@ -674,7 +674,13 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(MatchingFor("GAFE01_00"), "libforest/emu64/emu64.c", extra_cflags=["-lang=c++", "-O4,p", "-inline auto"]),
+            Object(
+                Matching,
+                "libforest/emu64/emu64.c",
+                extra_cflags=["-lang=c++", "-O4,p", "-inline off", "-sym on"]
+                if config.version == "GAFU01_00"
+                else ["-lang=c++", "-O4,p", "-inline auto"],
+            ),
             Object(MatchingFor("GAFE01_00"), "libforest/osreport.c"),
             Object(MatchingFor("GAFE01_00"), "libforest/fault.c"),
             Object(Matching, "libforest/ReconfigBATs.c"),

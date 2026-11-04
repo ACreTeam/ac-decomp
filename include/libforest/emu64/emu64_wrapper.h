@@ -15,6 +15,7 @@ extern void emu64_set_first_ucode(void* ucode);
 extern void emu64_taskstart(Gfx* gfx);
 extern void emu64_init();
 extern void emu64_refresh();
+extern void texture_cache_data_and_bss_clear();
 extern void emu64_cleanup();
 
 extern void emu64_texture_cache_data_entry_set(void* begin, void* end);
