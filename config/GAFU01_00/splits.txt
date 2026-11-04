@@ -18,7 +18,7 @@ boot.c:
 	.data       start:0x800B9DA0 end:0x800BA390
 	.bss        start:0x800ED160 end:0x800ED1F8
 
-jsyswrap.o:
+jsyswrap.cpp:
 	.text       start:0x8000661C end:0x80007258
 	.text       start:0x80007258 end:0x800072A0
 	.text       start:0x800072A0 end:0x800072C0
@@ -32,13 +32,13 @@ version.o:
 	.text       start:0x80007310 end:0x80007310
 	.data       start:0x800BAB28 end:0x800BAB48
 
-initial_menu.o:
+initial_menu.c:
 	.text       start:0x80007310 end:0x80007F10
 	.rodata     start:0x800B35A8 end:0x800B35B8
 	.data       start:0x800BAB48 end:0x800BAFA0
 	.bss        start:0x800ED540 end:0x800ED690
 
-dvderr.o:
+dvderr.c:
 	.text       start:0x80007F10 end:0x800084B0
 	.rodata     start:0x800B35B8 end:0x800B35F8
 	.data       start:0x800BAFA0 end:0x800C3680
@@ -468,19 +468,19 @@ jaudio_NES/internal/oneshot.c:
 	.sdata      start:0x80229A70 end:0x80229A78
 	.sdata2     start:0x8022B000 end:0x8022B030
 
-Famicom.a/ks_nes_core.cpp:
+Famicom/ks_nes_core.cpp:
 	.text       start:0x800399F0 end:0x8003E4D8
 	.rodata     start:0x800B46E8 end:0x800B4708
 	.data       start:0x800E0A30 end:0x800E2B50
 
-Famicom.a/ks_nes_draw.cpp:
+Famicom/ks_nes_draw.cpp:
 	.text       start:0x8003E4D8 end:0x800421AC
 	.text       start:0x800421AC end:0x800421D8
 	.text       start:0x800421D8 end:0x80042204
 	.rodata     start:0x800B4708 end:0x800B4768
 	.data       start:0x800E2B50 end:0x800E2C38
 
-Famicom.a/famicom.cpp:
+Famicom/famicom.cpp:
 	.text       start:0x80042204 end:0x8004795C
 	.text       start:0x8004795C end:0x80047A2C
 	.text       start:0x80047A2C end:0x80047A58
@@ -497,42 +497,42 @@ Famicom.a/famicom.cpp:
 	.data       start:0x800E2C38 end:0x800E3E48
 	.bss        start:0x801FD440 end:0x80204AE0
 
-Famicom.a/famicom_nesinfo.cpp:
+Famicom/famicom_nesinfo.cpp:
 	.text       start:0x80047D90 end:0x800494E4
 	.text       start:0x800494E4 end:0x800494E4
 	.rodata     start:0x800B4818 end:0x800B4948
 	.data       start:0x800E3E48 end:0x800E5048
 	.bss        start:0x80204AE0 end:0x80204BA0
 
-gba.a/GBA.c:
+dolphin/gba/GBA.c:
 	.text       start:0x800494E4 end:0x800497D4
 	.data       start:0x800E5048 end:0x800E5058
 	.bss        start:0x80204BA0 end:0x802050A0
 	.sbss       start:0x8022A490 end:0x8022A498
 
-gba.a/GBAGetProcessStatus.c:
+dolphin/gba/GBAGetProcessStatus.c:
 	.text       start:0x800497D4 end:0x80049948
 
-gba.a/GBAJoyBoot.c:
+dolphin/gba/GBAJoyBoot.c:
 	.text       start:0x80049948 end:0x8004A854
 	.data       start:0x800E5058 end:0x800E5088
 
-gba.a/GBARead.c:
+dolphin/gba/GBARead.c:
 	.text       start:0x8004A854 end:0x8004A9B4
 
-gba.a/GBAWrite.c:
+dolphin/gba/GBAWrite.c:
 	.text       start:0x8004A9B4 end:0x8004AB3C
 
-gba.a/GBAXfer.c:
+dolphin/gba/GBAXfer.c:
 	.text       start:0x8004AB3C end:0x8004AE74
 
-gba2.a/JoyBoot.cpp:
+GBA2/JoyBoot.c:
 	.text       start:0x8004AE74 end:0x8004D720
 	.text       start:0x8004D720 end:0x8004D730
 	.data       start:0x800E5088 end:0x800E5160
 	.bss        start:0x802050A0 end:0x80209EC0
 
-libforest.a/emu64.c:
+libforest/emu64/emu64.c:
 	.text       start:0x8004D730 end:0x80059318
 	.text       start:0x80059318 end:0x80059A64
 	.text       start:0x80059A64 end:0x80059A64
@@ -548,195 +548,195 @@ libforest.a/emu64.c:
 	.sbss       start:0x8022A498 end:0x8022A518
 	.sdata2     start:0x8022B030 end:0x8022B0D8
 
-libforest.a/osreport.c:
+libforest/osreport.c:
 	.text       start:0x8005A9CC end:0x8005ACC8
 	.data       start:0x800E6BF8 end:0x800E6C58
 	.bss        start:0x80219C08 end:0x80219C20
 	.sbss       start:0x8022A518 end:0x8022A528
 
-libforest.a/fault.c:
+libforest/fault.c:
 	.text       start:0x8005ACC8 end:0x8005B150
 	.data       start:0x800E6C58 end:0x800E6CE8
 	.bss        start:0x80219C20 end:0x80219C30
 	.sbss       start:0x8022A528 end:0x8022A530
 
-libforest.a/ReconfigBATs.c:
+libforest/ReconfigBATs.c:
 	.text       start:0x8005B150 end:0x8005B278
 
-libu64.a/debug.c:
+libu64/debug.c:
 	.text       start:0x8005B278 end:0x8005B2D4
 	.data       start:0x800E6CE8 end:0x800E6D10
 
-libu64.a/gfxprint.c:
+libu64/gfxprint.c:
 	.text       start:0x8005B2D4 end:0x8005BDDC
 	.data       start:0x800E6D10 end:0x800E6D30
 	.sbss       start:0x8022A530 end:0x8022A538
 
-libu64.a/gfxprint_data.c:
+libu64/gfxprint_data.c:
 	.text       start:0x8005BDDC end:0x8005BDDC
 	.data       start:0x800E6D30 end:0x800E75B0
 
-libu64.a/pad.c:
+libu64/pad.c:
 	.text       start:0x8005BDDC end:0x8005BE7C
 
-libc64.a/__osMalloc.c:
+libc64/__osMalloc.c:
 	.text       start:0x8005BE7C end:0x8005D074
 	.data       start:0x800E75B0 end:0x800E7880
 	.sdata      start:0x80229BF0 end:0x80229C08
 	.sbss       start:0x8022A538 end:0x8022A540
 
-libc64.a/aprintf.c:
+libc64/aprintf.c:
 	.text       start:0x8005D074 end:0x8005D0AC
 
-libc64.a/math64.c:
+libc64/math64.c:
 	.text       start:0x8005D0AC end:0x8005D10C
 	.text       start:0x8005D10C end:0x8005D154
 	.text       start:0x8005D154 end:0x8005D218
 	.sdata2     start:0x8022B0D8 end:0x8022B0F8
 
-libc64.a/qrand.c:
+libc64/qrand.c:
 	.text       start:0x8005D218 end:0x8005D2B0
 	.sdata      start:0x80229C08 end:0x80229C10
 	.sbss       start:0x8022A540 end:0x8022A548
 	.sdata2     start:0x8022B0F8 end:0x8022B100
 
-libc64.a/sleep.c:
+libc64/sleep.c:
 	.text       start:0x8005D2B0 end:0x8005D36C
 
-libc64.a/sprintf.c:
+libc64/sprintf.c:
 	.text       start:0x8005D36C end:0x8005D45C
 
-libc64.a/malloc.c:
+libc64/malloc.c:
 	.text       start:0x8005D45C end:0x8005D570
 	.bss        start:0x80219C30 end:0x80219C60
 
-libultra.a/ultra.c:
+libultra/ultra.c:
 	.text       start:0x8005D570 end:0x8005D6B0
 	.bss        start:0x80219C60 end:0x80219CA0
 
-libultra.a/coss.c:
+libultra/gu/coss.c:
 	.text       start:0x8005D6B0 end:0x8005D6D8
 
-libultra.a/lookat.c:
+libultra/gu/lookat.c:
 	.text       start:0x8005D6D8 end:0x8005DC00
 	.sdata2     start:0x8022B100 end:0x8022B128
 
-libultra.a/lookathil.c:
+libultra/gu/lookathil.c:
 	.text       start:0x8005DC00 end:0x8005E94C
 	.sdata2     start:0x8022B128 end:0x8022B170
 
-libultra.a/mtxutil.c:
+libultra/gu/mtxutil.c:
 	.text       start:0x8005E94C end:0x8005EBB0
 	.sdata2     start:0x8022B170 end:0x8022B180
 
-libultra.a/normalize.c:
+libultra/gu/normalize.c:
 	.text       start:0x8005EBB0 end:0x8005ECEC
 	.sdata2     start:0x8022B180 end:0x8022B1A8
 
-libultra.a/ortho.c:
+libultra/gu/ortho.c:
 	.text       start:0x8005ECEC end:0x8005EEE8
 	.sdata2     start:0x8022B1A8 end:0x8022B1B8
 
-libultra.a/perspective.c:
+libultra/gu/perspective.c:
 	.text       start:0x8005EEE8 end:0x8005F128
 	.sdata2     start:0x8022B1B8 end:0x8022B1E0
 
-libultra.a/rotate.c:
+libultra/gu/rotate.c:
 	.text       start:0x8005F128 end:0x8005F2A8
 	.sdata      start:0x80229C10 end:0x80229C18
 	.sdata2     start:0x8022B1E0 end:0x8022B1E8
 
-libultra.a/scale.c:
+libultra/gu/scale.c:
 	.text       start:0x8005F2A8 end:0x8005F334
 	.sdata2     start:0x8022B1E8 end:0x8022B1F0
 
-libultra.a/sins.c:
+libultra/gu/sins.c:
 	.text       start:0x8005F334 end:0x8005F380
 	.data       start:0x800E7880 end:0x800E8080
 
-libultra.a/translate.c:
+libultra/gu/translate.c:
 	.text       start:0x8005F380 end:0x8005F3EC
 
-libultra.a/xldtob.c:
+libultra/xldtob.c:
 	.text       start:0x8005F3EC end:0x8005FD74
 	.rodata     start:0x800B4ED8 end:0x800B4F20
 	.sdata      start:0x80229C18 end:0x80229C28
 	.sdata2     start:0x8022B1F0 end:0x8022B210
 
-libultra.a/xlitob.c:
+libultra/xlitob.c:
 	.text       start:0x8005FD74 end:0x8005FFA0
 	.data       start:0x800E8080 end:0x800E80A8
 
-libultra.a/xprintf.c:
+libultra/xprintf.c:
 	.text       start:0x8005FFA0 end:0x80060A48
 	.rodata     start:0x800B4F20 end:0x800B4F38
 	.data       start:0x800E80A8 end:0x800E8240
 	.sdata      start:0x80229C28 end:0x80229C30
 	.sdata2     start:0x8022B210 end:0x8022B218
 
-libultra.a/createmesgqueue.c:
+libultra/createmesgqueue.c:
 	.text       start:0x80060A48 end:0x80060A68
 
-libultra.a/createthread.c:
+libultra/createthread.c:
 	.text       start:0x80060A68 end:0x80060ADC
 
-libultra.a/destroythread.c:
+libultra/destroythread.c:
 	.text       start:0x80060ADC end:0x80060B08
 
-libultra.a/getthreadid.c:
+libultra/getthreadid.c:
 	.text       start:0x80060B08 end:0x80060B34
 
-libultra.a/gettime.c:
+libultra/gettime.c:
 	.text       start:0x80060B34 end:0x80060B64
 	.sbss       start:0x8022A548 end:0x8022A550
 
-libultra.a/initialize.c:
+libultra/initialize.c:
 	.text       start:0x80060B64 end:0x80060BF0
 	.sdata      start:0x80229C30 end:0x80229C38
 	.sbss       start:0x8022A550 end:0x8022A578
 
-libultra.a/recvmesg.c:
+libultra/recvmesg.c:
 	.text       start:0x80060BF0 end:0x80060C10
 
-libultra.a/sendmesg.c:
+libultra/sendmesg.c:
 	.text       start:0x80060C10 end:0x80060C30
 
-libultra.a/setthreadpri.c:
+libultra/setthreadpri.c:
 	.text       start:0x80060C30 end:0x80060C6C
 
-libultra.a/settimer.c:
+libultra/settimer.c:
 	.text       start:0x80060C6C end:0x80060E20
 
-libultra.a/shutdown.c:
+libultra/shutdown.c:
 	.text       start:0x80060E20 end:0x80060FB0
 	.data       start:0x800E8240 end:0x800E82C0
 
-libultra.a/startthread.c:
+libultra/startthread.c:
 	.text       start:0x80060FB0 end:0x80060FDC
 
-libultra.a/stoptimer.c:
+libultra/stoptimer.c:
 	.text       start:0x80060FDC end:0x80061068
 
-libultra.a/timerintr.c:
+libultra/timerintr.c:
 	.text       start:0x80061068 end:0x800610A8
 	.bss        start:0x80219CA0 end:0x80219CE8
 	.sdata      start:0x80229C38 end:0x80229C40
 
-libultra.a/contquery.c:
+libultra/contquery.c:
 	.text       start:0x800610A8 end:0x800610FC
 
-libultra.a/contreaddata.c:
+libultra/contreaddata.c:
 	.text       start:0x800610FC end:0x800616FC
 	.sbss       start:0x8022A578 end:0x8022A588
 
-libultra.a/controller.c:
+libultra/controller.c:
 	.text       start:0x800616FC end:0x80061850
 	.sbss       start:0x8022A588 end:0x8022A590
 
-libultra.a/contsetch.c:
+libultra/contsetch.c:
 	.text       start:0x80061850 end:0x80061870
 
-libjsys.a/jsyswrapper.cpp:
+libjsys/jsyswrapper.cpp:
 	.text       start:0x80061870 end:0x80061AD0
 	.text       start:0x80061AD0 end:0x80062A28
 	.text       start:0x80062A28 end:0x80062A70
@@ -775,13 +775,13 @@ libjsys.a/jsyswrapper.cpp:
 	.text       start:0x800631D4 end:0x800631D4
 	.sdata2     start:0x8022B218 end:0x8022B228
 
-JFramework.a/JFWSystem.cpp:
+JSystem/JFramework/JFWSystem.cpp:
 	.text       start:0x800631D4 end:0x80063524
 	.sdata      start:0x80229C40 end:0x80229C70
 	.sbss       start:0x8022A590 end:0x8022A5B0
 	.sdata2     start:0x8022B228 end:0x8022B238
 
-JFramework.a/JFWDisplay.cpp:
+JSystem/JFramework/JFWDisplay.cpp:
 	.text       start:0x80063524 end:0x80064E08
 	.text       start:0x80064E08 end:0x80064E08
 	.ctors      start:0x800B354C end:0x800B3550
@@ -791,7 +791,7 @@ JFramework.a/JFWDisplay.cpp:
 	.sbss       start:0x8022A5B0 end:0x8022A5D8
 	.sdata2     start:0x8022B238 end:0x8022B260
 
-JKernel.a/JKRHeap.cpp:
+JSystem/JKernel/JKRHeap.cpp:
 	.text       start:0x80064E08 end:0x80065C5C
 	.text       start:0x80065C5C end:0x80065C6C
 	.text       start:0x80065C6C end:0x80065CEC
@@ -800,7 +800,7 @@ JKernel.a/JKRHeap.cpp:
 	.sdata      start:0x80229C78 end:0x80229CA0
 	.sbss       start:0x8022A5D8 end:0x8022A600
 
-JKernel.a/JKRExpHeap.cpp:
+JSystem/JKernel/JKRExpHeap.cpp:
 	.text       start:0x80065CF4 end:0x80067800
 	.text       start:0x80067800 end:0x80067814
 	.data       start:0x800E84C8 end:0x800E88D8
@@ -808,12 +808,12 @@ JKernel.a/JKRExpHeap.cpp:
 	.sbss       start:0x8022A600 end:0x8022A618
 	.sdata2     start:0x8022B260 end:0x8022B270
 
-JKernel.a/JKRDisposer.cpp:
+JSystem/JKernel/JKRDisposer.cpp:
 	.text       start:0x80067814 end:0x80067900
 	.data       start:0x800E88D8 end:0x800E88F0
 	.sdata      start:0x80229CE8 end:0x80229CF0
 
-JKernel.a/JKRThread.cpp:
+JSystem/JKernel/JKRThread.cpp:
 	.text       start:0x80067900 end:0x80067C64
 	.text       start:0x80067C64 end:0x80067D7C
 	.ctors      start:0x800B3550 end:0x800B3554
@@ -821,7 +821,7 @@ JKernel.a/JKRThread.cpp:
 	.bss        start:0x80219D20 end:0x80219D70
 	.sdata      start:0x80229CF0 end:0x80229D00
 
-JKernel.a/JKRAram.cpp:
+JSystem/JKernel/JKRAram.cpp:
 	.text       start:0x80067D7C end:0x80068DF4
 	.ctors      start:0x800B3554 end:0x800B3558
 	.data       start:0x800E8928 end:0x800E89D0
@@ -829,33 +829,33 @@ JKernel.a/JKRAram.cpp:
 	.sdata      start:0x80229D00 end:0x80229D28
 	.sbss       start:0x8022A618 end:0x8022A658
 
-JKernel.a/JKRAramHeap.cpp:
+JSystem/JKernel/JKRAramHeap.cpp:
 	.text       start:0x80068DF4 end:0x800691E0
 	.ctors      start:0x800B3558 end:0x800B355C
 	.data       start:0x800E89D0 end:0x800E8A00
 	.bss        start:0x80219DA0 end:0x80219DB8
 	.sdata      start:0x80229D28 end:0x80229D38
 
-JKernel.a/JKRAramBlock.cpp:
+JSystem/JKernel/JKRAramBlock.cpp:
 	.text       start:0x800691E0 end:0x8006947C
 	.data       start:0x800E8A00 end:0x800E8A20
 	.sdata      start:0x80229D38 end:0x80229D40
 
-JKernel.a/JKRAramPiece.cpp:
+JSystem/JKernel/JKRAramPiece.cpp:
 	.text       start:0x8006947C end:0x800698D0
 	.ctors      start:0x800B355C end:0x800B3560
 	.data       start:0x800E8A20 end:0x800E8A90
 	.bss        start:0x80219DB8 end:0x80219DE8
 	.sdata      start:0x80229D40 end:0x80229D48
 
-JKernel.a/JKRAramStream.cpp:
+JSystem/JKernel/JKRAramStream.cpp:
 	.text       start:0x800698D0 end:0x80069E20
 	.text       start:0x80069E20 end:0x80069E7C
 	.data       start:0x800E8A90 end:0x800E8B48
 	.sdata      start:0x80229D48 end:0x80229D68
 	.sbss       start:0x8022A658 end:0x8022A668
 
-JKernel.a/JKRFileLoader.cpp:
+JSystem/JKernel/JKRFileLoader.cpp:
 	.text       start:0x80069E7C end:0x8006A4B4
 	.ctors      start:0x800B3560 end:0x800B3564
 	.data       start:0x800E8B48 end:0x800E8BB0
@@ -863,47 +863,47 @@ JKernel.a/JKRFileLoader.cpp:
 	.sdata      start:0x80229D68 end:0x80229D80
 	.sbss       start:0x8022A668 end:0x8022A670
 
-JKernel.a/JKRFileFinder.cpp:
+JSystem/JKernel/JKRFileFinder.cpp:
 	.text       start:0x8006A4B4 end:0x8006A5EC
 	.text       start:0x8006A5EC end:0x8006A648
 	.data       start:0x800E8BB0 end:0x800E8BF0
 	.sdata      start:0x80229D80 end:0x80229D90
 
-JKernel.a/JKRArchivePub.cpp:
+JSystem/JKernel/JKRArchivePub.cpp:
 	.text       start:0x8006A648 end:0x8006AEC4
 	.text       start:0x8006AEC4 end:0x8006AEF0
 	.data       start:0x800E8BF0 end:0x800E8C88
 	.sdata      start:0x80229D90 end:0x80229DA8
 
-JKernel.a/JKRArchivePri.cpp:
+JSystem/JKernel/JKRArchivePri.cpp:
 	.text       start:0x8006AEF0 end:0x8006BAFC
 	.text       start:0x8006BAFC end:0x8006BB50
 	.sbss       start:0x8022A670 end:0x8022A678
 
-JKernel.a/JKRMemArchive.cpp:
+JSystem/JKernel/JKRMemArchive.cpp:
 	.text       start:0x8006BB50 end:0x8006C11C
 	.data       start:0x800E8C88 end:0x800E8D78
 	.sdata      start:0x80229DA8 end:0x80229DD0
 
-JKernel.a/JKRAramArchive.cpp:
+JSystem/JKernel/JKRAramArchive.cpp:
 	.text       start:0x8006C11C end:0x8006CE64
 	.text       start:0x8006CE64 end:0x8006CEC4
 	.data       start:0x800E8D78 end:0x800E8E90
 	.sdata      start:0x80229DD0 end:0x80229E08
 
-JKernel.a/JKRDvdArchive.cpp:
+JSystem/JKernel/JKRDvdArchive.cpp:
 	.text       start:0x8006CEC4 end:0x8006DB00
 	.text       start:0x8006DB00 end:0x8006DB00
 	.data       start:0x800E8E90 end:0x800E8FF8
 	.sdata      start:0x80229E08 end:0x80229E30
 
-JKernel.a/JKRCompArchive.cpp:
+JSystem/JKernel/JKRCompArchive.cpp:
 	.text       start:0x8006DB00 end:0x8006E89C
 	.text       start:0x8006E89C end:0x8006E89C
 	.data       start:0x800E8FF8 end:0x800E90F8
 	.sdata      start:0x80229E30 end:0x80229E58
 
-JKernel.a/JKRDvdFile.cpp:
+JSystem/JKernel/JKRDvdFile.cpp:
 	.text       start:0x8006E89C end:0x8006ED88
 	.text       start:0x8006ED88 end:0x8006ED88
 	.text       start:0x8006ED88 end:0x8006EE28
@@ -912,7 +912,7 @@ JKernel.a/JKRDvdFile.cpp:
 	.bss        start:0x80219E00 end:0x80219E18
 	.sdata      start:0x80229E58 end:0x80229E80
 
-JKernel.a/JKRDvdRipper.cpp:
+JSystem/JKernel/JKRDvdRipper.cpp:
 	.text       start:0x8006EE28 end:0x8006FA88
 	.text       start:0x8006FA88 end:0x8006FA88
 	.text       start:0x8006FA88 end:0x8006FB28
@@ -922,7 +922,7 @@ JKernel.a/JKRDvdRipper.cpp:
 	.sdata      start:0x80229E80 end:0x80229E90
 	.sbss       start:0x8022A678 end:0x8022A6B8
 
-JKernel.a/JKRDvdAramRipper.cpp:
+JSystem/JKernel/JKRDvdAramRipper.cpp:
 	.text       start:0x8006FB28 end:0x8007094C
 	.text       start:0x8007094C end:0x8007094C
 	.text       start:0x8007094C end:0x8007094C
@@ -931,23 +931,23 @@ JKernel.a/JKRDvdAramRipper.cpp:
 	.sdata      start:0x80229E90 end:0x80229E98
 	.sbss       start:0x8022A6B8 end:0x8022A700
 
-JKernel.a/JKRDecomp.cpp:
+JSystem/JKernel/JKRDecomp.cpp:
 	.text       start:0x8007094C end:0x8007102C
 	.data       start:0x800E91E0 end:0x800E9278
 	.sdata      start:0x80229E98 end:0x80229EB0
 	.sbss       start:0x8022A700 end:0x8022A708
 
-JSupport.a/JSUList.cpp:
+JSystem/JSupport/JSUList.cpp:
 	.text       start:0x8007102C end:0x80071548
 
-JSupport.a/JSUInputStream.cpp:
+JSystem/JSupport/JSUInputStream.cpp:
 	.text       start:0x80071548 end:0x80071724
 	.text       start:0x80071724 end:0x80071790
 	.text       start:0x80071790 end:0x800717D8
 	.data       start:0x800E9278 end:0x800E9318
 	.sdata      start:0x80229EB0 end:0x80229EC8
 
-JSupport.a/JSUFileStream.cpp:
+JSystem/JSupport/JSUFileStream.cpp:
 	.text       start:0x800717D8 end:0x800719E4
 	.text       start:0x800719E4 end:0x800719E4
 	.text       start:0x800719E4 end:0x800719E4
@@ -956,23 +956,23 @@ JSupport.a/JSUFileStream.cpp:
 	.data       start:0x800E9318 end:0x800E93C0
 	.sdata      start:0x80229EC8 end:0x80229EE8
 
-JGadget.a/linklist.cpp:
+JSystem/JGadget/linklist.cpp:
 	.text       start:0x80071A1C end:0x80071A74
 	.text       start:0x80071A74 end:0x80071B5C
 
-JUtility.a/JUTGraphFifo.cpp:
+JSystem/JUtility/JUTGraphFifo.cpp:
 	.text       start:0x80071B5C end:0x80071CFC
 	.data       start:0x800E93C0 end:0x800E93E0
 	.sdata      start:0x80229EE8 end:0x80229EF0
 	.sbss       start:0x8022A708 end:0x8022A718
 
-JUtility.a/JUTFont.cpp:
+JSystem/JUtility/JUTFont.cpp:
 	.text       start:0x80071CFC end:0x80071EE8
 	.text       start:0x80071EE8 end:0x80071FB4
 	.data       start:0x800E93E0 end:0x800E9428
 	.sdata      start:0x80229EF0 end:0x80229F00
 
-JUtility.a/JUTResFont.cpp:
+JSystem/JUtility/JUTResFont.cpp:
 	.text       start:0x80071FB4 end:0x800731E8
 	.text       start:0x800731E8 end:0x80073228
 	.text       start:0x80073228 end:0x80073228
@@ -984,13 +984,13 @@ JUtility.a/JUTResFont.cpp:
 JSystem/JUtility/JUTFontData_Ascfont_fix12.s: comment:0
 	.rodata     start:0x800B5020 end:0x800B9180
 
-JUtility.a/JUTDbPrint.cpp:
+JSystem/JUtility/JUTDbPrint.cpp:
 	.text       start:0x80073228 end:0x80073740
 	.text       start:0x80073740 end:0x80073740
 	.sbss       start:0x8022A718 end:0x8022A720
 	.sdata2     start:0x8022B288 end:0x8022B298
 
-JUtility.a/JUTGamePad.cpp:
+JSystem/JUtility/JUTGamePad.cpp:
 	.text       start:0x80073740 end:0x80074B08
 	.text       start:0x80074B08 end:0x80074D04
 	.ctors      start:0x800B3570 end:0x800B3574
@@ -1000,7 +1000,7 @@ JUtility.a/JUTGamePad.cpp:
 	.sbss       start:0x8022A720 end:0x8022A758
 	.sdata2     start:0x8022B298 end:0x8022B2D0
 
-JUtility.a/JUTException.cpp:
+JSystem/JUtility/JUTException.cpp:
 	.text       start:0x80074D04 end:0x800777E4
 	.text       start:0x800777E4 end:0x800778E0
 	.ctors      start:0x800B3574 end:0x800B3578
@@ -1010,31 +1010,31 @@ JUtility.a/JUTException.cpp:
 	.sbss       start:0x8022A758 end:0x8022A778
 	.sdata2     start:0x8022B2D0 end:0x8022B2E0
 
-JUtility.a/JUTDirectPrint.cpp:
+JSystem/JUtility/JUTDirectPrint.cpp:
 	.text       start:0x800778E0 end:0x8007805C
 	.data       start:0x800E9B20 end:0x800E9DE8
 	.sdata      start:0x80229F98 end:0x80229FA0
 	.sbss       start:0x8022A778 end:0x8022A780
 	.sdata2     start:0x8022B2E0 end:0x8022B338
 
-JUtility.a/JUTAssert.cpp:
+JSystem/JUtility/JUTAssert.cpp:
 	.text       start:0x8007805C end:0x80078370
 	.bss        start:0x8021A310 end:0x8021A460
 	.sdata      start:0x80229FA0 end:0x80229FB0
 	.sbss       start:0x8022A780 end:0x8022A788
 	.sdata2     start:0x8022B338 end:0x8022B350
 
-JUtility.a/JUTVideo.cpp:
+JSystem/JUtility/JUTVideo.cpp:
 	.text       start:0x80078370 end:0x800788DC
 	.data       start:0x800E9DE8 end:0x800E9E00
 	.sdata      start:0x80229FB0 end:0x80229FB8
 	.sbss       start:0x8022A788 end:0x8022A7A0
 
-JUtility.a/JUTXfb.cpp:
+JSystem/JUtility/JUTXfb.cpp:
 	.text       start:0x800788DC end:0x80078B84
 	.sbss       start:0x8022A7A0 end:0x8022A7A8
 
-JUtility.a/JUTFader.cpp:
+JSystem/JUtility/JUTFader.cpp:
 	.text       start:0x80078B84 end:0x80078E24
 	.text       start:0x80078E24 end:0x80078E24
 	.text       start:0x80078E24 end:0x80078E24
@@ -1042,14 +1042,14 @@ JUtility.a/JUTFader.cpp:
 	.sdata      start:0x80229FB8 end:0x80229FC0
 	.sdata2     start:0x8022B350 end:0x8022B358
 
-JUtility.a/JUTProcBar.cpp:
+JSystem/JUtility/JUTProcBar.cpp:
 	.text       start:0x80078E24 end:0x8007AFC0
 	.text       start:0x8007AFC0 end:0x8007AFD4
 	.sdata      start:0x80229FC0 end:0x80229FC8
 	.sbss       start:0x8022A7A8 end:0x8022A7C0
 	.sdata2     start:0x8022B358 end:0x8022B3A0
 
-JUtility.a/JUTConsole.cpp:
+JSystem/JUtility/JUTConsole.cpp:
 	.text       start:0x8007AFD4 end:0x8007C4B8
 	.text       start:0x8007C4B8 end:0x8007C4B8
 	.data       start:0x800E9E28 end:0x800E9E50
@@ -1057,23 +1057,23 @@ JUtility.a/JUTConsole.cpp:
 	.sbss       start:0x8022A7C0 end:0x8022A7D0
 	.sdata2     start:0x8022B3A0 end:0x8022B3D0
 
-JUtility.a/JUTDirectFile.cpp:
+JSystem/JUtility/JUTDirectFile.cpp:
 	.text       start:0x8007C4B8 end:0x8007C860
 
-JUtility.a/JUTGba.cpp:
+JSystem/JUtility/JUTGba.cpp:
 	.text       start:0x8007C860 end:0x8007D494
 	.data       start:0x800E9E50 end:0x800E9EC0
 	.sdata      start:0x80229FD8 end:0x80229FE0
 	.sbss       start:0x8022A7D0 end:0x8022A7D8
 
-J2DGraph.a/J2DGrafContext.cpp:
+JSystem/J2DGraph/J2DGrafContext.cpp:
 	.text       start:0x8007D494 end:0x8007DF00
 	.text       start:0x8007DF00 end:0x8007DF54
 	.data       start:0x800E9EC0 end:0x800E9EF8
 	.sdata      start:0x80229FE0 end:0x80229FE8
 	.sdata2     start:0x8022B3D0 end:0x8022B3E8
 
-J2DGraph.a/J2DOrthoGraph.cpp:
+JSystem/J2DGraph/J2DOrthoGraph.cpp:
 	.text       start:0x8007DF54 end:0x8007E50C
 	.text       start:0x8007E50C end:0x8007E50C
 	.text       start:0x8007E50C end:0x8007E514
@@ -1762,7 +1762,7 @@ TRK_Minnow_Dolphin.a/MWCriticalSection_gc.cpp:
 amcstubs.a/AmcExi2Stubs.c:
 	.text       start:0x800B2A7C end:0x800B2AAC
 
-OdemuExi2.a/DebuggerDriver.c:
+dolphin/OdemuExi2/DebuggerDriver.c:
 	.text       start:0x800B2AAC end:0x800B352C
 	.sdata      start:0x8022A150 end:0x8022A151
 	.sbss       start:0x8022AB70 end:0x8022AB85
