@@ -1997,3 +1997,9 @@ void* PCM[9] = { (void*)&_STOP, (void*)&_STOP, NULL, NULL, NULL, NULL, NULL, NUL
 
 // UNUSED
 u32 PCMSIZE[9] = { sizeof(_STOP), sizeof(_STOP), 0, 0, 0, 0, 0, 0, 0 };
+
+// TODO: emusound is split up further than we've done
+#if VERSION >= VER_GAFU01_00
+// This is required for alignment in the Australian release
+#include "../src/static/jaudio_NES/game/emusound_menu.c_inc"
+#endif

@@ -14,7 +14,6 @@ import argparse
 import io
 import os
 import platform
-import shutil
 import stat
 import urllib.request
 import zipfile
@@ -109,19 +108,38 @@ TOOLS: Dict[str, Callable[[str], str]] = {
 }
 
 
+def write_if_changed(output: Path, data: bytes) -> bool:
+    if output.is_file() and output.read_bytes() == data:
+        return False
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_bytes(data)
+    return True
+
+
 def download(url, response, output) -> None:
     if url.endswith(".zip"):
         data = io.BytesIO(response.read())
+        changed = False
         with zipfile.ZipFile(data) as f:
-            f.extractall(output)
+            for entry in f.infolist():
+                path = Path(entry.filename)
+                if path.anchor or ".." in path.parts:
+                    raise ValueError(f"Invalid tool archive path: {entry.filename}")
+                target = output / path
+                if entry.is_dir():
+                    if not target.is_dir():
+                        target.mkdir(parents=True, exist_ok=True)
+                        changed = True
+                else:
+                    changed |= write_if_changed(target, f.read(entry))
         # Make all files executable
         for root, _, files in os.walk(output):
             for name in files:
                 os.chmod(os.path.join(root, name), 0o755)
-        output.touch(mode=0o755)  # Update dir modtime
+        if changed:
+            output.touch(mode=0o755)  # Update dir modtime when the archive changed
     else:
-        with open(output, "wb") as f:
-            shutil.copyfileobj(response, f)
+        write_if_changed(output, response.read())
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 

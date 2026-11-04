@@ -480,6 +480,7 @@ def generate_build_ninja(
         name="download_tool",
         command=f"$python {download_tool} $tool $out --tag $tag",
         description="TOOL $out",
+        restat=True,
     )
 
     decompctx = config.tools_dir / "decompctx.py"
@@ -613,10 +614,19 @@ def generate_build_ninja(
         )
     wrapper_cmd = f"{wrapper} " if wrapper else ""
 
+    # Archive directories change when tools are installed or switched. Check
+    # their actual executables with restat so a directory timestamp alone does
+    # not invalidate every object, while changed executables still do.
+    n.rule(
+        name="tool_file",
+        command='$python -c "import os, sys; assert os.path.isfile(sys.argv[1]), sys.argv[1]" $out',
+        description="CHECK TOOL $out",
+        restat=True,
+    )
+    n.newline()
+
     compilers = config.compilers()
-    compilers_implicit: Optional[Path] = None
     if config.compilers_path is None and config.compilers_tag is not None:
-        compilers_implicit = compilers
         n.build(
             outputs=compilers,
             rule="download_tool",
@@ -626,6 +636,14 @@ def generate_build_ninja(
                 "tag": config.compilers_tag,
             },
         )
+        compiler_files = {
+            compilers / version / "mwcceppc.exe"
+            for obj in objects.values()
+            if (version := obj.options["mw_version"]) is not None
+        }
+        compiler_files.add(compilers / str(config.linker_version) / "mwldeppc.exe")
+        for compiler_file in sorted(compiler_files):
+            n.build(outputs=compiler_file, rule="tool_file", inputs=compilers)
 
     binutils_implicit = None
     if config.binutils_path:
@@ -666,7 +684,7 @@ def generate_build_ninja(
     # MWCC
     mwcc = compiler_path / "mwcceppc.exe"
     mwcc_cmd = f"{wrapper_cmd}{mwcc} $cflags -MMD -c $in -o $basedir"
-    mwcc_implicit: List[Optional[Path]] = [compilers_implicit or mwcc, wrapper_implicit]
+    mwcc_implicit: List[Optional[Path]] = [mwcc, wrapper_implicit]
 
     # MWCC with UTF-8 to Shift JIS wrapper
     mwcc_sjis_cmd = f"{wrapper_cmd}{sjiswrap} {mwcc} $cflags -MMD -c $in -o $basedir"
@@ -681,14 +699,16 @@ def generate_build_ninja(
     # MWLD
     mwld = compiler_path / "mwldeppc.exe"
     mwld_cmd = f"{wrapper_cmd}{mwld} $ldflags -o $out @$out.rsp"
-    mwld_implicit: List[Optional[Path]] = [compilers_implicit or mwld, wrapper_implicit]
+    mwld_implicit: List[Optional[Path]] = [mwld, wrapper_implicit]
 
     # GNU as
     gnu_as = binutils / f"powerpc-eabi-as{EXE}"
+    if binutils_implicit is not None:
+        n.build(outputs=gnu_as, rule="tool_file", inputs=binutils_implicit)
     gnu_as_cmd = (
         f"{CHAIN}{gnu_as} $asflags -o $out $in" + f" && {dtk} elf fixup $out $out"
     )
-    gnu_as_implicit = [binutils_implicit or gnu_as, dtk]
+    gnu_as_implicit = [gnu_as, dtk]
     # As a workaround for https://github.com/encounter/dtk-template/issues/51
     # include macros.inc directly as an implicit dependency
     gnu_as_implicit.append(build_path / "include" / "macros.inc")
