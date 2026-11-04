@@ -14,7 +14,11 @@ extern "C" {
 #define AUDIO_PRELOAD_SEQ (1 << 0)
 #define AUDIO_PRELOAD_BANK (1 << 1)
 
+#if VERSION == VER_GAFE01_00
 #define AUDIO_ARAM_SIZE 0x400000 /* 4MB */
+#else
+#define AUDIO_ARAM_SIZE 0x810000 /* ~8MB */
+#endif
 #define AUDIO_ARAM_HEAP_SIZE 0xC000
 
 #define AUDIO_GROUP_MAX 5

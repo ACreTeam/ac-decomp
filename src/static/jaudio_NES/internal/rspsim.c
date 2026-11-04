@@ -595,7 +595,8 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                     Jac_bcopy((void*)cmdLo, DMEM_OFS(DMEMOut), 16 * sizeof(s16));
                 }
 
-                u16 temp1 = DMEMOut + 32;
+                u16 temp1 = DMEMOut;
+                temp1 += 32;
                 s16* dst = (s16*)&DMEM[temp1];
                 u8* src = sp128 + DMEMIn - sp12C;
                 u16 count = DMEMCount >> 1;

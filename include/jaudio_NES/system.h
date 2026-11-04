@@ -21,7 +21,11 @@ extern void* Nas_WaveDmaCallBack(u32 device_addr, u32 size, s32 arg2, u8* wavelo
 extern void Nas_InitAudio(u64* acmdBuf, s32 acmdBufSize);
 extern void Nas_FastCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);
 extern void Nas_FastDiskCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);
+#if VERSION == VER_GAFE01_00
 extern s32 Nas_StartMySeq(s32 group, s32 seq, s32 arg);
+#else
+extern s32 Nas_StartMySeq(s32 group, s32 seq);
+#endif
 extern s32 Nas_StartSeq_Skip(s32 group, s32 seq, s32 skip_ticks);
 
 extern s32 Nas_LoadVoice(s32 progId, s32 instId, s32 percId);

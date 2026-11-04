@@ -17,6 +17,22 @@ namespace std {
     inline float sqrtf(float x) {
         static const double _half = .5;
         static const double _three = 3.0;
+#if VERSION >= VER_GAFU01_00
+        if (x > 0.0f) {
+            double xd = (double)x;
+            double guess = __frsqrte(xd);
+            guess = _half * guess * (_three - guess * guess * xd);
+            guess = _half * guess * (_three - guess * guess * xd);
+            guess = _half * guess * (_three - guess * guess * xd);
+            return (float)(xd * guess);
+        } else if (x < 0.0) {
+            return NAN;
+        } else if (isnan(x)) {
+            return NAN;
+        } else {
+            return x;
+        }
+#else
         volatile float y;
 
         if (x > 0.0f) {
@@ -29,6 +45,7 @@ namespace std {
         }
 
         return x;
+#endif
     }
 
 #ifdef __cplusplus

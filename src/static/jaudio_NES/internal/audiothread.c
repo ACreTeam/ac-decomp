@@ -18,7 +18,11 @@
 #include "jaudio_NES/playercall.h"
 #include "jaudio_NES/dspbuf.h"
 
+#if VERSION == VER_GAFE01_00
 #define AUDIO_STACK_SIZE 0x1000
+#else
+#define AUDIO_STACK_SIZE 0x2000
+#endif
 #define AUDIOPROC_MQ_BUF_COUNT 16
 
 #define AUDIOPROC_MESSAGE_UPDATE_DAC ((OSMessage)0)
@@ -75,7 +79,7 @@ extern void NeosSync(void) {
 }
 
 static void __DspSync(__OSInterrupt interrupt, OSContext* context) {
-    u16 reg = __DSPRegs[DSP_CONTROL_STATUS];
+    int reg = (u16)__DSPRegs[DSP_CONTROL_STATUS];
     reg &= ~(1 << 3); /* clear AI interrupt */
     reg &= ~(1 << 5); /* clear AR interrupt */
     reg |= (1 << 7);  /* set DSP interrupt */

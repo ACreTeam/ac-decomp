@@ -2017,7 +2017,11 @@ static void Nas_GroupSeq(group* grp) {
                                     cmd = grp->group_idx;
                                 }
 
+#if VERSION == VER_GAFE01_00
                                 Nas_StartMySeq(cmd, Nas_ReadByteData(m), 0);
+#else
+                                Nas_StartMySeq(cmd, Nas_ReadByteData(m));
+#endif
                                 if (cmd == (u8)grp->group_idx) {
                                     return; // stop processing since we just used this group for a new sequence
                                 }
