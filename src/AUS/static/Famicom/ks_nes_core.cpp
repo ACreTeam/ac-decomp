@@ -1,4 +1,4 @@
-
+#define FIX_SQRT_LINKAGE
 #include "Famicom/ks_nes_core.h"
 #include "Famicom/ks_nes_draw.h"
 #include "dolphin/os/OSCache.h"
@@ -2348,6 +2348,7 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
     u32 b;
     u32 a;
     u32 c;
+    u32 stride;
     u32 abc;
     u32 i;
     u32 j;
@@ -2355,6 +2356,7 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
     u32 mask;
 
     bufSize = (wp->chr_to_i8_buf_size > CHR_TO_I8_BUF_SIZE ? 0x100 : wp->chr_to_i8_buf_size >> 12);
+    stride = bufSize >> 3;
     idx = (flags >> 9) & 0x1f;
 
     a = (flags & 0x40) << 5;
@@ -2371,11 +2373,11 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
 
         mask = 0x8080;
         for (j = 0; j < 8; j++) {
-            wp->chr_to_u8_bufp[abc + (flags & 0x3e00) * 8 + (i * (bufSize >> 3)) * 0x1000 + j] =
-                (((d & mask) & 0xff00) != 0 ? 2 : 0) | (((u16)(d & mask) & 0x00FF) != 0 ? 1 : 0);
+            wp->chr_to_u8_bufp[abc + (flags & 0x3e00) * 8 + (i * stride) * 0x1000 + j] =
+                ((s32)((d & mask) & 0xFF00) != 0 ? 2 : 0) | ((s32)((d & mask) & 0xFF) != 0 ? 1 : 0);
             mask >>= 1;
         }
-        DCStoreRangeNoSync(wp->chr_to_u8_bufp + (((idx) + (i * (bufSize >> 3))) * 0x1000 + b + a + c), 0x20);
+        DCStoreRangeNoSync(wp->chr_to_u8_bufp + (((idx) + (i * stride)) * 0x1000 + b + a + c), 0x20);
     }
 }
 
@@ -2385,15 +2387,17 @@ void ksNesConvertChrToI8MMC5(ksNesCommonWorkObj* wp, const u8* ptr, u32 flag) {
     u32 b;
     u32 a;
     u32 c;
+    u32 stride;
     u32 abc;
     u32 i;
     u32 j;
     u32 v;
     u32 mask;
 
-    idx = (flag >> 9) & 0x3F;
     adj = wp->chr_to_i8_buf_size >> 12;
 
+    stride = adj >> 3;
+    idx = (flag >> 9) & 0x3F;
     a = ((flag & 0x40) << 5);
     b = ((flag >> 4) & 0x18);
     c = ((flag & 0x3F) << 5);
@@ -2404,12 +2408,12 @@ void ksNesConvertChrToI8MMC5(ksNesCommonWorkObj* wp, const u8* ptr, u32 flag) {
         mask = 0x8080;
 
         for (j = 0; j < 8; j++) {
-            wp->chr_to_u8_bufp[abc + (flag & (0x3F << 9)) * 8 + (i * (adj >> 3)) * 0x1000 + j] =
-                (((v & mask) & 0xFF00) != 0 ? 2 : 0) | ((((u16)(v & mask)) & 0x00FF) != 0 ? 1 : 0);
+            wp->chr_to_u8_bufp[abc + (flag & (0x3F << 9)) * 8 + (i * stride) * 0x1000 + j] =
+                ((s32)((v & mask) & 0xFF00) != 0 ? 2 : 0) | ((s32)((v & mask) & 0xFF) != 0 ? 1 : 0);
             mask >>= 1;
         }
 
-        DCStoreRangeNoSync(wp->chr_to_u8_bufp + ((idx + ((i * (adj >> 3)))) * 0x1000 + b + a + c), 32);
+        DCStoreRangeNoSync(wp->chr_to_u8_bufp + ((idx + ((i * stride))) * 0x1000 + b + a + c), 32);
     }
 }
 
@@ -2633,10 +2637,9 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     int result;
     u8* nesromp;
     OSTick os_tick;
-    uint uVar4;
     size_t count;
     u8 bVar1;
-    int i;
+    u32 i;
 
     // 0x40XX values appear to be NES APU addresses
     // 0x5015 could be the address of the MMC5's audio status register
@@ -2685,8 +2688,8 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     } else {
         // fill ram with a predetermined pattern.
 
-        for (i = 0, iVar2 = 0; i < 0x200; iVar2 += 4, i++) {
-            wramp = &sp->wram[iVar2];
+        for (i = 0; i < KS_NES_WRAM_SIZE; i += 4) {
+            wramp = &sp->wram[i];
 
             wramp[0] = 0x0f;
             wramp[1] = 0xef;
@@ -2794,12 +2797,12 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
         sp->chrramp = sp->prgromp + sp->prg_size;
 
         if (sp->mapper == KS_NES_MAPPER_MMC5) {
-            for (uVar4 = 0; uVar4 < sp->chr_size; uVar4 = uVar4 + 0x10) {
-                ksNesConvertChrToI8MMC5(wp, sp->chrramp + uVar4, uVar4 >> 4);
+            for (i = 0; i < sp->chr_size; i = i + 0x10) {
+                ksNesConvertChrToI8MMC5(wp, sp->chrramp + i, i >> 4);
             }
         } else {
-            for (uVar4 = 0; uVar4 < sp->chr_size; uVar4 = uVar4 + 0x10) {
-                ksNesConvertChrToI8(wp, sp->chrramp + uVar4, uVar4 >> 4);
+            for (i = 0; i < sp->chr_size; i = i + 0x10) {
+                ksNesConvertChrToI8(wp, sp->chrramp + i, i >> 4);
             }
         }
     }

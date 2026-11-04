@@ -103,6 +103,15 @@ Building
 
   To use a version other than `GAFE01_00` (USA), specify it with `--version`.
 
+  Stock GC 2.6 with the external SJIS wrapper is the default. To use the optimized
+  compiler with built-in SJIS conversion, run
+  `python configure.py --version GAFU01_00 --fast-mwcc`.
+  This uses the compiler set in `build/GAFU01_00/compilers` (including `GC/2.6f1`),
+  or the directory specified by `--compilers`. Versions without GC 2.6 are unaffected.
+  Omit `--fast-mwcc` when configuring to return to stock.
+  The GC/2.6f1 compiler is an unreleased modification,
+  so most users should stick to stock GC/2.6.
+
 - Build:
 
   ```sh

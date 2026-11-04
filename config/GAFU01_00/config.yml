@@ -23,6 +23,11 @@ block_relocations:
 - source: 0x800D1A20
 # jaudio_NES/dspboot.o
 - source: 0x800DF5D8
+# ksNesPaletteNormal: RGB5A3 color pairs mistaken for code pointers.
+- source: 0x800E2B6C
+- source: 0x800E2B8C
+- source: 0x800E2BAC
+- source: 0x800E2BCC
 
 add_relocations:
 # texture_cache_select: linker-defined texture-cache address bounds.

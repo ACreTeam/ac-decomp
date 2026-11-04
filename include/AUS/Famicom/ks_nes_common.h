@@ -205,7 +205,10 @@ typedef struct ksNesDrawCtx {
     /* 0x0300 */ u8 sprite_vertex_count[KS_NES_OAM_TABLE_SIZE];
     /* 0x0340 */ ksNesSpriteQuadData sprite_quad_data[KS_NES_OAM_TABLE_SIZE];
     /* 0x0B40 */ ksNesPPUScanlineState ppu_scanline_regs[KS_NES_SCANLINE_COUNT];
-    /* 0x2940 */ ksNesOAMEntry OAMTable[KS_NES_OAM_TABLE_SIZE];
+    /* 0x2940 */ union {
+        ksNesOAMEntry OAMTable[KS_NES_OAM_TABLE_SIZE];
+        u8 oam_bytes[KS_NES_OAM_TABLE_SIZE * sizeof(ksNesOAMEntry)];
+    };
     /* 0x2A40 */ u8 post_process_lut[0x800];
     /* 0x3240 */ u8 bg_tile_index_texture[(36 * 256) * 2]; // IA8 texture, holds information about the background tile indices and pattern table data
     /* 0x7840 */ u8 bg_palette_attr_texture[(40 * 256) / 2]; // I4 texture, holds background palette attributes

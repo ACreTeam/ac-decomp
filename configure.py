@@ -108,6 +108,11 @@ parser.add_argument(
     help="path to sjiswrap.exe (optional)",
 )
 parser.add_argument(
+    "--fast-mwcc",
+    action="store_true",
+    help="replace GC 2.6 with 2.6f1 and built-in SJIS conversion (default: stock)",
+)
+parser.add_argument(
     "--ninja",
     metavar="BINARY",
     type=Path,
@@ -1130,8 +1135,8 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(MatchingFor("GAFE01_00"), "Famicom/ks_nes_core.cpp"),
-            Object(MatchingFor("GAFE01_00"), "Famicom/ks_nes_draw.cpp"),
+            Object(Matching, "Famicom/ks_nes_core.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "Famicom/ks_nes_draw.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
             Object(MatchingFor("GAFE01_00"), "Famicom/famicom.cpp"),
             Object(MatchingFor("GAFE01_00"), "Famicom/famicom_nesinfo.cpp"),
         ],
@@ -5311,6 +5316,20 @@ if config.version == "GAFU01_00":
             lib["cflags"] = ["-i include/AUS", "-i src/AUS/static", *lib["cflags"]]
             if lib["lib"] in {"libc64", "Famicom"}:
                 lib["cflags"] += ["-inline off", "-sym on"]
+
+if args.fast_mwcc:
+    # 2.6f1 performs UTF-8 to Shift JIS conversion internally.
+    # Keep the original linker and any libraries requiring older compilers.
+    fast_mwcc_used = False
+    for lib in config.libs:
+        for obj in lib["objects"]:
+            mw_version = obj.options.get("mw_version") or lib.get("mw_version") or config.linker_version
+            if mw_version == "GC/2.6":
+                obj.options["mw_version"] = "GC/2.6f1"
+                obj.options["shift_jis"] = False
+                fast_mwcc_used = True
+    if fast_mwcc_used and config.compilers_path is None:
+        config.compilers_path = config.build_dir / config.version / "compilers"
 
 config.add_objects = {
     # module_id => object names
