@@ -12,6 +12,21 @@ symbols_known: true
 fill_gaps: true
 ldscript_template: config/GAFP01_00_de/ldscript.tpl
 
+# emu64 checks the static data range, not boot's local table at its start.
+add_relocations:
+- source: .text:0x8004DAB0
+  type: ha
+  target: _f_rodata
+- source: .text:0x8004DAB4
+  type: l
+  target: _f_rodata
+- source: .text:0x8004DAC0
+  type: ha
+  target: _e_data
+- source: .text:0x8004DAC4
+  type: l
+  target: _e_data
+
 modules:
 - object: files/foresta.rel.szs
   hash: df7058ce00488cdee523147ec39ba35ca090e445

@@ -250,6 +250,7 @@ cflags_base = [
     "-maxerrors 1",
     "-nosyspath",
     # dtk-specific includes
+    *(["-i include/PAL"] if is_pal else []),
     "-i include",
     "-i include/dolphin",
     "-i include/libc",
@@ -5341,10 +5342,27 @@ config.libs = [
     },
 ]
 
-# PAL bootstrap: all five binaries are rebuilt from DTK's original split objects.
-# Add PAL source configuration here only after each target has been verified.
+# PAL source groups use GC 2.6 and share sources across languages.
+# Keep new objects NonMatching until code, data, and linked hashes are verified.
 if is_pal:
-    config.libs = []
+    config.libs = [
+        {
+            "lib": "pal_static",
+            "mw_version": "GC/2.6",
+            "src_dir": "src/PAL",
+            "cflags": cflags_static,
+            "progress_category": "game",
+            "objects": [
+                Object(
+                    Matching,
+                    "boot.o",
+                    source="static/boot.c",
+                    cflags=[*cflags_static_speed, "-sdata 0", "-sdata2 0", "-inline on"],
+                ),
+            ],
+        },
+        *[Rel(f"pal_{module}", []) for module in ("foresta", "forestd", "foresti", "foresto")],
+    ]
 
 if args.fast_mwcc:
     # 2.6f1 performs UTF-8 to Shift JIS conversion internally.

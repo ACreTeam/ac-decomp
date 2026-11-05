@@ -20,6 +20,7 @@ Supported versions:
 
 - `GAFE01_00`: Rev 0 (USA)
 - `GAFU01_00`: Rev 0 (Australia)
+- `GAFP01_00`: Rev 0 (PAL - en, es, fr, it, de)
 
 A decompilation of the original N64 version of the game is being worked on [here](https://github.com/zeldaret/af).
 
@@ -125,8 +126,9 @@ Building
   `de`, `it`, or `es` for the other languages. All PAL targets use `VERSION=2`
   and their corresponding `GAME_LANGUAGE` value. Each has separate build outputs,
   symbols, splits, progress, and hashes for its DOL and four RELs (`foresta`,
-  `forestd`, `foresti`, and `foresto`). PAL currently links only original split
-  objects; no source files are marked Matching. TGC rebuilding is not included.
+  `forestd`, `foresti`, and `foresto`). Matching PAL sources are shared across
+  languages; unmatched units still use original split objects. TGC rebuilding
+  is not included.
 
 - Build:
 
