@@ -256,7 +256,7 @@ cflags_base = [
     "-i src/static/dolphin",
     f"-i build/{config.version}/include",
     f"-DVERSION={version_num}",
-    f"-dGAME_LANGUAGE={language_ids[language]}",
+    f"-d GAME_LANGUAGE={language_ids[language]}",
 ]
 
 # Debug flags
