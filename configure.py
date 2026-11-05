@@ -3916,12 +3916,12 @@ config.libs = [
                 Object(Matching, "data/model/log_win_nintendo2_tex.c"),
                 Object(Matching, "data/model/log_win_nintendo3_tex.c"),
             ]),
-            Object(Matching, "data/model/cKF_ba_r_logo_us_animal.c"),
-            Object(Matching, "data/model/logo_us_animal.c"),
+            Object(Matching, "data/model/cKF_ba_r_logo_us_animal.c", src_dir="src/AUS" if is_aus else None),
+            Object(Matching, "data/model/logo_us_animal.c", src_dir="src/AUS" if is_aus else None),
             Object(Matching, "data/model/logo_us_back.c"),
-            Object(Matching, "data/model/cKF_ba_r_logo_us_cros.c"),
+            Object(Matching, "data/model/cKF_ba_r_logo_us_cros.c", src_dir="src/AUS" if is_aus else None),
             Object(Matching, "data/model/logo_us_cros.c"),
-            Object(Matching, "data/model/cKF_ba_r_logo_us_sing.c"),
+            Object(Matching, "data/model/cKF_ba_r_logo_us_sing.c", src_dir="src/AUS" if is_aus else None),
             Object(Matching, "data/model/logo_us_sing.c"),
             Object(Matching, "data/model/logo_us_tm.c"),
             Object(Matching, "data/model/cKF_ba_r_obj_romtrain_door.c"),
@@ -5300,9 +5300,9 @@ config.libs = [
             Object(Matching, "data/model/int_yos_flamingo2.c",),
             Object(Matching, "data/model/int_yos_gnome.c",),
             Object(Matching, "data/model/int_yos_kflag.c",),
-            Object(Matching, "data/model/int_yos_luigi.c",),
+            Object(Matching, "data/model/int_yos_luigi.c", src_dir="src/AUS" if is_aus else None),
             Object(Matching, "data/model/int_yos_mailbox.c",),
-            Object(Matching, "data/model/int_yos_mario.c",),
+            Object(Matching, "data/model/int_yos_mario.c", src_dir="src/AUS" if is_aus else None),
             Object(Matching, "data/model/int_yos_pbstove.c",),
             Object(Matching, "data/model/int_yos_terrace.c",),
             Object(Matching, "data/model/int_yos_turkey_mirror.c",),
@@ -5375,7 +5375,7 @@ config.custom_build_rules = [
 config.custom_build_steps = {}
 
 # Australia's REL keeps the asset objects combined as dataobject.obj. Rebuild
-# that object for objdiff, using the individual asset order recorded by US.
+# and link that object, using the individual asset order recorded by US.
 if is_aus:
     # Australia's boot assets are also combined into a single original object.
     config.objdiff_partial_links["bootdata.obj"] = [
@@ -5397,6 +5397,7 @@ if is_aus:
         [obj.name for obj in dataobject_lib["objects"]],
         key=lambda name: dataobject_order.get(name, len(dataobject_order)),
     )
+    dataobject_lib["objects"].append(Object(Matching, "dataobject.obj"))
     config.reconfig_deps = [*(config.reconfig_deps or []), dataobject_splits]
 
 # Grab the specific GameID so we can format our strings properly

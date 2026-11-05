@@ -34,7 +34,11 @@ Vtx dia_hyouji_v[] = {
 #include "assets/dia_hyouji_v.inc"
 };
 
+#if VERSION == VER_GAFE01_00
 Gfx kei_win_b2_model_1_data_4075A0[] = {
+#else
+Gfx kei_win_b2_model_1_data_407600[] = {
+#endif
     gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, lat_tegami_b3_tex),
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -56,7 +60,11 @@ Gfx dia_win_bb_model[] = {
     gsSPEndDisplayList(),
 };
 
+#if VERSION == VER_GAFE01_00
 Gfx kei_win_amojiT_model_1_data_407620[] = {
+#else
+Gfx kei_win_amojiT_model_1_data_407680[] = {
+#endif
     gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, 0, 0, 0,
                        COMBINED),
     gsDPSetPrimColor(0, 255, 255, 255, 255, 255),

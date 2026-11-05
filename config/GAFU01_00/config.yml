@@ -31441,7 +31441,7 @@ modules:
     header_type: none
     custom_type: vtx
 
-  - symbol: obj_shop_net2_pal!.data:0x00399880
+  - symbol: obj_shop_net2_pal!.data:0x00399CC0
     binary: assets/obj_shop_net2/obj_shop_net2_pal.bin
     header: assets/obj_shop_net2/obj_shop_net2_pal.inc
     header_type: none
@@ -49581,7 +49581,7 @@ modules:
     header_type: none
     custom_type: vtx
 
-  - symbol: ef_ase01_0!.data:0x0065FF80
+  - symbol: ef_ase01_0!.data:0x00660120
     binary: assets/ef_ase02_00/ef_ase01_0.bin
     header: assets/ef_ase02_00/ef_ase01_0.inc
     header_type: raw

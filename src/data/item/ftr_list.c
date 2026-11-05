@@ -586,7 +586,9 @@ mActor_name_t ftr_listKamakura[] = {
     FTR_START(FTR_IID_YUKI),
     FTR_START(FTR_TAK_SORI01),
     FTR_START(FTR_TAK_STEW),
+#if VERSION == VER_GAFE01_00
     FTR_START(FTR_DUMMY),
+#endif
     EMPTY_NO,
 };
 

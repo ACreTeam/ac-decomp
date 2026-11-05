@@ -49,7 +49,11 @@ static Vtx onp_hyouji_v[] = {
 #include "assets/onp_hyouji2/onp_hyouji_v.inc"
 };
 
+#if VERSION == VER_GAFE01_00
 Gfx onp_win_rmoji_model[] = {
+#else
+Gfx onp_win_rmoji_model_1_data_4A4020[] = {
+#endif
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
     gsDPSetPrimColor(0, 255, 255, 255, 255, 255),
