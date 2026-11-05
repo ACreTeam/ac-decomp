@@ -62,7 +62,7 @@ enum filer_demo_mode {
 };
 
 #define FAMICOM_SAVE_DATA_NAME_LEN 8
-#define FAMICOM_MORI_NAME_LEN 10
+#define FAMICOM_MORI_NAME_LEN 16
 
 typedef struct FamicomSaveDataHeader {
     u8 name[FAMICOM_SAVE_DATA_NAME_LEN];
@@ -140,7 +140,6 @@ typedef struct MemcardGameHeader_t {
     u8 _01;
     u8 mori_name[FAMICOM_MORI_NAME_LEN];
     u16 nesrom_size;
-    u8 _0E[6];
     u16 nestags_size;
     u16 icon_format;
     u16 icon_flags;

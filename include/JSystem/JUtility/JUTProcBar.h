@@ -147,7 +147,7 @@ class JUTProcBar {
     void setVisible(bool visible) {
         mVisible = visible;
     }
-    bool isVisible() {
+    bool isVisible() const {
         return mVisible;
     }
     void setHeapBarVisible(bool visible) {

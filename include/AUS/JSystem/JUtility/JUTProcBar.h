@@ -109,7 +109,7 @@ public:
     void wholeLoopEnd() { mWholeLoop.end(); }
 
     void setCostFrame(int frame) { mCostFrame = frame; }
-    bool isVisible() { return mVisible; }
+    bool isVisible() const { return mVisible; }
     void setVisible(bool visible) { mVisible = visible; }
     void setVisibleHeapBar(bool visible) { mHeapBarVisible = visible; }
     void setHeapBarVisible(bool visible) { mHeapBarVisible = visible; }
@@ -146,5 +146,7 @@ private:
 }; // 0x134 size
 
 #pragma optimize_for_size reset
+
+inline void JUTEnableProcessBar(bool enable) { JUTProcBar::getManager()->setVisible(enable); }
 
 #endif
