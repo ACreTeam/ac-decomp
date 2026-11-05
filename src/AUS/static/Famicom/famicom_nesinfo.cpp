@@ -187,7 +187,7 @@ static u8 tags_table_gomoku_narabe[] = {
 
 static u8 tags_table_mahjong[] = {
     GID_TAG(2), 'M', 'J',
-    GNM_TAG(6), 'M', 'A', 'H', 'J', 'O', 'N', 'G', // @BUG - should be GNM_TAG(7)
+    GNM_TAG(7), 'M', 'A', 'H', 'J', 'O', 'N', 'G',
     GNO_TAG(), FAMICOM_GAME_MAHJONG,
     END_TAG(),
 };
@@ -198,16 +198,12 @@ static u8 tags_table_wario_no_mori[] = {
     GNO_TAG(), FAMICOM_GAME_WARIOS_WOODS,
     
     OFS_TAG(), OFS_U16(0x00D8),
-    BBR_TAG(), OFS_U16(0x1B00), OFS_U16(0x0004), //  4 bytes from 0x1B00
-    BBR_TAG(), OFS_U16(0x1B10), OFS_U16(0x0034), // 34 bytes from 0x1B10
-    BBR_TAG(), OFS_U16(0x1B50), OFS_U16(0x0010), // 16 bytes from 0x1B50
-    BBR_TAG(), OFS_U16(0x1B67), OFS_U16(0x0003), //  3 bytes from 0x1B67
-    BBR_TAG(), OFS_U16(0x1B70), OFS_U16(0x0002), //  2 bytes from 0x1B70
-    BBR_TAG(), OFS_U16(0x1B74), OFS_U16(0x0002), //  2 bytes from 0x1B74
+    BBR_TAG(), OFS_U16(0x1E00), OFS_U16(0x0040), // 64 bytes from 0x1E00
+    BBR_TAG(), OFS_U16(0x1E40), OFS_U16(0x0010), // 16 bytes from 0x1E40
     
     /* Was this data saved at a later date and therefore had to have its offset much further? */
     OFS_TAG(), OFS_U16(0x0655),
-    BBR_TAG(), OFS_U16(0x1B6D), OFS_U16(0x0002), //  2 bytes from 0x1B6D
+    BBR_TAG(), OFS_U16(0x1E80), OFS_U16(0x0002), //  2 bytes from 0x1E80
     END_TAG(),
 };
 
@@ -368,6 +364,103 @@ static u8 tags_table_external_default[] = {
     TCS_TAG(), OFS_U16(0x0000),
     ICS_TAG(), OFS_U16(0x0000),
     GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    END_TAG(),
+};
+
+static u8 tags_table_external_bbram_default[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    BBR_TAG(), OFS_U16(0x0000), OFS_U16(0x2000),
+    END_TAG(),
+};
+
+static u8 tags_table_external_disksystem_default[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x000000), OFS_U16(0x8000),
+    QDS_TAG(), OFS_U24(0x008000), OFS_U16(0x8000),
+    QDS_TAG(), OFS_U24(0x010000), OFS_U16(0x8000),
+    QDS_TAG(), OFS_U24(0x018000), OFS_U16(0x8000),
+    END_TAG(),
+};
+
+static u8 tags_table_external_famicom_grand_prix[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x00BA33), OFS_U16(0x0150),
+    END_TAG(),
+};
+
+static u8 tags_table_wrecking_crew[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x00A15E), OFS_U16(0x0100),
+    END_TAG(),
+};
+
+static u8 tags_table_vs_excitebike[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x00B96F), OFS_U16(0x0743),
+    QDS_TAG(), OFS_U24(0x01D465), OFS_U16(0x0080),
+    END_TAG(),
+};
+
+static u8 tags_table_kaettekita_mario_bros[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x00D2C4), OFS_U16(0x0016),
+    QDS_TAG(), OFS_U24(0x01CA34), OFS_U16(0x0060),
+    END_TAG(),
+};
+
+static u8 tags_table_doctor_mario[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GID_TAG(2), 'V', 'U',
+    GNM_TAG(12), 'D', 'O', 'C', 'T', 'O', 'R', ' ', 'M', 'A', 'R', 'I', 'O',
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    HSC_TAG(6), OFS_U16(0x8700), 0, 0, 0, 1, 0, 0,
+    HSC_TAG(10), OFS_U16(0x8710), '!', 'D', 'R', '.', 'M', 'A', 'R', 'I', 'O', '!',
+    HSC_TAG(1), OFS_U16(0x830B), 1,
+    HSC_TAG(1), OFS_U16(0x8316), 0,
+    HSC_TAG(1), OFS_U16(0x838B), 1,
+    HSC_TAG(1), OFS_U16(0x8396), 0,
+    HSC_TAG(1), OFS_U16(0x8727), 1,
+    HSC_TAG(1), OFS_U16(0x8731), 0,
+    END_TAG(),
+};
+
+static u8 tags_table_adventure_of_link[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNM_TAG(17), 'A', 'D', 'V', 'E', 'N', 'T', 'U', 'R', 'E', ' ', 'O', 'F', ' ', 'L', 'I', 'N', 'K',
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    QDS_TAG(), OFS_U24(0x00D1BB), OFS_U16(0x0338),
+    END_TAG(),
+};
+
+static u8 tags_table_adventure_of_link_rom[] = {
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
+    GNM_TAG(17), 'A', 'D', 'V', 'E', 'N', 'T', 'U', 'R', 'E', ' ', 'O', 'F', ' ', 'L', 'I', 'N', 'K',
+    GNO_TAG(), FAMICOM_GAME_EXTERNAL,
+    OFS_TAG(), OFS_U16(0x0000),
+    BBR_TAG(), OFS_U16(0x1400), OFS_U16(0x033B),
     END_TAG(),
 };
 
@@ -812,7 +905,7 @@ extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p) {
 
             OSReport("ロムデータ参照: %d\n", rom_id); // Referencing ROM data: %d\n
             if (nesrom_filename_ptrs != nullptr && rom_p != nullptr) {
-                nesinfo_data_size = JKRFileLoader::readGlbResource(rom_p, 0x100000, (char*)nesrom_filename_ptrs[rom_id],
+                nesinfo_data_size = JKRReadResource(rom_p, 0x100000, (char*)nesrom_filename_ptrs[rom_id],
                                                                    EXPAND_SWITCH_DECOMPRESS);
                 nesinfo_data_start = rom_p;
                 nesinfo_data_end = rom_p + nesinfo_data_size;

@@ -1146,8 +1146,8 @@ config.libs = [
         "objects": [
             Object(Matching, "Famicom/ks_nes_core.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
             Object(Matching, "Famicom/ks_nes_draw.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
-            Object(MatchingFor("GAFE01_00"), "Famicom/famicom.cpp"),
-            Object(MatchingFor("GAFE01_00"), "Famicom/famicom_nesinfo.cpp"),
+            Object(MatchingFor("GAFE01_00"), "Famicom/famicom.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "Famicom/famicom_nesinfo.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
         ],
     },
     {

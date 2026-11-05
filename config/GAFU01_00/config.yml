@@ -48,6 +48,13 @@ block_relocations:
 - source: 0x800E2B8C
 - source: 0x800E2BAC
 - source: 0x800E2BCC
+# Packed NES tag bytes mistaken for pointers.
+# tags_table_excite_bike
+- source: 0x800E42A4
+# tags_table_excite_bike_design
+- source: 0x800E4390
+# tags_table_external_disksystem_default
+- source: 0x800E4678
 
 add_relocations:
 # texture_cache_select: linker-defined texture-cache address bounds.

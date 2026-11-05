@@ -8,7 +8,7 @@ static BOOL OnReset(BOOL final);
 static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 127, NULL, NULL};
 
 //.bss
-static GBASecParam SecParams[4];
+static GBASecParam SecParams[4] ATTRIBUTE_ALIGN(32);
 GBAControl __GBA[4];
 
 //.sbss
