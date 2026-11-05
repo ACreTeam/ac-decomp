@@ -1,80 +1,60 @@
-#ifndef JUTVIDEO_H
-#define JUTVIDEO_H
+#ifndef _JUTVIDEO_H
+#define _JUTVIDEO_H
 
+#include <dolphin/os.h>
+#include <dolphin/gx.h>
+#include <dolphin/vi.h>
 #include "types.h"
-#include "dolphin/os/OSTime.h"
-#include "dolphin/os.h"
-#include "dolphin/gx.h"
-#include "dolphin/vi.h"
 
-#ifdef __cplusplus
+/**
+ * @size{0x58}
+ */
 
 typedef u8 (*Pattern)[2];
 
-struct JUTVideo {
-    JUTVideo(const GXRenderModeObj*);
+struct JUTVideo
+{
+    JUTVideo(const _GXRenderModeObj *);
 
     virtual ~JUTVideo(); // _08
 
-    static JUTVideo* createManager(const GXRenderModeObj*);
+    static JUTVideo *createManager(const _GXRenderModeObj *);
     static void destroyManager();
     static void preRetraceProc(unsigned long);
     static void postRetraceProc(unsigned long);
     static void drawDoneCallback();
 
-    u32 getEfbHeight() const {
-        return mRenderModeObj->efbHeight;
-    }
-    u32 getXfbHeight() const {
-        return mRenderModeObj->xfbHeight & 0xffff;
-    }
-    u32 getFbWidth() const {
-        return (u16)mRenderModeObj->fbWidth;
-    }
+    u16 getEfbHeight() const { return (u16)mRenderModeObj->efbHeight; }
+    u16 getFbWidth() const { return (u16)mRenderModeObj->fbWidth; }
     void getBounds(u16& width, u16& height) const {
         width = getFbWidth();
         height = getEfbHeight();
     }
-    GXRenderModeObj* getRenderMode() const {
-        return mRenderModeObj;
-    }
-    u32 isAntiAliasing() const {
-        return mRenderModeObj->aa;
-    }
-    Pattern getSamplePattern() const {
-        return mRenderModeObj->sample_pattern;
-    }
-    u8* getVFilter() const {
-        return mRenderModeObj->vfilter;
-    }
-    OSMessageQueue* getMessageQueue() {
-        return &mMessageQueue;
-    };
+    _GXRenderModeObj *getRenderMode() const { return mRenderModeObj; }
+    u32 getXfbHeight() const { return mRenderModeObj->xfbHeight; }
+    u32 isAntiAliasing() const { return mRenderModeObj->aa; }
+    Pattern getSamplePattern() const { return mRenderModeObj->sample_pattern; }
+    u8 *getVFilter() const { return mRenderModeObj->vfilter; }
+    OSMessageQueue *getMessageQueue() { return &mMessageQueue; };
     static void drawDoneStart();
     static void dummyNoDrawWait();
-    void setRenderMode(const GXRenderModeObj*);
+    void setRenderMode(const _GXRenderModeObj *);
     void waitRetraceIfNeed(); // blr, global
     VIRetraceCallback setPostRetraceCallback(VIRetraceCallback);
 
     // Unused/inlined:
     void getDrawWait();
     VIRetraceCallback setPreRetraceCallback(VIRetraceCallback);
-    void getPixelAspect(const GXRenderModeObj*);
+    void getPixelAspect(const _GXRenderModeObj *);
     void getPixelAspect() const;
 
     // Static inline gets
-    static JUTVideo* getManager() {
-        return sManager;
-    }
-    static OSTick getVideoInterval() {
-        return sVideoInterval;
-    }
-    static OSTick getVideoLastTick() {
-        return sVideoLastTick;
-    }
+    static JUTVideo *getManager() { return sManager; }
+    static OSTick getVideoInterval() { return sVideoInterval; }
+    static OSTick getVideoLastTick() { return sVideoLastTick; }
 
     // _00 VTBL
-    GXRenderModeObj* mRenderModeObj;                // _04
+    GXRenderModeObj *mRenderModeObj;                // _04
     u32 _08;                                        // _08
     u32 mRetraceCount;                              // _0C
     int _10;                                        // _10
@@ -89,16 +69,15 @@ struct JUTVideo {
     OSMessage mMessage;                             // _34
     OSMessageQueue mMessageQueue;                   // _38
 
-    static JUTVideo* sManager;
+    static JUTVideo *sManager;
     static OSTick sVideoLastTick;
     static OSTick sVideoInterval;
 };
 
-inline JUTVideo* JUTGetVideoManager() {
+inline JUTVideo *JUTGetVideoManager() {
     return JUTVideo::getManager();
 }
 
 extern bool sDrawWaiting;
-#endif
 
 #endif

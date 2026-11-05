@@ -1,118 +1,110 @@
-#include "JSystem/JKernel/JKRDvdFile.h"
+#include "types.h"
+#include <JSystem/JKernel/JKRDvdFile.h>
+#include <JSystem/JUtility/JUTDbg.h>
 
 JSUList<JKRDvdFile> JKRDvdFile::sDvdList;
 
 JKRDvdFile::JKRDvdFile() : JKRFile(), mLink(this) {
-    this->initiate();
-}
-
-/* This method is confirmed to exist, but goes unused in AC. Retrieved from TP debug. */
-JKRDvdFile::JKRDvdFile(const char* filename) : JKRFile(), mLink(this) {
-    this->initiate();
-    this->mFileOpen = this->open(filename);
-
-    if (this->isAvailable()) {
-        return;
-    }
+    initiate();
 }
 
 JKRDvdFile::JKRDvdFile(s32 entrynum) : JKRFile(), mLink(this) {
-    this->initiate();
-    this->mFileOpen = this->open(entrynum);
+    initiate();
 
-    if (this->isAvailable()) {
+    mFileOpen = open(entrynum);
+    if(mFileOpen) // very useful
         return;
-    }
 }
 
 JKRDvdFile::~JKRDvdFile() {
-    this->close();
+    close();
 }
 
 void JKRDvdFile::initiate() {
-    /* Reference to self. Used to retrieve reference in the DVDReadAsync
-     * DVDCallback func. */
-    this->mDvdFileInfo.mFile = this;
-    OSInitMutex(&this->mDvdMutex);
-    OSInitMutex(&this->mAramMutex);
-    OSInitMessageQueue(&this->mDvdMessageQueue, &this->mDvdMessage, 1);
-    OSInitMessageQueue(&this->mAramMessageQueue, &this->mAramMessage, 1);
-    this->mDvdThread = nullptr;
-    this->mAramThread = nullptr;
-    this->_58 = 0;
+    mDvdFileInfo.mFile = this;
+    OSInitMutex(&mDvdMutex);
+    OSInitMutex(&mAramMutex);
+    OSInitMessageQueue(&mDvdMessageQueue, &mDvdMessage, OS_MESSAGE_BLOCK);
+    OSInitMessageQueue(&mAramMessageQueue, &mAramMessage, OS_MESSAGE_BLOCK);
+    mThread = nullptr;
+    mCommandThread = nullptr;
+    _58 = 0;
 }
 
-/* This method is confirmed to exist, but goes unused in AC. Retrieved from TP debug. */
-bool JKRDvdFile::open(const char* filename) {
-    if (this->mFileOpen == false) {
-        this->mFileOpen = DVDOpen((char*)filename, &this->mDvdFileInfo);
-        if (this->mFileOpen) {
-            sDvdList.append(&this->mLink);
-            DVDGetFileInfoStatus(&this->mDvdFileInfo);
+bool JKRDvdFile::open(const char * fileName) {
+    if(!mFileOpen) {
+        mFileOpen = DVDOpen(const_cast<char*>(fileName), &mDvdFileInfo);
+        if(mFileOpen) {
+            sDvdList.append(&mLink);
+            DVDGetCommandBlockStatus(&mDvdFileInfo.cb);
         }
     }
-
-    return this->mFileOpen;
+    return mFileOpen;
 }
 
-bool JKRDvdFile::open(s32 entrynum) {
-    if (this->mFileOpen == false) {
-        this->mFileOpen = DVDFastOpen(entrynum, &this->mDvdFileInfo);
-        if (this->mFileOpen) {
-            sDvdList.append(&this->mLink);
-            DVDGetFileInfoStatus(&this->mDvdFileInfo);
+bool JKRDvdFile::open(s32 entryNum) {
+    if(!mFileOpen) {
+        mFileOpen = DVDFastOpen(entryNum, &mDvdFileInfo);
+        if(mFileOpen) {
+            sDvdList.append(&mLink);
+            DVDGetCommandBlockStatus(&mDvdFileInfo.cb);
         }
     }
-
-    return this->mFileOpen;
+    return mFileOpen;
 }
 
-bool JKRDvdFile::close() {
-    if (this->mFileOpen) {
-        if (DVDClose(&this->mDvdFileInfo)) {
-            this->mFileOpen = false;
-            return sDvdList.remove(&this->mLink);
-        } else {
-            OSErrorLine(212, "cannot close DVD file\n"); /* JKRDvdFile.cpp line 212 */
+void JKRDvdFile::close() {
+    if(mFileOpen) {
+        if(DVDClose(&mDvdFileInfo)) {
+            mFileOpen = false;
+            sDvdList.remove(&mLink);
+        }
+        else {
+#line 213
+            JUT_PANIC("cannot close DVD file\n");
         }
     }
 }
 
-int JKRDvdFile::readData(void* data, s32 length, s32 ofs) {
-    OSLockMutex(&this->mDvdMutex);
+s32 JKRDvdFile::readData(void * addr,s32 length, s32 offset) {
+#line 238
+    JUT_ASSERT(( length & 0x1f ) == 0);
+    OSLockMutex(&mDvdMutex);
     s32 retAddr;
-
-    if (this->mDvdThread != nullptr) {
-        OSUnlockMutex(&this->mDvdMutex);
+    if(mThread != nullptr) {
+        OSUnlockMutex(&mDvdMutex);
         return -1;
-    } else {
-        this->mDvdThread = OSGetCurrentThread();
-        retAddr = -1;
-        if (DVDReadAsync(&this->mDvdFileInfo, data, length, ofs, JKRDvdFile::doneProcess)) {
-            retAddr = this->sync();
-        }
-
-        this->mDvdThread = nullptr;
-        OSUnlockMutex(&this->mDvdMutex);
     }
-
+    else {
+        mThread = OSGetCurrentThread();
+        retAddr = -1;
+        if (DVDReadAsyncPrio(&mDvdFileInfo, addr, length, offset, doneProcess, 2))
+        {
+            retAddr = (s32)sync();
+        }
+        mThread = nullptr;
+        OSUnlockMutex(&mDvdMutex);
+    }
     return retAddr;
 }
 
-int JKRDvdFile::writeData(const void* data, s32 length, s32 ofs) {
+s32 JKRDvdFile::writeData(const void * addr,s32 length, s32 offset) {
+#line 344
+    JUT_ASSERT(( length & 0x1f ) == 0);
     return -1;
 }
 
-s32 JKRDvdFile::sync() {
-    OSMessage m;
-
-    OSLockMutex(&this->mDvdMutex);
-    OSReceiveMessage(&this->mDvdMessageQueue, &m, OS_MESSAGE_BLOCK);
-    this->mDvdThread = nullptr;
-    OSUnlockMutex(&this->mDvdMutex);
-    return (s32)m;
+OSMessage JKRDvdFile::sync() {
+    OSMessage msg;
+    OSLockMutex(&mDvdMutex);
+    OSReceiveMessage(&mDvdMessageQueue, &msg, OS_MESSAGE_BLOCK);
+    mThread = nullptr;
+    OSUnlockMutex(&mDvdMutex);
+    return msg;
 }
 
-void JKRDvdFile::doneProcess(s32 result, DVDFileInfo* info) {
-    OSSendMessage(&static_cast<JKRDvdFileInfo*>(info)->mFile->mDvdMessageQueue, (OSMessage)result, OS_MESSAGE_NOBLOCK);
+void JKRDvdFile::doneProcess(s32 msg, DVDFileInfo * fInfo) {
+    JKRDvdFile *dvdFile = static_cast<JKRDvdFileInfo *>(fInfo)->mFile;
+    OSSendMessage(&dvdFile->mDvdMessageQueue, (void *)msg, OS_MESSAGE_NOBLOCK);
 }
+

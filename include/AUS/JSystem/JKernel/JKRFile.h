@@ -1,35 +1,26 @@
-#ifndef JKRFILE_H
-#define JKRFILE_H
+#ifndef _JSYSTEM_JKR_JKRFILE_H
+#define _JSYSTEM_JKR_JKRFILE_H
 
+#include <JSystem/JKernel/JKRDisposer.h>
 #include "types.h"
-#include "dolphin/dvd.h"
-#include "dolphin/os.h"
-#include "JSystem/JSupport/JSUList.h"
-#include "JSystem/JKernel/JKRDisposer.h"
-#include "JSystem/JKernel/JKRMacro.h"
 
-#ifdef __cplusplus
 class JKRFile : public JKRDisposer {
-  public:
-    inline JKRFile() : JKRDisposer(), mFileOpen(false) {
+public:
+    JKRFile() : JKRDisposer(), mFileOpen(false) {}
+    virtual ~JKRFile() {}                                                // 8
+    virtual bool open(const char *fileName) = 0;                         // C
+    virtual void close() = 0;                                            // 10
+    virtual s32 readData(void *addr, s32 length, s32 offset) = 0;        // 14
+    virtual s32 writeData(const void *addr, s32 length, s32 offset) = 0; // 18
+    virtual s32 getFileSize() const = 0;                                 // 1C
+
+    void read(void *, s32, s32);
+
+    bool isAvailable() const {
+        return mFileOpen;
     }
 
-    virtual ~JKRFile() {
-    }
-    virtual bool open(const char* path) = 0;
-    virtual bool close() = 0;
-    virtual int readData(void* data, s32 length, s32 ofs) = 0;
-    virtual int writeData(const void* data, s32 length, s32 ofs) = 0;
-    virtual u32 getFileSize() const = 0;
-
-    void read(void* data, s32 length, s32 ofs);
-    bool isAvailable() {
-        return this->mFileOpen;
-    }
-
-  protected:
+protected:
     bool mFileOpen;
 };
-#endif
-
 #endif

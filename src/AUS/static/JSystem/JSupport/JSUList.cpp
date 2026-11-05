@@ -1,6 +1,9 @@
-#include "JSystem/JSupport/JSUList.h"
+#include "types.h"
+#include <JSystem/JSupport/JSUList.h>
 
-JSUPtrLink::JSUPtrLink(void* pData) {
+// from pikmin decomp
+
+JSUPtrLink::JSUPtrLink(void *pData) {
     mPtrList = 0;
     mData = pData;
     mPrev = 0;
@@ -34,7 +37,7 @@ void JSUPtrList::initiate() {
     mLinkCount = 0;
 }
 
-void JSUPtrList::setFirst(JSUPtrLink* pLink) {
+void JSUPtrList::setFirst(JSUPtrLink *pLink) {
     pLink->mPtrList = this;
     pLink->mPrev = 0;
     pLink->mNext = 0;
@@ -43,7 +46,7 @@ void JSUPtrList::setFirst(JSUPtrLink* pLink) {
     mLinkCount = 1;
 }
 
-bool JSUPtrList::append(JSUPtrLink* pLink) {
+bool JSUPtrList::append(JSUPtrLink *pLink) {
     bool validity = (pLink->mPtrList == 0);
 
     if (!validity) {
@@ -53,7 +56,8 @@ bool JSUPtrList::append(JSUPtrLink* pLink) {
     if (validity) {
         if (!mLinkCount) {
             setFirst(pLink);
-        } else {
+        }
+        else {
             pLink->mPtrList = this;
             pLink->mPrev = mTail;
             pLink->mNext = 0;
@@ -66,7 +70,7 @@ bool JSUPtrList::append(JSUPtrLink* pLink) {
     return validity;
 }
 
-bool JSUPtrList::prepend(JSUPtrLink* pLink) {
+bool JSUPtrList::prepend(JSUPtrLink *pLink) {
     bool validity = (pLink->mPtrList == 0);
 
     if (!validity) {
@@ -76,7 +80,8 @@ bool JSUPtrList::prepend(JSUPtrLink* pLink) {
     if (validity) {
         if (!mLinkCount) {
             setFirst(pLink);
-        } else {
+        }
+        else {
             pLink->mPtrList = this;
             pLink->mPrev = 0;
             pLink->mNext = mHead;
@@ -89,7 +94,7 @@ bool JSUPtrList::prepend(JSUPtrLink* pLink) {
     return validity;
 }
 
-bool JSUPtrList::insert(JSUPtrLink* pLink_1, JSUPtrLink* pLink_2) {
+bool JSUPtrList::insert(JSUPtrLink *pLink_1, JSUPtrLink *pLink_2) {
     if (pLink_1 == mHead) {
         return prepend(pLink_2);
     }
@@ -121,20 +126,23 @@ bool JSUPtrList::insert(JSUPtrLink* pLink_1, JSUPtrLink* pLink_2) {
     return validity;
 }
 
-bool JSUPtrList::remove(JSUPtrLink* pLink) {
+bool JSUPtrList::remove(JSUPtrLink *pLink) {
     bool isSameList = (pLink->mPtrList == this);
 
     if (isSameList) {
         if (mLinkCount == 1) {
             mHead = 0;
             mTail = 0;
-        } else if (pLink == mHead) {
+        }
+        else if (pLink == mHead) {
             pLink->mNext->mPrev = 0;
             mHead = pLink->mNext;
-        } else if (pLink == mTail) {
+        }
+        else if (pLink == mTail) {
             pLink->mPrev->mNext = 0;
             mTail = pLink->mPrev;
-        } else {
+        }
+        else {
             pLink->mPrev->mNext = pLink->mNext;
             pLink->mNext->mPrev = pLink->mPrev;
         }
@@ -146,12 +154,15 @@ bool JSUPtrList::remove(JSUPtrLink* pLink) {
     return isSameList;
 }
 
-JSUPtrLink* JSUPtrList::getNthLink(u32 n) const {
-    if (n >= mLinkCount) {
+JSUPtrLink *JSUPtrList::getNthLink(u32 n) const
+{
+    if (n >= mLinkCount)
+    {
         return nullptr;
     }
-    JSUPtrLink* curHead = mHead;
-    for (int i = 0; i < n; i++) {
+    JSUPtrLink *curHead = mHead;
+    for (int i = 0; i < n; i++)
+    {
         curHead = curHead->mNext;
     }
     return curHead;

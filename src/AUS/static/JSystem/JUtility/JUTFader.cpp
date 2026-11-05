@@ -1,7 +1,7 @@
 #include "types.h"
 #include "JSystem/JUtility/JUTFader.h"
 #include "JSystem/JUtility/TColor.h"
-#include "JSystem/J2D/J2DGrafContext.h"
+#include "JSystem/J2DGraph/J2DGrafContext.h"
 
 JUTFader::JUTFader(int p1, int p2, int p3, int p4, JUtility::TColor color)
     : mColor(color), mViewBox(p1, p2, p1 + p3, p2 + p4) {

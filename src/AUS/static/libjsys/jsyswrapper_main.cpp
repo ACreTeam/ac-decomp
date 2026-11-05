@@ -1,3 +1,23 @@
+#ifdef __INTELLISENSE__
+#include "libjsys/jsyswrapper.h"
+
+#include "JSystem/JSystem.h"
+#include "JSystem/JKernel/JKRExpHeap.h"
+#include "JSystem/JUtility/JUTDbPrint.h"
+#include "JSystem/JUtility/JUTFader.h"
+#include "JSystem/J2D/J2DGrafContext.h"
+#include "JSystem/JFramework/JFWDisplay.h"
+#include "JSystem/JFramework/JFWSystem.h"
+#include "JSystem/JKernel/JKRDecomp.h"
+#include "JSystem/JKernel/JKRArchive.h"
+#include "JSystem/JKernel/JKRDvdRipper.h"
+#include "JSystem/JUtility/JUTFont.h"
+#include "JSystem/JUtility/JUTFsFont.h"
+#include "JSystem/J2DGraph/J2DPrint.h"
+
+#include "MSL_C/printf.h"
+#endif
+
 extern void JC_JUTFader_delete(void* fader) {
     delete reinterpret_cast<JUTFader*>(fader);
 }
@@ -6,32 +26,25 @@ extern void* JC_JUTFader_new(int ul_x, int ul_y, int br_x, int br_y, u32* color)
     return new JUTFader(ul_x, ul_y, br_x, br_y, JUtility::TColor(*(GXColor*)color));
 }
 
-// @unused (necessary for virtual function emmission)
-extern int JC_JKRHeap_dump_sort(void* heap) {
-    return reinterpret_cast<JKRHeap*>(heap)->dump_sort();
-}
-
-// @unused
-extern int JC_JKRHeap_check(void* heap) {
-    return reinterpret_cast<JKRHeap*>(heap)->check();
-}
-
-// @fabricated - necessary for virtuals
-extern void JC_JUTResFont_fabricated(void* font) {
-    reinterpret_cast<JUTResFont*>(font)->getLeading();
-    reinterpret_cast<JUTResFont*>(font)->getFontType();
-    reinterpret_cast<JUTResFont*>(font)->getResFont();
-}
-// @unused
+// Stripped font wrappers are retained for their weak virtual functions.
 extern int JC_JUTFont_getWidth(void* font) {
-    return reinterpret_cast<JUTResFont*>(font)->getWidth();
+    return reinterpret_cast<JUTFont*>(font)->getWidth();
 }
 
-// @unused -- extra hacked for the right weak func emission order
 extern int JC_JUTFont_getHeight(void* font) {
-    return reinterpret_cast<JUTResFont*>(font)->getHeight();
-    return reinterpret_cast<JUTResFont*>(font)->getDescent();
-    return reinterpret_cast<JUTResFont*>(font)->getAscent();
+    return reinterpret_cast<JUTFont*>(font)->getHeight();
+}
+
+extern void JC_JUTFont_setCharColor(void* font, GXColor color) {
+    reinterpret_cast<JUTFont*>(font)->setCharColor(color);
+}
+
+extern void JC_JUTResFont_delete(void* font) {
+    delete reinterpret_cast<JUTResFont*>(font);
+}
+
+extern void* JC_JUTResFont_new(const ResFONT* resource, void* heap) {
+    return new JUTResFont(resource, reinterpret_cast<JKRHeap*>(heap));
 }
 
 extern void* JC_JUTDbPrint_getManager() {
@@ -39,7 +52,7 @@ extern void* JC_JUTDbPrint_getManager() {
 }
 
 extern void JC_JUTDbPrint_setVisible(void* dbprint, BOOL visible) {
-    reinterpret_cast<JUTDbPrint*>(dbprint)->setVisible(visible);
+    reinterpret_cast<JUTDbPrint*>(dbprint)->setVisible(visible != 0);
 }
 
 extern void JC_J2DOrthoGraph_delete(void* orthograph) {
@@ -55,7 +68,7 @@ extern void JC_J2DOrthoGraph_setPort(void* orthograph) {
 }
 
 extern void JC_J2DOrthoGraph_setOrtho(void* orthograph, int ul_x, int ul_y, int br_x, int br_y) {
-    reinterpret_cast<J2DOrthoGraph*>(orthograph)->setOrtho(JGeometry::TBox2f((f32)ul_x, (f32)ul_y, (f32)ul_x + (f32)br_x, (f32)ul_y + (f32)br_y), -1.0f, 1.0f);
+    reinterpret_cast<J2DOrthoGraph*>(orthograph)->setOrtho(ul_x, ul_y, br_x, br_y, -1.0f, 1.0f);
 }
 
 extern void* JC_JUTVideo_getManager() {
@@ -63,6 +76,10 @@ extern void* JC_JUTVideo_getManager() {
 }
 extern void JC_JUTVideo_setRenderMode(void* manager, GXRenderModeObj* renderMode) {
     reinterpret_cast<JUTVideo*>(manager)->setRenderMode(renderMode);
+}
+
+extern GXRenderModeObj* JC_JUTVideo_getRenderMode(void* manager) {
+    return reinterpret_cast<JUTVideo*>(manager)->getRenderMode();
 }
 
 extern u32 JC_JUTVideo_getFbWidth(void* manager) {
@@ -89,6 +106,15 @@ extern int JC_JKRHeap_dump(void* heap) {
     return reinterpret_cast<JKRHeap*>(heap)->dump();
 }
 
+// UNUSED in the DnM+ map, following JC_JKRHeap_dump.
+extern int JC_JKRHeap_dump_sort(void* heap) {
+    return reinterpret_cast<JKRHeap*>(heap)->dump_sort();
+}
+
+extern int JC_JKRHeap_check(void* heap) {
+    return reinterpret_cast<JKRHeap*>(heap)->check();
+}
+
 extern u32 JC_JKRHeap_getFreeSize(void* heap) {
     return reinterpret_cast<JKRHeap*>(heap)->getFreeSize();
 }
@@ -102,15 +128,47 @@ extern size_t JC_JKRHeap_getSize(void* heap, void* mem) {
 }
 
 extern void* JC__JKRGetSystemHeap() {
-    return JKRHeap::getSystemHeap();
+    return JKRGetSystemHeap();
 }
 
 extern u32 JC__JKRGetMemBlockSize(void* heap, void* ptr) {
-    return JKRHeap::getSize(ptr, reinterpret_cast<JKRHeap*>(heap));
+    return reinterpret_cast<JKRHeap*>(heap)->getSize(ptr);
 }
 
 extern u8 JC_JKRExpHeap_changeGroupID(void* expheap, u8 groupId) {
     return reinterpret_cast<JKRExpHeap*>(expheap)->changeGroupID((u8)groupId);
+}
+
+// Retain the inherited virtual references from the original wrapper reconstruction.
+// The stripped filesystem-font wrappers follow the heap wrappers in the map.
+extern void JC_JUTResFont_fabricated(void* font) {
+    reinterpret_cast<JUTResFont*>(font)->getHeight();
+    reinterpret_cast<JUTResFont*>(font)->getDescent();
+    reinterpret_cast<JUTResFont*>(font)->getAscent();
+    reinterpret_cast<JUTResFont*>(font)->getWidth();
+    reinterpret_cast<JUTResFont*>(font)->getLeading();
+    reinterpret_cast<JUTResFont*>(font)->getFontType();
+    reinterpret_cast<JUTResFont*>(font)->getResFont();
+}
+
+extern void JC_JUTFsFont_delete(void* font) {
+    delete reinterpret_cast<JUTFsFont*>(font);
+}
+
+extern void* JC_JUTFsFont_new(const char* path, void* heap) {
+    return new JUTFsFont(path, reinterpret_cast<JKRHeap*>(heap));
+}
+
+JUTFsFont::~JUTFsFont() {
+    JKRDetachResource(const_cast<ResFONT*>(JUTResFont::getResFont()), nullptr);
+}
+
+extern void JC_J2DPrint_setGradColor(void* print, GXColor color) {
+    reinterpret_cast<J2DPrint*>(print)->setGradColor(color);
+}
+
+extern void JC_J2DPrint_setCharColor(void* print, GXColor color) {
+    reinterpret_cast<J2DPrint*>(print)->setCharColor(color);
 }
 
 extern void JC_JUTGamePad_read() {
@@ -118,7 +176,7 @@ extern void JC_JUTGamePad_read() {
 }
 
 extern PADStatus JC_JUTGamePad_getPadStatus(u32 port) {
-    return *JUTGamePad::getPadStatus(port);
+    return *JUTGamePad::getPadStatus((JUTGamePad::EPadPort)port);
 }
 
 extern u8 JC_JUTGamePad_recalibrate(u32 port) {
@@ -134,7 +192,7 @@ extern int JC_JUTConsole_getOutput(void* console) {
 }
 
 extern void JC_JUTConsole_setVisible(void* console, BOOL visible) {
-    reinterpret_cast<JUTConsole*>(console)->setVisible(visible);
+    reinterpret_cast<JUTConsole*>(console)->setVisible(visible != 0);
 }
 
 extern int JC_JUTConsole_isVisible(void* console) {
@@ -186,7 +244,7 @@ extern void* JC_JUTConsoleManager_getManager() {
 }
 
 extern void JC_JUTConsoleManager_drawDirect(void* manager, int direct) {
-    reinterpret_cast<JUTConsoleManager*>(manager)->drawDirect(direct);
+    reinterpret_cast<JUTConsoleManager*>(manager)->drawDirect(direct != 0);
 }
 
 extern void* JC_JUTException_getManager() {
@@ -206,7 +264,7 @@ extern void JC_JUTException_setPostUserCallback(void* callback) {
 }
 
 extern void JC_JUTException_setMapFile(const char* path) {
-    JUTException::appendMapFile(path);
+    JUTException::setMapFile(path);
 }
 
 extern void* JC_JUTException_getConsole() {
@@ -225,8 +283,8 @@ extern void JC_JUTException_waitTime(u32 time) {
     JUTException::waitTime(time);
 }
 
-extern void* JC_JFWDisplay_createManager_0(GXRenderModeObj* renderMode, void* heap, int exfbNumber, int enableAlpha) {
-    return JFWDisplay::createManager(renderMode, reinterpret_cast<JKRHeap*>(heap), (JUTXfb::EXfbNumber)exfbNumber, (bool)enableAlpha);
+extern void* JC_JFWDisplay_createManager_0(void* heap, int exfbNumber, int enableAlpha) {
+    return JFWDisplay::createManager(reinterpret_cast<JKRHeap*>(heap), (JUTXfb::EXfbNumber)exfbNumber, enableAlpha != 0);
 }
 
 extern void JC_JFWDisplay_destroyManager() {
@@ -238,10 +296,10 @@ extern void* JC_JFWDisplay_getManager() {
 }
 
 extern void JC_JFWDisplay_setGamma(void* manager, int gamma) {
-    reinterpret_cast<JFWDisplay*>(manager)->setGamma(gamma);
+    reinterpret_cast<JFWDisplay*>(manager)->setGamma((GXGamma)gamma);
 }
 
-extern void JC_JFWDisplay_setFrameRate(void* manager, u16 framerate) {
+extern void JC_JFWDisplay_setFrameRate(void* manager, int framerate) {
     reinterpret_cast<JFWDisplay*>(manager)->setFrameRate(framerate);
 }
 
@@ -338,11 +396,11 @@ extern void* JC_JUTProcBar_getManager() {
 }
 
 extern void JC_JUTProcBar_setVisible(void* procbar, BOOL visible) {
-    reinterpret_cast<JUTProcBar*>(procbar)->setVisible(visible);
+    reinterpret_cast<JUTProcBar*>(procbar)->setVisible(visible != 0);
 }
 
 extern void JC_JUTProcBar_setVisibleHeapBar(void* procbar, BOOL visible) {
-    reinterpret_cast<JUTProcBar*>(procbar)->setHeapBarVisible(visible);
+    reinterpret_cast<JUTProcBar*>(procbar)->setVisibleHeapBar(visible != 0);
 }
 
 extern int JC_JKRDecomp_checkCompressed(u8* bufp) {
@@ -353,8 +411,8 @@ extern void JC_JKRDecomp_decode(u8* comp_bufp, u8* decomp_bufp, u32 decomp_buf_s
     JKRDecomp::decode(comp_bufp, decomp_bufp, decomp_buf_size, skipCount);
 }
 
-extern void* JC__JKRGetResource(const char* resourceName) {
-    return JKRGetResource(resourceName);
+extern int JC__JKRReadResource(void* dst, size_t dst_size, const char* src, int expandSwitch) {
+    return JKRReadResource(dst, dst_size, src, (JKRExpandSwitch)expandSwitch);
 }
 
 extern void JC__JKRRemoveResource(void* res) {
@@ -362,7 +420,7 @@ extern void JC__JKRRemoveResource(void* res) {
 }
 
 extern void JC__JKRDetachResource(void* ptr) {
-    JKRDetachResource(ptr);
+    JKRDetachResource(ptr, nullptr);
 }
 
 extern void* JC__JKRMountArchive(const char* path, int mount_mode, void* heap, int mount_direction) {
@@ -370,7 +428,7 @@ extern void* JC__JKRMountArchive(const char* path, int mount_mode, void* heap, i
 }
 
 extern CSDIFileEntry* JC__JKRGetResourceEntry_byName(u32 root_name, const char* res_name, void* archive) {
-    JKRGetResourceEntry_byName(root_name, res_name, reinterpret_cast<JKRArchive*>(archive));
+    return (CSDIFileEntry*)JKRGetResourceEntry(root_name, res_name, reinterpret_cast<JKRArchive*>(archive));
 }
 
 extern void JC_JKRAramHeap_dump(void* heap) {
@@ -390,11 +448,11 @@ extern void* JC_JKRAramArchive_new() {
 }
 
 extern BOOL JC__JKRMountFixedAramArchive(void* aram_archive, const char* file) {
-    return reinterpret_cast<JKRAramArchive*>(aram_archive)->mountFixed(file, JKRArchive::MOUNT_DIRECTION_HEAD);
+    return JKRMountFixedAramArchive(reinterpret_cast<JKRAramArchive*>(aram_archive), file);
 }
 
 extern void JC__JKRUnmountFixedAramArchive(void* aram_archive) {
-    reinterpret_cast<JKRAramArchive*>(aram_archive)->unmountFixed();
+    JKRUnmountFixedAramArchive(reinterpret_cast<JKRAramArchive*>(aram_archive));
 }
 
 extern u32 JC_JKRAramArchive_getAramAddress_byName(void* archive, u32 root_name, const char* res_name) {
@@ -402,7 +460,7 @@ extern u32 JC_JKRAramArchive_getAramAddress_byName(void* archive, u32 root_name,
 }
 
 extern void* JC__JKRAllocFromAram(size_t size) {
-    return JKRAllocFromAram(size, JKRAramHeap::Head);
+    return JKRAllocFromAram(size, JKRAramHeap::AM_Head);
 }
 
 #pragma force_active on
@@ -412,15 +470,15 @@ extern u32 JC_JKRAramBlock_getAddress(void* aramBlock) {
 #pragma force_active reset
 
 extern u8* JC__JKRAramToMainRam_block(void* aramBlock, u8* ramDst, size_t size) {
-    return JKRAram::aramToMainRam(reinterpret_cast<JKRAramBlock*>(aramBlock), ramDst, size, 0, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);
+    return JKRAramToMainRam(reinterpret_cast<JKRAramBlock*>(aramBlock), ramDst, size, 0, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);
 }
 
 extern void* JC__JKRMainRamToAram_block(u8* ramAddr, void* aramBlock, size_t size) {
-    return JKRAram::mainRamToAram(ramAddr, reinterpret_cast<JKRAramBlock*>(aramBlock), size, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1);
+    return JKRMainRamToAram(ramAddr, reinterpret_cast<JKRAramBlock*>(aramBlock), size, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);
 }
 
 extern void* JC__JKRDvdToMainRam_byName(const char* name, u8* buf, JKRExpandSwitch expandSwitch) {
-    return JKRDvdRipper::loadToMainRAM(name, buf, expandSwitch, 0, NULL, JKRDvdRipper::ALLOC_DIR_TOP, 0, NULL);
+    return JKRDvdToMainRam(name, buf, expandSwitch, 0, NULL, JKRDvdRipper::ALLOC_DIR_TOP, 0, NULL, NULL);
 }
 
 extern void JC_JUTAssertion_changeDevice(int device) {

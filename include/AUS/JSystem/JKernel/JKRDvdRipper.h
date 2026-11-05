@@ -1,22 +1,15 @@
-#ifndef JKRDVDRIPPER_H
-#define JKRDVDRIPPER_H
+#ifndef _JSYSTEM_JKR_JKRDVDRIPPER_H
+#define _JSYSTEM_JKR_JKRDVDRIPPER_H
 
-#include "types.h"
-#include "JSystem/JKernel/JKREnum.h"
+#include <dolphin/os.h>
+#include <dolphin/dvd.h>
 #include "JSystem/JKernel/JKRDvdFile.h"
+#include "JSystem/JKernel/JKRHeap.h"
+#include "JSystem/JKernel/JKRCompression.h"
+#include "types.h"
 
-#ifdef __cplusplus
-
-#define SZP_BUFFERSIZE 1024
-#define REF_BUFFERSIZE 0x1120
-#define DMA_BUFFERSIZE 0x100
-
-struct SZPHeader {
-    u32 magic;
-    u32 decompSize;
-};
-
-struct SYaz0Header {
+struct SYaz0Header
+{
     u32 signature;
     u32 length;
 };
@@ -26,37 +19,44 @@ class JKRDMCommand {
     ~JKRDMCommand();
 };
 
-class JKRDvdRipper {
-  public:
-    enum EAllocDirection { ALLOC_DIR_DEFAULT = 0, ALLOC_DIR_TOP = 1, ALLOC_DIR_BOTTOM = 2 };
+namespace JKRDvdRipper { // not sure if this is a class/struct or a namespace(if it is a class, it could be inherited from JKRRipper perhaps?)
+    enum EAllocDirection {
+        ALLOC_DIR_PAD,    // Unseen/unhandled so far
+        ALLOC_DIR_TOP,    //!< [1] Negative alignment; allocate block from top of
+                          //!< free block.
+        ALLOC_DIR_BOTTOM, //!< [2] Positive alignment; allocate block from
+                          //!< bottom of free block.
+    };
+    // could also be u8 * return, however most functions seem to use void *
+    void *loadToMainRAM(const char *, u8 *, JKRExpandSwitch, u32, JKRHeap *, EAllocDirection, u32, int *, u32 *); 
+    void *loadToMainRAM(s32, u8 *, JKRExpandSwitch, u32, JKRHeap *, EAllocDirection, u32, int *, u32 *);
+    void *loadToMainRAM(JKRDvdFile *, u8 *, JKRExpandSwitch, u32, JKRHeap *, EAllocDirection, u32, int *, u32 *);
+    // Inline/Unused
+    void loadToMainRAMAsync(const char *, u8 *, JKRExpandSwitch, u32, JKRHeap *, u32 *);
+    void loadToMainRAMAsync(s32, u8 *, JKRExpandSwitch, u32, JKRHeap *, u32 *);
+    void loadToMainRAMAsync(JKRDvdFile *, u8 *, JKRExpandSwitch, u32, JKRHeap *, u32* );
 
-    static void* loadToMainRAM(const char* file, u8* buf, JKRExpandSwitch expandSwitch, u32 maxDest, JKRHeap* heap,
-                               EAllocDirection allocDir, u32 offset, int* compressMode);
-    static void* loadToMainRAM(s32 entrynum, u8* buf, JKRExpandSwitch expandSwitch, u32 maxDest, JKRHeap* heap,
-                               EAllocDirection allocDir, u32 offset, int* compressMode);
-    static void* loadToMainRAM(JKRDvdFile* file, u8* buf, JKRExpandSwitch expandSwitch, u32 maxDest, JKRHeap* heap,
-                               EAllocDirection allocDir, u32 offset, int* compressMode);
+    void sync(JKRDMCommand *, int);
+    void syncAll(int);
+    void countLeftSync();
 
-    static inline bool isErrorRetry() {
-        return JKRDvdRipper::errorRetry;
-    }
+    extern JSUList<JKRDMCommand> sDvdAsyncList;
 
-    static JSUList<JKRDMCommand> sDvdAsyncList;
-
-    static bool errorRetry;
-};
-
-inline void* JKRDvdToMainRam(long entryNum, u8* dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap* heap,
-                             JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int* pCompression) {
-    return JKRDvdRipper::loadToMainRAM(entryNum, dst, expandSwitch, fileSize, heap, allocDirection, startOffset,
-                                       pCompression);
+    extern bool errorRetry; 
+    extern int sSZSBufferSize; // 0x400
+    // Weak
+    inline int getSZSBufferSize() { return sSZSBufferSize; }    
+    inline bool isErrorRetry() { return errorRetry; }
 }
 
-inline void* JKRDvdToMainRam(const char* path, u8* dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap* heap,
-                             JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int* pCompression) {
-    return JKRDvdRipper::loadToMainRAM(path, dst, expandSwitch, fileSize, heap, allocDirection, startOffset,
-                                       pCompression);
+inline void *JKRDvdToMainRam(long entryNum, u8 *dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap *heap, JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int *pCompression, u32 *pSize)
+{
+    return JKRDvdRipper::loadToMainRAM(entryNum, dst, expandSwitch, fileSize, heap, allocDirection, startOffset, pCompression, pSize);
 }
 
-#endif
+inline void *JKRDvdToMainRam(const char *path, u8 *dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap *heap, JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int *pCompression, u32 *pSize)
+{
+    return JKRDvdRipper::loadToMainRAM(path, dst, expandSwitch, fileSize, heap, allocDirection, startOffset, pCompression, pSize);
+}
+
 #endif

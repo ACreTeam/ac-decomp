@@ -660,7 +660,12 @@ config.libs = [
         "src_dir": "src/static",
         "objects": [
             Object(MatchingFor("GAFE01_00"), "boot.c"),
-            Object(MatchingFor("GAFE01_00"), "jsyswrap.cpp"),
+            Object(
+                Matching, "jsyswrap.cpp",
+                cflags=["-i include/AUS", "-i src/AUS/static", *cflags_static, "-sdata 0", "-sdata2 0", "-inline on"]
+                if config.version == "GAFU01_00" else None,
+                extra_cflags=["-O4,p", "-inline off"] if config.version == "GAFU01_00" else [],
+            ),
             Object(Matching, "version.c"),
             Object(MatchingFor("GAFE01_00"), "initial_menu.c"),
             Object(MatchingFor("GAFE01_00"), "dvderr.c", extra_cflags=["-pool off"]),
@@ -769,7 +774,10 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(MatchingFor("GAFE01_00"), "libjsys/jsyswrapper.cpp"),
+            Object(
+                Matching, "libjsys/jsyswrapper.cpp",
+                extra_cflags=["-O4,p", "-inline off"] if config.version == "GAFU01_00" else [],
+            ),
         ],
     },
     DolphinLib(
@@ -951,76 +959,76 @@ config.libs = [
     JSystemLib(
         "J2DGraph",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/J2DGraph/J2DGrafContext.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/J2DGraph/J2DOrthoGraph.cpp"),
+            Object(Matching, "JSystem/J2DGraph/J2DGrafContext.cpp"),
+            Object(Matching, "JSystem/J2DGraph/J2DOrthoGraph.cpp"),
         ],
     ),
     JSystemLib(
         "JFramework",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/JFramework/JFWDisplay.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JFramework/JFWSystem.cpp"),
+            Object(Matching, "JSystem/JFramework/JFWDisplay.cpp"),
+            Object(Matching, "JSystem/JFramework/JFWSystem.cpp"),
         ],
     ),
     JSystemLib(
         "JGadget",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/JGadget/linklist.cpp"),
+            Object(Matching, "JSystem/JGadget/linklist.cpp"),
         ],
     ),
     JSystemLib(
         "JKernel",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAram.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAramArchive.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAramBlock.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAramHeap.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAramPiece.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRAramStream.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRArchivePri.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRArchivePub.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRCompArchive.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRDecomp.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAram.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAramArchive.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAramBlock.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAramHeap.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAramPiece.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRAramStream.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRArchivePri.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRArchivePub.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRCompArchive.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRDecomp.cpp"),
             Object(Matching, "JSystem/JKernel/JKRDisposer.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRDvdAramRipper.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRDvdArchive.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRDvdFile.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRDvdRipper.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRExpHeap.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRDvdAramRipper.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRDvdArchive.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRDvdFile.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRDvdRipper.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRExpHeap.cpp"),
             Object(Matching, "JSystem/JKernel/JKRFileFinder.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRFileLoader.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRHeap.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRMemArchive.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JKernel/JKRThread.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRFileLoader.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRHeap.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRMemArchive.cpp"),
+            Object(Matching, "JSystem/JKernel/JKRThread.cpp"),
         ],
     ),
     JSystemLib(
         "JSupport",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/JSupport/JSUFileStream.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JSupport/JSUInputStream.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JSupport/JSUList.cpp"),
+            Object(Matching, "JSystem/JSupport/JSUFileStream.cpp"),
+            Object(Matching, "JSystem/JSupport/JSUInputStream.cpp"),
+            Object(Matching, "JSystem/JSupport/JSUList.cpp"),
         ],
     ),
     JSystemLib(
         "JUtility",
         [
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTAssert.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTConsole.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTDbPrint.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTDirectFile.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTDirectPrint.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTException.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTFader.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTFont.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTAssert.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTConsole.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTDbPrint.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTDirectFile.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTDirectPrint.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTException.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTFader.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTFont.cpp"),
             Object(Matching, "JSystem/JUtility/JUTFontData_Ascfont_fix12.s"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTGamePad.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTGamePad.cpp"),
             Object(Matching, "JSystem/JUtility/JUTGraphFifo.cpp"),
             Object(MatchingFor("GAFU01_00"), "JSystem/JUtility/JUTGba.cpp", extra_cflags=["-O4,p"]),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTProcBar.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTResFont.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTVideo.cpp"),
-            Object(MatchingFor("GAFE01_00"), "JSystem/JUtility/JUTXfb.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTProcBar.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTResFont.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTVideo.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTXfb.cpp"),
         ],
     ),
     # {
@@ -5314,6 +5322,9 @@ if config.version == "GAFU01_00":
             lib["src_dir"] = "src/AUS/static"
             lib["mw_version"] = config.linker_version
             lib["cflags"] = ["-i include/AUS", "-i src/AUS/static", *lib["cflags"]]
+            if lib.get("progress_category") == "jsystem":
+                lib["cflags"] = [flag for flag in lib["cflags"] if not flag.startswith("-O4,") and flag != "-sym on"]
+                lib["cflags"] += ["-O4,p", "-inline auto", "-sym on"]
             if lib["lib"] in {"libc64", "Famicom"}:
                 lib["cflags"] += ["-inline off", "-sym on"]
 

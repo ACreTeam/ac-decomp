@@ -118,7 +118,7 @@ extern void JC_JUTGamePad_read() {
 }
 
 extern PADStatus JC_JUTGamePad_getPadStatus(u32 port) {
-    return *JUTGamePad::getPadStatus(port);
+    return *JUTGamePad::getPadStatus((JUTGamePad::EPadPort)port);
 }
 
 extern u8 JC_JUTGamePad_recalibrate(u32 port) {

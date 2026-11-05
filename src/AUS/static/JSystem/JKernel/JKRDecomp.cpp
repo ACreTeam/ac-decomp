@@ -1,189 +1,188 @@
+#include "types.h"
+#include "JSystem/JUtility/JUTDbg.h"
+#include "JSystem/JKernel/JKRHeap.h"
+#include "JSystem/JKernel/JKRAramPiece.h"
+#include "JSystem/JKernel/JKRArchive.h"
 #include "JSystem/JKernel/JKRDecomp.h"
 
-#include "JSystem/JKernel/JKRAram.h"
-#include "JSystem/JKernel/JKRHeap.h"
-#include "JSystem/JSystem.h"
-#include "dolphin/os/OSMessage.h"
-#include "types.h"
+// most copied from TP Decomp, i did put in some effort myself but since TP already had most matching, i opted to use that instead
+JKRDecomp *JKRDecomp::sDecompObject;
+OSMessage JKRDecomp::sMessageBuffer[8] = {0};
+OSMessageQueue JKRDecomp::sMessageQueue = {0};
 
-OSMessage JKRDecomp::sMessageBuffer[JKRDECOMP_MSG_BUF_COUNT] = { 0 };
-OSMessageQueue JKRDecomp::sMessageQueue = { 0 };
-JKRDecomp* JKRDecomp::sDecompObject;
+JKRDecomp *JKRDecomp::create(s32 priority) {
+    if (!sDecompObject)
+        sDecompObject = new (JKRHeap::getSystemHeap(), 0) JKRDecomp(priority);
 
-JKRDecomp* JKRDecomp::create(s32 decompPriority) {
-    if (JKRDecomp::sDecompObject == nullptr) {
-        JKRDecomp::sDecompObject = new (JKRGetSystemHeap(), 0) JKRDecomp(decompPriority);
-    }
-
-    return JKRDecomp::sDecompObject;
+    return sDecompObject;
 }
 
-JKRDecomp::JKRDecomp(s32 priority) : JKRThread(JKRDECOMP_STACK_SIZE, JKRDECOMP_THREAD_MSG_BUF_COUNT, priority) {
-    OSResumeThread(this->mThreadRecord);
+JKRDecomp::JKRDecomp(s32 threadPriority) : JKRThread(0x4000, 16, threadPriority) {
+    resume();
 }
 
-JKRDecomp::~JKRDecomp() {
-}
+JKRDecomp::~JKRDecomp() {}
 
-void* JKRDecomp::run() {
-    OSMessage recMesg;
-    JKRDecompCommand* cmd;
-    OSInitMessageQueue(&JKRDecomp::sMessageQueue, JKRDecomp::sMessageBuffer, JKRDECOMP_MSG_BUF_COUNT);
-
-    while (true) {
-        while (true) {
-            while (true) {
-                OSReceiveMessage(&JKRDecomp::sMessageQueue, &recMesg, OS_MESSAGE_BLOCK);
-                cmd = static_cast<JKRDecompCommand*>(recMesg);
-                JKRDecomp::decode(cmd->mSrcBuffer, cmd->mDstBuffer, cmd->mSrcLength, cmd->mSkipCount);
-
-                if (cmd->transferType == JKRDecompCommand::MRAM) {
-                    break;
-                }
-
-                if (cmd->transferType == JKRDecompCommand::ARAM) {
-                    JKRAramPcs_SendCommand(cmd->mAMCommand);
-                }
-            }
-
-            if (cmd->mCallback == nullptr) {
-                break;
-            }
-
-            cmd->mCallback((u32)cmd);
+void *JKRDecomp::run() {
+    OSInitMessageQueue(&sMessageQueue, sMessageBuffer, 8);
+    for (;;) {
+        OSMessage msg;
+        OSReceiveMessage(&sMessageQueue, &msg, OS_MESSAGE_BLOCK);
+        JKRDecompCommand *decompCmd = (JKRDecompCommand *)(msg);
+        decode(decompCmd->mSrcBuffer, decompCmd->mDstBuffer, decompCmd->mSrcLength, decompCmd->mDstLength);
+        if (decompCmd->_20 != 0) {
+            if (decompCmd->_20 == 1)
+                JKRAramPiece::sendCommand(decompCmd->mAramCmd);
+            continue;
         }
 
-        if (cmd->pMesgQueue1C != nullptr) {
-            OSSendMessage(cmd->pMesgQueue1C, (OSMessage)1, OS_MESSAGE_NOBLOCK);
-        } else {
-            OSSendMessage(&cmd->mMesgQueue, (OSMessage)1, OS_MESSAGE_NOBLOCK);
+        if (decompCmd->mCb) {
+            (*decompCmd->mCb)((u32)decompCmd);
+            continue;
         }
+        if (decompCmd->_1C)
+            OSSendMessage(decompCmd->_1C, (OSMessage)1, OS_MESSAGE_NOBLOCK);
+        else
+            OSSendMessage(&decompCmd->mMessageQueue, (OSMessage)1, OS_MESSAGE_NOBLOCK);
     }
+
+
 }
 
-JKRDecompCommand* JKRDecomp::prepareCommand(u8* srcBuffer, u8* dstBuffer, u32 srcLength, u32 skipCount,
-                                            DecompCallback* callback) {
-    JKRDecompCommand* cmd = new (JKRGetSystemHeap(), -4) JKRDecompCommand();
-
-    cmd->mSrcBuffer = srcBuffer;
-    cmd->mDstBuffer = dstBuffer;
-    cmd->mSrcLength = srcLength;
-    cmd->mSkipCount = skipCount;
-    cmd->mCallback = callback;
-
-    return cmd;
+JKRDecompCommand *JKRDecomp::prepareCommand(u8 *srcBuffer, u8 *dstBuffer, u32 srcLength,
+                                            u32 dstLength,
+                                            JKRDecompCommand::AsyncCallback callback)
+{
+    JKRDecompCommand *command = new (JKRHeap::getSystemHeap(), -4) JKRDecompCommand();
+    command->mSrcBuffer = srcBuffer;
+    command->mDstBuffer = dstBuffer;
+    command->mSrcLength = srcLength;
+    command->mDstLength = dstLength;
+    command->mCb = callback;
+    return command;
 }
 
-BOOL JKRDecomp::sendCommand(JKRDecompCommand* cmd) {
-    BOOL res = OSSendMessage(&JKRDecomp::sMessageQueue, (OSMessage)cmd, OS_MESSAGE_BLOCK);
+void JKRDecomp::sendCommand(JKRDecompCommand *decompCmd) {
+    BOOL msgret = OSSendMessage(&sMessageQueue, decompCmd, 0);
+#line 142
+    JUT_ASSERT_MSG(msgret, "Decomp MesgBuf FULL!");
+}
 
-#ifdef JSYSTEM_DEBUG
-    if (res == FALSE) {
-        JPANIC(142, "Decomp MesgBuf FULL!");
+JKRDecompCommand *JKRDecomp::orderAsync(u8 *srcBuffer, u8 *dstBuffer, u32 srcLength, u32 dstLength,
+                                        JKRDecompCommand::AsyncCallback callback)
+{
+    JKRDecompCommand *command =
+        prepareCommand(srcBuffer, dstBuffer, srcLength, dstLength, callback);
+    sendCommand(command);
+    return command;
+}
+
+bool JKRDecomp::sync(JKRDecompCommand *command, int isNonBlocking) {
+    OSMessage message;
+    bool result;
+    if (isNonBlocking == JKRDECOMP_SYNC_BLOCKING) {
+        OSReceiveMessage(&command->mMessageQueue, &message, OS_MESSAGE_BLOCK);
+        result = true;
     }
-#endif
-
-    return res;
-}
-
-JKRDecompCommand* JKRDecomp::orderAsync(u8* srcBuffer, u8* dstBuffer, u32 srcLength, u32 skipCount,
-                                        DecompCallback* callback) {
-    JKRDecompCommand* cmd = JKRDecomp::prepareCommand(srcBuffer, dstBuffer, srcLength, skipCount, callback);
-    JKRDecomp::sendCommand(cmd);
-    return cmd;
-}
-
-bool JKRDecomp::sync(JKRDecompCommand* cmd, BOOL noBlock) {
-    OSMessage msg;
-
-    if (!noBlock) {
-        OSReceiveMessage(&cmd->mMesgQueue, &msg, OS_MESSAGE_BLOCK);
-        return true;
-    } else {
-        return OSReceiveMessage(&cmd->mMesgQueue, &msg, OS_MESSAGE_NOBLOCK) != FALSE;
+    else {
+        result = OSReceiveMessage(&command->mMessageQueue, &message, OS_MESSAGE_NOBLOCK) != FALSE;
     }
+
+    return result;
 }
 
-bool JKRDecomp::orderSync(u8* srcBuffer, u8* dstBuffer, u32 srcLength, u32 skipCount) {
-    JKRDecompCommand* cmd = JKRDecomp::orderAsync(srcBuffer, dstBuffer, srcLength, skipCount, nullptr);
-    bool res = JKRDecomp::sync(cmd, FALSE);
-    delete cmd;
-    return res;
+bool JKRDecomp::orderSync(u8 *srcBuffer, u8 *dstBuffer, u32 srcLength, u32 dstLength) {
+    JKRDecompCommand *command = orderAsync(srcBuffer, dstBuffer, srcLength, dstLength, nullptr);
+    bool result = sync(command, JKRDECOMP_SYNC_BLOCKING);
+    delete command;
+    return result;
 }
 
-void JKRDecomp::decode(u8* srcBuffer, u8* dstBuffer, u32 srcLength, u32 skipCount) {
-    CompressionMode mode = JKRDecomp::checkCompressed(srcBuffer);
-    if (mode == SZP) {
-        JKRDecomp::decodeSZP(srcBuffer, dstBuffer, srcLength, skipCount);
-    } else if (mode == SZS) {
-        JKRDecomp::decodeSZS(srcBuffer, dstBuffer, srcLength, skipCount);
-    }
+void JKRDecomp::decode(u8 *src, u8 *dst, u32 srcSize, u32 dstSize) {
+    int compression = checkCompressed(src);
+    if (compression == JKRCOMPRESSION_YAY0)
+        decodeSZP(src, dst, srcSize, dstSize);
+    else if (compression == JKRCOMPRESSION_YAZ0)
+        decodeSZS(src, dst, srcSize, dstSize);
 }
 
-void JKRDecomp::decodeSZP(u8* src, u8* dst, u32 srcLength, u32 skipCount) {
+void JKRDecomp::decodeSZP(u8 *src, u8 *dst, u32 srcLength, u32 dstLength)
+{
     int srcChunkOffset;
     int count;
     int dstOffset;
-    u32 length;
+    u32 length = srcLength;
     int linkInfo;
     int offset;
     int i;
 
-    int decodedSize = JKRDECOMP_READU32BE(src, 4);
-    int linkTableOffset = JKRDECOMP_READU32BE(src, 8);
-    int srcDataOffset = JKRDECOMP_READU32BE(src, 12);
+    int decodedSize = READU32_BE(src, 4);
+    int linkTableOffset = READU32_BE(src, 8);
+    int srcDataOffset = READU32_BE(src, 12);
 
     dstOffset = 0;
-    u32 counter = 0; // curently counter gets assembled before the READ_U32 operations
+    u32 counter = 0;
     srcChunkOffset = 16;
 
     u32 chunkBits;
     if (srcLength == 0)
         return;
-    if (skipCount > decodedSize)
+    if (dstLength > decodedSize)
         return;
 
-    length = srcLength;
-    do {
-        if (counter == 0) {
-            chunkBits = JKRDECOMP_READU32BE(src, srcChunkOffset);
+    do
+    {
+        if (counter == 0)
+        {
+            chunkBits = READU32_BE(src, srcChunkOffset);
             srcChunkOffset += sizeof(u32);
             counter = sizeof(u32) * 8;
         }
 
-        if (chunkBits & 0x80000000) {
-            if (skipCount == 0) {
+        if (chunkBits & 0x80000000)
+        {
+            if (dstLength == 0)
+            {
                 dst[dstOffset] = src[srcDataOffset];
                 length--;
                 if (length == 0)
                     return;
-            } else {
-                skipCount--;
+            }
+            else
+            {
+                dstLength--;
             }
             dstOffset++;
             srcDataOffset++;
-        } else {
+        }
+        else
+        {
             linkInfo = src[linkTableOffset] << 8 | src[linkTableOffset + 1];
             linkTableOffset += sizeof(u16);
 
             offset = dstOffset - (linkInfo & 0xFFF);
             count = (linkInfo >> 12);
-            if (count == 0) {
+            if (count == 0)
+            {
                 count = (u32)src[srcDataOffset++] + 0x12;
-            } else
+            }
+            else
                 count += 2;
 
-            if ((int)count > decodedSize - dstOffset)
+            if (count > decodedSize - dstOffset)
                 count = decodedSize - dstOffset;
 
-            for (i = 0; i < (int)count; i++, dstOffset++, offset++) {
-                if (skipCount == 0) {
+            for (i = 0; i < count; i++, dstOffset++, offset++)
+            {
+                if (dstLength == 0)
+                {
                     dst[dstOffset] = dst[offset - 1];
                     length--;
                     if (length == 0)
                         return;
-                } else
-                    skipCount--;
+                }
+                else
+                    dstLength--;
             }
         }
 
@@ -192,54 +191,60 @@ void JKRDecomp::decodeSZP(u8* src, u8* dst, u32 srcLength, u32 skipCount) {
     } while (dstOffset < decodedSize);
 }
 
-void JKRDecomp::decodeSZS(u8* src_buffer, u8* dst_buffer, u32 srcSize, u32 skipCount) {
-    u8* decompEnd = dst_buffer + *(u32*)(src_buffer + 4) - skipCount;
-    u8* copyStart;
-    s32 copyByteCount;
+void JKRDecomp::decodeSZS(u8 *src_buffer, u8 *dst_buffer, u32 srcSize, u32 dstSize) {
+
+    u8 *decompEnd = dst_buffer + *(u32 *)(src_buffer + 4) - dstSize;
+    u8 *copyStart;
+    s32 copyByteCount;    
     s32 chunkBitsLeft = 0;
     s32 chunkBits;
 
     if (srcSize == 0)
         return;
-    if (skipCount > *(u32*)src_buffer)
+    if (dstSize > *(u32 *)src_buffer)
         return;
-
-    u8* curSrcPos = src_buffer + 0x10;
+    
+    u8 *curSrcPos = src_buffer + 0x10;
     do {
         if (chunkBitsLeft == 0) {
             chunkBits = *curSrcPos++;
-            chunkBitsLeft = 8;
+            chunkBitsLeft = 8;            
         }
         if ((chunkBits & 0x80) != 0) {
-            if (skipCount == 0) {
+            if (dstSize == 0)
+            {
                 *dst_buffer = *curSrcPos;
                 srcSize--;
                 dst_buffer++;
                 if (srcSize == 0)
                     return;
-            } else {
-                skipCount--;
+            }
+            else {
+                dstSize--;
             }
             curSrcPos++;
-        } else {
+        }
+        else {
             u8 curVal = *curSrcPos;
             copyStart = dst_buffer - (curSrcPos[1] | (curVal & 0xF) << 8);
             curSrcPos += 2;
             if (curVal >> 4 == 0) {
                 copyByteCount = *curSrcPos + 0x12;
                 curSrcPos++;
-            } else {
+            }
+            else {
                 copyByteCount = (curVal >> 4) + 2;
             }
             do {
-                if (skipCount == 0) {
+                if (dstSize == 0) {
                     *dst_buffer = *(copyStart - 1);
                     srcSize--;
                     dst_buffer++;
                     if (srcSize == 0)
                         return;
-                } else {
-                    skipCount--;
+                }
+                else {
+                    dstSize--;
                 }
                 copyByteCount--;
                 copyStart++;
@@ -250,27 +255,28 @@ void JKRDecomp::decodeSZS(u8* src_buffer, u8* dst_buffer, u32 srcSize, u32 skipC
     } while (dst_buffer != decompEnd);
 }
 
-JKRDecomp::CompressionMode JKRDecomp::checkCompressed(u8* buf) {
-    if (buf[0] == 'Y' && buf[1] == 'a' && buf[3] == '0') {
-        if (buf[2] == 'y') {
-            return SZP;
-        }
+int JKRDecomp::checkCompressed(u8 *src)
+{
+    if ((src[0] == 'Y') && (src[1] == 'a') && (src[3] == '0'))
+    {
+        if (src[2] == 'y')
+            return JKRCOMPRESSION_YAY0;
 
-        if (buf[2] == 'z') {
-            return SZS;
-        }
+        if (src[2] == 'z')
+            return JKRCOMPRESSION_YAZ0;
     }
+    if ((src[0] == 'A') && (src[1] == 'S') && (src[2] == 'R'))
+        return JKRCOMPRESSION_ASR;
 
-    return NONE;
+    return JKRCOMPRESSION_NONE;
 }
 
 JKRDecompCommand::JKRDecompCommand() {
-    OSInitMessageQueue(&this->mMesgQueue, this->mMesgBuffer, 1);
-    this->mCallback = nullptr;
-    this->pMesgQueue1C = nullptr;
-    this->mCmd = this;
-    this->transferType = MRAM;
+    OSInitMessageQueue(&mMessageQueue, &mMessageBuf, 1);
+    mCb = nullptr;
+    _1C = nullptr;
+    mThis = this;
+    _20 = 0;
 }
 
-JKRDecompCommand::~JKRDecompCommand() {
-}
+JKRDecompCommand::~JKRDecompCommand() {}

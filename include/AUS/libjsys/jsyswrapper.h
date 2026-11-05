@@ -83,7 +83,7 @@ extern u8 JC_JUTGamePad_recalibrate(u32 port);
 
 extern void* JC_JFWDisplay_getManager();
 extern int JC_JFWDisplay_startFadeIn(void* manager, int len);
-extern void JC_JFWDisplay_setFrameRate(void* manager, u16 framerate);
+extern void JC_JFWDisplay_setFrameRate(void* manager, int framerate);
 extern void JC_JFWDisplay_endFrame(void* manager);
 extern void JC_JFWDisplay_beginRender(void* manager);
 extern void JC_JFWDisplay_endRender(void* manager);
@@ -95,7 +95,7 @@ extern void* JC_JFWDisplay_changeToSingleXfb(void* manager, int index);
 extern void* JC_JFWDisplay_changeToDoubleXfb(void* manager);
 extern int JC_JFWDisplay_getEfbWidth(void* manager);
 extern int JC_JFWDisplay_getEfbHeight(void* manager);
-extern void* JC_JFWDisplay_createManager_0(GXRenderModeObj* renderMode, void* heap, int exfbNumber, int enableAlpha);
+extern void* JC_JFWDisplay_createManager_0(void* heap, int exfbNumber, int enableAlpha);
 extern void JC_JFWDisplay_setFader(void* manager, void* fader);
 extern void JC_JFWDisplay_setGamma(void* manager, int gamma);
 extern void JC_JFWDisplay_destroyManager();

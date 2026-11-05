@@ -145,7 +145,7 @@ class JUTGamePad : public JKRDisposer {
         return this->mButtons.mAnalogA;
     }
 
-    int getSubStickAngle() const {
+    s16 getSubStickAngle() const {
         return this->mSubStick.mAngle;
     }
 
@@ -305,8 +305,8 @@ class JUTGamePad : public JKRDisposer {
         bool mReset;
     };
 
-    static PADStatus* getPadStatus(int idx) {
-        return &mPadStatus[idx];
+    static PADStatus* getPadStatus(EPadPort port) {
+        return &mPadStatus[(int)port];
     }
 
     static JSUList<JUTGamePad> mPadList;

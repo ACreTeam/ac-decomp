@@ -170,6 +170,14 @@ typedef u32 unknown;
 typedef unsigned short wchar_t;
 #endif
 
+#define READU32_BE(ptr, offset) (((u32)(ptr)[offset] << 24) | ((u32)(ptr)[(offset)+1] << 16) | ((u32)(ptr)[(offset)+2] << 8) | (u32)(ptr)[(offset)+3])
+#ifndef CW_FORCE_STRINGS
+#define CW_FORCE_STRINGS(module, ...) \
+    void fake_function(...); \
+    void FORCE_STRINGS##module(void) { fake_function(__VA_ARGS__); }
+#endif
+
+
 // #if DEBUG
 // #define ASSERTLINE(line, cond) \
 //     ((cond) || (OSPanic(__FILE__, line, "Failed assertion " #cond), 0))

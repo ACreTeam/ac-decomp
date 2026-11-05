@@ -1,6 +1,9 @@
 #include "jsyswrap_cpp.h"
 
 #include "JSystem/JSystem.h"
+#if VERSION == VER_GAFU01_00
+#include "JSystem/JFramework/JFWSystem.h"
+#endif
 #include "JSystem/JUtility/JUTGamePad.h"
 #include "JSystem/JUtility/TColor.h"
 #include "libforest/emu64.h"
@@ -35,150 +38,202 @@ static u16 video_pan_height = 0;
 
 static u32 SystemHeapSize = 0x16C7000;
 static u32 gameheap_len = 0x380000;
-static GXRenderModeObj customized_GXNtsc240Ds = { VI_TVMODE_NTSC_DS,
-                                                  640,
-                                                  240,
-                                                  240,
-                                                  30,
-                                                  0,
-                                                  660,
-                                                  480,
-                                                  VI_XFBMODE_SF,
-                                                  FALSE,
-                                                  FALSE,
-                                                  { { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 } },
-                                                  { 0, 0, 21, 22, 21, 0, 0 } };
-static GXRenderModeObj customized_GXNtsc240Prog = { VI_TVMODE_NTSC_PROG,
-                                                    640,
-                                                    240,
-                                                    480,
-                                                    30,
-                                                    0,
-                                                    660,
-                                                    480,
-                                                    VI_XFBMODE_SF,
-                                                    FALSE,
-                                                    FALSE,
-                                                    { { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 } },
-                                                    { 0, 0, 21, 22, 21, 0, 0 } };
-static GXRenderModeObj customized_GXNtsc240IntDf = { VI_TVMODE_NTSC_INT,
-                                                     640,
-                                                     240,
-                                                     480,
-                                                     30,
-                                                     0,
-                                                     660,
-                                                     480,
-                                                     VI_XFBMODE_DF,
-                                                     FALSE,
-                                                     FALSE,
-                                                     { { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 } },
-                                                     { 8, 8, 10, 12, 10, 8, 8 } };
-static GXRenderModeObj customized_GXNtsc480Ds = { VI_TVMODE_NTSC_DS,
-                                                  640,
-                                                  480,
-                                                  240,
-                                                  30,
-                                                  0,
-                                                  660,
-                                                  480,
-                                                  VI_XFBMODE_SF,
-                                                  FALSE,
-                                                  FALSE,
-                                                  { { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 },
-                                                    { 6, 6 } },
-                                                  { 0, 0, 21, 22, 21, 0, 0 } };
-static GXRenderModeObj customized_GXNtsc480IntDf = { VI_TVMODE_NTSC_INT,
-                                                     640,
-                                                     480,
-                                                     480,
-                                                     30,
-                                                     0,
-                                                     660,
-                                                     480,
-                                                     VI_XFBMODE_DF,
-                                                     FALSE,
-                                                     FALSE,
-                                                     { { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 },
-                                                       { 6, 6 } },
-                                                     { 8, 8, 10, 12, 10, 8, 8 } };
-static GXRenderModeObj customized_GXNtsc480Prog = { VI_TVMODE_NTSC_PROG,
-                                                    640,
-                                                    480,
-                                                    480,
-                                                    30,
-                                                    0,
-                                                    660,
-                                                    480,
-                                                    VI_XFBMODE_SF,
-                                                    FALSE,
-                                                    FALSE,
-                                                    { { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 },
-                                                      { 6, 6 } },
-                                                    { 0, 0, 21, 22, 21, 0, 0 } };
+#if VERSION == VER_GAFU01_00
+static GXRenderModeObj customized_GXPal224Ds = {
+    VI_TVMODE_PAL_DS, 640, 224, 224, 30, 31, 660, 448,
+    VI_XFBMODE_SF, 0, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXEurgb60Hz240Ds = {
+    VI_TVMODE_EURGB60_DS, 640, 240, 240, 30, 0, 660, 480,
+    VI_XFBMODE_SF, 0, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXEurgb60Hz240Int = {
+    VI_TVMODE_EURGB60_INT, 640, 240, 240, 30, 0, 660, 480,
+    VI_XFBMODE_SF, 1, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXPal264IntDf = {
+    VI_TVMODE_PAL_INT, 640, 240, 568, 30, 3, 660, 568,
+    VI_XFBMODE_DF, 0, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 8, 8, 10, 12, 10, 8, 8 },
+};
+static GXRenderModeObj customized_GXPal528IntDf = {
+    VI_TVMODE_PAL_INT, 640, 480, 568, 30, 3, 660, 568,
+    VI_XFBMODE_DF, 0, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 8, 8, 10, 12, 10, 8, 8 },
+};
+static GXRenderModeObj customized_GXEurgb60Hz480IntDf = {
+    VI_TVMODE_EURGB60_INT, 640, 480, 480, 30, 0, 660, 480,
+    VI_XFBMODE_DF, 0, 0,
+    { { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 }, { 6, 6 } },
+    { 8, 8, 10, 12, 10, 8, 8 },
+};
+#else
+static GXRenderModeObj customized_GXNtsc240Ds = {
+    VI_TVMODE_NTSC_DS,
+    640,
+    240,
+    240,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_SF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXNtsc240Prog = {
+    VI_TVMODE_NTSC_PROG,
+    640,
+    240,
+    480,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_SF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXNtsc240IntDf = {
+    VI_TVMODE_NTSC_INT,
+    640,
+    240,
+    480,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_DF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 8, 8, 10, 12, 10, 8, 8 },
+};
+static GXRenderModeObj customized_GXNtsc480Ds = {
+    VI_TVMODE_NTSC_DS,
+    640,
+    480,
+    240,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_SF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+static GXRenderModeObj customized_GXNtsc480IntDf = {
+    VI_TVMODE_NTSC_INT,
+    640,
+    480,
+    480,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_DF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 8, 8, 10, 12, 10, 8, 8 },
+};
+static GXRenderModeObj customized_GXNtsc480Prog = {
+    VI_TVMODE_NTSC_PROG,
+    640,
+    480,
+    480,
+    30,
+    0,
+    660,
+    480,
+    VI_XFBMODE_SF,
+    FALSE,
+    FALSE,
+    { { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 },
+      { 6, 6 } },
+    { 0, 0, 21, 22, 21, 0, 0 },
+};
+
+#endif
 
 static void ReportDiskID() {
     DVDDiskID* disk_id = DVDGetCurrentDiskID();
@@ -188,6 +243,62 @@ static void ReportDiskID() {
                        disk_id->diskNumber, disk_id->gameVersion);
 }
 
+#if VERSION == VER_GAFU01_00
+extern void JW_UpdateVideoMode() {
+    GXRenderModeObj* renderMode;
+    if (video_famicom) {
+        if (!video_progressive) {
+            video_pan_xorg = 32;
+            video_pan_yorg = 0;
+            video_pan_width = 256;
+            video_pan_height = 224;
+        } else {
+            video_pan_xorg = 32;
+            video_pan_yorg = 8;
+            video_pan_width = 256;
+            video_pan_height = 232;
+        }
+        if (video_lowreso) {
+            if (video_progressive) renderMode = &customized_GXEurgb60Hz240Ds;
+            else renderMode = &customized_GXPal224Ds;
+        } else {
+            video_pan_yorg *= 2;
+            video_pan_height *= 2;
+            if (video_progressive) renderMode = &customized_GXEurgb60Hz240Int;
+            else renderMode = &customized_GXPal264IntDf;
+        }
+    } else {
+        if (video_logo) {
+            video_pan_xorg = 0;
+            video_pan_yorg = 0;
+            video_pan_width = 640;
+            video_pan_height = 524;
+        } else {
+            if (!video_progressive) {
+                video_pan_xorg = 20;
+                video_pan_yorg = 6;
+                video_pan_width = 598;
+                video_pan_height = 562;
+            } else {
+                video_pan_xorg = 20;
+                video_pan_yorg = 6;
+                video_pan_width = 598;
+                video_pan_height = 464;
+            }
+        }
+        if (video_progressive) renderMode = &customized_GXEurgb60Hz480IntDf;
+        else renderMode = &customized_GXPal528IntDf;
+    }
+    if (renderMode != NULL) {
+        VIWaitForRetrace();
+        JC_JUTVideo_setRenderMode(JC_JUTVideo_getManager(), renderMode);
+    }
+    if (video_pan_enable) {
+        VIConfigurePan(video_pan_xorg, video_pan_yorg, video_pan_width, video_pan_height);
+    }
+}
+
+#else
 extern void JW_UpdateVideoMode() {
     GXRenderModeObj* renderMode;
 
@@ -239,6 +350,8 @@ extern void JW_UpdateVideoMode() {
     }
 }
 
+#endif
+
 extern void JW_SetProgressiveMode(int enabled) {
     if (video_progressive != enabled) {
         video_progressive = enabled;
@@ -289,30 +402,54 @@ extern void JW_JUTGamePad_read() {
 }
 
 extern void JW_getPadStatus(PADStatus* padStatus) {
-    memcpy(&padStatus[0], &JUTGamePad::mPadStatus[0], sizeof(PADStatus));
-    memcpy(&padStatus[1], &JUTGamePad::mPadStatus[1], sizeof(PADStatus));
-    memcpy(&padStatus[2], &JUTGamePad::mPadStatus[2], sizeof(PADStatus));
-    memcpy(&padStatus[3], &JUTGamePad::mPadStatus[3], sizeof(PADStatus));
+    memcpy(&padStatus[0], JUTGamePad::getPadStatus(JUTGamePad::Port1), sizeof(PADStatus));
+    memcpy(&padStatus[1], JUTGamePad::getPadStatus(JUTGamePad::Port2), sizeof(PADStatus));
+    memcpy(&padStatus[2], JUTGamePad::getPadStatus(JUTGamePad::Port3), sizeof(PADStatus));
+    memcpy(&padStatus[3], JUTGamePad::getPadStatus(JUTGamePad::Port4), sizeof(PADStatus));
 }
 
 extern int JW_JUTGamepad_getErrorStatus() {
-    return (s8)((JUTGamePad*)gamePad)[0].mErrorStatus;
+    return (s8)gamePad[0].getErrorStatus();
 }
 
 extern u32 JW_JUTGamepad_getButton() {
-    return ((JUTGamePad*)gamePad)[0].mButtons.mButton;
+    return gamePad[0].getButton();
 }
 
 extern u32 JW_JUTGamepad_getTrigger() {
-    return ((JUTGamePad*)gamePad)[0].mButtons.mTrigger;
+    return gamePad[0].getTrigger();
+}
+
+extern u32 JW_JUTGamepad_getRelease() {
+    return gamePad[0].getRelease();
+}
+
+extern u32 JW_JUTGamepad_getRepeat() {
+    return gamePad[0].getRepeat();
+}
+
+// Stripped wrapper retained to emit the referenced weak accessor in map order.
+extern f32 JW_JUTGamepad_getSubStickX() {
+    return gamePad[0].getSubStickX();
+}
+
+extern f32 JW_JUTGamepad_getSubStickY() {
+    return gamePad[0].getSubStickY();
 }
 
 extern f32 JW_JUTGamepad_getSubStickValue() {
-    return ((JUTGamePad*)gamePad)[0].mSubStick.mValue;
+    return gamePad[0].getSubStickValue();
 }
 
 extern s16 JW_JUTGamepad_getSubStickAngle() {
-    return ((JUTGamePad*)gamePad)[0].mSubStick.mAngle;
+    return gamePad[0].getSubStickAngle();
+}
+
+// @fabricated - DnM+ symbol map shows this size=0xC8
+extern void JW_J2DNamePicture_draw() {
+    // Shows as:
+    // class J2DNamePicture : public J2DPicture {}
+    // J2DNamePicture::~J2DNamePicture 1.2.5n size is 0x64
 }
 
 static bool FrameDrawing = false;
@@ -353,82 +490,84 @@ extern int JW_setClearColor(u8 r, u8 g, u8 b) {
     return FALSE;
 }
 
-static const char* aram_resName[] = { "fgdata.bin",
-                                      "mail_data.bin",
-                                      "mail_data_table.bin",
-                                      "maila_data.bin",
-                                      "maila_data_table.bin",
-                                      "mailb_data.bin",
-                                      "mailb_data_table.bin",
-                                      "mailc_data.bin",
-                                      "mailc_data_table.bin",
-                                      "pallet_boy.bin",
-                                      "ps_data.bin",
-                                      "ps_data_table.bin",
-                                      "psz_data.bin",
-                                      "psz_data_table.bin",
-                                      "select_data.bin",
-                                      "select_data_table.bin",
-                                      "string_data.bin",
-                                      "string_data_table.bin",
-                                      "superz_data.bin",
-                                      "superz_data_table.bin",
-                                      "super_data.bin",
-                                      "super_data_table.bin",
-                                      "tex_boy.bin",
-                                      "face_boy.bin",
-                                      "fgnpcdata.bin",
-                                      "message_data.bin",
-                                      "message_data_table.bin",
-                                      "my_original.bin",
-                                      "needlework.bin",
-                                      "player_room_floor.bin",
-                                      "player_room_wall.bin",
-                                      "npc_name_str_table.bin",
-                                      "d_obj_npc_stock_sch.bin",
-                                      "d_obj_npc_stock_scl.bin",
-                                      "title.bti",
-                                      "mura_spring.bti",
-                                      "mura_summer.bti",
-                                      "mura_fall.bti",
-                                      "mura_winter.bti",
-                                      "odekake.bti",
-                                      "omake.bti",
-                                      "eki1.bti",
-                                      "eki1_2.bti",
-                                      "eki1_3.bti",
-                                      "eki1_4.bti",
-                                      "eki1_5.bti",
-                                      "eki2.bti",
-                                      "eki2_2.bti",
-                                      "eki2_3.bti",
-                                      "eki2_4.bti",
-                                      "eki2_5.bti",
-                                      "eki3.bti",
-                                      "eki3_2.bti",
-                                      "eki3_3.bti",
-                                      "eki3_4.bti",
-                                      "eki3_5.bti",
-                                      "tegami.bti",
-                                      "tegami2.bti",
-                                      "famikon.bti",
-                                      "boy1.bti",
-                                      "boy2.bti",
-                                      "boy3.bti",
-                                      "boy4.bti",
-                                      "boy5.bti",
-                                      "boy6.bti",
-                                      "boy7.bti",
-                                      "boy8.bti",
-                                      "girl1.bti",
-                                      "girl2.bti",
-                                      "girl3.bti",
-                                      "girl4.bti",
-                                      "girl5.bti",
-                                      "girl6.bti",
-                                      "girl7.bti",
-                                      "girl8.bti",
-                                      "d_bg_island_sch.bin" };
+static const char* aram_resName[] = {
+    "fgdata.bin",
+    "mail_data.bin",
+    "mail_data_table.bin",
+    "maila_data.bin",
+    "maila_data_table.bin",
+    "mailb_data.bin",
+    "mailb_data_table.bin",
+    "mailc_data.bin",
+    "mailc_data_table.bin",
+    "pallet_boy.bin",
+    "ps_data.bin",
+    "ps_data_table.bin",
+    "psz_data.bin",
+    "psz_data_table.bin",
+    "select_data.bin",
+    "select_data_table.bin",
+    "string_data.bin",
+    "string_data_table.bin",
+    "superz_data.bin",
+    "superz_data_table.bin",
+    "super_data.bin",
+    "super_data_table.bin",
+    "tex_boy.bin",
+    "face_boy.bin",
+    "fgnpcdata.bin",
+    "message_data.bin",
+    "message_data_table.bin",
+    "my_original.bin",
+    "needlework.bin",
+    "player_room_floor.bin",
+    "player_room_wall.bin",
+    "npc_name_str_table.bin",
+    "d_obj_npc_stock_sch.bin",
+    "d_obj_npc_stock_scl.bin",
+    "title.bti",
+    "mura_spring.bti",
+    "mura_summer.bti",
+    "mura_fall.bti",
+    "mura_winter.bti",
+    "odekake.bti",
+    "omake.bti",
+    "eki1.bti",
+    "eki1_2.bti",
+    "eki1_3.bti",
+    "eki1_4.bti",
+    "eki1_5.bti",
+    "eki2.bti",
+    "eki2_2.bti",
+    "eki2_3.bti",
+    "eki2_4.bti",
+    "eki2_5.bti",
+    "eki3.bti",
+    "eki3_2.bti",
+    "eki3_3.bti",
+    "eki3_4.bti",
+    "eki3_5.bti",
+    "tegami.bti",
+    "tegami2.bti",
+    "famikon.bti",
+    "boy1.bti",
+    "boy2.bti",
+    "boy3.bti",
+    "boy4.bti",
+    "boy5.bti",
+    "boy6.bti",
+    "boy7.bti",
+    "boy8.bti",
+    "girl1.bti",
+    "girl2.bti",
+    "girl3.bti",
+    "girl4.bti",
+    "girl5.bti",
+    "girl6.bti",
+    "girl7.bti",
+    "girl8.bti",
+    "d_bg_island_sch.bin",
+};
 
 extern u32 JW_GetAramAddress(int res_no) {
     int address = 0;
@@ -444,6 +583,21 @@ extern u32 JW_GetAramAddress(int res_no) {
 
 extern u8* _JW_GetResourceAram(u32 aram_addr, u8* dst, u32 size) {
     return JKRAramToMainRam(aram_addr, dst, size, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);
+}
+
+// @fabricated -- DnM+ symbol map shows this size=0x98
+extern void* JW_GetResource(const char* name) {
+    return JC__JKRGetResource(name);
+}
+
+// @fabricated - DnM+ symbol map shows this size=0x24
+extern void JW_RemoveResource(void* res) {
+    JC__JKRRemoveResource(res);
+}
+
+// @fabricated - DnM+ symbol map shows this size=0x24
+extern u32 JW_GetResSize(const char* name) {
+    return 0;
 }
 
 extern u32 JW_GetResSizeFileNo(int res_no) {
@@ -466,6 +620,10 @@ extern u32 JW_GetResSizeFileNo(int res_no) {
     return res_size;
 }
 
+// @fabricated - DnM+ symbol map shows this size=0x10
+extern void forest_suppressPadReset() {
+}
+
 extern void JW_Init() {
     const u32 soundAramSize = 0x810000;
     const u32 graphAramSize = 0x6A3780;
@@ -481,22 +639,37 @@ extern void JW_Init() {
              soundAramSize + graphAramSize);
     JC_JFWSystem_setAramAudioBufSize(soundAramSize);
     JC_JFWSystem_setAramGraphBufSize(graphAramSize);
+#if VERSION == VER_GAFU01_00
+    JFWSystem::setRenderMode(&customized_GXPal528IntDf);
+#endif
     JC_JFWSystem_init();
     JC_JKRExpHeap_changeGroupID(JC_JFWSystem_getSystemHeap(), 1);
     jc_sysConsole = JC_JFWSystem_getSystemConsole();
     JC_JUTConsole_setOutput(jc_sysConsole, 3);
     JC_JUTConsole_setPosition(jc_sysConsole, 32, 42);
+#if VERSION == VER_GAFU01_00
+    void* display_manager = JC_JFWDisplay_createManager_0(JC_JFWSystem_getSystemHeap(), 2, 1);
+#else
     void* display_manager = JC_JFWDisplay_createManager_0(&GXNtsc480IntDf, JC_JFWSystem_getSystemHeap(), 2, 1);
+#endif
     JC_JUTProcBar_setVisible(JC_JUTProcBar_getManager(), FALSE);
     JC_JUTProcBar_setVisibleHeapBar(JC_JUTProcBar_getManager(), FALSE);
     jc_gport = JC_J2DOrthoGraph_new();
+#if VERSION == VER_GAFU01_00
+    GXColor color = TCOLOR_BLACK;
+#else
     u32 color = TCOLOR_BLACK;
+#endif
     jc_fader = JC_JUTFader_new(0, 0, (u16)JC_JUTVideo_getFbWidth(JC_JUTVideo_getManager()),
-                               (u16)JC_JUTVideo_getEfbHeight(JC_JUTVideo_getManager()), &color);
+                               (u16)JC_JUTVideo_getEfbHeight(JC_JUTVideo_getManager()), (u32*)&color);
     JC_JFWDisplay_setFader(display_manager, jc_fader);
     JC_JFWDisplay_setClearColor(display_manager, TCOLOR_BLACK);
     JC_JFWDisplay_setGamma(display_manager, 0);
+#if VERSION == VER_GAFU01_00
+    JW_SetVideoPan(20, 6, 598, 562);
+#else
     JW_SetVideoPan(20, 6, 598, 464);
+#endif
     JW_SetLogoMode(1);
     JC_JKRExpHeap_changeGroupID(JC_JFWSystem_getSystemHeap(), 2);
 }

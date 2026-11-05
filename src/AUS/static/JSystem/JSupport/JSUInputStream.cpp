@@ -1,120 +1,94 @@
-#include "JSystem/JSupport/JSUStream.h"
+#include <dolphin/os.h>
+#include <JSystem/JSupport/JSUStream.h>
+#include "types.h"
 
-JSUInputStream::~JSUInputStream() {
+JSUInputStream::~JSUInputStream() { 
+#if DEBUG // TODO: OS Assert/Panic?
+    if(isGood())
+    	OSReport("JSUInputStream: occur error.\n");
+#endif
 }
 
-int JSUInputStream::read(void* buf, s32 size) {
-    int len = this->readData(buf, size);
-    if (len != size) {
-        this->setState(EOF);
-    }
-    return len;
+s32 JSUInputStream::read(void* data, s32 length)
+{
+	s32 len = readData(data, length);
+	if (len != length) {
+		setState(State_1);
+	}
+	return len;
 }
 
-char* JSUInputStream::read(char* str) {
-    u16 size;
-    int len = this->readData(&size, sizeof(size));
-    if (len != sizeof(size)) {
-        str[0] = '\0';
-        this->setState(EOF);
-        str = nullptr;
-    } else {
-        int strRead = this->readData(str, size);
-        str[strRead] = '\0';
-        if (strRead != size) {
-            this->setState(EOF);
-        }
-    }
+char* JSUInputStream::read(char* str)
+{
+	u16 val;
+	if (readData(&val, sizeof(val)) != sizeof(val)) {
+		str[0] = '\0';
+		setState(State_1);
+		return nullptr;
+	}
 
-    return str;
+	int len  = readData(str, val);
+	str[len] = '\0';
+	if (len != val) {
+		setState(State_1);
+	}
+
+	return str;
 }
 
-/* @fabricated -- this method is confirmed to exist, but goes unused in AC */
-char* JSUInputStream::readString() {
-    u16 len;
-    int r = this->readData(&len, sizeof(len));
-    if (r != sizeof(len)) {
-        this->setState(EOF);
-        return nullptr;
-    }
-
-    char* buf = new char[len + 1];
-    r = this->readData(buf, len);
-    if (r != len) {
-        delete[] buf;
-        this->setState(EOF);
-        return nullptr;
-    }
-
-    buf[len] = '\0';
-    return buf;
+s32 JSUInputStream::skip(s32 val)
+{
+	char unk;
+	int i;
+	for (i = 0; val > i; i++) {
+		if (readData(&unk, sizeof(unk)) != sizeof(unk)) {
+			setState(State_1);
+			break;
+		}
+	}
+	return i;
 }
 
-/* @fabricated -- this method is confirmed to exist, but goes unused in AC */
-char* JSUInputStream::readString(char* buf, u16 len) {
-    int r = this->readData(buf, len);
-    if (r != len) {
-        this->setState(EOF);
-        return nullptr;
-    }
+u32 JSURandomInputStream::align(s32 arg0)
+{
+	int th_var;
+	s32 one_var;
+	s32 newtemp;
+	s32 seekPosTmp;
 
-    buf[len] = '\0';
-    return buf;
+	one_var = getPosition();
+	th_var  = (arg0 - 1 + one_var) & ~(arg0 - 1) /*- one_var*/;
+	newtemp = th_var - one_var;
+	if (newtemp != 0) {
+		seekPosTmp = seekPos(th_var, SEEK_SET);
+		if (seekPosTmp != newtemp) {
+			setState(State_1);
+		}
+	}
+	return newtemp;
 }
 
-int JSUInputStream::skip(s32 amount) {
-    u8 _p;
-    int i;
-
-    for (i = 0; i < amount; i++) {
-        if (this->readData(&_p, sizeof(_p)) != sizeof(_p)) {
-            this->setState(EOF);
-            break;
-        }
-    }
-
-    return i;
+s32 JSURandomInputStream::skip(s32 offset)
+{
+	s32 tmp = seekPos(offset, SEEK_CUR);
+	if (tmp != offset) {
+		setState(State_1);
+	}
+	return tmp;
 }
 
-/* JSURandomInputStream */
-
-int JSURandomInputStream::skip(s32 amount) {
-    int s = this->seekPos(amount, SEEK_CUR);
-    if (s != amount) {
-        this->setState(EOF);
-    }
-    return s;
+size_t JSURandomInputStream::peek(void* buffer, s32 byteCount)
+{
+	s32 position   = getPosition();
+	s32 dataLength = read(buffer, byteCount);
+	if (dataLength != 0) {
+		seekPos(position, SEEK_SET);
+	}
+	return dataLength;
 }
 
-/* This method is confirmed to exist, but goes unused in AC. Retrieved from TP debug. */
-int JSURandomInputStream::align(s32 alignment) {
-    int pos = this->getPosition();
-    int aligned = ((alignment - 1) + pos) & ~(alignment - 1);
-    int change = aligned - pos;
-
-    if (change != 0) {
-        int s = this->seekPos(aligned, SEEK_SET);
-        if (s != change) {
-            this->setState(EOF);
-        }
-    }
-
-    return change;
-}
-
-/* This method is confirmed to exist, but goes unused in AC. Retrieved from TP debug. */
-int JSURandomInputStream::peek(void* buf, s32 len) {
-    int pos = this->getPosition();
-    int r = this->read(buf, len);
-    if (r != 0) {
-        this->seekPos(pos, SEEK_SET);
-    }
-
-    return r;
-}
-
-int JSURandomInputStream::seek(s32 offset, JSUStreamSeekFrom from) {
-    int s = this->seekPos(offset, from);
-    this->clrState(EOF);
-    return s;
+void JSURandomInputStream::seek(s32 offset, JSUStreamSeekFrom mode)
+{
+	seekPos(offset, mode);
+	clrState(State_1);
 }

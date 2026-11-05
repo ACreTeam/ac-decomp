@@ -2,23 +2,19 @@
 #define JKRDISPOSER_H
 
 #include "types.h"
-#include "JSystem/JSupport/JSUList.h"
 
-#ifdef __cplusplus
-extern "C" {
+#include <JSystem/JSupport/JSUList.h>
 
 class JKRHeap;
 
-class JKRDisposer {
-  public:
+class JKRDisposer
+{
+public:
     JKRDisposer();
     virtual ~JKRDisposer();
-
-  public:
-    JKRHeap* mRootHeap;                 // _4
+public:
+    JKRHeap* mRootHeap; // _4
     JSULink<JKRDisposer> mPointerLinks; // _8
 };
-}
-#endif
 
 #endif
