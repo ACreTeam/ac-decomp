@@ -659,21 +659,22 @@ config.libs = [
         "progress_category": "game",
         "src_dir": "src/static",
         "objects": [
-            Object(MatchingFor("GAFE01_00"), "boot.c"),
+            Object(Matching, "boot.c", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
             Object(
                 Matching, "jsyswrap.cpp",
                 cflags=["-i include/AUS", "-i src/AUS/static", *cflags_static, "-sdata 0", "-sdata2 0", "-inline on"]
                 if config.version == "GAFU01_00" else None,
                 extra_cflags=["-O4,p", "-inline off"] if config.version == "GAFU01_00" else [],
             ),
-            Object(Matching, "version.c"),
-            Object(MatchingFor("GAFE01_00"), "initial_menu.c"),
-            Object(MatchingFor("GAFE01_00"), "dvderr.c", extra_cflags=["-pool off"]),
+            Object(Matching, "version.o" if config.version == "GAFU01_00" else "version.c", source="version.c"),
+            Object(Matching, "initial_menu.c", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "dvderr.c", extra_cflags=["-pool off"]),
+            *([Object(Matching, "bootdata.obj")] if config.version == "GAFU01_00" else []),
             Object(Matching, "bootdata/gam_win1.c"),
             Object(Matching, "bootdata/gam_win2.c"),
             Object(Matching, "bootdata/gam_win3.c"),
             Object(Matching, "bootdata/logo_nin.c"),
-            Object(Matching, "nintendo_hi_0.c"),
+            Object(Matching, "nintendo_hi_0.o" if config.version == "GAFU01_00" else "nintendo_hi_0.c", source="nintendo_hi_0.c"),
             Object(MatchingFor("GAFE01_00"), "GBA2/JoyBoot.c"),
         ],
     },
@@ -5381,6 +5382,13 @@ config.custom_build_steps = {}
 # Australia's REL keeps the asset objects combined as dataobject.obj. Rebuild
 # that object for objdiff, using the individual asset order recorded by US.
 if config.version == "GAFU01_00":
+    # Australia's boot assets are also combined into a single original object.
+    config.objdiff_partial_links["bootdata.obj"] = [
+        "bootdata/gam_win1.c",
+        "bootdata/gam_win2.c",
+        "bootdata/gam_win3.c",
+        "bootdata/logo_nin.c",
+    ]
     dataobject_lib = next(lib for lib in config.libs if lib["lib"] == "dataobject")
     dataobject_splits = Path("config/GAFE01_00/foresta/splits.txt")
     dataobject_order = {
