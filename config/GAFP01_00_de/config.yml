@@ -1,0 +1,31 @@
+object_base: orig/GAFP01_00_de
+object: sys/main.dol
+hash: 345b0668a2f505509e5f69203d7c5490eb72aff2
+name: static
+symbols: config/GAFP01_00_de/symbols.txt
+splits: config/GAFP01_00_de/splits.txt
+# Map sizes include the linker common-BSS inflation bug. symbols.txt records
+# the true sizes of jac_audioThread (0x318) and MK_QUEUE (0x18), as in e+.
+common_start: 0x80221CB4
+mw_comment_version: 10
+symbols_known: true
+fill_gaps: true
+ldscript_template: config/GAFP01_00_de/ldscript.tpl
+
+modules:
+- object: files/foresta.rel.szs
+  hash: df7058ce00488cdee523147ec39ba35ca090e445
+  symbols: config/GAFP01_00_de/foresta/symbols.txt
+  splits: config/GAFP01_00_de/foresta/splits.txt
+- object: files/forestd.rel.szs
+  hash: 3774e60f3479b5a57d80a5b46d68aff7c4ec86a8
+  symbols: config/GAFP01_00_de/forestd/symbols.txt
+  splits: config/GAFP01_00_de/forestd/splits.txt
+- object: files/foresti.rel.szs
+  hash: a4bca4afbe8704ed05d18bf675792bd19c868cd5
+  symbols: config/GAFP01_00_de/foresti/symbols.txt
+  splits: config/GAFP01_00_de/foresti/splits.txt
+- object: files/foresto.rel.szs
+  hash: 9eb02c3c99994c04442663e3c5a1e9912f17bf2b
+  symbols: config/GAFP01_00_de/foresto/symbols.txt
+  splits: config/GAFP01_00_de/foresto/splits.txt

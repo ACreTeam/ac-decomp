@@ -35,6 +35,8 @@ DEFAULT_VERSION = 0
 VERSIONS = [
     "GAFE01_00",  # USA Rev 0
     "GAFU01_00",  # Australia Rev 0
+    "GAFP01_00",  # PAL Rev 0 (English unless --language is supplied)
+    *[f"GAFP01_00_{language}" for language in ("en", "fr", "de", "it", "es")],
 ]
 
 parser = argparse.ArgumentParser()
@@ -49,9 +51,14 @@ parser.add_argument(
     "-v",
     "--version",
     choices=VERSIONS,
-    type=str.upper,
+    type=lambda value: value[:9].upper() + value[9:].lower(),
     default=VERSIONS[DEFAULT_VERSION],
     help="version to build",
+)
+parser.add_argument(
+    "--language",
+    choices=("en", "fr", "de", "it", "es"),
+    help="PAL language (default: en); also selectable with --version GAFP01_00_en",
 )
 parser.add_argument(
     "--build-dir",
@@ -151,9 +158,18 @@ parser.add_argument(
 args = parser.parse_args()
 
 config = ProjectConfig()
-config.version = str(args.version)
-version_num = VERSIONS.index(config.version)
-is_aus = config.version == "GAFU01_00"
+release_version = args.version[:9]
+is_pal = release_version == "GAFP01_00"
+is_aus = release_version == "GAFU01_00"
+language_ids = {"en": 0, "es": 1, "fr": 2, "it": 3, "de": 4}
+if args.language and not is_pal:
+    parser.error("--language is only supported for GAFP01_00")
+version_language = args.version[10:] if len(args.version) > 9 else None
+if args.language and version_language and args.language != version_language:
+    parser.error("--language conflicts with the language in --version")
+language = args.language or version_language or "en"
+config.version = f"{release_version}_{language}" if is_pal else release_version
+version_num = {"GAFE01_00": 0, "GAFU01_00": 1, "GAFP01_00": 2}[release_version]
 
 # Apply arguments
 config.build_dir = args.build_dir
@@ -240,6 +256,7 @@ cflags_base = [
     "-i src/static/dolphin",
     f"-i build/{config.version}/include",
     f"-DVERSION={version_num}",
+    f"-dGAME_LANGUAGE={language_ids[language]}",
 ]
 
 # Debug flags
@@ -301,7 +318,7 @@ cflags_foresta = [
     "-sym on",
 ]
 
-config.linker_version = "GC/2.6" if is_aus else "GC/1.3.2"
+config.linker_version = "GC/2.6" if is_aus or is_pal else "GC/1.3.2"
 cflags_foresta += ["-O4,p", "-inline off"] if is_aus else ["-O4,s"]
 
 
@@ -5324,6 +5341,11 @@ config.libs = [
     },
 ]
 
+# PAL bootstrap: all five binaries are rebuilt from DTK's original split objects.
+# Add PAL source configuration here only after each target has been verified.
+if is_pal:
+    config.libs = []
+
 if args.fast_mwcc:
     # 2.6f1 performs UTF-8 to Shift JIS conversion internally.
     # Keep the original linker and any libraries requiring older compilers.
@@ -5401,7 +5423,7 @@ if is_aus:
     config.reconfig_deps = [*(config.reconfig_deps or []), dataobject_splits]
 
 # Grab the specific GameID so we can format our strings properly
-version = VERSIONS[version_num]
+version = config.version
 out_dir = config.build_dir / version
 
 

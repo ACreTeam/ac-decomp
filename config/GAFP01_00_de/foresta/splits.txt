@@ -1,0 +1,3775 @@
+Sections:
+	.text       type:code align:4
+	.ctors      type:rodata align:4
+	.dtors      type:rodata align:4
+	.rodata     type:rodata align:8
+	.data       type:data align:32
+	.bss        type:bss align:32
+
+executor.o:
+	.text       start:0x00000000 end:0x00000060
+	.bss        start:0x00000000 end:0x00000008
+
+sys_vimgr.o:
+	.text       start:0x00000060 end:0x00000080
+
+c_keyframe.o:
+	.text       start:0x00000080 end:0x00002A44
+	.text       start:0x00002A44 end:0x00002A68
+	.text       start:0x00002A68 end:0x00002A70
+	.rodata     start:0x00000000 end:0x00000048
+
+evw_anime.o:
+	.text       start:0x00002A70 end:0x00003720
+	.rodata     start:0x00000048 end:0x00000060
+	.data       start:0x00000000 end:0x00000018
+
+m_all_grow.o:
+	.text       start:0x00003720 end:0x000044CC
+	.rodata     start:0x00000060 end:0x00000088
+	.data       start:0x00000018 end:0x00000080
+	.bss        start:0x00000008 end:0x00000028
+
+m_actor.o:
+	.text       start:0x000044CC end:0x000064B4
+	.text       start:0x000064B4 end:0x000064B4
+	.text       start:0x000064B4 end:0x000064B4
+	.rodata     start:0x00000088 end:0x000000C0
+	.data       start:0x00000080 end:0x000000A8
+	.bss        start:0x00000028 end:0x00000068
+
+m_actor_dlftbls.o:
+	.text       start:0x000064B4 end:0x000064D4
+	.data       start:0x000000A8 end:0x00001F68
+	.bss        start:0x00000068 end:0x00000070
+
+m_actor_shadow.o:
+	.text       start:0x000064D4 end:0x00007450
+	.rodata     start:0x000000C0 end:0x00000120
+	.data       start:0x00001F68 end:0x00001FC8
+
+m_banti.o:
+	.text       start:0x00007450 end:0x00008A0C
+	.text       start:0x00008A0C end:0x00008AE4
+	.rodata     start:0x00000120 end:0x00000180
+	.data       start:0x00001FC8 end:0x000020D8
+	.bss        start:0x00000070 end:0x000004C0
+
+m_bg_tex.o:
+	.text       start:0x00008AE4 end:0x00008AE4
+	.bss        start:0x000004C0 end:0x000088C0
+
+m_bg_item.o:
+	.text       start:0x00008AE4 end:0x00008C88
+	.rodata     start:0x00000180 end:0x00000190
+	.bss        start:0x000088C0 end:0x000088C8
+
+m_bgm.o:
+	.text       start:0x00008C88 end:0x0000D738
+	.rodata     start:0x00000190 end:0x000001D8
+	.data       start:0x000020D8 end:0x00002298
+	.bss        start:0x000088C8 end:0x00008BE0
+
+m_calendar.o:
+	.text       start:0x0000D738 end:0x0000E368
+
+m_camera2.o:
+	.text       start:0x0000E368 end:0x00014010
+	.text       start:0x00014010 end:0x00014058
+	.text       start:0x00014058 end:0x00014058
+	.rodata     start:0x000001D8 end:0x000005C8
+	.data       start:0x00002298 end:0x000022E0
+
+m_choice.o:
+	.text       start:0x00014058 end:0x0001422C
+	.text       start:0x0001422C end:0x0001589C
+	.text       start:0x0001589C end:0x00015958
+	.text       start:0x00015958 end:0x00015998
+	.text       start:0x00015998 end:0x00015B4C
+	.text       start:0x00015B4C end:0x00016038
+	.text       start:0x00016038 end:0x0001623C
+	.text       start:0x0001623C end:0x000166C0
+	.rodata     start:0x000005C8 end:0x000009E8
+	.data       start:0x000022E0 end:0x000033E0
+	.bss        start:0x00008BE0 end:0x00008BE8
+
+m_clip.o:
+	.text       start:0x000166C0 end:0x00016768
+
+m_cockroach.o:
+	.text       start:0x00016768 end:0x00016DD4
+
+m_collision_bg.o:
+	.text       start:0x00016DD4 end:0x0001BAC0
+	.text       start:0x0001BAC0 end:0x0001BAC0
+	.text       start:0x0001BAC0 end:0x0001D30C
+	.text       start:0x0001D30C end:0x0001E2F8
+	.text       start:0x0001E2F8 end:0x0001F9C8
+	.text       start:0x0001F9C8 end:0x0001F9C8
+	.text       start:0x0001F9C8 end:0x00022F1C
+	.text       start:0x00022F1C end:0x00024840
+	.rodata     start:0x000009E8 end:0x00000C10
+	.data       start:0x000033E0 end:0x00003D80
+	.bss        start:0x00008BE8 end:0x0000BB90
+
+m_collision_bg_math.o:
+	.text       start:0x00024840 end:0x0002588C
+	.text       start:0x0002588C end:0x0002588C
+	.text       start:0x0002588C end:0x0002588C
+	.rodata     start:0x00000C10 end:0x00000C28
+	.data       start:0x00003D80 end:0x00003DA0
+	.bss        start:0x0000BB90 end:0x0000BBA8
+
+m_collision_obj.o:
+	.text       start:0x0002588C end:0x000270C8
+	.text       start:0x000270C8 end:0x000270C8
+	.text       start:0x000270C8 end:0x000270C8
+	.rodata     start:0x00000C28 end:0x00000C48
+	.data       start:0x00003DA0 end:0x00003E70
+	.bss        start:0x0000BBA8 end:0x0000BBE0
+
+m_common_data.o:
+	.text       start:0x000270C8 end:0x0002718C
+	.bss        start:0x0000BBE0 end:0x000397E0
+
+m_controller.o:
+	.text       start:0x0002718C end:0x00027658
+	.text       start:0x00027658 end:0x00027658
+	.rodata     start:0x00000C48 end:0x00000C68
+
+m_debug.o:
+	.text       start:0x00027658 end:0x0002778C
+	.bss        start:0x000397E0 end:0x000397E8
+
+m_debug_display.o:
+	.text       start:0x0002778C end:0x00027BF8
+	.data       start:0x00003E70 end:0x00003EC0
+	.bss        start:0x000397E8 end:0x000397F0
+
+m_debug_hayakawa.o:
+	.text       start:0x00027BF8 end:0x00028B9C
+	.rodata     start:0x00000C68 end:0x00000CA8
+	.data       start:0x00003EC0 end:0x00003EF0
+
+m_debug_mode.o:
+	.text       start:0x00028B9C end:0x00029CA0
+	.text       start:0x00029CA0 end:0x00029CA0
+	.rodata     start:0x00000CA8 end:0x00000CC0
+	.data       start:0x00003EF0 end:0x00004320
+	.bss        start:0x000397F0 end:0x0003A5F8
+
+m_demo.o:
+	.text       start:0x00029CA0 end:0x0002BDD8
+	.rodata     start:0x00000CC0 end:0x00000E18
+	.data       start:0x00004320 end:0x000044B0
+	.bss        start:0x0003A5F8 end:0x0003A930
+
+m_diary.o:
+	.text       start:0x0002BDD8 end:0x0002BE78
+
+m_eappli.o:
+	.text       start:0x0002BE78 end:0x0002C324
+	.bss        start:0x0003A930 end:0x0003AD30
+
+m_event.o:
+	.text       start:0x0002C324 end:0x00031A4C
+	.rodata     start:0x00000E18 end:0x00000E50
+	.data       start:0x000044B0 end:0x00004E90
+	.bss        start:0x0003AD30 end:0x0003AF70
+
+m_event_map_npc.o:
+	.text       start:0x00031A4C end:0x000329FC
+	.rodata     start:0x00000E50 end:0x00000E58
+	.data       start:0x00004E90 end:0x00005638
+
+m_fbdemo.o:
+	.text       start:0x000329FC end:0x0003319C
+	.rodata     start:0x00000E58 end:0x00000E78
+	.data       start:0x00005638 end:0x00005668
+
+m_fbdemo_triforce.o:
+	.text       start:0x0003319C end:0x000335EC
+	.rodata     start:0x00000E78 end:0x00000EB8
+
+m_fbdemo_wipe1.o:
+	.text       start:0x000335EC end:0x000339E4
+	.rodata     start:0x00000EB8 end:0x00000ED8
+	.data       start:0x00005668 end:0x000060F0
+
+m_fbdemo_fade.o:
+	.text       start:0x000339E4 end:0x00033BF4
+	.rodata     start:0x00000ED8 end:0x00000EF0
+	.data       start:0x000060F0 end:0x00006138
+
+m_field_assessment.o:
+	.text       start:0x00033BF4 end:0x00034A5C
+	.rodata     start:0x00000EF0 end:0x00000EF8
+	.data       start:0x00006138 end:0x000061B8
+	.bss        start:0x0003AF70 end:0x0003AF80
+
+m_field_make.o:
+	.text       start:0x00034A5C end:0x00037EF0
+	.rodata     start:0x00000EF8 end:0x00000F20
+	.data       start:0x000061B8 end:0x000069C0
+	.bss        start:0x0003AF80 end:0x0003B268
+
+m_field_info.o:
+	.text       start:0x00037EF0 end:0x0003EEB8
+	.rodata     start:0x00000F20 end:0x00000F80
+	.data       start:0x000069C0 end:0x00006D18
+	.bss        start:0x0003B268 end:0x0003B3B0
+
+m_fishrecord.o:
+	.text       start:0x0003EEB8 end:0x0003FE80
+	.rodata     start:0x00000F80 end:0x00000F98
+	.data       start:0x00006D18 end:0x00006D20
+	.bss        start:0x0003B3B0 end:0x0003B3B8
+
+m_flashrom.o:
+	.text       start:0x0003FE80 end:0x000403DC
+	.text       start:0x000403DC end:0x0004172C
+	.text       start:0x0004172C end:0x00041734
+	.text       start:0x00041734 end:0x00041FB4
+	.text       start:0x00041FB4 end:0x00042788
+	.text       start:0x00042788 end:0x000429F0
+	.text       start:0x000429F0 end:0x00042C88
+	.text       start:0x00042C88 end:0x00042E0C
+	.data       start:0x00006D20 end:0x00006E30
+	.bss        start:0x0003B3B8 end:0x0003B410
+
+m_font.o:
+	.text       start:0x00042E0C end:0x0004351C
+	.text       start:0x0004351C end:0x00043530
+	.text       start:0x00043530 end:0x00045938
+	.text       start:0x00045938 end:0x00045938
+	.text       start:0x00045938 end:0x00045938
+	.text       start:0x00045938 end:0x00045B78
+	.text       start:0x00045B78 end:0x00045B9C
+	.rodata     start:0x00000F98 end:0x000011E0
+	.data       start:0x00006E30 end:0x00007068
+	.bss        start:0x0003B410 end:0x0003B460
+
+m_fuusen.o:
+	.text       start:0x00045B9C end:0x00045ED4
+	.rodata     start:0x000011E0 end:0x00001210
+	.bss        start:0x0003B460 end:0x0003B468
+
+m_game_dlftbls.o:
+	.text       start:0x00045ED4 end:0x00045ED4
+	.data       start:0x00007068 end:0x00007278
+
+m_huusui_room.o:
+	.text       start:0x00045ED4 end:0x00045F34
+
+m_handbill.o:
+	.text       start:0x00045F34 end:0x00047E60
+	.rodata     start:0x00001210 end:0x000015B0
+	.bss        start:0x0003B468 end:0x0003B788
+
+m_home.o:
+	.text       start:0x00047E60 end:0x000487C0
+	.data       start:0x00007278 end:0x00007EF0
+
+m_house.o:
+	.text       start:0x000487C0 end:0x000489E0
+
+m_land.o:
+	.text       start:0x000489E0 end:0x00048EEC
+	.rodata     start:0x000015B0 end:0x000015B8
+	.bss        start:0x0003B788 end:0x0003B7A0
+
+m_island.o:
+	.text       start:0x00048EEC end:0x0004AED4
+	.data       start:0x00007EF0 end:0x00007F38
+	.bss        start:0x0003B7A0 end:0x0003D0C8
+
+m_item_name.o:
+	.text       start:0x0004AED4 end:0x0004B30C
+	.data       start:0x00007F38 end:0x00009B38
+
+m_kabu_manager.o:
+	.text       start:0x0004B30C end:0x0004B8C8
+	.rodata     start:0x000015B8 end:0x000015F8
+	.data       start:0x00009B38 end:0x00009B68
+
+m_kankyo.o:
+	.text       start:0x0004B8C8 end:0x0004F23C
+	.text       start:0x0004F23C end:0x00050204
+	.text       start:0x00050204 end:0x00050204
+	.rodata     start:0x000015F8 end:0x00001758
+	.data       start:0x00009B68 end:0x0000A460
+	.bss        start:0x0003D0C8 end:0x0003D178
+
+m_lib.o:
+	.text       start:0x00050204 end:0x00051060
+	.text       start:0x00051060 end:0x00051060
+	.rodata     start:0x00001758 end:0x00001780
+
+m_lights.o:
+	.text       start:0x00051060 end:0x00051BC8
+	.text       start:0x00051BC8 end:0x00051BC8
+	.rodata     start:0x00001780 end:0x000017C0
+	.bss        start:0x0003D178 end:0x0003D300
+
+m_malloc.o:
+	.text       start:0x00051BC8 end:0x00051DC4
+	.bss        start:0x0003D300 end:0x0003D330
+
+m_mail.o:
+	.text       start:0x00051DC4 end:0x00052908
+	.data       start:0x0000A460 end:0x0000A4B0
+	.bss        start:0x0003D330 end:0x0003D4E0
+
+m_mail_check.o:
+	.text       start:0x00052908 end:0x00052928
+
+m_mail_password_check.o:
+	.text       start:0x00052928 end:0x00052928
+	.text       start:0x00052928 end:0x00054E04
+	.data       start:0x0000A4B0 end:0x0000AFC8
+
+m_mark_room.o:
+	.text       start:0x00054E04 end:0x000553F4
+	.rodata     start:0x000017C0 end:0x000017D0
+
+m_melody.o:
+	.text       start:0x000553F4 end:0x000558C0
+	.data       start:0x0000AFC8 end:0x0000AFE0
+	.bss        start:0x0003D4E0 end:0x0003D500
+
+m_msg.o:
+	.text       start:0x000558C0 end:0x00055C30
+	.text       start:0x00055C30 end:0x00056318
+	.text       start:0x00056318 end:0x00057348
+	.text       start:0x00057348 end:0x00059B08
+	.text       start:0x00059B08 end:0x0005A464
+	.text       start:0x0005A464 end:0x0005A4AC
+	.text       start:0x0005A4AC end:0x0005A6A8
+	.text       start:0x0005A6A8 end:0x0005AB0C
+	.text       start:0x0005AB0C end:0x000618B4
+	.text       start:0x000618B4 end:0x00061A70
+	.text       start:0x00061A70 end:0x00061BD0
+	.text       start:0x00061BD0 end:0x00061C3C
+	.text       start:0x00061C3C end:0x00061D34
+	.text       start:0x00061D34 end:0x000621E0
+	.text       start:0x000621E0 end:0x000626E0
+	.text       start:0x000626E0 end:0x000626E0
+	.text       start:0x000626E0 end:0x000626E0
+	.rodata     start:0x000017D0 end:0x00001FB8
+	.data       start:0x0000AFE0 end:0x0000E060
+	.bss        start:0x0003D500 end:0x0003FC00
+
+m_museum.o:
+	.text       start:0x000626E0 end:0x00063A74
+	.rodata     start:0x00001FB8 end:0x00001FD0
+	.data       start:0x0000E060 end:0x0000E0E8
+	.bss        start:0x0003FC00 end:0x0003FD40
+
+m_museum_display.o:
+	.text       start:0x00063A74 end:0x00064674
+	.data       start:0x0000E0E8 end:0x0000E1D8
+
+m_mushroom.o:
+	.text       start:0x00064674 end:0x000659D0
+	.rodata     start:0x00001FD0 end:0x00001FE0
+	.data       start:0x0000E1D8 end:0x0000E210
+	.bss        start:0x0003FD40 end:0x00040160
+
+m_name_table.o:
+	.text       start:0x000659D0 end:0x00066220
+	.rodata     start:0x00001FE0 end:0x00001FF8
+	.data       start:0x0000E210 end:0x0000E9A0
+
+m_needlework.o:
+	.text       start:0x00066220 end:0x00066984
+	.data       start:0x0000E9A0 end:0x0000EC00
+	.bss        start:0x00040160 end:0x00040380
+
+m_notice.o:
+	.text       start:0x00066984 end:0x00066984
+	.text       start:0x00066984 end:0x00067E18
+	.rodata     start:0x00001FF8 end:0x00002058
+	.data       start:0x0000EC00 end:0x0000ECB8
+	.bss        start:0x00040380 end:0x00040440
+
+m_npc.o:
+	.text       start:0x00067E18 end:0x00074E64
+	.rodata     start:0x00002058 end:0x00002090
+	.data       start:0x0000ECB8 end:0x0000F410
+	.bss        start:0x00040440 end:0x00043E68
+
+m_npc_schedule.o:
+	.text       start:0x00074E64 end:0x00075260
+	.data       start:0x0000F410 end:0x0000F5C8
+
+m_npc_walk.o:
+	.text       start:0x00075260 end:0x00076490
+	.rodata     start:0x00002090 end:0x000020A0
+	.data       start:0x0000F5C8 end:0x0000F778
+	.bss        start:0x00043E68 end:0x00043EB8
+
+m_olib.o:
+	.text       start:0x00076490 end:0x000765E4
+	.text       start:0x000765E4 end:0x000765E4
+	.rodata     start:0x000020A0 end:0x000020B0
+
+m_pause.o:
+	.text       start:0x000765E4 end:0x00076698
+
+m_player_call.o:
+	.text       start:0x00076698 end:0x00076898
+	.data       start:0x0000F778 end:0x0000F7A0
+	.bss        start:0x00043EB8 end:0x00043EC8
+
+m_player_lib.o:
+	.text       start:0x00076898 end:0x0007C580
+	.rodata     start:0x000020B0 end:0x00002868
+	.data       start:0x0000F7A0 end:0x0000FC70
+	.bss        start:0x00043EC8 end:0x00043F60
+
+m_police_box.o:
+	.text       start:0x0007C580 end:0x0007CE3C
+	.rodata     start:0x00002868 end:0x00002878
+	.data       start:0x0000FC70 end:0x0000FCC8
+
+m_post_office.o:
+	.text       start:0x0007CE3C end:0x0007DFF4
+	.data       start:0x0000FCC8 end:0x0000FCD8
+
+m_private.o:
+	.text       start:0x0007DFF4 end:0x000812A8
+	.rodata     start:0x00002878 end:0x000028A8
+	.data       start:0x0000FCD8 end:0x0000FE08
+	.bss        start:0x00043F60 end:0x000464D0
+
+m_quest.o:
+	.text       start:0x000812A8 end:0x00083758
+	.rodata     start:0x000028A8 end:0x000028B8
+	.data       start:0x0000FE08 end:0x0000FE70
+	.bss        start:0x000464D0 end:0x00046508
+
+m_random_field.o:
+	.text       start:0x00083758 end:0x00083D34
+	.rodata     start:0x000028B8 end:0x000028E0
+	.data       start:0x0000FE70 end:0x00010360
+
+m_rcp.o:
+	.text       start:0x00083D34 end:0x0008495C
+	.data       start:0x00010360 end:0x000106E8
+	.bss        start:0x00046508 end:0x00046510
+
+m_room_type.o:
+	.text       start:0x0008495C end:0x00086780
+	.text       start:0x00086780 end:0x00086780
+	.rodata     start:0x000028E0 end:0x000028F8
+	.data       start:0x000106E8 end:0x00011468
+	.bss        start:0x00046510 end:0x00046528
+
+m_scene_ftr.o:
+	.text       start:0x00086780 end:0x00086864
+
+m_shop.o:
+	.text       start:0x00086864 end:0x0008B368
+	.text       start:0x0008B368 end:0x0008B794
+	.rodata     start:0x000028F8 end:0x00002958
+	.data       start:0x00011468 end:0x000119D0
+	.bss        start:0x00046528 end:0x00046538
+
+m_soncho.o:
+	.text       start:0x0008B794 end:0x0008D458
+	.rodata     start:0x00002958 end:0x00002968
+	.data       start:0x000119D0 end:0x00011B48
+
+m_start_data_init.o:
+	.text       start:0x0008D458 end:0x0008E2D4
+	.rodata     start:0x00002968 end:0x00002978
+	.data       start:0x00011B48 end:0x00011BA8
+
+m_string.o:
+	.text       start:0x0008E2D4 end:0x0008E954
+	.bss        start:0x00046538 end:0x00046540
+
+m_submenu.o:
+	.text       start:0x0008E954 end:0x0008FD0C
+	.rodata     start:0x00002978 end:0x00002980
+	.data       start:0x00011BA8 end:0x00011C58
+	.bss        start:0x00046540 end:0x00046548
+
+m_scene.o:
+	.text       start:0x0008FD0C end:0x00090DA0
+	.rodata     start:0x00002980 end:0x00002998
+	.data       start:0x00011C58 end:0x00011CA0
+
+m_scene_table.o:
+	.text       start:0x00090DA0 end:0x00090DA0
+	.data       start:0x00011CA0 end:0x000120B0
+
+m_skin_matrix.o:
+	.text       start:0x00090DA0 end:0x0009143C
+	.text       start:0x0009143C end:0x0009143C
+	.text       start:0x0009143C end:0x0009143C
+	.rodata     start:0x00002998 end:0x000029A0
+
+m_snowman.o:
+	.text       start:0x0009143C end:0x00091928
+	.rodata     start:0x000029A0 end:0x000029B8
+
+m_titledemo.o:
+	.text       start:0x00091928 end:0x00091DB8
+	.rodata     start:0x000029B8 end:0x000029D8
+	.data       start:0x000120B0 end:0x000120C8
+	.bss        start:0x00046548 end:0x00046550
+
+m_train_control.o:
+	.text       start:0x00091DB8 end:0x00092DF8
+	.text       start:0x00092DF8 end:0x00092DF8
+	.text       start:0x00092DF8 end:0x00092DF8
+	.rodata     start:0x000029D8 end:0x00002A28
+	.data       start:0x000120C8 end:0x00012150
+
+m_time.o:
+	.text       start:0x00092DF8 end:0x000938A0
+	.rodata     start:0x00002A28 end:0x00002A50
+	.data       start:0x00012150 end:0x00012200
+	.bss        start:0x00046550 end:0x00046560
+
+m_view.o:
+	.text       start:0x000938A0 end:0x00094908
+	.rodata     start:0x00002A50 end:0x00002A80
+
+m_watch_my_step.o:
+	.text       start:0x00094908 end:0x00095E48
+	.text       start:0x00095E48 end:0x00095E48
+	.rodata     start:0x00002A80 end:0x00002B38
+	.data       start:0x00012200 end:0x00012238
+	.bss        start:0x00046560 end:0x000465C0
+
+m_roll_lib.o:
+	.text       start:0x00095E48 end:0x00096E48
+	.text       start:0x00096E48 end:0x00096E48
+	.rodata     start:0x00002B38 end:0x00002B88
+
+m_card.o:
+	.text       start:0x00096E48 end:0x000A3718
+	.text       start:0x000A3718 end:0x000A3844
+	.rodata     start:0x00002B88 end:0x00002BA0
+	.data       start:0x00012238 end:0x00012A60
+	.bss        start:0x000465C0 end:0x0009A180
+
+m_cpak.o:
+	.text       start:0x000A3844 end:0x000A3888
+	.data       start:0x00012A60 end:0x00012A68
+	.bss        start:0x0009A180 end:0x0009A1D8
+
+s_cpak.o:
+	.text       start:0x000A3888 end:0x000A3890
+
+m_vibctl.o:
+	.text       start:0x000A3890 end:0x000A4118
+	.rodata     start:0x00002BA0 end:0x00002D18
+	.bss        start:0x0009A1D8 end:0x0009A2F8
+
+PreRender.o:
+	.text       start:0x000A4118 end:0x000A4B0C
+	.rodata     start:0x00002D18 end:0x00002D38
+
+THA_GA.o:
+	.text       start:0x000A4B0C end:0x000A4B6C
+
+TwoHeadArena.o:
+	.text       start:0x000A4B6C end:0x000A4C94
+
+game.o:
+	.text       start:0x000A4C94 end:0x000A53EC
+	.rodata     start:0x00002D38 end:0x00002D48
+	.data       start:0x00012A68 end:0x00012A70
+	.bss        start:0x0009A2F8 end:0x0009A328
+
+gamealloc.o:
+	.text       start:0x000A53EC end:0x000A552C
+
+gfxalloc.o:
+	.text       start:0x000A552C end:0x000A5594
+
+graph.o:
+	.text       start:0x000A5594 end:0x000A5F74
+	.data       start:0x00012A70 end:0x00012A78
+	.bss        start:0x0009A328 end:0x0009A698
+
+irqmgr.o:
+	.text       start:0x000A5F74 end:0x000A6548
+	.data       start:0x00012A78 end:0x00012A98
+	.bss        start:0x0009A698 end:0x0009BDF8
+
+lb_rtc.o:
+	.text       start:0x000A6548 end:0x000A7794
+	.rodata     start:0x00002D48 end:0x00002DF0
+	.data       start:0x00012A98 end:0x00012AA0
+	.bss        start:0x0009BDF8 end:0x0009BE08
+
+lb_reki.o:
+	.text       start:0x000A7794 end:0x000A7D64
+	.rodata     start:0x00002DF0 end:0x00002E10
+	.data       start:0x00012AA0 end:0x00012ED8
+
+main.o:
+	.text       start:0x000A7D64 end:0x000A7F74
+	.data       start:0x00012ED8 end:0x00012F00
+	.bss        start:0x0009BE08 end:0x0009C188
+
+padmgr.o:
+	.text       start:0x000A7F74 end:0x000A8C04
+	.data       start:0x00012F00 end:0x00012F18
+	.bss        start:0x0009C188 end:0x0009C5F8
+
+sys_math.o:
+	.text       start:0x000A8C04 end:0x000A8D08
+	.rodata     start:0x00002E10 end:0x00002E20
+
+sys_math3d.o:
+	.text       start:0x000A8D08 end:0x000AC110
+	.text       start:0x000AC110 end:0x000AC110
+	.text       start:0x000AC110 end:0x000AC110
+	.rodata     start:0x00002E20 end:0x00002E48
+	.data       start:0x00012F18 end:0x00012F30
+	.bss        start:0x0009C5F8 end:0x0009C7C0
+
+sys_math_atan.o:
+	.text       start:0x000AC110 end:0x000AC328
+	.rodata     start:0x00002E48 end:0x00002E60
+	.data       start:0x00012F30 end:0x00013738
+
+sys_matrix.o:
+	.text       start:0x000AC328 end:0x000AE9CC
+	.text       start:0x000AE9CC end:0x000AE9CC
+	.rodata     start:0x00002E60 end:0x00002E88
+	.data       start:0x00013738 end:0x000137B8
+	.bss        start:0x0009C7C0 end:0x0009C7C8
+
+sys_stacks.o:
+	.text       start:0x000AE9CC end:0x000AE9CC
+	.bss        start:0x0009C7C8 end:0x000A07C8
+
+zurumode.o:
+	.text       start:0x000AE9CC end:0x000AEE9C
+	.data       start:0x000137B8 end:0x000137F8
+	.bss        start:0x000A07C8 end:0x000A07D8
+
+sys_ucode.o:
+	.text       start:0x000AEE9C end:0x000AEEDC
+	.data       start:0x000137F8 end:0x00013808
+	.bss        start:0x000A07D8 end:0x000A07F8
+
+ac_sample.o:
+	.text       start:0x000AEEDC end:0x000AF4B8
+	.rodata     start:0x00002E88 end:0x00002E90
+	.data       start:0x00013808 end:0x00013868
+	.bss        start:0x000A07F8 end:0x000A0838
+
+ac_airplane.o:
+	.text       start:0x000AF4B8 end:0x000AF6F4
+	.text       start:0x000AF6F4 end:0x000B0360
+	.rodata     start:0x00002E90 end:0x00002F40
+	.data       start:0x00013868 end:0x00013930
+
+ac_animal_logo.o:
+	.text       start:0x000B0360 end:0x000B0360
+	.text       start:0x000B0360 end:0x000B13F0
+	.text       start:0x000B13F0 end:0x000B167C
+	.rodata     start:0x00002F40 end:0x000030C8
+	.data       start:0x00013930 end:0x00013970
+
+ac_arrange_ftr.o:
+	.text       start:0x000B167C end:0x000B168C
+	.data       start:0x00013970 end:0x00013998
+
+ac_arrange_room.o:
+	.text       start:0x000B168C end:0x000B1BA0
+	.rodata     start:0x000030C8 end:0x000030D0
+	.data       start:0x00013998 end:0x000139C0
+
+ac_ball.o:
+	.text       start:0x000B1BA0 end:0x000B38F8
+	.text       start:0x000B38F8 end:0x000B38F8
+	.text       start:0x000B38F8 end:0x000B38F8
+	.rodata     start:0x000030D0 end:0x00003188
+	.data       start:0x000139C0 end:0x00013A20
+	.bss        start:0x000A0838 end:0x000A0840
+
+ac_balloon.o:
+	.text       start:0x000B38F8 end:0x000B3FC4
+	.text       start:0x000B3FC4 end:0x000B3FC4
+	.rodata     start:0x00003188 end:0x000031A0
+	.data       start:0x00013A20 end:0x00013A78
+
+ac_birth_control.o:
+	.text       start:0x000B3FC4 end:0x000B48E8
+	.rodata     start:0x000031A0 end:0x000031A8
+	.data       start:0x00013A78 end:0x00013AF0
+
+ac_boat_demo.o:
+	.text       start:0x000B48E8 end:0x000B49D4
+	.text       start:0x000B49D4 end:0x000B5614
+	.rodata     start:0x000031A8 end:0x000031B0
+	.data       start:0x00013AF0 end:0x00035788
+	.bss        start:0x000A0840 end:0x000A0848
+
+ac_boxManager.o:
+	.text       start:0x000B5614 end:0x000B5624
+	.data       start:0x00035788 end:0x000357B0
+
+ac_boxMove.o:
+	.text       start:0x000B5624 end:0x000B5634
+	.data       start:0x000357B0 end:0x000357D8
+
+ac_boxTrick01.o:
+	.text       start:0x000B5634 end:0x000B5640
+	.data       start:0x000357D8 end:0x00035800
+
+ac_broker_design.o:
+	.text       start:0x000B5640 end:0x000B5938
+	.data       start:0x00035800 end:0x00035840
+
+ac_cottage.o:
+	.text       start:0x000B5938 end:0x000B6F0C
+	.rodata     start:0x000031B0 end:0x000033C0
+	.data       start:0x00035840 end:0x00035980
+
+ac_effectbg.o:
+	.text       start:0x000B6F0C end:0x000B8F60
+	.text       start:0x000B8F60 end:0x000B8F60
+	.rodata     start:0x000033C0 end:0x00003410
+	.data       start:0x00035980 end:0x00035CF0
+	.bss        start:0x000A0848 end:0x000A0850
+
+ac_event_manager.o:
+	.text       start:0x000B8F60 end:0x000C2B68
+	.rodata     start:0x00003410 end:0x000034F8
+	.data       start:0x00035CF0 end:0x000368C0
+	.bss        start:0x000A0850 end:0x000A0A18
+
+ac_field_draw.o:
+	.text       start:0x000C2B68 end:0x000C3C88
+	.rodata     start:0x000034F8 end:0x00003580
+	.data       start:0x000368C0 end:0x00036A48
+	.bss        start:0x000A0A18 end:0x000A0D80
+
+ac_fieldm_draw.o:
+	.text       start:0x000C3C88 end:0x000C3C98
+	.data       start:0x00036A48 end:0x00036A70
+
+ac_flag.o:
+	.text       start:0x000C3C98 end:0x000C4A10
+	.rodata     start:0x00003580 end:0x000035B8
+	.data       start:0x00036A70 end:0x00036AE0
+
+ac_garagara.o:
+	.text       start:0x000C4A10 end:0x000C4FF8
+	.text       start:0x000C4FF8 end:0x000C553C
+	.rodata     start:0x000035B8 end:0x00003600
+	.data       start:0x00036AE0 end:0x00036B38
+
+ac_gyo_kage.o:
+	.text       start:0x000C553C end:0x000C5CF0
+	.rodata     start:0x00003600 end:0x00003628
+	.data       start:0x00036B38 end:0x00036BD8
+
+ac_gyo_release.o:
+	.text       start:0x000C5CF0 end:0x000C68A4
+	.text       start:0x000C68A4 end:0x000C68A4
+	.rodata     start:0x00003628 end:0x00003688
+	.data       start:0x00036BD8 end:0x000371A0
+
+ac_handOverItem.o:
+	.text       start:0x000C68A4 end:0x000C68E4
+	.text       start:0x000C68E4 end:0x000C6B5C
+	.text       start:0x000C6B5C end:0x000C7060
+	.text       start:0x000C7060 end:0x000C7060
+	.text       start:0x000C7060 end:0x000C7060
+	.text       start:0x000C7060 end:0x000C748C
+	.rodata     start:0x00003688 end:0x000036A0
+	.data       start:0x000371A0 end:0x00037BE8
+	.bss        start:0x000A0D80 end:0x000A0DA8
+
+ac_haniwa.o:
+	.text       start:0x000C748C end:0x000C76F0
+	.text       start:0x000C76F0 end:0x000C8EC8
+	.rodata     start:0x000036A0 end:0x000036E0
+	.data       start:0x00037BE8 end:0x00037D78
+
+ac_hatumode_control.o:
+	.text       start:0x000C8EC8 end:0x000C8FA0
+	.text       start:0x000C8FA0 end:0x000C94EC
+	.text       start:0x000C94EC end:0x000C9B40
+	.text       start:0x000C9B40 end:0x000CA23C
+	.rodata     start:0x000036E0 end:0x000036F8
+	.data       start:0x00037D78 end:0x00037F58
+
+ac_house_clock.o:
+	.text       start:0x000CA23C end:0x000CA920
+	.rodata     start:0x000036F8 end:0x00003710
+	.data       start:0x00037F58 end:0x000380E8
+
+ac_intro_demo.o:
+	.text       start:0x000CA920 end:0x000CAA88
+	.text       start:0x000CAA88 end:0x000CB62C
+	.rodata     start:0x00003710 end:0x00003740
+	.data       start:0x000380E8 end:0x000381C0
+	.bss        start:0x000A0DA8 end:0x000A0DC0
+
+ac_kamakura_indoor.o:
+	.text       start:0x000CB62C end:0x000CC004
+	.rodata     start:0x00003740 end:0x00003770
+	.data       start:0x000381C0 end:0x000388E8
+
+ac_lighthouse_switch.o:
+	.text       start:0x000CC004 end:0x000CD24C
+	.text       start:0x000CD24C end:0x000CD24C
+	.text       start:0x000CD24C end:0x000CD24C
+	.rodata     start:0x00003770 end:0x000037D8
+	.data       start:0x000388E8 end:0x00038930
+
+ac_mailbox.o:
+	.text       start:0x000CD24C end:0x000CD504
+	.text       start:0x000CD504 end:0x000CDD14
+	.rodata     start:0x000037D8 end:0x00003800
+	.data       start:0x00038930 end:0x00038A90
+
+ac_mbg.o:
+	.text       start:0x000CDD14 end:0x000CDF44
+	.rodata     start:0x00003800 end:0x00003820
+	.data       start:0x00038A90 end:0x00038B98
+
+ac_misin.o:
+	.text       start:0x000CDF44 end:0x000CEB6C
+	.rodata     start:0x00003820 end:0x00003870
+	.data       start:0x00038B98 end:0x00038C00
+
+ac_mural.o:
+	.text       start:0x000CEB6C end:0x000CEE38
+	.rodata     start:0x00003870 end:0x00003888
+	.data       start:0x00038C00 end:0x00038C28
+	.bss        start:0x000A0DC0 end:0x000A2FC0
+
+ac_museum_fossil.o:
+	.text       start:0x000CEE38 end:0x000CF150
+	.text       start:0x000CF150 end:0x000CF150
+	.rodata     start:0x00003888 end:0x000038A8
+	.data       start:0x00038C28 end:0x00038D18
+
+ac_museum_picture.o:
+	.text       start:0x000CF150 end:0x000CF6F4
+	.text       start:0x000CF6F4 end:0x000CF6F4
+	.rodata     start:0x000038A8 end:0x000038E8
+	.data       start:0x00038D18 end:0x00038E38
+
+ac_museum_fish.o:
+	.text       start:0x000CF6F4 end:0x000D1310
+	.text       start:0x000D1310 end:0x000D73D4
+	.text       start:0x000D73D4 end:0x000D73D4
+	.text       start:0x000D73D4 end:0x000D86D8
+	.text       start:0x000D86D8 end:0x000D9CF0
+	.text       start:0x000D9CF0 end:0x000DC214
+	.text       start:0x000DC214 end:0x000DD6C4
+	.text       start:0x000DD6C4 end:0x000DF0C8
+	.text       start:0x000DF0C8 end:0x000DF0C8
+	.text       start:0x000DF0C8 end:0x000E0254
+	.text       start:0x000E0254 end:0x000E173C
+	.text       start:0x000E173C end:0x000E26C8
+	.text       start:0x000E26C8 end:0x000E3988
+	.text       start:0x000E3988 end:0x000E47DC
+	.text       start:0x000E47DC end:0x000E601C
+	.text       start:0x000E601C end:0x000E7174
+	.text       start:0x000E7174 end:0x000E7A18
+	.text       start:0x000E7A18 end:0x000E8D8C
+	.text       start:0x000E8D8C end:0x000E9944
+	.text       start:0x000E9944 end:0x000EBAD8
+	.text       start:0x000EBAD8 end:0x000ED418
+	.text       start:0x000ED418 end:0x000EE924
+	.text       start:0x000EE924 end:0x000EFE28
+	.text       start:0x000EFE28 end:0x000F0DF8
+	.rodata     start:0x000038E8 end:0x00003BA8
+	.data       start:0x00038E38 end:0x0003A2E8
+	.bss        start:0x000A2FC0 end:0x000A2FC8
+
+ac_museum_indoor.o:
+	.text       start:0x000F0DF8 end:0x000F1114
+	.rodata     start:0x00003BA8 end:0x00003BB8
+	.data       start:0x0003A2E8 end:0x0003A328
+
+ac_museum_insect.o:
+	.text       start:0x000F1114 end:0x000F1898
+	.text       start:0x000F1898 end:0x000F3254
+	.text       start:0x000F3254 end:0x000F44EC
+	.text       start:0x000F44EC end:0x000F44EC
+	.text       start:0x000F44EC end:0x000F4B74
+	.text       start:0x000F4B74 end:0x000F7238
+	.text       start:0x000F7238 end:0x000F7238
+	.text       start:0x000F7238 end:0x000F80D0
+	.text       start:0x000F80D0 end:0x000F9480
+	.text       start:0x000F9480 end:0x000FA5A4
+	.text       start:0x000FA5A4 end:0x000FAE68
+	.text       start:0x000FAE68 end:0x000FC01C
+	.text       start:0x000FC01C end:0x000FD8B0
+	.text       start:0x000FD8B0 end:0x000FEF70
+	.text       start:0x000FEF70 end:0x000FFB0C
+	.text       start:0x000FFB0C end:0x00100EF4
+	.text       start:0x00100EF4 end:0x00101AFC
+	.text       start:0x00101AFC end:0x00102884
+	.text       start:0x00102884 end:0x00102F7C
+	.rodata     start:0x00003BB8 end:0x00003F70
+	.data       start:0x0003A328 end:0x0003AFD0
+	.bss        start:0x000A2FC8 end:0x000A2FD0
+
+ac_my_indoor.o:
+	.text       start:0x00102F7C end:0x001043E8
+	.rodata     start:0x00003F70 end:0x00003F80
+	.data       start:0x0003AFD0 end:0x0003B2C8
+
+ac_my_room.o:
+	.text       start:0x001043E8 end:0x00108618
+	.text       start:0x00108618 end:0x0010B620
+	.text       start:0x0010B620 end:0x0010BDD8
+	.text       start:0x0010BDD8 end:0x0010BE84
+	.text       start:0x0010BE84 end:0x00113108
+	.text       start:0x00113108 end:0x0011663C
+	.text       start:0x0011663C end:0x0011663C
+	.text       start:0x0011663C end:0x0011663C
+	.text       start:0x0011663C end:0x001177B0
+	.rodata     start:0x00003F80 end:0x00004100
+	.data       start:0x0003B2C8 end:0x0003E258
+	.bss        start:0x000A2FD0 end:0x000A3700
+
+ac_needlework_indoor.o:
+	.text       start:0x001177B0 end:0x00118490
+	.rodata     start:0x00004100 end:0x00004108
+	.data       start:0x0003E258 end:0x0003E2F0
+	.bss        start:0x000A3700 end:0x000A3708
+
+ac_present_demo.o:
+	.text       start:0x00118490 end:0x00118538
+	.text       start:0x00118538 end:0x00118AB0
+	.data       start:0x0003E2F0 end:0x0003E338
+	.bss        start:0x000A3708 end:0x000A3710
+
+ac_psnowman.o:
+	.text       start:0x00118AB0 end:0x001190D8
+	.rodata     start:0x00004108 end:0x00004138
+	.data       start:0x0003E338 end:0x0003E360
+
+ac_pterminal.o:
+	.text       start:0x001190D8 end:0x0011A284
+	.text       start:0x0011A284 end:0x0011A284
+	.rodata     start:0x00004138 end:0x00004158
+	.data       start:0x0003E360 end:0x0003E400
+	.bss        start:0x000A3710 end:0x000A3A40
+
+ac_quest_manager.o:
+	.text       start:0x0011A284 end:0x0011C0A8
+	.text       start:0x0011C0A8 end:0x0011C358
+	.text       start:0x0011C358 end:0x0011C8AC
+	.data       start:0x0003E400 end:0x0003ECD8
+	.bss        start:0x000A3A40 end:0x000A3A58
+
+ac_quest_talk_fj_init.o:
+	.text       start:0x0011C8AC end:0x0011D2D0
+	.data       start:0x0003ECD8 end:0x0003ED20
+	.bss        start:0x000A3A58 end:0x000A3B88
+
+ac_quest_talk_greeting.o:
+	.text       start:0x0011D2D0 end:0x0011E934
+	.rodata     start:0x00004158 end:0x00004160
+	.data       start:0x0003ED20 end:0x0003EF28
+	.bss        start:0x000A3B88 end:0x000A3BE8
+
+ac_quest_talk_init.o:
+	.text       start:0x0011E934 end:0x00122770
+	.rodata     start:0x00004160 end:0x000041C8
+	.data       start:0x0003EF28 end:0x0003F1F0
+
+ac_quest_talk_island.o:
+	.text       start:0x00122770 end:0x00126698
+	.rodata     start:0x000041C8 end:0x00004208
+	.data       start:0x0003F1F0 end:0x0003F448
+	.bss        start:0x000A3BE8 end:0x000A3C50
+
+ac_quest_talk_normal_init.o:
+	.text       start:0x00126698 end:0x0012B2AC
+	.rodata     start:0x00004208 end:0x00004240
+	.data       start:0x0003F448 end:0x0003F9C8
+	.bss        start:0x000A3C50 end:0x000A3E40
+
+ac_reset_demo.o:
+	.text       start:0x0012B2AC end:0x0012B780
+	.rodata     start:0x00004240 end:0x00004248
+	.data       start:0x0003F9C8 end:0x0003FA10
+	.bss        start:0x000A3E40 end:0x000A3E48
+
+ac_ride_off_demo.o:
+	.text       start:0x0012B780 end:0x0012B828
+	.text       start:0x0012B828 end:0x0012BD28
+	.text       start:0x0012BD28 end:0x0012BD28
+	.text       start:0x0012BD28 end:0x0012BD28
+	.rodata     start:0x00004248 end:0x00004268
+	.data       start:0x0003FA10 end:0x0003FA68
+	.bss        start:0x000A3E48 end:0x000A3E50
+
+ac_rope.o:
+	.text       start:0x0012BD28 end:0x0012C0BC
+	.rodata     start:0x00004268 end:0x00004270
+	.data       start:0x0003FA68 end:0x0003FAC8
+
+ac_set_manager.o:
+	.text       start:0x0012C0BC end:0x0012C56C
+	.rodata     start:0x00004270 end:0x00004280
+	.data       start:0x0003FAC8 end:0x0003FB00
+
+ac_set_npc_manager.o:
+	.text       start:0x0012C56C end:0x0012EDC4
+	.rodata     start:0x00004280 end:0x00004288
+	.data       start:0x0003FB00 end:0x0003FBD8
+	.bss        start:0x000A3E50 end:0x000A3E70
+
+ac_set_ovl_gyoei.o:
+	.text       start:0x0012EDC4 end:0x001303BC
+	.rodata     start:0x00004288 end:0x000042B8
+	.data       start:0x0003FBD8 end:0x00040CD0
+	.bss        start:0x000A3E70 end:0x000A41B8
+
+ac_set_ovl_insect.o:
+	.text       start:0x001303BC end:0x00132414
+	.rodata     start:0x000042B8 end:0x000042E0
+	.data       start:0x00040CD0 end:0x000422A8
+	.bss        start:0x000A41B8 end:0x000A43E0
+
+ac_shop_design.o:
+	.text       start:0x00132414 end:0x00133298
+	.data       start:0x000422A8 end:0x00042318
+
+ac_shop_goods.o:
+	.text       start:0x00133298 end:0x001344B0
+	.rodata     start:0x000042E0 end:0x00005168
+	.data       start:0x00042318 end:0x00042340
+	.bss        start:0x000A43E0 end:0x000A45F0
+
+ac_shop_indoor.o:
+	.text       start:0x001344B0 end:0x0013521C
+	.rodata     start:0x00005168 end:0x00005188
+	.data       start:0x00042340 end:0x00042408
+	.bss        start:0x000A45F0 end:0x000A45F8
+
+ac_shop_level.o:
+	.text       start:0x0013521C end:0x00135CF4
+	.data       start:0x00042408 end:0x000425F0
+
+ac_shop_manekin.o:
+	.text       start:0x00135CF4 end:0x00136A38
+	.rodata     start:0x00005188 end:0x000051A8
+	.data       start:0x000425F0 end:0x00042628
+	.bss        start:0x000A45F8 end:0x000A4600
+
+ac_shop_umbrella.o:
+	.text       start:0x00136A38 end:0x00137354
+	.rodata     start:0x000051A8 end:0x000051D0
+	.data       start:0x00042628 end:0x00042768
+	.bss        start:0x000A4600 end:0x000A4608
+
+ac_sign.o:
+	.text       start:0x00137354 end:0x001395A8
+	.text       start:0x001395A8 end:0x001395A8
+	.text       start:0x001395A8 end:0x001395A8
+	.rodata     start:0x000051D0 end:0x00005230
+	.data       start:0x00042768 end:0x000427D0
+
+ac_snowman.o:
+	.text       start:0x001395A8 end:0x0013D45C
+	.text       start:0x0013D45C end:0x0013D45C
+	.text       start:0x0013D45C end:0x0013D45C
+	.rodata     start:0x00005230 end:0x00005340
+	.data       start:0x000427D0 end:0x000428B0
+
+ac_t_anrium1.o:
+	.text       start:0x0013D45C end:0x0013D5B8
+	.data       start:0x000428B0 end:0x000428F0
+
+ac_t_bag1.o:
+	.text       start:0x0013D5B8 end:0x0013D714
+	.data       start:0x000428F0 end:0x00042930
+
+ac_t_bag2.o:
+	.text       start:0x0013D714 end:0x0013D870
+	.data       start:0x00042930 end:0x00042970
+
+ac_t_biscus1.o:
+	.text       start:0x0013D870 end:0x0013D9CC
+	.data       start:0x00042970 end:0x000429B0
+
+ac_t_biscus2.o:
+	.text       start:0x0013D9CC end:0x0013DB28
+	.data       start:0x000429B0 end:0x000429F0
+
+ac_t_biscus3.o:
+	.text       start:0x0013DB28 end:0x0013DC84
+	.data       start:0x000429F0 end:0x00042A30
+
+ac_t_biscus4.o:
+	.text       start:0x0013DC84 end:0x0013DDE0
+	.data       start:0x00042A30 end:0x00042A70
+
+ac_t_cobra1.o:
+	.text       start:0x0013DDE0 end:0x0013DF3C
+	.data       start:0x00042A70 end:0x00042AB0
+
+ac_t_cracker.o:
+	.text       start:0x0013DF3C end:0x0013E1A8
+	.rodata     start:0x00005340 end:0x00005348
+	.data       start:0x00042AB0 end:0x00042B10
+
+ac_t_flag.o:
+	.text       start:0x0013E1A8 end:0x0013E590
+	.rodata     start:0x00005348 end:0x00005360
+	.data       start:0x00042B10 end:0x00042B38
+
+ac_t_hanabi.o:
+	.text       start:0x0013E590 end:0x0013E800
+	.rodata     start:0x00005360 end:0x00005368
+	.data       start:0x00042B38 end:0x00042B98
+
+ac_t_hasu1.o:
+	.text       start:0x0013E800 end:0x0013E95C
+	.data       start:0x00042B98 end:0x00042BD8
+
+ac_t_hat1.o:
+	.text       start:0x0013E95C end:0x0013EAB8
+	.data       start:0x00042BD8 end:0x00042C18
+
+ac_t_hat2.o:
+	.text       start:0x0013EAB8 end:0x0013EC14
+	.data       start:0x00042C18 end:0x00042C58
+
+ac_t_hat3.o:
+	.text       start:0x0013EC14 end:0x0013ED70
+	.data       start:0x00042C58 end:0x00042C98
+
+ac_t_keitai.o:
+	.text       start:0x0013ED70 end:0x0013F0CC
+	.rodata     start:0x00005368 end:0x00005378
+	.data       start:0x00042C98 end:0x00042D40
+
+ac_t_npc_sao.o:
+	.text       start:0x0013F0CC end:0x0013F390
+	.rodata     start:0x00005378 end:0x00005390
+	.data       start:0x00042D40 end:0x00042D80
+
+ac_t_pistol.o:
+	.text       start:0x0013F390 end:0x0013F5FC
+	.rodata     start:0x00005390 end:0x00005398
+	.data       start:0x00042D80 end:0x00042DE0
+
+ac_t_rei1.o:
+	.text       start:0x0013F5FC end:0x0013F758
+	.data       start:0x00042DE0 end:0x00042E20
+
+ac_t_rei2.o:
+	.text       start:0x0013F758 end:0x0013F8B4
+	.data       start:0x00042E20 end:0x00042E60
+
+ac_t_tama.o:
+	.text       start:0x0013F8B4 end:0x0013FA88
+	.rodata     start:0x00005398 end:0x000053A8
+	.data       start:0x00042E60 end:0x00042EC8
+
+ac_t_tumbler.o:
+	.text       start:0x0013FA88 end:0x0013FCF0
+	.rodata     start:0x000053A8 end:0x000053B0
+	.data       start:0x00042EC8 end:0x00042F28
+
+ac_t_umbrella.o:
+	.text       start:0x0013FCF0 end:0x00140294
+	.rodata     start:0x000053B0 end:0x000053C8
+	.data       start:0x00042F28 end:0x000431F8
+
+ac_t_utiwa.o:
+	.text       start:0x00140294 end:0x00140500
+	.rodata     start:0x000053C8 end:0x000053D0
+	.data       start:0x000431F8 end:0x00043258
+
+ac_t_zinnia1.o:
+	.text       start:0x00140500 end:0x0014065C
+	.data       start:0x00043258 end:0x00043298
+
+ac_t_zinnia2.o:
+	.text       start:0x0014065C end:0x001407B8
+	.data       start:0x00043298 end:0x000432D8
+
+ac_tokyoso_control.o:
+	.text       start:0x001407B8 end:0x00140E1C
+	.text       start:0x00140E1C end:0x00141E44
+	.rodata     start:0x000053D0 end:0x00005428
+	.data       start:0x000432D8 end:0x000433F8
+
+ac_tools.o:
+	.text       start:0x00141E44 end:0x00141E88
+	.text       start:0x00141E88 end:0x001420E8
+	.rodata     start:0x00005428 end:0x00005430
+	.data       start:0x000433F8 end:0x000434A8
+	.bss        start:0x000A4608 end:0x000A4618
+
+ac_train_door.o:
+	.text       start:0x001420E8 end:0x0014232C
+	.rodata     start:0x00005430 end:0x00005440
+	.data       start:0x000434A8 end:0x000434E0
+
+ac_train_window.o:
+	.text       start:0x0014232C end:0x001432EC
+	.rodata     start:0x00005440 end:0x00005490
+	.data       start:0x000434E0 end:0x00043710
+
+ac_tunahiki_control.o:
+	.text       start:0x001432EC end:0x00143508
+	.rodata     start:0x00005490 end:0x000054A8
+	.data       start:0x00043710 end:0x00043738
+
+ac_uki.o:
+	.text       start:0x00143508 end:0x001436AC
+	.text       start:0x001436AC end:0x001454F4
+	.text       start:0x001454F4 end:0x0014593C
+	.text       start:0x0014593C end:0x0014593C
+	.rodata     start:0x000054A8 end:0x00005550
+	.data       start:0x00043738 end:0x00043B48
+
+bg_cherry_item.o:
+	.text       start:0x0014593C end:0x00145B84
+	.text       start:0x00145B84 end:0x00145EF8
+	.text       start:0x00145EF8 end:0x0014D114
+	.text       start:0x0014D114 end:0x0014D114
+	.text       start:0x0014D114 end:0x0014D114
+	.text       start:0x0014D114 end:0x0014D21C
+	.text       start:0x0014D21C end:0x0014D250
+	.rodata     start:0x00005550 end:0x000055F0
+	.data       start:0x00043B48 end:0x00046AC0
+	.bss        start:0x000A4618 end:0x000A4AA8
+
+bg_item.o:
+	.text       start:0x0014D250 end:0x0014D4A4
+	.text       start:0x0014D4A4 end:0x0014D818
+	.text       start:0x0014D818 end:0x00154A34
+	.text       start:0x00154A34 end:0x00154A34
+	.text       start:0x00154A34 end:0x00154A34
+	.text       start:0x00154A34 end:0x00154B3C
+	.text       start:0x00154B3C end:0x00154B70
+	.rodata     start:0x000055F0 end:0x00005690
+	.data       start:0x00046AC0 end:0x00049A18
+	.bss        start:0x000A4AA8 end:0x000A4F38
+
+bg_police_item.o:
+	.text       start:0x00154B70 end:0x00154B70
+	.text       start:0x00154B70 end:0x001550FC
+	.text       start:0x001550FC end:0x001552A8
+	.rodata     start:0x00005690 end:0x00005698
+	.data       start:0x00049A18 end:0x00049C40
+	.bss        start:0x000A4F38 end:0x000A4F58
+
+bg_post_item.o:
+	.text       start:0x001552A8 end:0x00155414
+	.rodata     start:0x00005698 end:0x000056A0
+	.data       start:0x00049C40 end:0x00049C78
+
+bg_winter_item.o:
+	.text       start:0x00155414 end:0x001556EC
+	.text       start:0x001556EC end:0x00155A60
+	.text       start:0x00155A60 end:0x0015CC7C
+	.text       start:0x0015CC7C end:0x0015CC7C
+	.text       start:0x0015CC7C end:0x0015CC7C
+	.text       start:0x0015CC7C end:0x0015CD84
+	.text       start:0x0015CD84 end:0x0015CDB8
+	.rodata     start:0x000056A0 end:0x00005740
+	.data       start:0x00049C78 end:0x0004CBF0
+	.bss        start:0x000A4F58 end:0x000A53E8
+
+bg_xmas_item.o:
+	.text       start:0x0015CDB8 end:0x0015D2B4
+	.text       start:0x0015D2B4 end:0x0015D628
+	.text       start:0x0015D628 end:0x00164844
+	.text       start:0x00164844 end:0x00164844
+	.text       start:0x00164844 end:0x00164844
+	.text       start:0x00164844 end:0x001649A8
+	.text       start:0x001649A8 end:0x00164BB8
+	.rodata     start:0x00005740 end:0x000057E0
+	.data       start:0x0004CBF0 end:0x0004FBF0
+	.bss        start:0x000A53E8 end:0x000A5878
+
+ef_effect_control.o:
+	.text       start:0x00164BB8 end:0x00165768
+	.text       start:0x00165768 end:0x001664CC
+	.rodata     start:0x000057E0 end:0x00005840
+	.data       start:0x0004FBF0 end:0x0004FEB0
+	.bss        start:0x000A5878 end:0x000A7D40
+
+ef_lamp_light.o:
+	.text       start:0x001664CC end:0x0016679C
+	.rodata     start:0x00005840 end:0x00005850
+	.data       start:0x0004FEB0 end:0x0004FF08
+
+ef_room_sunshine.o:
+	.text       start:0x0016679C end:0x0016700C
+	.rodata     start:0x00005850 end:0x00005898
+	.data       start:0x0004FF08 end:0x0004FF30
+
+ef_room_sunshine_police.o:
+	.text       start:0x0016700C end:0x0016782C
+	.rodata     start:0x00005898 end:0x000058E8
+	.data       start:0x0004FF30 end:0x0004FF58
+
+ef_room_sunshine_posthouse.o:
+	.text       start:0x0016782C end:0x00167FBC
+	.rodata     start:0x000058E8 end:0x00005930
+	.data       start:0x0004FF58 end:0x0004FF80
+
+ef_room_sunshine_museum.o:
+	.text       start:0x00167FBC end:0x0016880C
+	.rodata     start:0x00005930 end:0x00005980
+	.data       start:0x0004FF80 end:0x0004FFA8
+
+ef_room_sunshine_minsect.o:
+	.text       start:0x0016880C end:0x001694BC
+	.rodata     start:0x00005980 end:0x000059D0
+	.data       start:0x0004FFA8 end:0x0004FFD0
+	.bss        start:0x000A7D40 end:0x000A7D48
+
+m_huusui_room_ovl.o:
+	.text       start:0x001694BC end:0x00169B64
+	.rodata     start:0x000059D0 end:0x00005A40
+	.data       start:0x0004FFD0 end:0x000509D0
+
+m_mark_room_ovl.o:
+	.text       start:0x00169B64 end:0x0016BA60
+	.rodata     start:0x00005A40 end:0x00005A48
+	.data       start:0x000509D0 end:0x000520A0
+	.bss        start:0x000A7D48 end:0x000A8258
+
+m_player.o:
+	.text       start:0x0016BA60 end:0x0016C518
+	.text       start:0x0016C518 end:0x0016CD54
+	.text       start:0x0016CD54 end:0x0016D014
+	.text       start:0x0016D014 end:0x001773F4
+	.text       start:0x001773F4 end:0x001773F4
+	.text       start:0x001773F4 end:0x00177ED8
+	.text       start:0x00177ED8 end:0x00178B28
+	.text       start:0x00178B28 end:0x00179658
+	.text       start:0x00179658 end:0x0017970C
+	.text       start:0x0017970C end:0x00179EF0
+	.text       start:0x00179EF0 end:0x00179F6C
+	.text       start:0x00179F6C end:0x0017AA44
+	.text       start:0x0017AA44 end:0x0017AAE8
+	.text       start:0x0017AAE8 end:0x0017B3B8
+	.text       start:0x0017B3B8 end:0x0017BA44
+	.text       start:0x0017BA44 end:0x0017BACC
+	.text       start:0x0017BACC end:0x0017BD2C
+	.text       start:0x0017BD2C end:0x0017C7A4
+	.text       start:0x0017C7A4 end:0x0017CA4C
+	.text       start:0x0017CA4C end:0x0017CD04
+	.text       start:0x0017CD04 end:0x0017CEF8
+	.text       start:0x0017CEF8 end:0x0017D214
+	.text       start:0x0017D214 end:0x0017D4E4
+	.text       start:0x0017D4E4 end:0x0017D7B4
+	.text       start:0x0017D7B4 end:0x0017DAA4
+	.text       start:0x0017DAA4 end:0x0017DF10
+	.text       start:0x0017DF10 end:0x0017E9A4
+	.text       start:0x0017E9A4 end:0x0017EEA4
+	.text       start:0x0017EEA4 end:0x0017F874
+	.text       start:0x0017F874 end:0x0017FEB8
+	.text       start:0x0017FEB8 end:0x001802E4
+	.text       start:0x001802E4 end:0x00180768
+	.text       start:0x00180768 end:0x00180A90
+	.text       start:0x00180A90 end:0x00180F2C
+	.text       start:0x00180F2C end:0x00181444
+	.text       start:0x00181444 end:0x00181708
+	.text       start:0x00181708 end:0x00181A88
+	.text       start:0x00181A88 end:0x00181CA8
+	.text       start:0x00181CA8 end:0x001822B0
+	.text       start:0x001822B0 end:0x001826A4
+	.text       start:0x001826A4 end:0x00182BFC
+	.text       start:0x00182BFC end:0x0018300C
+	.text       start:0x0018300C end:0x001833DC
+	.text       start:0x001833DC end:0x00183668
+	.text       start:0x00183668 end:0x00183A50
+	.text       start:0x00183A50 end:0x00184060
+	.text       start:0x00184060 end:0x00184484
+	.text       start:0x00184484 end:0x00184828
+	.text       start:0x00184828 end:0x00184F74
+	.text       start:0x00184F74 end:0x00185578
+	.text       start:0x00185578 end:0x00185D8C
+	.text       start:0x00185D8C end:0x00186568
+	.text       start:0x00186568 end:0x00186ACC
+	.text       start:0x00186ACC end:0x00186F08
+	.text       start:0x00186F08 end:0x00187128
+	.text       start:0x00187128 end:0x00187580
+	.text       start:0x00187580 end:0x00188268
+	.text       start:0x00188268 end:0x00188644
+	.text       start:0x00188644 end:0x00188E84
+	.text       start:0x00188E84 end:0x001895E0
+	.text       start:0x001895E0 end:0x00189AD4
+	.text       start:0x00189AD4 end:0x00189DE4
+	.text       start:0x00189DE4 end:0x0018A464
+	.text       start:0x0018A464 end:0x0018B140
+	.text       start:0x0018B140 end:0x0018B7AC
+	.text       start:0x0018B7AC end:0x0018B9F4
+	.text       start:0x0018B9F4 end:0x0018C208
+	.text       start:0x0018C208 end:0x0018C650
+	.text       start:0x0018C650 end:0x0018CB44
+	.text       start:0x0018CB44 end:0x0018CEDC
+	.text       start:0x0018CEDC end:0x0018D29C
+	.text       start:0x0018D29C end:0x0018D634
+	.text       start:0x0018D634 end:0x0018D9C8
+	.text       start:0x0018D9C8 end:0x0018DC48
+	.text       start:0x0018DC48 end:0x0018DF5C
+	.text       start:0x0018DF5C end:0x0018E938
+	.text       start:0x0018E938 end:0x0018ECD8
+	.text       start:0x0018ECD8 end:0x0018F710
+	.text       start:0x0018F710 end:0x0018FEF0
+	.text       start:0x0018FEF0 end:0x00190E18
+	.text       start:0x00190E18 end:0x00191120
+	.text       start:0x00191120 end:0x00191594
+	.text       start:0x00191594 end:0x00191950
+	.text       start:0x00191950 end:0x001922A8
+	.text       start:0x001922A8 end:0x001929A8
+	.text       start:0x001929A8 end:0x00192C7C
+	.text       start:0x00192C7C end:0x00192F80
+	.text       start:0x00192F80 end:0x001932BC
+	.text       start:0x001932BC end:0x0019361C
+	.text       start:0x0019361C end:0x001939E8
+	.text       start:0x001939E8 end:0x00193D74
+	.text       start:0x00193D74 end:0x00194304
+	.text       start:0x00194304 end:0x001947D0
+	.text       start:0x001947D0 end:0x00194C4C
+	.text       start:0x00194C4C end:0x001953B4
+	.text       start:0x001953B4 end:0x00195708
+	.text       start:0x00195708 end:0x00195880
+	.text       start:0x00195880 end:0x00195BF8
+	.text       start:0x00195BF8 end:0x00195E18
+	.text       start:0x00195E18 end:0x00196250
+	.text       start:0x00196250 end:0x00196308
+	.text       start:0x00196308 end:0x001964CC
+	.text       start:0x001964CC end:0x00196EEC
+	.text       start:0x00196EEC end:0x0019736C
+	.text       start:0x0019736C end:0x00197660
+	.text       start:0x00197660 end:0x00197A08
+	.text       start:0x00197A08 end:0x00197ED4
+	.text       start:0x00197ED4 end:0x00198280
+	.text       start:0x00198280 end:0x00198BA8
+	.text       start:0x00198BA8 end:0x00198EB0
+	.text       start:0x00198EB0 end:0x001991EC
+	.text       start:0x001991EC end:0x001995B8
+	.text       start:0x001995B8 end:0x001998F8
+	.text       start:0x001998F8 end:0x00199D84
+	.text       start:0x00199D84 end:0x0019A1AC
+	.text       start:0x0019A1AC end:0x0019A640
+	.text       start:0x0019A640 end:0x0019AB5C
+	.text       start:0x0019AB5C end:0x0019B004
+	.text       start:0x0019B004 end:0x0019B5F4
+	.text       start:0x0019B5F4 end:0x0019BA48
+	.text       start:0x0019BA48 end:0x0019C0D4
+	.text       start:0x0019C0D4 end:0x0019C3D0
+	.text       start:0x0019C3D0 end:0x0019C740
+	.text       start:0x0019C740 end:0x0019CC14
+	.text       start:0x0019CC14 end:0x0019CFB8
+	.text       start:0x0019CFB8 end:0x0019D2A8
+	.text       start:0x0019D2A8 end:0x0019D774
+	.text       start:0x0019D774 end:0x0019DBB0
+	.text       start:0x0019DBB0 end:0x0019DFC0
+	.text       start:0x0019DFC0 end:0x0019E2FC
+	.text       start:0x0019E2FC end:0x0019E834
+	.text       start:0x0019E834 end:0x0019EC30
+	.text       start:0x0019EC30 end:0x0019EE48
+	.text       start:0x0019EE48 end:0x0019F188
+	.text       start:0x0019F188 end:0x0019F5FC
+	.text       start:0x0019F5FC end:0x0019FAAC
+	.text       start:0x0019FAAC end:0x001A00F4
+	.text       start:0x001A00F4 end:0x001A0180
+	.text       start:0x001A0180 end:0x001A03B0
+	.rodata     start:0x00005A48 end:0x00008308
+	.data       start:0x000520A0 end:0x00052438
+
+m_random_field_ovl.o:
+	.text       start:0x001A03B0 end:0x001A30FC
+	.rodata     start:0x00008308 end:0x00008310
+	.data       start:0x00052438 end:0x00052B90
+	.bss        start:0x000A8258 end:0x000A8568
+
+ev_cherry_manager.o:
+	.text       start:0x001A30FC end:0x001A3130
+	.data       start:0x00052B90 end:0x00052BB8
+
+ac_house_goki.o:
+	.text       start:0x001A3130 end:0x001A40A4
+	.text       start:0x001A40A4 end:0x001A40A4
+	.text       start:0x001A40A4 end:0x001A40A4
+	.rodata     start:0x00008310 end:0x00008378
+	.data       start:0x00052BB8 end:0x00052C10
+
+ac_ant.o:
+	.text       start:0x001A40A4 end:0x001A4648
+	.rodata     start:0x00008378 end:0x00008398
+	.data       start:0x00052C10 end:0x00052C50
+
+ac_bee.o:
+	.text       start:0x001A4648 end:0x001A554C
+	.text       start:0x001A554C end:0x001A554C
+	.text       start:0x001A554C end:0x001A554C
+	.rodata     start:0x00008398 end:0x00008400
+	.data       start:0x00052C50 end:0x00052CB0
+
+ac_fuusen.o:
+	.text       start:0x001A554C end:0x001A68AC
+	.text       start:0x001A68AC end:0x001A68AC
+	.text       start:0x001A68AC end:0x001A68AC
+	.rodata     start:0x00008400 end:0x00008498
+	.data       start:0x00052CB0 end:0x00052E40
+
+m_mail_check_ovl.o:
+	.text       start:0x001A68AC end:0x001A7094
+	.data       start:0x00052E40 end:0x00053638
+
+ac_dummy.o:
+	.text       start:0x001A7094 end:0x001A70A4
+	.data       start:0x00053638 end:0x00053660
+
+m_all_grow_ovl.o:
+	.text       start:0x001A70A4 end:0x001ACFD8
+	.rodata     start:0x00008498 end:0x00008510
+	.data       start:0x00053660 end:0x00053900
+	.bss        start:0x000A8568 end:0x000A89A8
+
+ac_aprilfool_control.o:
+	.text       start:0x001ACFD8 end:0x001AD260
+	.data       start:0x00053900 end:0x00053980
+
+ac_groundhog_control.o:
+	.text       start:0x001AD260 end:0x001AD8F0
+	.data       start:0x00053980 end:0x000539C8
+
+ac_mscore_control.o:
+	.text       start:0x001AD8F0 end:0x001AE0F4
+	.data       start:0x000539C8 end:0x00053A30
+
+ac_countdown_npc0.o:
+	.text       start:0x001AE0F4 end:0x001AE298
+	.text       start:0x001AE298 end:0x001AE2E4
+	.text       start:0x001AE2E4 end:0x001AED3C
+	.rodata     start:0x00008510 end:0x00008518
+	.data       start:0x00053A30 end:0x00053AF0
+
+ac_countdown_npc1.o:
+	.text       start:0x001AED3C end:0x001AEEE0
+	.text       start:0x001AEEE0 end:0x001AEF2C
+	.text       start:0x001AEF2C end:0x001AFEB4
+	.rodata     start:0x00008518 end:0x00008548
+	.data       start:0x00053AF0 end:0x00053BE8
+
+ac_ev_angler.o:
+	.text       start:0x001AFEB4 end:0x001B006C
+	.text       start:0x001B006C end:0x001B10FC
+	.rodata     start:0x00008548 end:0x00008560
+	.data       start:0x00053BE8 end:0x00053C78
+
+ac_ev_artist.o:
+	.text       start:0x001B10FC end:0x001B12A0
+	.text       start:0x001B12A0 end:0x001B1AAC
+	.data       start:0x00053C78 end:0x00053D20
+
+ac_ev_broker.o:
+	.text       start:0x001B1AAC end:0x001B1D0C
+	.text       start:0x001B1D0C end:0x001B25D8
+	.rodata     start:0x00008560 end:0x00008578
+	.data       start:0x00053D20 end:0x00053DA8
+
+ac_ev_broker2.o:
+	.text       start:0x001B25D8 end:0x001B27B0
+	.text       start:0x001B27B0 end:0x001B3AD0
+	.rodata     start:0x00008578 end:0x000085B0
+	.data       start:0x00053DA8 end:0x00053EA8
+
+ac_ev_carpetPeddler.o:
+	.text       start:0x001B3AD0 end:0x001B3C54
+	.text       start:0x001B3C54 end:0x001B4908
+	.data       start:0x00053EA8 end:0x00053F98
+
+ac_ev_castaway.o:
+	.text       start:0x001B4908 end:0x001B4C28
+	.rodata     start:0x000085B0 end:0x000085B8
+	.data       start:0x00053F98 end:0x00053FF0
+
+ac_ev_designer.o:
+	.text       start:0x001B4C28 end:0x001B4DF0
+	.text       start:0x001B4DF0 end:0x001B4F58
+	.text       start:0x001B4F58 end:0x001B5874
+	.text       start:0x001B5874 end:0x001B5EA4
+	.rodata     start:0x000085B8 end:0x000085D8
+	.data       start:0x00053FF0 end:0x000541C0
+
+ac_ev_dokutu.o:
+	.text       start:0x001B5EA4 end:0x001B6024
+	.text       start:0x001B6024 end:0x001B60E0
+	.data       start:0x000541C0 end:0x00054200
+
+ac_ev_dozaemon.o:
+	.text       start:0x001B60E0 end:0x001B6460
+	.text       start:0x001B6460 end:0x001B6B98
+	.text       start:0x001B6B98 end:0x001B6FE4
+	.rodata     start:0x000085D8 end:0x000085E8
+	.data       start:0x00054200 end:0x00054298
+
+ac_ev_ghost.o:
+	.text       start:0x001B6FE4 end:0x001B7578
+	.text       start:0x001B7578 end:0x001B830C
+	.text       start:0x001B830C end:0x001B8DE8
+	.rodata     start:0x000085E8 end:0x00008628
+	.data       start:0x00054298 end:0x00054530
+	.bss        start:0x000A89A8 end:0x000A89B8
+
+ac_ev_gypsy.o:
+	.text       start:0x001B8DE8 end:0x001B8F98
+	.text       start:0x001B8F98 end:0x001B94AC
+	.rodata     start:0x00008628 end:0x00008638
+	.data       start:0x00054530 end:0x000545F0
+
+ac_ev_kabuPeddler.o:
+	.text       start:0x001B94AC end:0x001B9630
+	.text       start:0x001B9630 end:0x001B9DE0
+	.data       start:0x000545F0 end:0x000546D0
+
+ac_ev_miko.o:
+	.text       start:0x001B9DE0 end:0x001B9FFC
+	.text       start:0x001B9FFC end:0x001BA784
+	.rodata     start:0x00008638 end:0x00008650
+	.data       start:0x000546D0 end:0x00054758
+	.bss        start:0x000A89B8 end:0x000A89D0
+
+ac_ev_pumpkin.o:
+	.text       start:0x001BA784 end:0x001BA960
+	.text       start:0x001BA960 end:0x001BB590
+	.rodata     start:0x00008650 end:0x00008668
+	.data       start:0x00054758 end:0x000547D8
+
+ac_ev_santa.o:
+	.text       start:0x001BB590 end:0x001BB778
+	.text       start:0x001BB778 end:0x001BC15C
+	.rodata     start:0x00008668 end:0x00008670
+	.data       start:0x000547D8 end:0x00054930
+
+ac_ev_soncho.o:
+	.text       start:0x001BC15C end:0x001BC378
+	.text       start:0x001BC378 end:0x001BC8BC
+	.rodata     start:0x00008670 end:0x00008678
+	.data       start:0x00054930 end:0x00054980
+
+ac_ev_soncho2.o:
+	.text       start:0x001BC8BC end:0x001BCB94
+	.text       start:0x001BCB94 end:0x001BD178
+	.text       start:0x001BD178 end:0x001BDA2C
+	.rodata     start:0x00008678 end:0x00008690
+	.data       start:0x00054980 end:0x00054A70
+
+ac_ev_speech_soncho.o:
+	.text       start:0x001BDA2C end:0x001BDC2C
+	.text       start:0x001BDC2C end:0x001BE2D8
+	.rodata     start:0x00008690 end:0x000086A0
+	.data       start:0x00054A70 end:0x00054B20
+
+ac_ev_yomise.o:
+	.text       start:0x001BE2D8 end:0x001BE5B0
+	.text       start:0x001BE5B0 end:0x001BF154
+	.rodata     start:0x000086A0 end:0x000086B8
+	.data       start:0x00054B20 end:0x00054BB0
+
+ac_go_home_npc.o:
+	.text       start:0x001BF154 end:0x001BF2EC
+	.text       start:0x001BF2EC end:0x001BF4EC
+	.rodata     start:0x000086B8 end:0x000086C0
+	.data       start:0x00054BB0 end:0x00054BF0
+
+ac_halloween_npc.o:
+	.text       start:0x001BF4EC end:0x001BF660
+	.text       start:0x001BF660 end:0x001BF734
+	.text       start:0x001BF734 end:0x001C02C0
+	.text       start:0x001C02C0 end:0x001C0770
+	.rodata     start:0x000086C0 end:0x000086E0
+	.data       start:0x00054BF0 end:0x00054CA8
+
+ac_hanabi_npc0.o:
+	.text       start:0x001C0770 end:0x001C0914
+	.text       start:0x001C0914 end:0x001C096C
+	.text       start:0x001C096C end:0x001C12B4
+	.rodata     start:0x000086E0 end:0x00008700
+	.data       start:0x00054CA8 end:0x00054D50
+
+ac_hanabi_npc1.o:
+	.text       start:0x001C12B4 end:0x001C1460
+	.text       start:0x001C1460 end:0x001C14B8
+	.text       start:0x001C14B8 end:0x001C1C2C
+	.rodata     start:0x00008700 end:0x00008718
+	.data       start:0x00054D50 end:0x00054E60
+
+ac_hanami_npc0.o:
+	.text       start:0x001C1C2C end:0x001C1DD0
+	.text       start:0x001C1DD0 end:0x001C1E1C
+	.text       start:0x001C1E1C end:0x001C2440
+	.rodata     start:0x00008718 end:0x00008728
+	.data       start:0x00054E60 end:0x00054F20
+
+ac_hanami_npc1.o:
+	.text       start:0x001C2440 end:0x001C25E4
+	.text       start:0x001C25E4 end:0x001C2630
+	.text       start:0x001C2630 end:0x001C2E44
+	.rodata     start:0x00008728 end:0x00008748
+	.data       start:0x00054F20 end:0x00054FC0
+
+ac_hatumode_npc0.o:
+	.text       start:0x001C2E44 end:0x001C3148
+	.text       start:0x001C3148 end:0x001C33FC
+	.text       start:0x001C33FC end:0x001C4068
+	.rodata     start:0x00008748 end:0x00008760
+	.data       start:0x00054FC0 end:0x00055078
+
+ac_kamakura_npc0.o:
+	.text       start:0x001C4068 end:0x001C4214
+	.text       start:0x001C4214 end:0x001C42D8
+	.data       start:0x00055078 end:0x000550B8
+
+ac_normal_npc.o:
+	.text       start:0x001C42D8 end:0x001C4470
+	.data       start:0x000550B8 end:0x000550F8
+
+ac_npc.o:
+	.text       start:0x001C4470 end:0x001C4470
+	.text       start:0x001C4470 end:0x001C4FEC
+	.text       start:0x001C4FEC end:0x001C6018
+	.text       start:0x001C6018 end:0x001C612C
+	.text       start:0x001C612C end:0x001C6568
+	.text       start:0x001C6568 end:0x001C6B18
+	.text       start:0x001C6B18 end:0x001C75C0
+	.text       start:0x001C75C0 end:0x001C8AF8
+	.text       start:0x001C8AF8 end:0x001C931C
+	.text       start:0x001C931C end:0x001C95C0
+	.text       start:0x001C95C0 end:0x001CA254
+	.text       start:0x001CA254 end:0x001CA3AC
+	.text       start:0x001CA3AC end:0x001CA594
+	.text       start:0x001CA594 end:0x001CA768
+	.text       start:0x001CA768 end:0x001CAA98
+	.text       start:0x001CAA98 end:0x001CBC6C
+	.text       start:0x001CBC6C end:0x001CC04C
+	.text       start:0x001CC04C end:0x001CC430
+	.text       start:0x001CC430 end:0x001CC680
+	.text       start:0x001CC680 end:0x001CC7BC
+	.text       start:0x001CC7BC end:0x001CC8A0
+	.text       start:0x001CC8A0 end:0x001CCCAC
+	.text       start:0x001CCCAC end:0x001CD61C
+	.text       start:0x001CD61C end:0x001CD6A8
+	.text       start:0x001CD6A8 end:0x001CD8D4
+	.text       start:0x001CD8D4 end:0x001CD9D8
+	.text       start:0x001CD9D8 end:0x001CDC84
+	.text       start:0x001CDC84 end:0x001CDD48
+	.text       start:0x001CDD48 end:0x001CF590
+	.text       start:0x001CF590 end:0x001CF590
+	.text       start:0x001CF590 end:0x001CF590
+	.text       start:0x001CF590 end:0x001CFCB4
+	.text       start:0x001CFCB4 end:0x001CFF3C
+	.text       start:0x001CFF3C end:0x001CFFD4
+	.text       start:0x001CFFD4 end:0x001D00FC
+	.text       start:0x001D00FC end:0x001D05D0
+	.text       start:0x001D05D0 end:0x001D076C
+	.text       start:0x001D076C end:0x001D08FC
+	.text       start:0x001D08FC end:0x001D0EB4
+	.text       start:0x001D0EB4 end:0x001D1088
+	.text       start:0x001D1088 end:0x001D12B0
+	.text       start:0x001D12B0 end:0x001D14C4
+	.text       start:0x001D14C4 end:0x001D1718
+	.text       start:0x001D1718 end:0x001D1EC4
+	.text       start:0x001D1EC4 end:0x001D1FF0
+	.text       start:0x001D1FF0 end:0x001D2200
+	.text       start:0x001D2200 end:0x001D3AF4
+	.rodata     start:0x00008760 end:0x00008860
+	.data       start:0x000550F8 end:0x00056870
+	.bss        start:0x000A89D0 end:0x000C0D88
+
+ac_npc2.o:
+	.text       start:0x001D3AF4 end:0x001D3AF4
+	.text       start:0x001D3AF4 end:0x001D4670
+	.text       start:0x001D4670 end:0x001D5684
+	.text       start:0x001D5684 end:0x001D5730
+	.text       start:0x001D5730 end:0x001D5AB0
+	.text       start:0x001D5AB0 end:0x001D6058
+	.text       start:0x001D6058 end:0x001D6BA4
+	.text       start:0x001D6BA4 end:0x001D72F0
+	.text       start:0x001D72F0 end:0x001D7B14
+	.text       start:0x001D7B14 end:0x001D7DB8
+	.text       start:0x001D7DB8 end:0x001D87D0
+	.text       start:0x001D87D0 end:0x001D8928
+	.text       start:0x001D8928 end:0x001D8AE4
+	.text       start:0x001D8AE4 end:0x001D8CB0
+	.text       start:0x001D8CB0 end:0x001D9090
+	.text       start:0x001D9090 end:0x001D90F0
+	.text       start:0x001D90F0 end:0x001D91D4
+	.text       start:0x001D91D4 end:0x001D95E0
+	.text       start:0x001D95E0 end:0x001D9D34
+	.text       start:0x001D9D34 end:0x001DA068
+	.text       start:0x001DA068 end:0x001DA248
+	.text       start:0x001DA248 end:0x001DA2C4
+	.text       start:0x001DA2C4 end:0x001DBAD4
+	.text       start:0x001DBAD4 end:0x001DBAD4
+	.text       start:0x001DBAD4 end:0x001DBAD4
+	.text       start:0x001DBAD4 end:0x001DBD7C
+	.text       start:0x001DBD7C end:0x001DC040
+	.text       start:0x001DC040 end:0x001DC308
+	.text       start:0x001DC308 end:0x001DC464
+	.text       start:0x001DC464 end:0x001DC890
+	.text       start:0x001DC890 end:0x001DCA28
+	.text       start:0x001DCA28 end:0x001DCBBC
+	.text       start:0x001DCBBC end:0x001DCE10
+	.text       start:0x001DCE10 end:0x001DD74C
+	.text       start:0x001DD74C end:0x001DD850
+	.text       start:0x001DD850 end:0x001DD9DC
+	.text       start:0x001DD9DC end:0x001DEA64
+	.rodata     start:0x00008860 end:0x00008950
+	.data       start:0x00056870 end:0x00057EC8
+	.bss        start:0x000C0D88 end:0x000C1250
+
+ac_npc_conv_master.o:
+	.text       start:0x001DEA64 end:0x001DEBF8
+	.text       start:0x001DEBF8 end:0x001DEF4C
+	.text       start:0x001DEF4C end:0x001E4618
+	.rodata     start:0x00008950 end:0x000089B0
+	.data       start:0x00057EC8 end:0x00058BA8
+
+ac_npc_curator.o:
+	.text       start:0x001E4618 end:0x001E47E8
+	.text       start:0x001E47E8 end:0x001E6654
+	.rodata     start:0x000089B0 end:0x000089B8
+	.data       start:0x00058BA8 end:0x00059128
+
+ac_npc_depart_master.o:
+	.text       start:0x001E6654 end:0x001E6844
+	.text       start:0x001E6844 end:0x001E6BD0
+	.text       start:0x001E6BD0 end:0x001EC29C
+	.rodata     start:0x000089B8 end:0x00008A20
+	.data       start:0x00059128 end:0x00059DC0
+
+ac_npc_engineer.o:
+	.text       start:0x001EC29C end:0x001EC47C
+	.data       start:0x00059DC0 end:0x00059E00
+
+ac_npc_guide.o:
+	.text       start:0x001EC47C end:0x001EC6C4
+	.text       start:0x001EC6C4 end:0x001EC74C
+	.text       start:0x001EC74C end:0x001EE458
+	.rodata     start:0x00008A20 end:0x00008AA0
+	.data       start:0x00059E00 end:0x0005A100
+
+ac_npc_guide2.o:
+	.text       start:0x001EE458 end:0x001EE644
+	.text       start:0x001EE644 end:0x001EE694
+	.text       start:0x001EE694 end:0x001F00B4
+	.rodata     start:0x00008AA0 end:0x00008B20
+	.data       start:0x0005A100 end:0x0005A3D8
+
+ac_npc_majin.o:
+	.text       start:0x001F00B4 end:0x001F031C
+	.text       start:0x001F031C end:0x001F0734
+	.text       start:0x001F0734 end:0x001F0D00
+	.rodata     start:0x00008B20 end:0x00008B40
+	.data       start:0x0005A3D8 end:0x0005A520
+
+ac_npc_majin2.o:
+	.text       start:0x001F0D00 end:0x001F0F68
+	.text       start:0x001F0F68 end:0x001F123C
+	.text       start:0x001F123C end:0x001F1974
+	.rodata     start:0x00008B40 end:0x00008B50
+	.data       start:0x0005A520 end:0x0005A688
+
+ac_npc_majin3.o:
+	.text       start:0x001F1974 end:0x001F1BDC
+	.text       start:0x001F1BDC end:0x001F20E8
+	.text       start:0x001F20E8 end:0x001F2718
+	.rodata     start:0x00008B50 end:0x00008B68
+	.data       start:0x0005A688 end:0x0005A7E0
+
+ac_npc_majin4.o:
+	.text       start:0x001F2718 end:0x001F2BD0
+	.text       start:0x001F2BD0 end:0x001F2D98
+	.text       start:0x001F2D98 end:0x001F3474
+	.rodata     start:0x00008B68 end:0x00008B90
+	.data       start:0x0005A7E0 end:0x0005A918
+	.bss        start:0x000C1250 end:0x000C1260
+
+ac_npc_majin5.o:
+	.text       start:0x001F3474 end:0x001F37CC
+	.text       start:0x001F37CC end:0x001F39AC
+	.rodata     start:0x00008B90 end:0x00008B98
+	.data       start:0x0005A918 end:0x0005A958
+
+ac_npc_mamedanuki.o:
+	.text       start:0x001F39AC end:0x001F3C00
+	.text       start:0x001F3C00 end:0x001F4000
+	.text       start:0x001F4000 end:0x001F8BE4
+	.rodata     start:0x00008B98 end:0x00008BF0
+	.data       start:0x0005A958 end:0x0005DF68
+	.bss        start:0x000C1260 end:0x000C1280
+
+ac_npc_mask_cat.o:
+	.text       start:0x001F8BE4 end:0x001F8D94
+	.text       start:0x001F8D94 end:0x001F8F50
+	.rodata     start:0x00008BF0 end:0x00008BF8
+	.data       start:0x0005DF68 end:0x0005DFA8
+
+ac_npc_mask_cat2.o:
+	.text       start:0x001F8F50 end:0x001F9234
+	.text       start:0x001F9234 end:0x001FADBC
+	.rodata     start:0x00008BF8 end:0x00008C68
+	.data       start:0x0005DFA8 end:0x0005E208
+
+ac_npc_needlework.o:
+	.text       start:0x001FADBC end:0x001FAFFC
+	.text       start:0x001FAFFC end:0x001FB598
+	.text       start:0x001FB598 end:0x001FEB10
+	.text       start:0x001FEB10 end:0x002001A8
+	.rodata     start:0x00008C68 end:0x00008CC0
+	.data       start:0x0005E208 end:0x00071F60
+	.bss        start:0x000C1280 end:0x000C2388
+
+ac_npc_p_sel.o:
+	.text       start:0x002001A8 end:0x0020054C
+	.text       start:0x0020054C end:0x00200874
+	.text       start:0x00200874 end:0x00200F1C
+	.rodata     start:0x00008CC0 end:0x00008CF8
+	.data       start:0x00071F60 end:0x00071FF0
+
+ac_npc_p_sel2.o:
+	.text       start:0x00200F1C end:0x0020126C
+	.text       start:0x0020126C end:0x002013E8
+	.text       start:0x002013E8 end:0x002040A0
+	.rodata     start:0x00008CF8 end:0x00008D18
+	.data       start:0x00071FF0 end:0x000723C0
+	.bss        start:0x000C2388 end:0x000C23E8
+
+ac_npc_police.o:
+	.text       start:0x002040A0 end:0x00204314
+	.text       start:0x00204314 end:0x002050E0
+	.rodata     start:0x00008D18 end:0x00008D30
+	.data       start:0x000723C0 end:0x000724D8
+
+ac_npc_police2.o:
+	.text       start:0x002050E0 end:0x0020526C
+	.text       start:0x0020526C end:0x00206378
+	.rodata     start:0x00008D30 end:0x00008D60
+	.data       start:0x000724D8 end:0x000725B8
+
+ac_npc_post_girl.o:
+	.text       start:0x00206378 end:0x002065D0
+	.text       start:0x002065D0 end:0x00207C38
+	.rodata     start:0x00008D60 end:0x00008D68
+	.data       start:0x000725B8 end:0x00072780
+
+ac_npc_post_man.o:
+	.text       start:0x00207C38 end:0x00207EC8
+	.text       start:0x00207EC8 end:0x00207F18
+	.text       start:0x00207F18 end:0x0020902C
+	.rodata     start:0x00008D68 end:0x00008DC0
+	.data       start:0x00072780 end:0x00072998
+
+ac_npc_rcn_guide.o:
+	.text       start:0x0020902C end:0x00209234
+	.text       start:0x00209234 end:0x002093C8
+	.text       start:0x002093C8 end:0x00209880
+	.text       start:0x00209880 end:0x0020A17C
+	.rodata     start:0x00008DC0 end:0x00008DE8
+	.data       start:0x00072998 end:0x00072BA0
+
+ac_npc_rcn_guide2.o:
+	.text       start:0x0020A17C end:0x0020A348
+	.text       start:0x0020A348 end:0x0020A49C
+	.text       start:0x0020A49C end:0x0020BA88
+	.text       start:0x0020BA88 end:0x0020C274
+	.rodata     start:0x00008DE8 end:0x00008DF0
+	.data       start:0x00072BA0 end:0x00073070
+
+ac_npc_restart.o:
+	.text       start:0x0020C274 end:0x0020C570
+	.text       start:0x0020C570 end:0x0020C868
+	.text       start:0x0020C868 end:0x0020D2B0
+	.rodata     start:0x00008DF0 end:0x00008E08
+	.data       start:0x00073070 end:0x000731C0
+	.bss        start:0x000C23E8 end:0x000C2400
+
+ac_npc_rtc.o:
+	.text       start:0x0020D2B0 end:0x0020D620
+	.text       start:0x0020D620 end:0x0020DA70
+	.text       start:0x0020DA70 end:0x0020E3D8
+	.rodata     start:0x00008E08 end:0x00008E40
+	.data       start:0x000731C0 end:0x00073300
+
+ac_npc_sendo.o:
+	.text       start:0x0020E3D8 end:0x0020E59C
+	.text       start:0x0020E59C end:0x00210784
+	.rodata     start:0x00008E40 end:0x00008E58
+	.data       start:0x00073300 end:0x000735F8
+	.bss        start:0x000C2400 end:0x000C2440
+
+ac_npc_shasho.o:
+	.text       start:0x00210784 end:0x00210970
+	.text       start:0x00210970 end:0x00210FEC
+	.rodata     start:0x00008E58 end:0x00008E88
+	.data       start:0x000735F8 end:0x000736F0
+
+ac_npc_shop_master.o:
+	.text       start:0x00210FEC end:0x00211180
+	.text       start:0x00211180 end:0x0021146C
+	.text       start:0x0021146C end:0x00216B38
+	.rodata     start:0x00008E88 end:0x00008EF0
+	.data       start:0x000736F0 end:0x00074300
+
+ac_npc_shop_mastersp.o:
+	.text       start:0x00216B38 end:0x00216CA0
+	.text       start:0x00216CA0 end:0x002170A4
+	.text       start:0x002170A4 end:0x00217E88
+	.text       start:0x00217E88 end:0x00218A20
+	.rodata     start:0x00008EF0 end:0x00008F10
+	.data       start:0x00074300 end:0x00074620
+
+ac_npc_sleep_obaba.o:
+	.text       start:0x00218A20 end:0x00218BF4
+	.text       start:0x00218BF4 end:0x00218C40
+	.text       start:0x00218C40 end:0x00218FB0
+	.rodata     start:0x00008F10 end:0x00008F20
+	.data       start:0x00074620 end:0x00074698
+
+ac_npc_soncho.o:
+	.text       start:0x00218FB0 end:0x00219214
+	.text       start:0x00219214 end:0x002193E8
+	.text       start:0x002193E8 end:0x002196BC
+	.rodata     start:0x00008F20 end:0x00008F28
+	.data       start:0x00074698 end:0x00074708
+
+ac_npc_station_master.o:
+	.text       start:0x002196BC end:0x00219880
+	.text       start:0x00219880 end:0x0021994C
+	.text       start:0x0021994C end:0x00219D04
+	.text       start:0x00219D04 end:0x0021AC0C
+	.rodata     start:0x00008F28 end:0x00008F48
+	.data       start:0x00074708 end:0x00074890
+
+ac_npc_super_master.o:
+	.text       start:0x0021AC0C end:0x0021ADA0
+	.text       start:0x0021ADA0 end:0x0021B208
+	.text       start:0x0021B208 end:0x002208D4
+	.rodata     start:0x00008F48 end:0x00008FC0
+	.data       start:0x00074890 end:0x00075848
+
+ac_npc_totakeke.o:
+	.text       start:0x002208D4 end:0x00220CF4
+	.text       start:0x00220CF4 end:0x00221794
+	.text       start:0x00221794 end:0x0022211C
+	.rodata     start:0x00008FC0 end:0x00008FE0
+	.data       start:0x00075848 end:0x00075918
+
+ac_present_npc.o:
+	.text       start:0x0022211C end:0x002222C0
+	.text       start:0x002222C0 end:0x00222DFC
+	.rodata     start:0x00008FE0 end:0x00009000
+	.data       start:0x00075918 end:0x00075A18
+
+ac_taisou_npc0.o:
+	.text       start:0x00222DFC end:0x0022311C
+	.text       start:0x0022311C end:0x00223224
+	.text       start:0x00223224 end:0x00223FC8
+	.rodata     start:0x00009000 end:0x00009030
+	.data       start:0x00075A18 end:0x00075C70
+	.bss        start:0x000C2440 end:0x000C2450
+
+ac_tamaire_npc0.o:
+	.text       start:0x00223FC8 end:0x00224240
+	.text       start:0x00224240 end:0x00224418
+	.text       start:0x00224418 end:0x00224A8C
+	.rodata     start:0x00009030 end:0x00009040
+	.data       start:0x00075C70 end:0x00075D30
+
+ac_tamaire_npc1.o:
+	.text       start:0x00224A8C end:0x00224EB0
+	.text       start:0x00224EB0 end:0x00225058
+	.text       start:0x00225058 end:0x00225E14
+	.rodata     start:0x00009040 end:0x00009088
+	.data       start:0x00075D30 end:0x00075E40
+	.bss        start:0x000C2450 end:0x000C2458
+
+ac_tokyoso_npc0.o:
+	.text       start:0x00225E14 end:0x002261C8
+	.text       start:0x002261C8 end:0x00226370
+	.text       start:0x00226370 end:0x00226B78
+	.rodata     start:0x00009088 end:0x00009098
+	.data       start:0x00075E40 end:0x00075F20
+
+ac_tokyoso_npc1.o:
+	.text       start:0x00226B78 end:0x00226E4C
+	.text       start:0x00226E4C end:0x0022702C
+	.text       start:0x0022702C end:0x002281A0
+	.rodata     start:0x00009098 end:0x000090B0
+	.data       start:0x00075F20 end:0x00076040
+
+ac_tukimi_npc0.o:
+	.text       start:0x002281A0 end:0x00228344
+	.text       start:0x00228344 end:0x00228384
+	.text       start:0x00228384 end:0x002288AC
+	.rodata     start:0x000090B0 end:0x000090C0
+	.data       start:0x00076040 end:0x00076118
+
+ac_tukimi_npc1.o:
+	.text       start:0x002288AC end:0x00228A50
+	.text       start:0x00228A50 end:0x00228A9C
+	.text       start:0x00228A9C end:0x002290A0
+	.rodata     start:0x000090C0 end:0x000090D0
+	.data       start:0x00076118 end:0x00076228
+
+ac_tunahiki_npc0.o:
+	.text       start:0x002290A0 end:0x00229448
+	.text       start:0x00229448 end:0x002295F4
+	.text       start:0x002295F4 end:0x00229A28
+	.rodata     start:0x000090D0 end:0x000090E8
+	.data       start:0x00076228 end:0x000762B0
+
+ac_tunahiki_npc1.o:
+	.text       start:0x00229A28 end:0x00229DC4
+	.text       start:0x00229DC4 end:0x0022A058
+	.text       start:0x0022A058 end:0x0022AAC8
+	.rodata     start:0x000090E8 end:0x00009148
+	.data       start:0x000762B0 end:0x00076360
+
+ac_turi_npc0.o:
+	.text       start:0x0022AAC8 end:0x0022AD0C
+	.text       start:0x0022AD0C end:0x0022AD88
+	.text       start:0x0022AD88 end:0x0022B398
+	.rodata     start:0x00009148 end:0x00009150
+	.data       start:0x00076360 end:0x00076448
+	.bss        start:0x000C2458 end:0x000C2470
+
+ac_groundhog_npc0.o:
+	.text       start:0x0022B398 end:0x0022B5A8
+	.text       start:0x0022B5A8 end:0x0022B694
+	.text       start:0x0022B694 end:0x0022BD18
+	.rodata     start:0x00009150 end:0x00009178
+	.data       start:0x00076448 end:0x000764F8
+
+ac_harvest_npc0.o:
+	.text       start:0x0022BD18 end:0x0022BF4C
+	.text       start:0x0022BF4C end:0x0022C638
+	.rodata     start:0x00009178 end:0x00009188
+	.data       start:0x000764F8 end:0x000765D0
+
+ac_harvest_npc1.o:
+	.text       start:0x0022C638 end:0x0022C848
+	.text       start:0x0022C848 end:0x0022CD14
+	.rodata     start:0x00009188 end:0x00009190
+	.data       start:0x000765D0 end:0x00076658
+
+ac_npc_hem.o:
+	.text       start:0x0022CD14 end:0x0022CE80
+	.text       start:0x0022CE80 end:0x0022D4E8
+	.rodata     start:0x00009190 end:0x00009198
+	.data       start:0x00076658 end:0x000766C8
+
+ac_ev_majin.o:
+	.text       start:0x0022D4E8 end:0x0022D750
+	.text       start:0x0022D750 end:0x0022DC10
+	.rodata     start:0x00009198 end:0x000091A0
+	.data       start:0x000766C8 end:0x00076748
+
+ac_ev_turkey.o:
+	.text       start:0x0022DC10 end:0x0022EE44
+	.text       start:0x0022EE44 end:0x0022EE44
+	.rodata     start:0x000091A0 end:0x000091E8
+	.data       start:0x00076748 end:0x000767F8
+
+ac_insect.o:
+	.text       start:0x0022EE44 end:0x0022EF2C
+	.text       start:0x0022EF2C end:0x0022FB60
+	.text       start:0x0022FB60 end:0x002305D0
+	.text       start:0x002305D0 end:0x002305D0
+	.text       start:0x002305D0 end:0x002305D0
+	.text       start:0x002305D0 end:0x00230A5C
+	.rodata     start:0x000091E8 end:0x00009240
+	.data       start:0x000767F8 end:0x00076D78
+	.bss        start:0x000C2470 end:0x000C78E0
+
+ac_ins_amenbo.o:
+	.text       start:0x00230A5C end:0x00231174
+	.text       start:0x00231174 end:0x00231174
+	.text       start:0x00231174 end:0x00231174
+	.rodata     start:0x00009240 end:0x00009298
+	.data       start:0x00076D78 end:0x00076DA8
+
+ac_ins_batta.o:
+	.text       start:0x00231174 end:0x002324BC
+	.text       start:0x002324BC end:0x002324BC
+	.rodata     start:0x00009298 end:0x00009320
+	.data       start:0x00076DA8 end:0x00076E30
+
+ac_ins_dango.o:
+	.text       start:0x002324BC end:0x002331C4
+	.rodata     start:0x00009320 end:0x00009368
+	.data       start:0x00076E30 end:0x00076E80
+
+ac_ins_chou.o:
+	.text       start:0x002331C4 end:0x00234798
+	.text       start:0x00234798 end:0x00234798
+	.text       start:0x00234798 end:0x00234798
+	.rodata     start:0x00009368 end:0x000093D8
+	.data       start:0x00076E80 end:0x00076F40
+
+ac_ins_goki.o:
+	.text       start:0x00234798 end:0x0023565C
+	.rodata     start:0x000093D8 end:0x00009440
+	.data       start:0x00076F40 end:0x00076FD8
+
+ac_ins_hitodama.o:
+	.text       start:0x0023565C end:0x0023606C
+	.text       start:0x0023606C end:0x0023606C
+	.text       start:0x0023606C end:0x0023606C
+	.rodata     start:0x00009440 end:0x000094A0
+	.data       start:0x00076FD8 end:0x00077028
+
+ac_ins_hotaru.o:
+	.text       start:0x0023606C end:0x00236DC4
+	.text       start:0x00236DC4 end:0x00236DC4
+	.text       start:0x00236DC4 end:0x00236DC4
+	.rodata     start:0x000094A0 end:0x00009520
+	.data       start:0x00077028 end:0x000770C8
+
+ac_ins_ka.o:
+	.text       start:0x00236DC4 end:0x00237650
+	.rodata     start:0x00009520 end:0x00009568
+	.data       start:0x000770C8 end:0x000770F8
+
+ac_ins_kabuto.o:
+	.text       start:0x00237650 end:0x00237E60
+	.rodata     start:0x00009568 end:0x000095A0
+	.data       start:0x000770F8 end:0x00077158
+
+ac_ins_kera.o:
+	.text       start:0x00237E60 end:0x00238B8C
+	.rodata     start:0x000095A0 end:0x000095E8
+	.data       start:0x00077158 end:0x000771B0
+
+ac_ins_mino.o:
+	.text       start:0x00238B8C end:0x00239E28
+	.text       start:0x00239E28 end:0x00239E28
+	.text       start:0x00239E28 end:0x00239E28
+	.rodata     start:0x000095E8 end:0x00009668
+	.data       start:0x000771B0 end:0x00077250
+
+ac_ins_semi.o:
+	.text       start:0x00239E28 end:0x0023A6D4
+	.rodata     start:0x00009668 end:0x000096B0
+	.data       start:0x00077250 end:0x00077288
+
+ac_ins_tentou.o:
+	.text       start:0x0023A6D4 end:0x0023B338
+	.rodata     start:0x000096B0 end:0x00009718
+	.data       start:0x00077288 end:0x000772F8
+
+ac_ins_tonbo.o:
+	.text       start:0x0023B338 end:0x0023C790
+	.text       start:0x0023C790 end:0x0023C790
+	.text       start:0x0023C790 end:0x0023C790
+	.rodata     start:0x00009718 end:0x00009790
+	.data       start:0x000772F8 end:0x00077350
+
+ac_gyoei.o:
+	.text       start:0x0023C790 end:0x0023C844
+	.text       start:0x0023C844 end:0x0023CF74
+	.text       start:0x0023CF74 end:0x0023D2B4
+	.text       start:0x0023D2B4 end:0x0023D908
+	.rodata     start:0x00009790 end:0x00009808
+	.data       start:0x00077350 end:0x000778D0
+	.bss        start:0x000C78E0 end:0x000CF0E8
+
+ac_gyo_test.o:
+	.text       start:0x0023D908 end:0x0023F93C
+	.text       start:0x0023F93C end:0x0023F93C
+	.text       start:0x0023F93C end:0x0023F93C
+	.rodata     start:0x00009808 end:0x00009888
+	.data       start:0x000778D0 end:0x00077C20
+
+ac_gyo_kaseki.o:
+	.text       start:0x0023F93C end:0x00241860
+	.text       start:0x00241860 end:0x00241860
+	.text       start:0x00241860 end:0x00241860
+	.rodata     start:0x00009888 end:0x00009908
+	.data       start:0x00077C20 end:0x00077FB8
+
+ac_boat.o:
+	.text       start:0x00241860 end:0x00241D54
+	.text       start:0x00241D54 end:0x00243138
+	.rodata     start:0x00009908 end:0x00009990
+	.data       start:0x00077FB8 end:0x000780D8
+
+ac_br_shop.o:
+	.text       start:0x00243138 end:0x0024333C
+	.text       start:0x0024333C end:0x00243DB8
+	.text       start:0x00243DB8 end:0x0024406C
+	.rodata     start:0x00009990 end:0x000099C0
+	.data       start:0x000780D8 end:0x00078200
+
+ac_bridge_a.o:
+	.text       start:0x0024406C end:0x002448A0
+	.rodata     start:0x000099C0 end:0x00009A30
+	.data       start:0x00078200 end:0x000782A8
+
+ac_buggy.o:
+	.text       start:0x002448A0 end:0x00244A18
+	.text       start:0x00244A18 end:0x00245488
+	.text       start:0x00245488 end:0x00245764
+	.rodata     start:0x00009A30 end:0x00009A68
+	.data       start:0x000782A8 end:0x000783D0
+
+ac_conveni.o:
+	.text       start:0x00245764 end:0x00245914
+	.text       start:0x00245914 end:0x00246268
+	.text       start:0x00246268 end:0x00246504
+	.rodata     start:0x00009A68 end:0x00009AB0
+	.data       start:0x000783D0 end:0x000785B0
+
+ac_count02.o:
+	.text       start:0x00246504 end:0x002465F8
+	.text       start:0x002465F8 end:0x00246AE8
+	.text       start:0x00246AE8 end:0x00246D64
+	.rodata     start:0x00009AB0 end:0x00009AD8
+	.data       start:0x000785B0 end:0x00078620
+
+ac_countdown.o:
+	.text       start:0x00246D64 end:0x00246E00
+	.text       start:0x00246E00 end:0x00246E80
+	.text       start:0x00246E80 end:0x00247338
+	.text       start:0x00247338 end:0x002475F0
+	.rodata     start:0x00009AD8 end:0x00009AE0
+	.data       start:0x00078620 end:0x00078720
+	.bss        start:0x000CF0E8 end:0x000CF0F0
+
+ac_depart.o:
+	.text       start:0x002475F0 end:0x002477AC
+	.text       start:0x002477AC end:0x00248100
+	.text       start:0x00248100 end:0x002483E0
+	.rodata     start:0x00009AE0 end:0x00009B20
+	.data       start:0x00078720 end:0x00078968
+
+ac_douzou.o:
+	.text       start:0x002483E0 end:0x00248510
+	.text       start:0x00248510 end:0x002490A4
+	.text       start:0x002490A4 end:0x00249428
+	.rodata     start:0x00009B20 end:0x00009B48
+	.data       start:0x00078968 end:0x00078B90
+
+ac_dump.o:
+	.text       start:0x00249428 end:0x002494A4
+	.text       start:0x002494A4 end:0x002498F4
+	.text       start:0x002498F4 end:0x00249A1C
+	.rodata     start:0x00009B48 end:0x00009B68
+	.data       start:0x00078B90 end:0x00078C98
+
+ac_fallS.o:
+	.text       start:0x00249A1C end:0x00249A78
+	.text       start:0x00249A78 end:0x00249CB4
+	.rodata     start:0x00009B68 end:0x00009B90
+	.data       start:0x00078C98 end:0x00078CC0
+
+ac_fallSESW.o:
+	.text       start:0x00249CB4 end:0x00249D10
+	.text       start:0x00249D10 end:0x00249FA4
+	.rodata     start:0x00009B90 end:0x00009BB8
+	.data       start:0x00078CC0 end:0x00078D28
+
+ac_ghog.o:
+	.text       start:0x00249FA4 end:0x0024A1F8
+	.rodata     start:0x00009BB8 end:0x00009BC8
+	.data       start:0x00078D28 end:0x00078D78
+
+ac_goza.o:
+	.text       start:0x0024A1F8 end:0x0024A244
+	.text       start:0x0024A244 end:0x0024A53C
+	.text       start:0x0024A53C end:0x0024A660
+	.rodata     start:0x00009BC8 end:0x00009BD8
+	.data       start:0x00078D78 end:0x00078EB8
+
+ac_house.o:
+	.text       start:0x0024A660 end:0x0024A844
+	.text       start:0x0024A844 end:0x0024B6BC
+	.text       start:0x0024B6BC end:0x0024BE34
+	.rodata     start:0x00009BD8 end:0x00009C08
+	.data       start:0x00078EB8 end:0x00079198
+
+ac_htable.o:
+	.text       start:0x0024BE34 end:0x0024C7A0
+	.rodata     start:0x00009C08 end:0x00009CA8
+	.data       start:0x00079198 end:0x000792C8
+
+ac_kago.o:
+	.text       start:0x0024C7A0 end:0x0024C800
+	.text       start:0x0024C800 end:0x0024C9F8
+	.text       start:0x0024C9F8 end:0x0024CAF0
+	.data       start:0x000792C8 end:0x00079320
+
+ac_kamakura.o:
+	.text       start:0x0024CAF0 end:0x0024CB84
+	.text       start:0x0024CB84 end:0x0024D344
+	.text       start:0x0024D344 end:0x0024D56C
+	.rodata     start:0x00009CA8 end:0x00009CD8
+	.data       start:0x00079320 end:0x00079400
+
+ac_koinobori.o:
+	.text       start:0x0024D56C end:0x0024D608
+	.text       start:0x0024D608 end:0x0024D77C
+	.text       start:0x0024D77C end:0x0024D894
+	.rodata     start:0x00009CD8 end:0x00009CF0
+	.data       start:0x00079400 end:0x000794A0
+
+ac_lotus.o:
+	.text       start:0x0024D894 end:0x0024D9A0
+	.text       start:0x0024D9A0 end:0x0024DC80
+	.text       start:0x0024DC80 end:0x0024DDCC
+	.rodata     start:0x00009CF0 end:0x00009D10
+	.data       start:0x000794A0 end:0x000796B8
+	.bss        start:0x000CF0F0 end:0x000CF110
+
+ac_mikanbox.o:
+	.text       start:0x0024DDCC end:0x0024DEB8
+	.text       start:0x0024DEB8 end:0x0024EC80
+	.text       start:0x0024EC80 end:0x0024ECE0
+	.text       start:0x0024ECE0 end:0x0024EF20
+	.rodata     start:0x00009D10 end:0x00009D58
+	.data       start:0x000796B8 end:0x00079730
+	.bss        start:0x000CF110 end:0x000CF280
+
+ac_mikuji.o:
+	.text       start:0x0024EF20 end:0x0024EF44
+	.text       start:0x0024EF44 end:0x0024F1C8
+	.text       start:0x0024F1C8 end:0x0024F2A0
+	.data       start:0x00079730 end:0x000797C0
+
+ac_museum.o:
+	.text       start:0x0024F2A0 end:0x0024FAD0
+	.rodata     start:0x00009D58 end:0x00009DA8
+	.data       start:0x000797C0 end:0x000798E0
+
+ac_my_house.o:
+	.text       start:0x0024FAD0 end:0x0024FD70
+	.text       start:0x0024FD70 end:0x00250B44
+	.text       start:0x00250B44 end:0x00251214
+	.rodata     start:0x00009DA8 end:0x00009DF8
+	.data       start:0x000798E0 end:0x00079C30
+	.bss        start:0x000CF280 end:0x000CF290
+
+ac_nameplate.o:
+	.text       start:0x00251214 end:0x00251414
+	.data       start:0x00079C30 end:0x00079C58
+
+ac_needlework_shop.o:
+	.text       start:0x00251414 end:0x002515A8
+	.text       start:0x002515A8 end:0x00251ED0
+	.text       start:0x00251ED0 end:0x002521A8
+	.rodata     start:0x00009DF8 end:0x00009E40
+	.data       start:0x00079C58 end:0x00079DF0
+
+ac_police_box.o:
+	.text       start:0x002521A8 end:0x00252210
+	.text       start:0x00252210 end:0x00252710
+	.text       start:0x00252710 end:0x00252988
+	.rodata     start:0x00009E40 end:0x00009E70
+	.data       start:0x00079DF0 end:0x00079EE0
+
+ac_post_office.o:
+	.text       start:0x00252988 end:0x00252AF8
+	.text       start:0x00252AF8 end:0x0025334C
+	.text       start:0x0025334C end:0x00253718
+	.rodata     start:0x00009E70 end:0x00009EB0
+	.data       start:0x00079EE0 end:0x0007A078
+
+ac_radio.o:
+	.text       start:0x00253718 end:0x0025375C
+	.text       start:0x0025375C end:0x00253A3C
+	.text       start:0x00253A3C end:0x00253B30
+	.rodata     start:0x00009EB0 end:0x00009EC0
+	.data       start:0x0007A078 end:0x0007A0C0
+
+ac_reserve.o:
+	.text       start:0x00253B30 end:0x00253B8C
+	.text       start:0x00253B8C end:0x00253E08
+	.text       start:0x00253E08 end:0x00253F64
+	.data       start:0x0007A0C0 end:0x0007A128
+
+ac_s_car.o:
+	.text       start:0x00253F64 end:0x00253FEC
+	.text       start:0x00253FEC end:0x00254324
+	.text       start:0x00254324 end:0x00254528
+	.rodata     start:0x00009EC0 end:0x00009EE0
+	.data       start:0x0007A128 end:0x0007A1F0
+
+ac_shop.o:
+	.text       start:0x00254528 end:0x00254720
+	.text       start:0x00254720 end:0x0025509C
+	.text       start:0x0025509C end:0x002553F0
+	.rodata     start:0x00009EE0 end:0x00009F28
+	.data       start:0x0007A1F0 end:0x0007A358
+
+ac_shrine.o:
+	.text       start:0x002553F0 end:0x0025558C
+	.text       start:0x0025558C end:0x00255614
+	.text       start:0x00255614 end:0x00256264
+	.text       start:0x00256264 end:0x00256838
+	.rodata     start:0x00009F28 end:0x00009F70
+	.data       start:0x0007A358 end:0x0007A450
+	.bss        start:0x000CF290 end:0x000CF2B8
+
+ac_station.o:
+	.text       start:0x00256838 end:0x00256980
+	.text       start:0x00256980 end:0x00256ACC
+	.text       start:0x00256ACC end:0x00256CD4
+	.text       start:0x00256CD4 end:0x002579A8
+	.rodata     start:0x00009F70 end:0x00009F88
+	.data       start:0x0007A450 end:0x0007A720
+	.bss        start:0x000CF2B8 end:0x000CF2C0
+
+ac_structure.o:
+	.text       start:0x002579A8 end:0x00257AF0
+	.text       start:0x00257AF0 end:0x00258208
+	.rodata     start:0x00009F88 end:0x00009F90
+	.data       start:0x0007A720 end:0x0007A9F0
+	.bss        start:0x000CF2C0 end:0x000E5080
+
+ac_super.o:
+	.text       start:0x00258208 end:0x002583C4
+	.text       start:0x002583C4 end:0x00258D18
+	.text       start:0x00258D18 end:0x00258FB4
+	.rodata     start:0x00009F90 end:0x00009FD0
+	.data       start:0x0007A9F0 end:0x0007AC30
+
+ac_tama.o:
+	.text       start:0x00258FB4 end:0x00258FDC
+	.text       start:0x00258FDC end:0x00259144
+	.text       start:0x00259144 end:0x0025923C
+	.rodata     start:0x00009FD0 end:0x00009FD8
+	.data       start:0x0007AC30 end:0x0007AC60
+
+ac_tent.o:
+	.text       start:0x0025923C end:0x00259BE8
+	.rodata     start:0x00009FD8 end:0x0000A008
+	.data       start:0x0007AC60 end:0x0007AD20
+
+ac_toudai.o:
+	.text       start:0x00259BE8 end:0x00259F5C
+	.text       start:0x00259F5C end:0x0025A8A8
+	.text       start:0x0025A8A8 end:0x0025A8A8
+	.text       start:0x0025A8A8 end:0x0025A8A8
+	.text       start:0x0025A8A8 end:0x0025ABA4
+	.rodata     start:0x0000A008 end:0x0000A068
+	.data       start:0x0007AD20 end:0x0007ADF0
+
+ac_train0.o:
+	.text       start:0x0025ABA4 end:0x0025ACDC
+	.text       start:0x0025ACDC end:0x0025B4BC
+	.text       start:0x0025B4BC end:0x0025B4BC
+	.text       start:0x0025B4BC end:0x0025B4BC
+	.text       start:0x0025B4BC end:0x0025B5F0
+	.rodata     start:0x0000A068 end:0x0000A0C0
+	.data       start:0x0007ADF0 end:0x0007AE20
+
+ac_train1.o:
+	.text       start:0x0025B5F0 end:0x0025B6B8
+	.text       start:0x0025B6B8 end:0x0025BC40
+	.text       start:0x0025BC40 end:0x0025BC40
+	.text       start:0x0025BC40 end:0x0025BC40
+	.text       start:0x0025BC40 end:0x0025BD04
+	.rodata     start:0x0000A0C0 end:0x0000A0F0
+	.data       start:0x0007AE20 end:0x0007AEA8
+
+ac_tukimi.o:
+	.text       start:0x0025BD04 end:0x0025BDBC
+	.text       start:0x0025BDBC end:0x0025BFF0
+	.text       start:0x0025BFF0 end:0x0025C1F4
+	.rodata     start:0x0000A0F0 end:0x0000A100
+	.data       start:0x0007AEA8 end:0x0007AF20
+
+ac_turi.o:
+	.text       start:0x0025C1F4 end:0x0025C27C
+	.text       start:0x0025C27C end:0x0025C6E0
+	.text       start:0x0025C6E0 end:0x0025C9FC
+	.text       start:0x0025C9FC end:0x0025CB00
+	.data       start:0x0007AF20 end:0x0007B0F0
+	.bss        start:0x000E5080 end:0x000E5090
+
+ac_windmill.o:
+	.text       start:0x0025CB00 end:0x0025CB38
+	.text       start:0x0025CB38 end:0x0025CD7C
+	.text       start:0x0025CD7C end:0x0025CD80
+	.data       start:0x0007B0F0 end:0x0007B1D8
+
+ac_yatai.o:
+	.text       start:0x0025CD80 end:0x0025CDB4
+	.text       start:0x0025CDB4 end:0x0025D0A8
+	.text       start:0x0025D0A8 end:0x0025D1C0
+	.rodata     start:0x0000A100 end:0x0000A108
+	.data       start:0x0007B1D8 end:0x0007B300
+
+m_address_ovl.o:
+	.text       start:0x0025D1C0 end:0x0025E828
+	.text       start:0x0025E828 end:0x0025E828
+	.text       start:0x0025E828 end:0x0025E828
+	.rodata     start:0x0000A108 end:0x0000A180
+	.data       start:0x0007B300 end:0x0007B6B0
+	.bss        start:0x000E5090 end:0x000E5278
+
+m_bank_ovl.o:
+	.text       start:0x0025E828 end:0x0025F670
+	.rodata     start:0x0000A180 end:0x0000A1B8
+	.data       start:0x0007B6B0 end:0x0007B700
+	.bss        start:0x000E5278 end:0x000E5290
+
+m_birthday_ovl.o:
+	.text       start:0x0025F670 end:0x0025FE68
+	.rodata     start:0x0000A1B8 end:0x0000A1E8
+	.data       start:0x0007B700 end:0x0007B780
+	.bss        start:0x000E5290 end:0x000E5298
+
+m_board_ovl.o:
+	.text       start:0x0025FE68 end:0x0025FE68
+	.text       start:0x0025FE68 end:0x00261824
+	.text       start:0x00261824 end:0x00261824
+	.text       start:0x00261824 end:0x00261824
+	.rodata     start:0x0000A1E8 end:0x0000A258
+	.data       start:0x0007B780 end:0x0007C3A0
+	.bss        start:0x000E5298 end:0x000E53E0
+
+m_calendar_ovl.o:
+	.text       start:0x00261824 end:0x002634A0
+	.text       start:0x002634A0 end:0x002634A0
+	.text       start:0x002634A0 end:0x002634A0
+	.text       start:0x002634A0 end:0x00264540
+	.rodata     start:0x0000A258 end:0x0000A2C0
+	.data       start:0x0007C3A0 end:0x0007C5D0
+
+m_catalog_ovl.o:
+	.text       start:0x00264540 end:0x002676D8
+	.rodata     start:0x0000A2C0 end:0x0000A3C0
+	.data       start:0x0007C5D0 end:0x0007F358
+
+m_cpedit_ovl.o:
+	.text       start:0x002676D8 end:0x002678DC
+	.data       start:0x0007F358 end:0x0007F370
+	.bss        start:0x000E53E0 end:0x000E53E8
+
+m_cpmail_ovl.o:
+	.text       start:0x002678DC end:0x002688C8
+	.rodata     start:0x0000A3C0 end:0x0000A418
+	.data       start:0x0007F370 end:0x0007F428
+	.bss        start:0x000E53E8 end:0x000E5FC0
+
+m_cporiginal_ovl.o:
+	.text       start:0x002688C8 end:0x0026A478
+	.rodata     start:0x0000A418 end:0x0000A460
+	.data       start:0x0007F428 end:0x0007F538
+	.bss        start:0x000E5FC0 end:0x000E6058
+
+m_cpwarning_ovl.o:
+	.text       start:0x0026A478 end:0x0026AC9C
+	.rodata     start:0x0000A460 end:0x0000A4C8
+	.data       start:0x0007F538 end:0x0007F590
+	.bss        start:0x000E6058 end:0x000E6068
+
+m_diary_ovl.o:
+	.text       start:0x0026AC9C end:0x0026AC9C
+	.text       start:0x0026AC9C end:0x0026CBA0
+	.text       start:0x0026CBA0 end:0x0026CBA0
+	.text       start:0x0026CBA0 end:0x0026CBA0
+	.rodata     start:0x0000A4C8 end:0x0000A538
+	.data       start:0x0007F590 end:0x0007F600
+	.bss        start:0x000E6068 end:0x000E60C0
+
+m_design_ovl.o:
+	.text       start:0x0026CBA0 end:0x002734E0
+	.rodata     start:0x0000A538 end:0x0000A5F0
+	.data       start:0x0007F600 end:0x000803A8
+	.bss        start:0x000E60C0 end:0x000E67A0
+
+m_editEndChk_ovl.o:
+	.text       start:0x002734E0 end:0x00273F50
+	.rodata     start:0x0000A5F0 end:0x0000A630
+	.data       start:0x000803A8 end:0x000805D8
+	.bss        start:0x000E67A0 end:0x000E67A8
+
+m_editor_ovl.o:
+	.text       start:0x00273F50 end:0x00273F50
+	.text       start:0x00273F50 end:0x00278150
+	.rodata     start:0x0000A630 end:0x0000A698
+	.data       start:0x000805D8 end:0x00081068
+	.bss        start:0x000E67A8 end:0x000E67E0
+
+m_gba_ovl.o:
+	.text       start:0x00278150 end:0x00278F2C
+	.rodata     start:0x0000A698 end:0x0000A6B8
+	.data       start:0x00081068 end:0x000810A0
+	.bss        start:0x000E67E0 end:0x000E67E8
+
+m_hand_ovl.o:
+	.text       start:0x00278F2C end:0x0027B7F8
+	.text       start:0x0027B7F8 end:0x0027B7F8
+	.text       start:0x0027B7F8 end:0x0027B7F8
+	.rodata     start:0x0000A6B8 end:0x0000A738
+	.data       start:0x000810A0 end:0x00081260
+	.bss        start:0x000E67E8 end:0x000E6B60
+
+m_haniwaPortrait_ovl.o:
+	.text       start:0x0027B7F8 end:0x0027BC50
+	.rodata     start:0x0000A738 end:0x0000A768
+	.bss        start:0x000E6B60 end:0x000E6C80
+
+m_haniwa_ovl.o:
+	.text       start:0x0027BC50 end:0x0027BC50
+	.text       start:0x0027BC50 end:0x0027C910
+	.rodata     start:0x0000A768 end:0x0000A7A0
+	.data       start:0x00081260 end:0x000813B8
+	.bss        start:0x000E6C80 end:0x000E6CC0
+
+m_hboard_ovl.o:
+	.text       start:0x0027C910 end:0x0027C910
+	.text       start:0x0027C910 end:0x0027D228
+	.rodata     start:0x0000A7A0 end:0x0000A7D8
+	.data       start:0x000813B8 end:0x000813D0
+
+m_inventory_ovl.o:
+	.text       start:0x0027D228 end:0x0027D228
+	.text       start:0x0027D228 end:0x00280E5C
+	.rodata     start:0x0000A7D8 end:0x0000A8E8
+	.data       start:0x000813D0 end:0x000817C0
+	.bss        start:0x000E6CC0 end:0x000E72B0
+
+m_ledit_ovl.o:
+	.text       start:0x00280E5C end:0x00281698
+	.rodata     start:0x0000A8E8 end:0x0000A920
+	.data       start:0x000817C0 end:0x000819A8
+	.bss        start:0x000E72B0 end:0x000E7630
+
+m_mailbox_ovl.o:
+	.text       start:0x00281698 end:0x00281FAC
+	.rodata     start:0x0000A920 end:0x0000A948
+	.data       start:0x000819A8 end:0x000819C0
+	.bss        start:0x000E7630 end:0x000E7648
+
+m_map_ovl.o:
+	.text       start:0x00281FAC end:0x00281FAC
+	.text       start:0x00281FAC end:0x00283CA0
+	.text       start:0x00283CA0 end:0x00283CA0
+	.text       start:0x00283CA0 end:0x00283CA0
+	.rodata     start:0x0000A948 end:0x0000A9D0
+	.data       start:0x000819C0 end:0x00081FF0
+	.bss        start:0x000E7648 end:0x000E7668
+
+m_mscore_ovl.o:
+	.text       start:0x00283CA0 end:0x00284F6C
+	.text       start:0x00284F6C end:0x00284F6C
+	.text       start:0x00284F6C end:0x00284F6C
+	.rodata     start:0x0000A9D0 end:0x0000AA58
+	.data       start:0x00081FF0 end:0x00082320
+	.bss        start:0x000E7668 end:0x000E7690
+
+m_music_ovl.o:
+	.text       start:0x00284F6C end:0x00285A00
+	.rodata     start:0x0000AA58 end:0x0000AA98
+	.data       start:0x00082320 end:0x00082338
+	.bss        start:0x000E7690 end:0x000E76B0
+
+m_needlework_ovl.o:
+	.text       start:0x00285A00 end:0x00286D8C
+	.rodata     start:0x0000AA98 end:0x0000AAC8
+	.data       start:0x00082338 end:0x000823B0
+
+m_notice_ovl.o:
+	.text       start:0x00286D8C end:0x00286D8C
+	.text       start:0x00286D8C end:0x002888F8
+	.text       start:0x002888F8 end:0x002888F8
+	.text       start:0x002888F8 end:0x002888F8
+	.rodata     start:0x0000AAC8 end:0x0000AB50
+	.data       start:0x000823B0 end:0x00082410
+	.bss        start:0x000E76B0 end:0x000E7788
+
+m_repay_ovl.o:
+	.text       start:0x002888F8 end:0x002894BC
+	.rodata     start:0x0000AB50 end:0x0000AB90
+	.data       start:0x00082410 end:0x00082480
+	.bss        start:0x000E7788 end:0x000E77A0
+
+m_submenu_ovl.o:
+	.text       start:0x002894BC end:0x0028BB74
+	.rodata     start:0x0000AB90 end:0x0000AC20
+	.data       start:0x00082480 end:0x00083858
+	.bss        start:0x000E77A0 end:0x000E81A8
+
+m_tag_ovl.o:
+	.text       start:0x0028BB74 end:0x0029B920
+	.text       start:0x0029B920 end:0x0029C658
+	.text       start:0x0029C658 end:0x0029C658
+	.text       start:0x0029C658 end:0x0029C658
+	.rodata     start:0x0000AC20 end:0x0000AD10
+	.data       start:0x00083858 end:0x00085298
+	.bss        start:0x000E81A8 end:0x000E8570
+
+m_timeIn_ovl.o:
+	.text       start:0x0029C658 end:0x0029C658
+	.text       start:0x0029C658 end:0x0029D6E8
+	.rodata     start:0x0000AD10 end:0x0000AD68
+	.data       start:0x00085298 end:0x00085360
+	.bss        start:0x000E8570 end:0x000E8590
+
+m_warning_ovl.o:
+	.text       start:0x0029D6E8 end:0x0029DE90
+	.rodata     start:0x0000AD68 end:0x0000AD88
+	.data       start:0x00085360 end:0x00085DF8
+	.bss        start:0x000E8590 end:0x000E8598
+
+m_passwordMake_ovl.o:
+	.text       start:0x0029DE90 end:0x0029E638
+	.rodata     start:0x0000AD88 end:0x0000ADC0
+	.data       start:0x00085DF8 end:0x00085E38
+	.bss        start:0x000E8598 end:0x000E85B0
+
+m_passwordChk_ovl.o:
+	.text       start:0x0029E638 end:0x0029ECFC
+	.rodata     start:0x0000ADC0 end:0x0000ADF8
+	.data       start:0x00085E38 end:0x00085E70
+	.bss        start:0x000E85B0 end:0x000E85D8
+
+ac_weather.o:
+	.text       start:0x0029ECFC end:0x002A03DC
+	.rodata     start:0x0000ADF8 end:0x0000AE18
+	.data       start:0x00085E70 end:0x00085EC0
+
+ac_weather_fine.o:
+	.text       start:0x002A03DC end:0x002A03DC
+	.data       start:0x00085EC0 end:0x00085ED8
+
+ac_weather_rain.o:
+	.text       start:0x002A03DC end:0x002A0A0C
+	.rodata     start:0x0000AE18 end:0x0000AE40
+	.data       start:0x00085ED8 end:0x00085F18
+
+ac_weather_snow.o:
+	.text       start:0x002A0A0C end:0x002A10DC
+	.rodata     start:0x0000AE40 end:0x0000AE98
+	.data       start:0x00085F18 end:0x00085F30
+
+ac_weather_sakura.o:
+	.text       start:0x002A10DC end:0x002A17BC
+	.rodata     start:0x0000AE98 end:0x0000AEF8
+	.data       start:0x00085F30 end:0x00085F48
+
+ac_weather_leaf.o:
+	.text       start:0x002A17BC end:0x002A1E80
+	.rodata     start:0x0000AEF8 end:0x0000AF50
+	.data       start:0x00085F48 end:0x00085F68
+
+ef_ami_mizu.o:
+	.text       start:0x002A1E80 end:0x002A2274
+	.rodata     start:0x0000AF50 end:0x0000AF88
+	.data       start:0x00085F68 end:0x00085F80
+
+ef_anahikari.o:
+	.text       start:0x002A2274 end:0x002A2548
+	.rodata     start:0x0000AF88 end:0x0000AFA0
+	.data       start:0x00085F80 end:0x00085FA8
+
+ef_ase.o:
+	.text       start:0x002A2548 end:0x002A26B4
+	.rodata     start:0x0000AFA0 end:0x0000AFA8
+	.data       start:0x00085FA8 end:0x00085FC0
+
+ef_ase2.o:
+	.text       start:0x002A26B4 end:0x002A2878
+	.rodata     start:0x0000AFA8 end:0x0000AFB8
+	.data       start:0x00085FC0 end:0x00085FE8
+
+ef_ase_ch.o:
+	.text       start:0x002A2878 end:0x002A2AC0
+	.rodata     start:0x0000AFB8 end:0x0000AFD0
+	.data       start:0x00085FE8 end:0x00086028
+
+ef_break_axe.o:
+	.text       start:0x002A2AC0 end:0x002A3C5C
+	.text       start:0x002A3C5C end:0x002A3C5C
+	.rodata     start:0x0000AFD0 end:0x0000B058
+	.data       start:0x00086028 end:0x00086040
+
+ef_bubu.o:
+	.text       start:0x002A3C5C end:0x002A3D98
+	.rodata     start:0x0000B058 end:0x0000B060
+	.data       start:0x00086040 end:0x00086058
+
+ef_buruburu.o:
+	.text       start:0x002A3D98 end:0x002A3F90
+	.rodata     start:0x0000B060 end:0x0000B070
+	.data       start:0x00086058 end:0x00086088
+
+ef_bush_happa.o:
+	.text       start:0x002A3F90 end:0x002A476C
+	.text       start:0x002A476C end:0x002A476C
+	.rodata     start:0x0000B070 end:0x0000B0C0
+	.data       start:0x00086088 end:0x000860A0
+
+ef_bush_yuki.o:
+	.text       start:0x002A476C end:0x002A4A4C
+	.rodata     start:0x0000B0C0 end:0x0000B0E8
+	.data       start:0x000860A0 end:0x000860B8
+
+ef_car_blight.o:
+	.text       start:0x002A4A4C end:0x002A4E5C
+	.rodata     start:0x0000B0E8 end:0x0000B100
+	.data       start:0x000860B8 end:0x00086190
+
+ef_car_light.o:
+	.text       start:0x002A4E5C end:0x002A502C
+	.rodata     start:0x0000B100 end:0x0000B108
+	.data       start:0x00086190 end:0x000861A8
+
+ef_clacker.o:
+	.text       start:0x002A502C end:0x002A548C
+	.text       start:0x002A548C end:0x002A548C
+	.rodata     start:0x0000B108 end:0x0000B120
+	.data       start:0x000861A8 end:0x000861E0
+
+ef_coin.o:
+	.text       start:0x002A548C end:0x002A5C30
+	.rodata     start:0x0000B120 end:0x0000B178
+	.data       start:0x000861E0 end:0x00086248
+
+ef_dash_asimoto.o:
+	.text       start:0x002A5C30 end:0x002A6484
+	.rodata     start:0x0000B178 end:0x0000B190
+	.data       start:0x00086248 end:0x000862D0
+
+ef_dig_hole.o:
+	.text       start:0x002A6484 end:0x002A6D08
+	.text       start:0x002A6D08 end:0x002A6D08
+	.rodata     start:0x0000B190 end:0x0000B1E0
+	.data       start:0x000862D0 end:0x00086340
+
+ef_dig_mud.o:
+	.text       start:0x002A6D08 end:0x002A737C
+	.rodata     start:0x0000B1E0 end:0x0000B230
+	.data       start:0x00086340 end:0x00086388
+
+ef_dig_scoop.o:
+	.text       start:0x002A737C end:0x002A7C14
+	.rodata     start:0x0000B230 end:0x0000B250
+	.data       start:0x00086388 end:0x000863A0
+
+ef_douzou_light.o:
+	.text       start:0x002A7C14 end:0x002A7EE0
+	.rodata     start:0x0000B250 end:0x0000B268
+	.data       start:0x000863A0 end:0x000863B8
+
+ef_doyon.o:
+	.text       start:0x002A7EE0 end:0x002A83D8
+	.text       start:0x002A83D8 end:0x002A83D8
+	.rodata     start:0x0000B268 end:0x0000B2A8
+	.data       start:0x000863B8 end:0x000863D0
+
+ef_dust.o:
+	.text       start:0x002A83D8 end:0x002A8A3C
+	.text       start:0x002A8A3C end:0x002A8A3C
+	.rodata     start:0x0000B2A8 end:0x0000B308
+	.data       start:0x000863D0 end:0x00086470
+
+ef_flash.o:
+	.text       start:0x002A8A3C end:0x002A8F48
+	.rodata     start:0x0000B308 end:0x0000B340
+	.data       start:0x00086470 end:0x00086550
+
+ef_footprint.o:
+	.text       start:0x002A8F48 end:0x002A94C8
+	.rodata     start:0x0000B340 end:0x0000B370
+	.data       start:0x00086550 end:0x00086590
+
+ef_furo_yuge.o:
+	.text       start:0x002A94C8 end:0x002A9A78
+	.rodata     start:0x0000B370 end:0x0000B3A0
+	.data       start:0x00086590 end:0x00086600
+
+ef_gimonhu.o:
+	.text       start:0x002A9A78 end:0x002A9D84
+	.rodata     start:0x0000B3A0 end:0x0000B3C8
+	.data       start:0x00086600 end:0x000866E8
+
+ef_goki.o:
+	.text       start:0x002A9D84 end:0x002AA22C
+	.text       start:0x002AA22C end:0x002AA22C
+	.rodata     start:0x0000B3C8 end:0x0000B408
+	.data       start:0x000866E8 end:0x00086700
+
+ef_ha.o:
+	.text       start:0x002AA22C end:0x002AA5EC
+	.rodata     start:0x0000B408 end:0x0000B430
+	.data       start:0x00086700 end:0x00086720
+
+ef_halloween.o:
+	.text       start:0x002AA5EC end:0x002AA7FC
+	.rodata     start:0x0000B430 end:0x0000B440
+	.data       start:0x00086720 end:0x00086738
+
+ef_halloween_smoke.o:
+	.text       start:0x002AA7FC end:0x002AAA80
+	.rodata     start:0x0000B440 end:0x0000B450
+	.data       start:0x00086738 end:0x00086780
+
+ef_hanabi_botan1.o:
+	.text       start:0x002AAA80 end:0x002AB0A0
+	.text       start:0x002AB0A0 end:0x002AB0A0
+	.rodata     start:0x0000B450 end:0x0000B4A0
+	.data       start:0x00086780 end:0x00086880
+
+ef_hanabi_botan2.o:
+	.text       start:0x002AB0A0 end:0x002AB7D0
+	.text       start:0x002AB7D0 end:0x002AB7D0
+	.rodata     start:0x0000B4A0 end:0x0000B4F0
+	.data       start:0x00086880 end:0x00086978
+
+ef_hanabi_dummy.o:
+	.text       start:0x002AB7D0 end:0x002ABAB8
+	.rodata     start:0x0000B4F0 end:0x0000B510
+	.data       start:0x00086978 end:0x000869A8
+
+ef_hanabi_hoshi.o:
+	.text       start:0x002ABAB8 end:0x002AC0D8
+	.text       start:0x002AC0D8 end:0x002AC0D8
+	.rodata     start:0x0000B510 end:0x0000B560
+	.data       start:0x000869A8 end:0x00086AA8
+
+ef_hanabi_set.o:
+	.text       start:0x002AC0D8 end:0x002AC578
+	.rodata     start:0x0000B560 end:0x0000B598
+	.data       start:0x00086AA8 end:0x00086BF0
+
+ef_hanabi_switch.o:
+	.text       start:0x002AC578 end:0x002AC908
+	.rodata     start:0x0000B598 end:0x0000B5A8
+	.data       start:0x00086BF0 end:0x00086C08
+
+ef_hanabi_yanagi.o:
+	.text       start:0x002AC908 end:0x002ACFE0
+	.text       start:0x002ACFE0 end:0x002ACFE0
+	.rodata     start:0x0000B5A8 end:0x0000B5F0
+	.data       start:0x00086C08 end:0x00086D00
+
+ef_hanabira.o:
+	.text       start:0x002ACFE0 end:0x002AD50C
+	.rodata     start:0x0000B5F0 end:0x0000B628
+	.data       start:0x00086D00 end:0x00086D28
+
+ef_hanatiri.o:
+	.text       start:0x002AD50C end:0x002AD6B0
+	.data       start:0x00086D28 end:0x00086D40
+
+ef_hirameki_den.o:
+	.text       start:0x002AD6B0 end:0x002AD9B4
+	.rodata     start:0x0000B628 end:0x0000B638
+	.data       start:0x00086D40 end:0x00086D60
+
+ef_hirameki_hikari.o:
+	.text       start:0x002AD9B4 end:0x002ADBB8
+	.rodata     start:0x0000B638 end:0x0000B650
+	.data       start:0x00086D60 end:0x00086D78
+
+ef_ikigire.o:
+	.text       start:0x002ADBB8 end:0x002ADD34
+	.rodata     start:0x0000B650 end:0x0000B660
+	.data       start:0x00086D78 end:0x00086D90
+
+ef_impact_star.o:
+	.text       start:0x002ADD34 end:0x002AE218
+	.text       start:0x002AE218 end:0x002AE218
+	.rodata     start:0x0000B660 end:0x0000B688
+	.data       start:0x00086D90 end:0x00086DA8
+
+ef_kagu_happa.o:
+	.text       start:0x002AE218 end:0x002AE704
+	.text       start:0x002AE704 end:0x002AE704
+	.rodata     start:0x0000B688 end:0x0000B6C8
+	.data       start:0x00086DA8 end:0x00086DC0
+
+ef_kamifubuki.o:
+	.text       start:0x002AE704 end:0x002AED68
+	.text       start:0x002AED68 end:0x002AED68
+	.rodata     start:0x0000B6C8 end:0x0000B710
+	.data       start:0x00086DC0 end:0x00086E00
+
+ef_kangaeru.o:
+	.text       start:0x002AED68 end:0x002AED68
+	.text       start:0x002AED68 end:0x002AF3D4
+	.rodata     start:0x0000B710 end:0x0000B760
+	.data       start:0x00086E00 end:0x00086E18
+
+ef_kantanhu.o:
+	.text       start:0x002AF3D4 end:0x002AF6A4
+	.rodata     start:0x0000B760 end:0x0000B788
+	.data       start:0x00086E18 end:0x00086F00
+
+ef_kasamizu.o:
+	.text       start:0x002AF6A4 end:0x002AF850
+	.data       start:0x00086F00 end:0x00086F28
+
+ef_kasamizutama.o:
+	.text       start:0x002AF850 end:0x002AFB3C
+	.rodata     start:0x0000B788 end:0x0000B7A0
+	.data       start:0x00086F28 end:0x00086F68
+
+ef_kaze.o:
+	.text       start:0x002AFB3C end:0x002AFFC4
+	.rodata     start:0x0000B7A0 end:0x0000B7D0
+	.data       start:0x00086F68 end:0x00086F80
+
+ef_kaze_happa.o:
+	.text       start:0x002AFFC4 end:0x002B051C
+	.rodata     start:0x0000B7D0 end:0x0000B810
+	.data       start:0x00086F80 end:0x00086F98
+
+ef_kigae.o:
+	.text       start:0x002B051C end:0x002B074C
+	.rodata     start:0x0000B810 end:0x0000B820
+	.data       start:0x00086F98 end:0x00086FB0
+
+ef_kigae_light.o:
+	.text       start:0x002B074C end:0x002B0B28
+	.rodata     start:0x0000B820 end:0x0000B838
+	.data       start:0x00086FB0 end:0x00086FC8
+
+ef_kikuzu.o:
+	.text       start:0x002B0B28 end:0x002B109C
+	.rodata     start:0x0000B838 end:0x0000B870
+	.data       start:0x00086FC8 end:0x00086FE0
+
+ef_killer.o:
+	.text       start:0x002B109C end:0x002B1748
+	.rodata     start:0x0000B870 end:0x0000B8B0
+	.data       start:0x00086FE0 end:0x000870B0
+
+ef_kisha_kemuri.o:
+	.text       start:0x002B1748 end:0x002B1A6C
+	.rodata     start:0x0000B8B0 end:0x0000B8D8
+	.data       start:0x000870B0 end:0x000870C8
+
+ef_konpu.o:
+	.text       start:0x002B1A6C end:0x002B21FC
+	.text       start:0x002B21FC end:0x002B21FC
+	.rodata     start:0x0000B8D8 end:0x0000B948
+	.data       start:0x000870C8 end:0x00087120
+
+ef_kpun.o:
+	.text       start:0x002B21FC end:0x002B273C
+	.rodata     start:0x0000B948 end:0x0000B988
+	.data       start:0x00087120 end:0x00087220
+
+ef_kyousou_onpu.o:
+	.text       start:0x002B273C end:0x002B2840
+	.data       start:0x00087220 end:0x00087238
+
+ef_lovelove.o:
+	.text       start:0x002B2840 end:0x002B29A8
+	.rodata     start:0x0000B988 end:0x0000B990
+	.data       start:0x00087238 end:0x00087250
+
+ef_lovelove2.o:
+	.text       start:0x002B29A8 end:0x002B2D90
+	.rodata     start:0x0000B990 end:0x0000B9C0
+	.data       start:0x00087250 end:0x00087268
+
+ef_lovelove_heart.o:
+	.text       start:0x002B2D90 end:0x002B3174
+	.rodata     start:0x0000B9C0 end:0x0000B9F0
+	.data       start:0x00087268 end:0x00087280
+
+ef_make_hem.o:
+	.text       start:0x002B3174 end:0x002B4000
+	.rodata     start:0x0000B9F0 end:0x0000BA38
+	.data       start:0x00087280 end:0x000872D8
+
+ef_mizutama.o:
+	.text       start:0x002B4000 end:0x002B4624
+	.rodata     start:0x0000BA38 end:0x0000BA60
+	.data       start:0x000872D8 end:0x00087388
+
+ef_motiyuge.o:
+	.text       start:0x002B4624 end:0x002B49DC
+	.rodata     start:0x0000BA60 end:0x0000BA80
+	.data       start:0x00087388 end:0x000873B0
+
+ef_muka.o:
+	.text       start:0x002B49DC end:0x002B4CB8
+	.rodata     start:0x0000BA80 end:0x0000BAA8
+	.data       start:0x000873B0 end:0x000873C8
+
+ef_naku.o:
+	.text       start:0x002B4CB8 end:0x002B4EEC
+	.rodata     start:0x0000BAA8 end:0x0000BAC0
+	.data       start:0x000873C8 end:0x000873E0
+
+ef_namida.o:
+	.text       start:0x002B4EEC end:0x002B52F8
+	.rodata     start:0x0000BAC0 end:0x0000BAF0
+	.data       start:0x000873E0 end:0x000873F8
+
+ef_neboke.o:
+	.text       start:0x002B52F8 end:0x002B551C
+	.data       start:0x000873F8 end:0x00087410
+
+ef_neboke_akubi.o:
+	.text       start:0x002B551C end:0x002B596C
+	.rodata     start:0x0000BAF0 end:0x0000BB30
+	.data       start:0x00087410 end:0x00087430
+
+ef_neboke_awa.o:
+	.text       start:0x002B596C end:0x002B596C
+	.text       start:0x002B596C end:0x002B5E18
+	.rodata     start:0x0000BB30 end:0x0000BB70
+	.data       start:0x00087430 end:0x00087448
+
+ef_night13_moon.o:
+	.text       start:0x002B5E18 end:0x002B64B0
+	.rodata     start:0x0000BB70 end:0x0000BBD8
+	.data       start:0x00087448 end:0x00087460
+
+ef_night15_moon.o:
+	.text       start:0x002B64B0 end:0x002B6B24
+	.rodata     start:0x0000BBD8 end:0x0000BC38
+	.data       start:0x00087460 end:0x00087478
+
+ef_ongen.o:
+	.text       start:0x002B6B24 end:0x002B6D0C
+	.data       start:0x00087478 end:0x000874B0
+
+ef_otikomi.o:
+	.text       start:0x002B6D0C end:0x002B6D0C
+	.text       start:0x002B6D0C end:0x002B744C
+	.rodata     start:0x0000BC38 end:0x0000BC90
+	.data       start:0x000874B0 end:0x000874D8
+
+ef_otosiana.o:
+	.text       start:0x002B744C end:0x002B75B8
+	.data       start:0x000874D8 end:0x000874F8
+
+ef_pun.o:
+	.text       start:0x002B75B8 end:0x002B779C
+	.rodata     start:0x0000BC90 end:0x0000BC98
+	.data       start:0x000874F8 end:0x00087510
+
+ef_pun_sekimen.o:
+	.text       start:0x002B779C end:0x002B7998
+	.rodata     start:0x0000BC98 end:0x0000BCB0
+	.data       start:0x00087510 end:0x00087528
+
+ef_pun_yuge.o:
+	.text       start:0x002B7998 end:0x002B7E04
+	.rodata     start:0x0000BCB0 end:0x0000BCE0
+	.data       start:0x00087528 end:0x00087598
+
+ef_reset_hole.o:
+	.text       start:0x002B7E04 end:0x002B83D0
+	.rodata     start:0x0000BCE0 end:0x0000BD00
+	.data       start:0x00087598 end:0x000875C0
+
+ef_sandsplash.o:
+	.text       start:0x002B83D0 end:0x002B88A4
+	.rodata     start:0x0000BD00 end:0x0000BD48
+	.data       start:0x000875C0 end:0x000875F8
+
+ef_shock.o:
+	.text       start:0x002B88A4 end:0x002B8B2C
+	.rodata     start:0x0000BD48 end:0x0000BD60
+	.data       start:0x000875F8 end:0x00087680
+
+ef_shooting.o:
+	.text       start:0x002B8B2C end:0x002B8E98
+	.rodata     start:0x0000BD60 end:0x0000BD80
+	.data       start:0x00087680 end:0x00087698
+
+ef_shooting_kira.o:
+	.text       start:0x002B8E98 end:0x002B94E4
+	.rodata     start:0x0000BD80 end:0x0000BDB0
+	.data       start:0x00087698 end:0x000876C0
+
+ef_shooting_set.o:
+	.text       start:0x002B94E4 end:0x002B9B14
+	.rodata     start:0x0000BDB0 end:0x0000BE00
+	.data       start:0x000876C0 end:0x000876D8
+
+ef_siawase_hana.o:
+	.text       start:0x002B9B14 end:0x002B9D68
+	.rodata     start:0x0000BE00 end:0x0000BE08
+	.data       start:0x000876D8 end:0x000876F0
+
+ef_siawase_hana_ch.o:
+	.text       start:0x002B9D68 end:0x002BA1E8
+	.rodata     start:0x0000BE08 end:0x0000BE28
+	.data       start:0x000876F0 end:0x00087728
+
+ef_siawase_hikari.o:
+	.text       start:0x002BA1E8 end:0x002BA518
+	.rodata     start:0x0000BE28 end:0x0000BE38
+	.data       start:0x00087728 end:0x00087740
+
+ef_sibuki.o:
+	.text       start:0x002BA518 end:0x002BA84C
+	.rodata     start:0x0000BE38 end:0x0000BE58
+	.data       start:0x00087740 end:0x00087770
+
+ef_situren.o:
+	.text       start:0x002BA84C end:0x002BACE8
+	.rodata     start:0x0000BE58 end:0x0000BE90
+	.data       start:0x00087770 end:0x00087788
+
+ef_slip.o:
+	.text       start:0x002BACE8 end:0x002BB2D4
+	.rodata     start:0x0000BE90 end:0x0000BEA8
+	.data       start:0x00087788 end:0x000877A0
+
+ef_slip_footprint.o:
+	.text       start:0x002BB2D4 end:0x002BB794
+	.rodata     start:0x0000BEA8 end:0x0000BEC8
+	.data       start:0x000877A0 end:0x000877E0
+
+ef_soba_yuge.o:
+	.text       start:0x002BB794 end:0x002BBE5C
+	.rodata     start:0x0000BEC8 end:0x0000BEF8
+	.data       start:0x000877E0 end:0x00087850
+
+ef_steam.o:
+	.text       start:0x002BBE5C end:0x002BC1AC
+	.text       start:0x002BC1AC end:0x002BC1AC
+	.rodata     start:0x0000BEF8 end:0x0000BF18
+	.data       start:0x00087850 end:0x000878A8
+
+ef_string.o:
+	.text       start:0x002BC1AC end:0x002BC344
+	.rodata     start:0x0000BF18 end:0x0000BF30
+	.data       start:0x000878A8 end:0x000878F8
+
+ef_suisou_awa.o:
+	.text       start:0x002BC344 end:0x002BC9B0
+	.text       start:0x002BC9B0 end:0x002BC9B0
+	.rodata     start:0x0000BF30 end:0x0000BF80
+	.data       start:0x000878F8 end:0x00087950
+
+ef_swing_axe.o:
+	.text       start:0x002BC9B0 end:0x002BCD9C
+	.data       start:0x00087950 end:0x00087968
+
+ef_swing_net.o:
+	.text       start:0x002BCD9C end:0x002BD440
+	.rodata     start:0x0000BF80 end:0x0000BFA0
+	.data       start:0x00087968 end:0x00087980
+
+ef_swing_rod.o:
+	.text       start:0x002BD440 end:0x002BD5D8
+	.data       start:0x00087980 end:0x00087998
+
+ef_taberu.o:
+	.text       start:0x002BD5D8 end:0x002BD828
+	.rodata     start:0x0000BFA0 end:0x0000BFB8
+	.data       start:0x00087998 end:0x000879C0
+
+ef_takurami.o:
+	.text       start:0x002BD828 end:0x002BDC98
+	.rodata     start:0x0000BFB8 end:0x0000BFF8
+	.data       start:0x000879C0 end:0x000879E0
+
+ef_takurami_kira.o:
+	.text       start:0x002BDC98 end:0x002BE008
+	.rodata     start:0x0000BFF8 end:0x0000C020
+	.data       start:0x000879E0 end:0x000879F8
+
+ef_tamaire.o:
+	.text       start:0x002BE008 end:0x002BE8D8
+	.text       start:0x002BE8D8 end:0x002BE8D8
+	.rodata     start:0x0000C020 end:0x0000C078
+	.data       start:0x000879F8 end:0x00087A18
+
+ef_tape.o:
+	.text       start:0x002BE8D8 end:0x002BEDA4
+	.text       start:0x002BEDA4 end:0x002BEDA4
+	.rodata     start:0x0000C078 end:0x0000C0A0
+	.data       start:0x00087A18 end:0x00087A30
+
+ef_tent_lamp.o:
+	.text       start:0x002BEDA4 end:0x002BF0BC
+	.rodata     start:0x0000C0A0 end:0x0000C0C8
+	.data       start:0x00087A30 end:0x00087A48
+
+ef_tumble.o:
+	.text       start:0x002BF0BC end:0x002BF994
+	.rodata     start:0x0000C0C8 end:0x0000C0E0
+	.data       start:0x00087A48 end:0x00087AC0
+
+ef_tumble_bodyprint.o:
+	.text       start:0x002BF994 end:0x002BFEE8
+	.rodata     start:0x0000C0E0 end:0x0000C100
+	.data       start:0x00087AC0 end:0x00087AD8
+
+ef_tumble_dust.o:
+	.text       start:0x002BFEE8 end:0x002C0454
+	.text       start:0x002C0454 end:0x002C0454
+	.rodata     start:0x0000C100 end:0x0000C148
+	.data       start:0x00087AD8 end:0x00087B30
+
+ef_turi_hamon.o:
+	.text       start:0x002C0454 end:0x002C0958
+	.text       start:0x002C0958 end:0x002C0958
+	.rodata     start:0x0000C148 end:0x0000C1A8
+	.data       start:0x00087B30 end:0x00087B48
+
+ef_turi_hane0.o:
+	.text       start:0x002C0958 end:0x002C0B80
+	.rodata     start:0x0000C1A8 end:0x0000C1C0
+	.data       start:0x00087B48 end:0x00087B80
+
+ef_turi_hane1.o:
+	.text       start:0x002C0B80 end:0x002C0D4C
+	.rodata     start:0x0000C1C0 end:0x0000C1C8
+	.data       start:0x00087B80 end:0x00087BB8
+
+ef_turi_mizu.o:
+	.text       start:0x002C0D4C end:0x002C1440
+	.rodata     start:0x0000C1C8 end:0x0000C1E0
+	.data       start:0x00087BB8 end:0x00087BD0
+
+ef_turi_suiteki.o:
+	.text       start:0x002C1440 end:0x002C18A8
+	.rodata     start:0x0000C1E0 end:0x0000C210
+	.data       start:0x00087BD0 end:0x00087C00
+
+ef_turn_asimoto.o:
+	.text       start:0x002C18A8 end:0x002C20B0
+	.rodata     start:0x0000C210 end:0x0000C218
+	.data       start:0x00087C00 end:0x00087C18
+
+ef_turn_footprint.o:
+	.text       start:0x002C20B0 end:0x002C2528
+	.rodata     start:0x0000C218 end:0x0000C238
+	.data       start:0x00087C18 end:0x00087C58
+
+ef_uranai.o:
+	.text       start:0x002C2528 end:0x002C2894
+	.rodata     start:0x0000C238 end:0x0000C250
+	.data       start:0x00087C58 end:0x00087C70
+
+ef_wait_asimoto.o:
+	.text       start:0x002C2894 end:0x002C29AC
+	.data       start:0x00087C70 end:0x00087C88
+
+ef_walk_asimoto.o:
+	.text       start:0x002C29AC end:0x002C2E50
+	.rodata     start:0x0000C250 end:0x0000C268
+	.data       start:0x00087C88 end:0x00087CB0
+
+ef_warau.o:
+	.text       start:0x002C2E50 end:0x002C3060
+	.rodata     start:0x0000C268 end:0x0000C270
+	.data       start:0x00087CB0 end:0x00087CF8
+
+ef_yajirushi.o:
+	.text       start:0x002C3060 end:0x002C32AC
+	.rodata     start:0x0000C270 end:0x0000C278
+	.data       start:0x00087CF8 end:0x00087D10
+
+ef_young_tree.o:
+	.text       start:0x002C32AC end:0x002C3C54
+	.rodata     start:0x0000C278 end:0x0000C2B8
+	.data       start:0x00087D10 end:0x00087D28
+
+ef_yukidama.o:
+	.text       start:0x002C3C54 end:0x002C4294
+	.rodata     start:0x0000C2B8 end:0x0000C2E8
+	.data       start:0x00087D28 end:0x00087DC8
+
+ef_yukidaruma.o:
+	.text       start:0x002C4294 end:0x002C4644
+	.rodata     start:0x0000C2E8 end:0x0000C2F8
+	.data       start:0x00087DC8 end:0x00087DF0
+
+ef_yukihane.o:
+	.text       start:0x002C4644 end:0x002C4924
+	.rodata     start:0x0000C2F8 end:0x0000C318
+	.data       start:0x00087DF0 end:0x00087E28
+
+sys_dynamic.o:
+	.text       start:0x002C4924 end:0x002C4924
+	.bss        start:0x000E85D8 end:0x00108A00
+
+m_select.o:
+	.text       start:0x002C4924 end:0x002C6738
+	.rodata     start:0x0000C318 end:0x0000C320
+	.data       start:0x00087E28 end:0x000887F8
+
+first_game.o:
+	.text       start:0x002C6738 end:0x002C67DC
+
+sys_romcheck.o:
+	.text       start:0x002C67DC end:0x002C681C
+
+m_play.o:
+	.text       start:0x002C681C end:0x002C80E8
+	.rodata     start:0x0000C320 end:0x0000C328
+	.data       start:0x000887F8 end:0x00088A80
+	.bss        start:0x00108A00 end:0x00234C40
+
+second_game.o:
+	.text       start:0x002C80E8 end:0x002C8300
+	.bss        start:0x00234C40 end:0x00234C48
+
+m_trademark.o:
+	.text       start:0x002C8300 end:0x002C8B08
+	.rodata     start:0x0000C328 end:0x0000C330
+	.data       start:0x00088A80 end:0x00088C40
+
+player_select.o:
+	.text       start:0x002C8B08 end:0x002C9648
+	.rodata     start:0x0000C330 end:0x0000C360
+	.data       start:0x00088C40 end:0x00088CA8
+
+save_menu.o:
+	.text       start:0x002C9648 end:0x002C9F7C
+	.rodata     start:0x0000C360 end:0x0000C480
+	.data       start:0x00088CA8 end:0x00088CC0
+
+famicom_emu.o:
+	.text       start:0x002C9F7C end:0x002CA56C
+	.data       start:0x00088CC0 end:0x00088DD8
+	.bss        start:0x00234C48 end:0x00234C58
+
+m_prenmi.o:
+	.text       start:0x002CA56C end:0x002CA87C
+	.rodata     start:0x0000C480 end:0x0000C4A8
+
+reload_data.o:
+	.text       start:0x002CA87C end:0x002CABDC
+	.data       start:0x00088DD8 end:0x00088E80
+
+audio.o:
+	.text       start:0x002CABDC end:0x002CB8F0
+	.text       start:0x002CB8F0 end:0x002CB8F0
+	.rodata     start:0x0000C4A8 end:0x0000C4B0
+	.data       start:0x00088E80 end:0x00088F20
+	.bss        start:0x00234C58 end:0x00234C5C
+
+f_furniture.o:
+	.text       start:0x002CB8F0 end:0x002CBC1C
+	.text       start:0x002CBC1C end:0x002CBDDC
+	.text       start:0x002CBDDC end:0x002CBEAC
+	.text       start:0x002CBEAC end:0x002CBF18
+	.text       start:0x002CBF18 end:0x002CC600
+	.text       start:0x002CC600 end:0x002CCBC4
+	.text       start:0x002CCBC4 end:0x002CCC08
+	.text       start:0x002CCC08 end:0x002CCDE8
+	.text       start:0x002CCDE8 end:0x002CD2C0
+	.text       start:0x002CD2C0 end:0x002CD5B4
+	.text       start:0x002CD5B4 end:0x002CD8B8
+	.text       start:0x002CD8B8 end:0x002CDA4C
+	.text       start:0x002CDA4C end:0x002CDC0C
+	.text       start:0x002CDC0C end:0x002CDD7C
+	.text       start:0x002CDD7C end:0x002CDDF0
+	.text       start:0x002CDDF0 end:0x002CDE58
+	.text       start:0x002CDE58 end:0x002CDF98
+	.text       start:0x002CDF98 end:0x002CE0AC
+	.text       start:0x002CE0AC end:0x002CE1C4
+	.text       start:0x002CE1C4 end:0x002CE1D4
+	.text       start:0x002CE1D4 end:0x002CE31C
+	.text       start:0x002CE31C end:0x002CE518
+	.text       start:0x002CE518 end:0x002CE694
+	.text       start:0x002CE694 end:0x002CE714
+	.text       start:0x002CE714 end:0x002CE9A4
+	.text       start:0x002CE9A4 end:0x002CEAEC
+	.text       start:0x002CEAEC end:0x002CEBC0
+	.text       start:0x002CEBC0 end:0x002CED3C
+	.text       start:0x002CED3C end:0x002CEE2C
+	.text       start:0x002CEE2C end:0x002CEF74
+	.text       start:0x002CEF74 end:0x002CF04C
+	.text       start:0x002CF04C end:0x002CF1B0
+	.text       start:0x002CF1B0 end:0x002CF3C4
+	.text       start:0x002CF3C4 end:0x002CF528
+	.text       start:0x002CF528 end:0x002CF704
+	.text       start:0x002CF704 end:0x002CF824
+	.text       start:0x002CF824 end:0x002CF920
+	.text       start:0x002CF920 end:0x002CFA1C
+	.text       start:0x002CFA1C end:0x002CFC58
+	.text       start:0x002CFC58 end:0x002CFD94
+	.text       start:0x002CFD94 end:0x002D0140
+	.text       start:0x002D0140 end:0x002D0140
+	.text       start:0x002D0140 end:0x002D018C
+	.text       start:0x002D018C end:0x002D01D8
+	.text       start:0x002D01D8 end:0x002D0364
+	.text       start:0x002D0364 end:0x002D03B0
+	.text       start:0x002D03B0 end:0x002D053C
+	.text       start:0x002D053C end:0x002D06C8
+	.text       start:0x002D06C8 end:0x002D0950
+	.text       start:0x002D0950 end:0x002D0A24
+	.text       start:0x002D0A24 end:0x002D1020
+	.text       start:0x002D1020 end:0x002D12E0
+	.text       start:0x002D12E0 end:0x002D15A0
+	.text       start:0x002D15A0 end:0x002D1748
+	.text       start:0x002D1748 end:0x002D1928
+	.text       start:0x002D1928 end:0x002D1AB4
+	.text       start:0x002D1AB4 end:0x002D1B04
+	.text       start:0x002D1B04 end:0x002D1C68
+	.text       start:0x002D1C68 end:0x002D1DCC
+	.text       start:0x002D1DCC end:0x002D1F30
+	.text       start:0x002D1F30 end:0x002D2078
+	.text       start:0x002D2078 end:0x002D2204
+	.text       start:0x002D2204 end:0x002D2390
+	.text       start:0x002D2390 end:0x002D251C
+	.text       start:0x002D251C end:0x002D2660
+	.text       start:0x002D2660 end:0x002D27C4
+	.text       start:0x002D27C4 end:0x002D2928
+	.text       start:0x002D2928 end:0x002D2978
+	.text       start:0x002D2978 end:0x002D29C8
+	.text       start:0x002D29C8 end:0x002D2B2C
+	.text       start:0x002D2B2C end:0x002D2B7C
+	.text       start:0x002D2B7C end:0x002D2CE0
+	.text       start:0x002D2CE0 end:0x002D2E44
+	.text       start:0x002D2E44 end:0x002D2EE8
+	.text       start:0x002D2EE8 end:0x002D304C
+	.text       start:0x002D304C end:0x002D31B0
+	.text       start:0x002D31B0 end:0x002D36B8
+	.text       start:0x002D36B8 end:0x002D381C
+	.text       start:0x002D381C end:0x002D3874
+	.text       start:0x002D3874 end:0x002D38C4
+	.text       start:0x002D38C4 end:0x002D3914
+	.text       start:0x002D3914 end:0x002D3964
+	.text       start:0x002D3964 end:0x002D3AC8
+	.text       start:0x002D3AC8 end:0x002D3C2C
+	.text       start:0x002D3C2C end:0x002D3C7C
+	.text       start:0x002D3C7C end:0x002D3CD4
+	.text       start:0x002D3CD4 end:0x002D3D24
+	.text       start:0x002D3D24 end:0x002D3E88
+	.text       start:0x002D3E88 end:0x002D3FEC
+	.text       start:0x002D3FEC end:0x002D4074
+	.text       start:0x002D4074 end:0x002D41D8
+	.text       start:0x002D41D8 end:0x002D433C
+	.text       start:0x002D433C end:0x002D4484
+	.text       start:0x002D4484 end:0x002D4654
+	.text       start:0x002D4654 end:0x002D48C0
+	.text       start:0x002D48C0 end:0x002D4A24
+	.text       start:0x002D4A24 end:0x002D4B88
+	.text       start:0x002D4B88 end:0x002D4C10
+	.text       start:0x002D4C10 end:0x002D4C60
+	.text       start:0x002D4C60 end:0x002D4CB0
+	.text       start:0x002D4CB0 end:0x002D4D00
+	.text       start:0x002D4D00 end:0x002D4EF4
+	.text       start:0x002D4EF4 end:0x002D5058
+	.text       start:0x002D5058 end:0x002D51BC
+	.text       start:0x002D51BC end:0x002D555C
+	.text       start:0x002D555C end:0x002D55E4
+	.text       start:0x002D55E4 end:0x002D566C
+	.text       start:0x002D566C end:0x002D56BC
+	.text       start:0x002D56BC end:0x002D5800
+	.text       start:0x002D5800 end:0x002D5850
+	.text       start:0x002D5850 end:0x002D5994
+	.text       start:0x002D5994 end:0x002D5C4C
+	.text       start:0x002D5C4C end:0x002D5D90
+	.text       start:0x002D5D90 end:0x002D5EF4
+	.text       start:0x002D5EF4 end:0x002D6058
+	.text       start:0x002D6058 end:0x002D60E0
+	.text       start:0x002D60E0 end:0x002D6130
+	.text       start:0x002D6130 end:0x002D6294
+	.text       start:0x002D6294 end:0x002D63F8
+	.text       start:0x002D63F8 end:0x002D69C4
+	.text       start:0x002D69C4 end:0x002D6A14
+	.text       start:0x002D6A14 end:0x002D6B58
+	.text       start:0x002D6B58 end:0x002D6BB0
+	.text       start:0x002D6BB0 end:0x002D6D28
+	.text       start:0x002D6D28 end:0x002D6E6C
+	.text       start:0x002D6E6C end:0x002D6ED8
+	.text       start:0x002D6ED8 end:0x002D70A0
+	.text       start:0x002D70A0 end:0x002D729C
+	.text       start:0x002D729C end:0x002D73E0
+	.text       start:0x002D73E0 end:0x002D7430
+	.text       start:0x002D7430 end:0x002D7488
+	.text       start:0x002D7488 end:0x002D74E0
+	.text       start:0x002D74E0 end:0x002D7644
+	.text       start:0x002D7644 end:0x002D77A8
+	.text       start:0x002D77A8 end:0x002D7830
+	.text       start:0x002D7830 end:0x002D79C8
+	.text       start:0x002D79C8 end:0x002D7B4C
+	.text       start:0x002D7B4C end:0x002D7D24
+	.text       start:0x002D7D24 end:0x002D7D7C
+	.text       start:0x002D7D7C end:0x002D7FD8
+	.text       start:0x002D7FD8 end:0x002D8030
+	.text       start:0x002D8030 end:0x002D8088
+	.text       start:0x002D8088 end:0x002D8110
+	.text       start:0x002D8110 end:0x002D8254
+	.text       start:0x002D8254 end:0x002D8398
+	.text       start:0x002D8398 end:0x002D83E8
+	.text       start:0x002D83E8 end:0x002D8438
+	.text       start:0x002D8438 end:0x002D8488
+	.text       start:0x002D8488 end:0x002D85CC
+	.text       start:0x002D85CC end:0x002D8710
+	.text       start:0x002D8710 end:0x002D88F8
+	.text       start:0x002D88F8 end:0x002D8AD4
+	.text       start:0x002D8AD4 end:0x002D8B24
+	.text       start:0x002D8B24 end:0x002D8C88
+	.text       start:0x002D8C88 end:0x002D8DEC
+	.text       start:0x002D8DEC end:0x002D8E74
+	.text       start:0x002D8E74 end:0x002D8EFC
+	.text       start:0x002D8EFC end:0x002D9060
+	.text       start:0x002D9060 end:0x002D91C4
+	.text       start:0x002D91C4 end:0x002D96CC
+	.text       start:0x002D96CC end:0x002D9714
+	.text       start:0x002D9714 end:0x002D9B98
+	.text       start:0x002D9B98 end:0x002D9EB8
+	.text       start:0x002D9EB8 end:0x002D9F64
+	.text       start:0x002D9F64 end:0x002DA260
+	.text       start:0x002DA260 end:0x002DA658
+	.text       start:0x002DA658 end:0x002DA904
+	.text       start:0x002DA904 end:0x002DAA90
+	.text       start:0x002DAA90 end:0x002DAD9C
+	.text       start:0x002DAD9C end:0x002DAED8
+	.text       start:0x002DAED8 end:0x002DB084
+	.text       start:0x002DB084 end:0x002DB1AC
+	.text       start:0x002DB1AC end:0x002DB268
+	.text       start:0x002DB268 end:0x002DB304
+	.text       start:0x002DB304 end:0x002DB42C
+	.text       start:0x002DB42C end:0x002DB484
+	.text       start:0x002DB484 end:0x002DB4E0
+	.text       start:0x002DB4E0 end:0x002DB620
+	.text       start:0x002DB620 end:0x002DB678
+	.text       start:0x002DB678 end:0x002DB7D4
+	.text       start:0x002DB7D4 end:0x002DB82C
+	.text       start:0x002DB82C end:0x002DB97C
+	.text       start:0x002DB97C end:0x002DBB30
+	.text       start:0x002DBB30 end:0x002DBD04
+	.text       start:0x002DBD04 end:0x002DBDFC
+	.text       start:0x002DBDFC end:0x002DC02C
+	.text       start:0x002DC02C end:0x002DC3C0
+	.text       start:0x002DC3C0 end:0x002DC4B0
+	.text       start:0x002DC4B0 end:0x002DC564
+	.text       start:0x002DC564 end:0x002DC6A4
+	.text       start:0x002DC6A4 end:0x002DC808
+	.text       start:0x002DC808 end:0x002DC96C
+	.text       start:0x002DC96C end:0x002DCAB4
+	.text       start:0x002DCAB4 end:0x002DCC30
+	.text       start:0x002DCC30 end:0x002DCD20
+	.text       start:0x002DCD20 end:0x002DCD78
+	.text       start:0x002DCD78 end:0x002DCF7C
+	.text       start:0x002DCF7C end:0x002DD124
+	.text       start:0x002DD124 end:0x002DD1D8
+	.text       start:0x002DD1D8 end:0x002DD420
+	.text       start:0x002DD420 end:0x002DD668
+	.text       start:0x002DD668 end:0x002DDA1C
+	.text       start:0x002DDA1C end:0x002DDDD4
+	.text       start:0x002DDDD4 end:0x002DDEA0
+	.text       start:0x002DDEA0 end:0x002DE0E4
+	.text       start:0x002DE0E4 end:0x002DE304
+	.text       start:0x002DE304 end:0x002DE63C
+	.rodata     start:0x0000C4B0 end:0x0000C624
+	.data       start:0x00088F20 end:0x00094480

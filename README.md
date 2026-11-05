@@ -113,6 +113,21 @@ Building
   The GC/2.6f1 compiler is an unreleased modification,
   so most users should stick to stock GC/2.6.
 
+  PAL has five language targets. Extract each language TGC into
+  `orig/GAFP01_00_en`, `orig/GAFP01_00_fr`, `orig/GAFP01_00_de`,
+  `orig/GAFP01_00_it`, or `orig/GAFP01_00_es`, then configure with:
+
+  ```sh
+  python configure.py --version GAFP01_00 --language en
+  ```
+
+  `--version GAFP01_00_en` selects the same target. Replace `en` with `fr`,
+  `de`, `it`, or `es` for the other languages. All PAL targets use `VERSION=2`
+  and their corresponding `GAME_LANGUAGE` value. Each has separate build outputs,
+  symbols, splits, progress, and hashes for its DOL and four RELs (`foresta`,
+  `forestd`, `foresti`, and `foresto`). PAL currently links only original split
+  objects; no source files are marked Matching. TGC rebuilding is not included.
+
 - Build:
 
   ```sh

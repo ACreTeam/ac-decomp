@@ -1274,13 +1274,14 @@ def generate_build_ninja(
                 },
                 order_only="post-link",
             )
-            n.build(
-                outputs=rel_compressed_outputs,
-                rule="compressrel",
-                inputs=rel_outputs,
-                implicit=[dtk],
-                order_only="post-link",
-            )
+            for rel_output, compressed_output in zip(rel_outputs, rel_compressed_outputs):
+                n.build(
+                    outputs=compressed_output,
+                    rule="compressrel",
+                    inputs=rel_output,
+                    implicit=[dtk],
+                    order_only="post-link",
+                )
             n.newline()
 
         # Add all build steps needed post-build (re-building archives and such)

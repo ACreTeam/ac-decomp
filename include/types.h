@@ -5,8 +5,15 @@
 #include <dolphin/types.h>
 #include "macros.h"
 
-#define VER_GAFE01_00 0
-#define VER_GAFU01_00 1
+#define VER_GAFE01_00 0 // US/Canada
+#define VER_GAFU01_00 1 // Australia
+#define VER_GAFP01_00 2 // PAL
+
+#define GAME_LANG_EN 0 // English - US/Canada/Australia/UK (UK version has British English)
+#define GAME_LANG_ES 1 // Spanish - Spain
+#define GAME_LANG_FR 2 // French - France
+#define GAME_LANG_IT 3 // Italian - Italy
+#define GAME_LANG_DE 4 // German - Germany
 
 // TODO: add PAL version to this check
 // Adjusts values based on regional frame rate (Hz)

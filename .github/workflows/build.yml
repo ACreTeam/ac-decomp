@@ -15,7 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         # Add game versions here
-        version: [GAFE01_00, GAFU01_00]
+        version:
+          - GAFE01_00
+          - GAFU01_00
+          - GAFP01_00_en
+          - GAFP01_00_fr
+          - GAFP01_00_de
+          - GAFP01_00_it
+          - GAFP01_00_es
 
     steps:
     # Checkout the repository
