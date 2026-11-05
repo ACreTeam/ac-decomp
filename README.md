@@ -19,6 +19,7 @@ This repository does **not** contain any game assets or assembly whatsoever. An 
 Supported versions:
 
 - `GAFE01_00`: Rev 0 (USA)
+- `GAFU01_00`: Rev 0 (Australia)
 
 A decompilation of the original N64 version of the game is being worked on [here](https://github.com/zeldaret/af).
 

@@ -14,6 +14,10 @@ void csleep(OSTime c) {
     osRecvMesg(&mq, NULL, 1);
 }
 
+void usleep(u32 us) {
+    csleep(OSMicrosecondsToTicks((u64)us));
+}
+
 void msleep(u32 ms) {
     csleep(OSMillisecondsToTicks((u64)ms));
 }

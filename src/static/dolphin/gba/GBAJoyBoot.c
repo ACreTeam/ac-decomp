@@ -378,8 +378,8 @@ s32 GBAJoyBoot(s32 chan, s32 paletteColor, s32 paletteSpeed, u8* programp, s32 l
     s32 ret; // r31
 
     ret = GBAJoyBootAsync(chan, paletteColor, paletteSpeed, programp, length, status, &__GBASyncCallback);
-    if (ret == GBA_READY) {
-        return __GBASync(chan);
+    if (ret != GBA_READY) {
+        return ret;
     }
-    return ret;
+    return __GBASync(chan);
 }

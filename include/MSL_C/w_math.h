@@ -10,7 +10,8 @@
 #define SQRTF_LINKAGE static
 #endif
 
-#if defined(IS_REL) && VERSION >= 1
+/* The Australian SDK uses the newer inline sqrtf in both DOL and REL code. */
+#if VERSION >= 1
 SQRTF_LINKAGE inline float sqrtf(float x) {
     static const double _half = 0.5f;
     static const double _three = 3.0f;

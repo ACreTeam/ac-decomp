@@ -18,10 +18,19 @@ extern void DisplayArena(void) {
 extern void GetFreeArena(u32* max, u32* free, u32* alloc) {
     __osGetFreeArena(&malloc_arena, max, free, alloc);
 }
+
+extern int CheckArena(void) {
+    return __osCheckArena(&malloc_arena);
+}
+
 extern void MallocInit(void* start, u32 size) {
     __osMallocInit(&malloc_arena, start, size);
 }
 
 extern void MallocCleanup(void) {
     __osMallocCleanup(&malloc_arena);
+}
+
+extern int MallocIsInitalized(void) {
+    return __osMallocIsInitalized(&malloc_arena);
 }

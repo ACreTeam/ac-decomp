@@ -10,6 +10,7 @@ extern "C" {
 
 void csleep(OSTime c);
 void msleep(u32);
+void usleep(u32);
 
 #ifdef __cplusplus
 }

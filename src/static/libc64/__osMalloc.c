@@ -165,8 +165,8 @@ static void* __osMallocAlign_NoLock(OSArena* arena, u32 size, u32 align) {
     u8* data_p = NULL;
     OSMemBlock* next;
     u32 full_size;
-    u32 mask;
     int remain;
+    u32 mask;
 
     size = ALIGN_NEXT(size, 32);
     full_size = ALIGN_NEXT(size, 32) + sizeof(OSMemBlock);

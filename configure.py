@@ -153,6 +153,7 @@ args = parser.parse_args()
 config = ProjectConfig()
 config.version = str(args.version)
 version_num = VERSIONS.index(config.version)
+is_aus = config.version == "GAFU01_00"
 
 # Apply arguments
 config.build_dir = args.build_dir
@@ -270,6 +271,18 @@ cflags_static = [
     "-O4,s",
 ]
 
+# DOL libraries use speed optimization in Australia. Keep the size profile for
+# US libraries and the boot assets' original US compiler settings.
+cflags_static_speed = [*cflags_base, *cflags_common, "-O4,p"]
+cflags_static_lib = cflags_static_speed if is_aus else cflags_static
+cflags_aus_includes = ["-i include/AUS", "-i src/AUS/static"] if is_aus else []
+cflags_boot = [*cflags_static_lib, "-sdata 0", "-sdata2 0", "-inline on"]
+cflags_emu64 = [
+    *cflags_static_speed,
+    "-lang=c++",
+    "-inline off" if is_aus else "-inline auto",
+]
+
 # Metrowerks library flags
 cflags_runtime = [
     *cflags_base,
@@ -288,21 +301,14 @@ cflags_foresta = [
     "-sym on",
 ]
 
-if version_num >= 1:
-    cflags_foresta.append("-O4,p")
-    cflags_foresta.append("-inline off")
-    config.linker_version = "GC/2.6"
-    foresta_compiler = "GC/2.6"
-else:
-    cflags_foresta.append("-O4,s")
-    config.linker_version = "GC/1.3.2"
-    foresta_compiler = "GC/1.3.2"
+config.linker_version = "GC/2.6" if is_aus else "GC/1.3.2"
+cflags_foresta += ["-O4,p", "-inline off"] if is_aus else ["-O4,s"]
 
 
 # Helper function for Dolphin libraries
 def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     # The imported SDKs have no GBA or OdemuExi2 implementation.
-    if config.version == "GAFU01_00" and lib_name not in ("gba", "OdemuExi2"):
+    if is_aus and lib_name not in ("gba", "OdemuExi2"):
         # The Australian SDK has no GXStubs object.
         objects = [obj for obj in objects if obj.name != "dolphin/gx/GXStubs.c"]
         if lib_name == "dvd":
@@ -338,10 +344,8 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 
 
 def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    if config.version == "GAFU01_00":
-        lib = DolphinLib(lib_name, objects)
-        lib["mw_version"] = "GC/1.2.5n"
-        return lib
+    if is_aus:
+        return DolphinLib(lib_name, objects)
     return {
         "lib": lib_name,
         "mw_version": "GC/1.2.5",
@@ -355,10 +359,16 @@ def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.3.2",
-        "cflags": [*cflags_base, "-O4,s", "-char signed"],
+        "mw_version": config.linker_version,
+        "cflags": [
+            *cflags_aus_includes,
+            *cflags_base,
+            "-O4,p" if is_aus else "-O4,s",
+            "-char signed",
+            *(["-inline auto"] if is_aus else []),
+        ],
         "progress_category": "jsystem",
-        "src_dir": "src/static",
+        "src_dir": "src/AUS/static" if is_aus else "src/static",
         "objects": objects,
     }
 
@@ -367,7 +377,7 @@ def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": foresta_compiler,
+        "mw_version": config.linker_version,
         "cflags": cflags_foresta,
         "progress_category": "game",
         "objects": objects,
@@ -387,7 +397,6 @@ def MatchingFor(*versions):
 
 
 # The Australian release uses the newer MSL/runtime sources and headers.
-use_mwcc26_libs = config.version == "GAFU01_00"
 mwcc26_src_dir = "src/static/mwcc/2.6"
 cflags_mwcc26 = [
     f"-i {mwcc26_src_dir}/include",
@@ -598,10 +607,8 @@ config.warn_missing_config = False
 config.warn_missing_source = False
 # With symbols enabled, MWCC places included helper files in separate code
 # contributions. Australia links those after the entry points; US uses source order.
-cflags_jaudio_order = [
-    "-sym on" if config.version == "GAFU01_00" else "-sym off",
-    "-i src/static/jaudio_NES/internal",
-]
+cflags_jaudio_symbols = [] if is_aus else ["-sym off"]
+cflags_jaudio_order = [*cflags_jaudio_symbols, "-i src/static/jaudio_NES/internal"]
 
 # Australian MetroTRK uses the GameCube sources imported from Twilight Princess.
 trk26_root = "src/static/TRK_MINNOW_DOLPHIN/2.6"
@@ -650,78 +657,78 @@ config.libs = [
     {
         "lib": "boot",
         "mw_version": config.linker_version,
-        "cflags": [
-            *cflags_static,
-            "-sdata 0",
-            "-sdata2 0",
-            "-inline on",
-        ],
+        "cflags": cflags_boot,
         "progress_category": "game",
         "src_dir": "src/static",
         "objects": [
-            Object(Matching, "boot.c", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "boot.c"),
             Object(
                 Matching, "jsyswrap.cpp",
-                cflags=["-i include/AUS", "-i src/AUS/static", *cflags_static, "-sdata 0", "-sdata2 0", "-inline on"]
-                if config.version == "GAFU01_00" else None,
-                extra_cflags=["-O4,p", "-inline off"] if config.version == "GAFU01_00" else [],
+                cflags=[*cflags_aus_includes, *cflags_boot] if is_aus else None,
+                extra_cflags=["-inline off"] if is_aus else [],
             ),
-            Object(Matching, "version.o" if config.version == "GAFU01_00" else "version.c", source="version.c"),
-            Object(Matching, "initial_menu.c", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "version.o" if is_aus else "version.c", source="version.c"),
+            Object(Matching, "initial_menu.c"),
             Object(Matching, "dvderr.c", extra_cflags=["-pool off"]),
-            *([Object(Matching, "bootdata.obj")] if config.version == "GAFU01_00" else []),
+            *([Object(Matching, "bootdata.obj")] if is_aus else []),
             Object(Matching, "bootdata/gam_win1.c"),
             Object(Matching, "bootdata/gam_win2.c"),
             Object(Matching, "bootdata/gam_win3.c"),
             Object(Matching, "bootdata/logo_nin.c"),
-            Object(Matching, "nintendo_hi_0.o" if config.version == "GAFU01_00" else "nintendo_hi_0.c", source="nintendo_hi_0.c"),
-            Object(MatchingFor("GAFE01_00"), "GBA2/JoyBoot.c"),
+            Object(Matching, "nintendo_hi_0.o" if is_aus else "nintendo_hi_0.c", source="nintendo_hi_0.c"),
+            Object(
+                Matching, "GBA2/JoyBoot.c",
+                src_dir="src/AUS/static" if is_aus else None,
+                extra_cflags=["-lang=c++", "-inline off"] if is_aus else [],
+            ),
         ],
     },
     {
         "lib": "libforest",
         "mw_version": config.linker_version,
-        "cflags": cflags_static,
+        "cflags": cflags_static_lib,
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
             Object(
                 Matching,
                 "libforest/emu64/emu64.c",
-                extra_cflags=["-lang=c++", "-O4,p", "-inline off", "-sym on"]
-                if config.version == "GAFU01_00"
-                else ["-lang=c++", "-O4,p", "-inline auto"],
+                cflags=cflags_emu64,
             ),
-            Object(MatchingFor("GAFE01_00"), "libforest/osreport.c"),
-            Object(MatchingFor("GAFE01_00"), "libforest/fault.c"),
+            Object(Matching, "libforest/osreport.c"),
+            Object(Matching, "libforest/fault.c"),
             Object(Matching, "libforest/ReconfigBATs.c"),
         ],
     },
     {
         "lib": "libu64",
         "mw_version": config.linker_version,
-        "cflags": cflags_static,
+        "cflags": cflags_static_lib,
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
             Object(Matching, "libu64/debug.c"),
-            Object(MatchingFor("GAFE01_00"), "libu64/gfxprint.c"),
+            Object(Matching, "libu64/gfxprint.c"),
             Object(Matching, "libu64/gfxprint_data.c"),
-            Object(MatchingFor("GAFE01_00"), "libu64/pad.c"),
+            Object(Matching, "libu64/pad.c"),
         ],
     },
     {
         "lib": "libc64",
         "mw_version": config.linker_version,
-        "cflags": cflags_static,
+        "cflags": [
+            *cflags_aus_includes,
+            *cflags_static_lib,
+            *(["-inline off"] if is_aus else []),
+        ],
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(MatchingFor("GAFE01_00"), "libc64/__osMalloc.c"),
+            Object(Matching, "libc64/__osMalloc.c"),
             Object(Matching, "libc64/aprintf.c"),
-            Object(MatchingFor("GAFE01_00"), "libc64/math64.c"),
+            Object(Matching, "libc64/math64.c"),
             Object(Matching, "libc64/qrand.c"),
-            Object(MatchingFor("GAFE01_00"), "libc64/sleep.c"),
+            Object(Matching, "libc64/sleep.c"),
             Object(Matching, "libc64/sprintf.c"),
             Object(Matching, "libc64/malloc.c"),
         ],
@@ -729,7 +736,7 @@ config.libs = [
     {
         "lib": "libultra",
         "mw_version": config.linker_version,
-        "cflags": [*cflags_static, "-O4,p", "-inline auto"],
+        "cflags": [*cflags_static_speed, "-inline auto"],
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
@@ -744,10 +751,10 @@ config.libs = [
             Object(Matching, "libultra/getthreadid.c"),
             Object(Matching, "libultra/gettime.c"),
             Object(Matching, "libultra/initialize.c"),
-            Object(MatchingFor("GAFE01_00"), "libultra/gu/lookat.c"),
-            Object(MatchingFor("GAFE01_00"), "libultra/gu/lookathil.c"),
+            Object(Matching, "libultra/gu/lookat.c"),
+            Object(Matching, "libultra/gu/lookathil.c"),
             Object(Matching, "libultra/gu/mtxutil.c"),
-            Object(MatchingFor("GAFE01_00"), "libultra/gu/normalize.c"),
+            Object(Matching, "libultra/gu/normalize.c"),
             Object(Matching, "libultra/gu/ortho.c"),
             Object(Matching, "libultra/gu/perspective.c"),
             Object(Matching, "libultra/recvmesg.c"),
@@ -771,14 +778,15 @@ config.libs = [
     {
         "lib": "libjsys",
         "mw_version": config.linker_version,
-        "cflags": cflags_static,
+        "cflags": [
+            *cflags_aus_includes,
+            *cflags_static_lib,
+            *(["-inline off"] if is_aus else []),
+        ],
         "progress_category": "library",
-        "src_dir": "src/static",
+        "src_dir": "src/AUS/static" if is_aus else "src/static",
         "objects": [
-            Object(
-                Matching, "libjsys/jsyswrapper.cpp",
-                extra_cflags=["-O4,p", "-inline off"] if config.version == "GAFU01_00" else [],
-            ),
+            Object(Matching, "libjsys/jsyswrapper.cpp"),
         ],
     },
     DolphinLib(
@@ -862,7 +870,7 @@ config.libs = [
         [
             Object(Matching, "dolphin/gba/GBA.c"),
             Object(Matching, "dolphin/gba/GBAGetProcessStatus.c"),
-            Object(MatchingFor("GAFE01_00"), "dolphin/gba/GBAJoyBoot.c"),
+            Object(Matching, "dolphin/gba/GBAJoyBoot.c"),
             Object(Matching, "dolphin/gba/GBARead.c"),
             Object(Matching, "dolphin/gba/GBAWrite.c"),
             Object(Matching, "dolphin/gba/GBAXfer.c"),
@@ -1025,7 +1033,7 @@ config.libs = [
             Object(Matching, "JSystem/JUtility/JUTFontData_Ascfont_fix12.s"),
             Object(Matching, "JSystem/JUtility/JUTGamePad.cpp"),
             Object(Matching, "JSystem/JUtility/JUTGraphFifo.cpp"),
-            Object(MatchingFor("GAFU01_00"), "JSystem/JUtility/JUTGba.cpp", extra_cflags=["-O4,p"]),
+            Object(MatchingFor("GAFU01_00"), "JSystem/JUtility/JUTGba.cpp", extra_cflags=[] if is_aus else ["-O4,p"]),
             Object(Matching, "JSystem/JUtility/JUTProcBar.cpp"),
             Object(Matching, "JSystem/JUtility/JUTResFont.cpp"),
             Object(Matching, "JSystem/JUtility/JUTVideo.cpp"),
@@ -1051,7 +1059,7 @@ config.libs = [
         "objects": [
             Object(Matching, "jaudio_NES/game/audioheaders.c"),
             Object(Matching, "jaudio_NES/game/dummyprobe.c"),
-            Object(Matching, "jaudio_NES/game/emusound.c", extra_cflags=["-O4,s", "-fp_contract on", "-func_align 32", "-vector on", "" if version_num == 0 else "-sym on"]),
+            Object(Matching, "jaudio_NES/game/emusound.c", extra_cflags=["-O4,s", "-fp_contract on", "-func_align 32", "-vector on"]),
             Object(Matching, "jaudio_NES/game/game64.c"),
             Object(Matching, "jaudio_NES/game/kappa.c"),
             Object(Matching, "jaudio_NES/game/melody.c"),
@@ -1081,7 +1089,7 @@ config.libs = [
         "objects": [
             Object(Matching, "jaudio_NES/internal/aictrl.c"),
             Object(Matching, "jaudio_NES/internal/astest.c"),
-            Object(Matching, "jaudio_NES/internal/audiothread.c", extra_cflags=["-sym off" if version_num == 0 else "-sym on"]), # The entire lib probably has sym off
+            Object(Matching, "jaudio_NES/internal/audiothread.c", extra_cflags=cflags_jaudio_symbols),
             Object(Matching, "jaudio_NES/internal/cpubuf.c"),
             Object(Matching, "jaudio_NES/internal/dspboot.c", extra_cflags=cflags_jaudio_order),
             Object(Matching, "jaudio_NES/internal/dspbuf.c"),
@@ -1106,7 +1114,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/channel.c"),
             Object(Matching, "jaudio_NES/internal/cmdstack.c"),
             Object(Matching, "jaudio_NES/internal/connect.c"),
-            Object(Matching, "jaudio_NES/internal/driver.c", extra_cflags=["-vector on", "-sym off" if version_num == 0 else "-sym on"]),
+            Object(Matching, "jaudio_NES/internal/driver.c", extra_cflags=["-vector on", *cflags_jaudio_symbols]),
             Object(Matching, "jaudio_NES/internal/driverinterface.c"),
             Object(Matching, "jaudio_NES/internal/dsp_cardunlock.c"),
             Object(Matching, "jaudio_NES/internal/dsp_GBAKey.c"),
@@ -1134,33 +1142,34 @@ config.libs = [
     },
     {
         "lib": "Famicom",
-        "mw_version": "GC/1.3.2",
+        "mw_version": config.linker_version,
         "cflags": [
-            *cflags_static,
+            *cflags_aus_includes,
+            *cflags_static_lib,
             "-sdata 0",
             "-sdata2 0",
-            "-sym on",
+            *(["-inline off"] if is_aus else []),
         ],
         "progress_category": "library",
-        "src_dir": "src/static",
+        "src_dir": "src/AUS/static" if is_aus else "src/static",
         "objects": [
-            Object(Matching, "Famicom/ks_nes_core.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
-            Object(Matching, "Famicom/ks_nes_draw.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
-            Object(Matching, "Famicom/famicom.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
-            Object(Matching, "Famicom/famicom_nesinfo.cpp", extra_cflags=["-O4,p"] if config.version == "GAFU01_00" else []),
+            Object(Matching, "Famicom/ks_nes_core.cpp"),
+            Object(Matching, "Famicom/ks_nes_draw.cpp"),
+            Object(Matching, "Famicom/famicom.cpp"),
+            Object(Matching, "Famicom/famicom_nesinfo.cpp"),
         ],
     },
     {
         "lib": "MSL_C.PPCEABI.bare.H",
-        "mw_version": "GC/2.6" if use_mwcc26_libs else "GC/1.3",
-        "cflags": cflags_mwcc26 if use_mwcc26_libs else [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on", "-str pool,readonly"],
+        "mw_version": "GC/2.6" if is_aus else "GC/1.3",
+        "cflags": cflags_mwcc26 if is_aus else [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on", "-str pool,readonly"],
         "progress_category": "sdk",
-        "src_dir": mwcc26_src_dir if use_mwcc26_libs else "src/static",
-        "objects": msl26_objects if use_mwcc26_libs else [
+        "src_dir": mwcc26_src_dir if is_aus else "src/static",
+        "objects": msl26_objects if is_aus else [
             Object(Matching, "MSL_C.PPCEABI.bare.H/abort_exit.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/ansi_files.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/ansi_fp.c"),
-            Object(MatchingFor("GAFE01_00"), "MSL_C.PPCEABI.bare.H/arith.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/arith.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/buffer_io.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/ctype.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/direct_io.c"),
@@ -1199,11 +1208,11 @@ config.libs = [
     },
     {
         "lib": "Runtime.PPCEABI.H",
-        "mw_version": "GC/2.6" if use_mwcc26_libs else config.linker_version,
-        "cflags": cflags_mwcc26 if use_mwcc26_libs else [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on"],
+        "mw_version": "GC/2.6" if is_aus else config.linker_version,
+        "cflags": cflags_mwcc26 if is_aus else [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on"],
         "progress_category": "sdk",
-        "src_dir": mwcc26_src_dir if use_mwcc26_libs else "src/static",
-        "objects": runtime26_objects if use_mwcc26_libs else [
+        "src_dir": mwcc26_src_dir if is_aus else "src/static",
+        "objects": runtime26_objects if is_aus else [
             Object(Matching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
             Object(Matching, "Runtime.PPCEABI.H/__mem.c"),
             Object(Matching, "Runtime.PPCEABI.H/__va_arg.c"),
@@ -1217,8 +1226,8 @@ config.libs = [
     },
     {
         "lib": "TRK_MINNOW_DOLPHIN",
-        "mw_version": "GC/2.6" if use_mwcc26_libs else "GC/1.3",
-        "cflags": cflags_trk26 if use_mwcc26_libs else [
+        "mw_version": "GC/2.6" if is_aus else "GC/1.3",
+        "cflags": cflags_trk26 if is_aus else [
             *cflags_static,
             "-O4,p",
             "-sdata 0",
@@ -1229,8 +1238,8 @@ config.libs = [
             "-use_lmw_stmw on"
         ],
         "progress_category": "sdk",
-        "src_dir": f"{trk26_root}/src" if use_mwcc26_libs else "src/static",
-        "objects": trk26_objects if use_mwcc26_libs else [
+        "src_dir": f"{trk26_root}/src" if is_aus else "src/static",
+        "objects": trk26_objects if is_aus else [
             Object(Matching, "TRK_MINNOW_DOLPHIN/__exception.s"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/dispatch.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
@@ -3902,7 +3911,7 @@ config.libs = [
             Object(Matching, "data/model/log_win_logo4_tex.c"),
             *([
                 Object(Matching, "data/model/logo_nin_copy.c"),
-            ] if config.version == "GAFU01_00" else [
+            ] if is_aus else [
                 Object(Matching, "data/model/log_win_nintendo1_tex.c"),
                 Object(Matching, "data/model/log_win_nintendo2_tex.c"),
                 Object(Matching, "data/model/log_win_nintendo3_tex.c"),
@@ -5315,20 +5324,6 @@ config.libs = [
     },
 ]
 
-# Australia uses newer revisions of these libraries. Keep their sources and
-# headers separate so work on them does not change the US build.
-if config.version == "GAFU01_00":
-    for lib in config.libs:
-        if lib["lib"] in {"libc64", "libjsys", "Famicom"} or lib.get("progress_category") == "jsystem":
-            lib["src_dir"] = "src/AUS/static"
-            lib["mw_version"] = config.linker_version
-            lib["cflags"] = ["-i include/AUS", "-i src/AUS/static", *lib["cflags"]]
-            if lib.get("progress_category") == "jsystem":
-                lib["cflags"] = [flag for flag in lib["cflags"] if not flag.startswith("-O4,") and flag != "-sym on"]
-                lib["cflags"] += ["-O4,p", "-inline auto", "-sym on"]
-            if lib["lib"] in {"libc64", "Famicom"}:
-                lib["cflags"] += ["-inline off", "-sym on"]
-
 if args.fast_mwcc:
     # 2.6f1 performs UTF-8 to Shift JIS conversion internally.
     # Keep the original linker and any libraries requiring older compilers.
@@ -5381,7 +5376,7 @@ config.custom_build_steps = {}
 
 # Australia's REL keeps the asset objects combined as dataobject.obj. Rebuild
 # that object for objdiff, using the individual asset order recorded by US.
-if config.version == "GAFU01_00":
+if is_aus:
     # Australia's boot assets are also combined into a single original object.
     config.objdiff_partial_links["bootdata.obj"] = [
         "bootdata/gam_win1.c",
