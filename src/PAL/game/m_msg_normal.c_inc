@@ -1,0 +1,132 @@
+static int mMsg_Check_ScrollOrder(mMsg_Window_c* msg_p) {
+  return (chkTrigger(BUTTON_A) || chkTrigger(BUTTON_B));
+}
+
+static int mMsg_MsgTimeEnd_dec(mMsg_Window_c* msg_p) {
+  if (msg_p->end_timer == 0) {
+    return FALSE;
+  }
+  else if (msg_p->end_timer == 1) {
+    return TRUE;
+  }
+  else {
+    msg_p->end_timer--;
+    return FALSE;
+  }
+}
+
+static int mMsg_end_to_disappear(mMsg_Window_c* msg_p) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_DISAPPEAR, 5)) {
+    mMsg_Clear_CursolIndex(msg_p);
+    mMsg_Unset_ForceNext(msg_p);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static void mMsg_request_main_index_fromNormal(mMsg_Window_c* msg_p, GAME* game) {
+  if (mMsg_MsgTimeEnd_dec(msg_p) && mMsg_Check_NextIndex_MsgTimeEndCode(msg_p)) {
+    mMsg_end_to_disappear(msg_p);
+  }
+  else if ((mMsg_Check_ScrollOrder(msg_p) || msg_p->force_next) && msg_p->lock_continue == FALSE) {
+    int last = FALSE;
+
+    if (mMsg_Check_NextIndex_ContinueCode(msg_p) && msg_p->continue_cancel_flag == FALSE) {
+      int continue_msg = msg_p->continue_msg_no;
+
+      if (continue_msg >= 0 && continue_msg < MSG_MAX && mMsg_ChangeMsgData(msg_p, continue_msg)) {
+        if (mMsg_request_main_cursol(msg_p, FALSE, 5) && msg_p->force_next == FALSE && mMsg_Check_NextIndex_SetSelectWindowCode(msg_p) == FALSE) {
+          if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI) == 0) {
+            mMsg_sound_PAGE_OKURI();
+          }
+        }
+
+        mMsg_Unset_ForceNext(msg_p);
+        mMsg_Set_continue_msg_num(msg_p, -1);
+      }
+    }
+    else if (
+      (mMsg_Check_NextIndex_ContinueCode(msg_p) && msg_p->continue_cancel_flag) ||
+      (last = mMsg_Check_NextIndex_LastCode(msg_p)) || // hate this but it works
+      mMsg_Check_NextIndex_MsgTimeEndCode(msg_p)
+    ) {
+      if ((msg_p->status_flags & mMsg_STATUS_FLAG_IDLING_NOW) == 0) {
+        if (last && (msg_p->status_flags & mMsg_STATUS_FLAG_IDLING_REQ)) {
+          msg_p->status_flags |= mMsg_STATUS_FLAG_IDLING_NOW;
+        }
+        else {
+          mMsg_end_to_disappear(msg_p);
+        }
+      }
+    }
+    else if (mMsg_request_main_cursol(msg_p, FALSE, 5)) {
+      if (
+        msg_p->force_next == FALSE &&
+        mMsg_Check_NextIndex_SetSelectWindowCode(msg_p) == FALSE &&
+        (msg_p->status_flags & mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI) == 0
+      ) {
+        mMsg_sound_PAGE_OKURI();
+      }
+
+      mMsg_Unset_ForceNext(msg_p);
+    }
+  }
+}
+
+static void mMsg_Set_display_button_turn_color(mMsg_Window_c* msg_p, GAME* game) {
+  f32* timer = &msg_p->continue_button_timer;
+  f32 target;
+
+  (*timer) += 1.0f;
+  if (*timer >= mMsg_BUTTON_TURN_TIME) {
+    *timer = 0.0f;
+  }
+
+  target = (*timer - mMsg_BUTTON_TURN_TIME * 0.5f) / (mMsg_BUTTON_TURN_TIME * 0.5f);
+  target = target <= 0.0f ? 1.0f + target : 1.0f - target;
+
+  if (target < 0.0f) {
+    target = 0.0f;
+  }
+  else if (target > 1.0f) {
+    target = 1.0f;
+  }
+
+  msg_p->continue_button_color.a = (int)(target * 255.0f);
+}
+
+static void mMsg_Main_Normal(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_Set_display_button_turn_color(msg_p, game);
+  mMsg_request_main_index_fromNormal(msg_p, game);
+  mMsg_MainSetup_Window(msg_p, game);
+
+  if (msg_p->main_index != mMsg_INDEX_NORMAL) {
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI;
+  }
+}
+
+static void mMsg_MainSetup_Normal(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_Request_MainNormal_Data_c* normal_data = &msg_p->request_data.request_main_normal;
+  int wait_flag = normal_data->wait_flag;
+
+  msg_p->main_index = mMsg_INDEX_NORMAL;
+  msg_p->draw_flag = TRUE;
+  msg_p->requested_main_index = -1;
+  msg_p->requested_priority = 4;
+  msg_p->status_flags &= ~mMsg_STATUS_FLAG_IDLING_NOW;
+
+  if (wait_flag != TRUE) {
+    msg_p->continue_button_timer = 0.0f;
+    msg_p->continue_button_color.a = 0;
+
+    if (msg_p->end_timer == 0) {
+      msg_p->show_continue_button = TRUE;
+    }
+    else {
+      msg_p->show_continue_button = FALSE;
+    }
+
+    msg_p->cancel_flag = FALSE;
+  }
+}

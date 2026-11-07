@@ -1,0 +1,571 @@
+static mTG_tag_word_c* mTG_field_default[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_default_bury[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniumeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_letter[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_letter_bury[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniumeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_sign[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_field_sign,
+    &mTG_tag_word_suteru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_balloon[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_fly,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_hukubukuro[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_akeru2,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_hukubukuro_bury[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_akeru2,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniumeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_release[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_nigasu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_catch_item[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_plant[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniueru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_plant_job[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_zimenniueru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_present_item[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_akeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_default[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_wall[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_kabeniharu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_carpet[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yukanisiku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_letter[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_hukubukuro[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_akeru2,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_other_letter[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_other_hukubukuro[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_akeru2,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_def_rmail[] = {
+    &mTG_tag_word_yomu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_suteru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_rmail[] = {
+    &mTG_tag_word_yomu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_def_rmail_pre[] = {
+    &mTG_tag_word_yomu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_present,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_def_smail[] = {
+    &mTG_tag_word_kakinaosu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_suteru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_smail[] = {
+    &mTG_tag_word_kakinaosu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_def_smail_pre[] = {
+    &mTG_tag_word_kakinaosu,
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_present,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_dump_mail[] = {
+    &mTG_tag_word_dump_mail,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_dump_item[] = {
+    &mTG_tag_word_dump_item,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack1[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack2[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_1000,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack3[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_1000,
+    &mTG_tag_word_10000,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack4[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_1000,
+    &mTG_tag_word_10000,
+    &mTG_tag_word_30000,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_quest_item[] = {
+    &mTG_tag_word_watasu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_sell_item[] = {
+    &mTG_tag_word_sell,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_give_item[] = {
+    &mTG_tag_word_ageru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_send_mail[] = {
+    &mTG_tag_word_okuru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_ticket[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_ticket_bury[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniumeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_ticket[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_catch_ticket[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_putin_item[] = {
+    &mTG_tag_word_korewoireru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_shrine_item[] = {
+    &mTG_tag_word_osameru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_haniwa_item[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_tada,
+    &mTG_tag_word_nedanwotukeru,
+    &mTG_tag_word_miserudake,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_haniwa_put_item[] = {
+    &mTG_tag_word_tada,
+    &mTG_tag_word_nedanwotukeru,
+    &mTG_tag_word_miserudake,
+};
+
+static mTG_tag_word_c* mTG_haniwa_get_item[] = {
+    &mTG_tag_word_itadaku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_haniwa_price[] = {
+    &mTG_tag_word_okane,
+    &mTG_tag_word_beru,
+};
+
+static mTG_tag_word_c* mTG_order_item[] = {
+    &mTG_tag_word_order,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_cp_delete[] = {
+    &mTG_tag_word_yameru,
+    &mTG_tag_word_kesu,
+};
+
+static mTG_tag_word_c* mTG_cp_delete2[] = {
+    &mTG_tag_word_iie,
+    &mTG_tag_word_hai,
+};
+
+static mTG_tag_word_c* mTG_field_mail_mark[] = {
+    &mTG_tag_word_dump_mail_mark_conf,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_dump_mail_mark_conf[] = {
+    &mTG_tag_word_dump_mail_mark_exe,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_mail_mark2[] = {
+    &mTG_tag_word_mailbox_change_mail,
+    &mTG_tag_word_dump_mail_mark_conf,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_cpack_mail_mark[] = {
+    &mTG_tag_word_cpmail_change_mail,
+    &mTG_tag_word_dump_mail_mark_conf,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_sell_all_item[] = {
+    &mTG_tag_word_sell_all,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_music_select[] = {
+    &mTG_tag_word_music_listen,
+    &mTG_tag_word_music_takeout,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_music_select_many[] = {
+    &mTG_tag_word_music_takeout_all,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_wisp[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1tamatukamu,
+    &mTG_tag_word_nigasu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_catch_wisp[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1tamatukamu,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_hand_over_curator[] = {
+    &mTG_tag_word_hand_over_curator,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_select[] = {
+    &mTG_tag_word_nw_select_this,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_select2[] = {
+    &mTG_tag_word_nw_select_this2,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_my_room[] = {
+    &mTG_tag_word_nw_catch,
+    &mTG_tag_word_nw_mr_sel_stick,
+    &mTG_tag_word_nw_sel_put,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_ot_room[] = {
+    &mTG_tag_word_nw_catch,
+    &mTG_tag_word_nw_or_sel_stick,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_ug_room[] = {
+    &mTG_tag_word_nw_catch,
+    &mTG_tag_word_nw_mr_sel_stick,
+    &mTG_tag_word_nw_sel_put,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_mr_sel_stick[] = {
+    &mTG_tag_word_nw_st_wear,
+    &mTG_tag_word_nw_st_umbrella,
+    &mTG_tag_word_nw_cover,
+    &mTG_tag_word_nw_carpet,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_sel_put[] = {
+    &mTG_tag_word_nw_put_wear,
+    &mTG_tag_word_nw_put_umbrella,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_or_sel_stick[] = {
+    &mTG_tag_word_nw_st_wear,
+    &mTG_tag_word_nw_st_umbrella,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_sel_stk_pattern[] = {
+    &mTG_tag_word_nw_stk_pat_nrml,
+    &mTG_tag_word_nw_stk_pat_turn,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_remove[] = {
+    &mTG_tag_word_remove,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_put_all[] = {
+    &mTG_tag_word_put_all,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_put_chk[] = {
+    &mTG_tag_word_put_chk,
+    &mTG_tag_word_never_mind,
+};
+
+static mTG_tag_word_c* mTG_field_letters[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_field_letters_bury[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_zimennioku,
+    &mTG_tag_word_zimenniumeru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_room_letters[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_heyanioku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_other_letters[] = {
+    &mTG_tag_word_zenbutukamu,
+    &mTG_tag_word_1maitukamu,
+    &mTG_tag_word_tegamiwokaku,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_change_original[] = {
+    &mTG_tag_word_change_original,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_taisou_card[] = {
+    &mTG_tag_word_tukamu,
+    &mTG_tag_word_suteru,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_select_change[] = {
+    &mTG_tag_word_nw_select_change,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_nw_select_put[] = {
+    &mTG_tag_word_nw_select_put,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_tag_password_item[] = {
+    &mTG_tag_word_password_item,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_data_c mTG_label_table[] = {
+    { NULL, 0 },
+    { mTG_field_default, ARRAY_COUNT(mTG_field_default) },
+    { mTG_field_default_bury, ARRAY_COUNT(mTG_field_default_bury) },
+    { mTG_field_letter, ARRAY_COUNT(mTG_field_letter) },
+    { mTG_field_letter_bury, ARRAY_COUNT(mTG_field_letter_bury) },
+    { mTG_field_hukubukuro, ARRAY_COUNT(mTG_field_hukubukuro) },
+    { mTG_field_hukubukuro_bury, ARRAY_COUNT(mTG_field_hukubukuro_bury) },
+    { mTG_field_release, ARRAY_COUNT(mTG_field_release) },
+    { mTG_catch_item, ARRAY_COUNT(mTG_catch_item) },
+    { mTG_field_plant, ARRAY_COUNT(mTG_field_plant) },
+    { mTG_field_plant_job, ARRAY_COUNT(mTG_field_plant_job) },
+    { mTG_present_item, ARRAY_COUNT(mTG_present_item) },
+    { mTG_room_default, ARRAY_COUNT(mTG_room_default) },
+    { mTG_room_wall, ARRAY_COUNT(mTG_room_wall) },
+    { mTG_room_carpet, ARRAY_COUNT(mTG_room_carpet) },
+    { mTG_room_letter, ARRAY_COUNT(mTG_room_letter) },
+    { mTG_room_hukubukuro, ARRAY_COUNT(mTG_room_hukubukuro) },
+    { mTG_other_letter, ARRAY_COUNT(mTG_other_letter) },
+    { mTG_other_hukubukuro, ARRAY_COUNT(mTG_other_hukubukuro) },
+    { mTG_def_rmail, ARRAY_COUNT(mTG_def_rmail) },
+    { mTG_room_rmail, ARRAY_COUNT(mTG_room_rmail) },
+    { mTG_def_rmail_pre, ARRAY_COUNT(mTG_def_rmail_pre) },
+    { mTG_def_smail, ARRAY_COUNT(mTG_def_smail) },
+    { mTG_room_smail, ARRAY_COUNT(mTG_room_smail) },
+    { mTG_def_smail_pre, ARRAY_COUNT(mTG_def_smail_pre) },
+    { mTG_dump_mail, ARRAY_COUNT(mTG_dump_mail) },
+    { mTG_money_sack3, ARRAY_COUNT(mTG_money_sack3) },
+    { mTG_quest_item, ARRAY_COUNT(mTG_quest_item) },
+    { mTG_sell_item, ARRAY_COUNT(mTG_sell_item) },
+    { mTG_give_item, ARRAY_COUNT(mTG_give_item) },
+    { mTG_send_mail, ARRAY_COUNT(mTG_send_mail) },
+    { mTG_field_ticket, ARRAY_COUNT(mTG_field_ticket) },
+    { mTG_field_ticket_bury, ARRAY_COUNT(mTG_field_ticket_bury) },
+    { mTG_room_ticket, ARRAY_COUNT(mTG_room_ticket) },
+    { mTG_catch_ticket, ARRAY_COUNT(mTG_catch_ticket) },
+    { mTG_putin_item, ARRAY_COUNT(mTG_putin_item) },
+    { mTG_shrine_item, ARRAY_COUNT(mTG_shrine_item) },
+    { mTG_haniwa_item, ARRAY_COUNT(mTG_haniwa_item) },
+    { mTG_haniwa_put_item, ARRAY_COUNT(mTG_haniwa_put_item) },
+    { mTG_haniwa_price, ARRAY_COUNT(mTG_haniwa_price) },
+    { mTG_haniwa_get_item, ARRAY_COUNT(mTG_haniwa_get_item) },
+    { mTG_order_item, ARRAY_COUNT(mTG_order_item) },
+    { mTG_cp_delete, ARRAY_COUNT(mTG_cp_delete) },
+    { mTG_cp_delete2, ARRAY_COUNT(mTG_cp_delete2) },
+    { mTG_field_mail_mark, ARRAY_COUNT(mTG_field_mail_mark) },
+    { mTG_dump_mail_mark_conf, ARRAY_COUNT(mTG_dump_mail_mark_conf) },
+    { mTG_field_mail_mark2, ARRAY_COUNT(mTG_field_mail_mark2) },
+    { mTG_cpack_mail_mark, ARRAY_COUNT(mTG_cpack_mail_mark) },
+    { mTG_sell_all_item, ARRAY_COUNT(mTG_sell_all_item) },
+    { mTG_music_select, ARRAY_COUNT(mTG_music_select) },
+    { mTG_music_select_many, ARRAY_COUNT(mTG_music_select_many) },
+    { mTG_field_wisp, ARRAY_COUNT(mTG_field_wisp) },
+    { mTG_catch_wisp, ARRAY_COUNT(mTG_catch_wisp) },
+    { mTG_tag_hand_over_curator, ARRAY_COUNT(mTG_tag_hand_over_curator) },
+    { mTG_tag_nw_select, ARRAY_COUNT(mTG_tag_nw_select) },
+    { mTG_tag_nw_my_room, ARRAY_COUNT(mTG_tag_nw_my_room) },
+    { mTG_tag_nw_ot_room, ARRAY_COUNT(mTG_tag_nw_ot_room) },
+    { mTG_tag_nw_ug_room, ARRAY_COUNT(mTG_tag_nw_ug_room) },
+    { mTG_tag_nw_mr_sel_stick, ARRAY_COUNT(mTG_tag_nw_mr_sel_stick) },
+    { mTG_tag_nw_or_sel_stick, ARRAY_COUNT(mTG_tag_nw_or_sel_stick) },
+    { mTG_tag_nw_sel_put, ARRAY_COUNT(mTG_tag_nw_sel_put) },
+    { mTG_tag_nw_sel_stk_pattern, ARRAY_COUNT(mTG_tag_nw_sel_stk_pattern) },
+    { mTG_tag_remove, ARRAY_COUNT(mTG_tag_remove) },
+    { mTG_tag_put_all, ARRAY_COUNT(mTG_tag_put_all) },
+    { mTG_tag_put_chk, ARRAY_COUNT(mTG_tag_put_chk) },
+    { mTG_field_letters, ARRAY_COUNT(mTG_field_letters) },
+    { mTG_field_letters_bury, ARRAY_COUNT(mTG_field_letters_bury) },
+    { mTG_room_letters, ARRAY_COUNT(mTG_room_letters) },
+    { mTG_other_letters, ARRAY_COUNT(mTG_other_letters) },
+    { mTG_change_original, ARRAY_COUNT(mTG_change_original) },
+    { mTG_taisou_card, ARRAY_COUNT(mTG_taisou_card) },
+    { mTG_dump_item, ARRAY_COUNT(mTG_dump_item) },
+    { mTG_field_sign, ARRAY_COUNT(mTG_field_sign) },
+    { mTG_field_balloon, ARRAY_COUNT(mTG_field_balloon) },
+    { mTG_tag_nw_select_change, ARRAY_COUNT(mTG_tag_nw_select_change) },
+    { mTG_tag_nw_select_put, ARRAY_COUNT(mTG_tag_nw_select_put) },
+    { NULL, 0 },
+    { mTG_tag_password_item, ARRAY_COUNT(mTG_tag_password_item) },
+    { mTG_tag_nw_select2, ARRAY_COUNT(mTG_tag_nw_select2) },
+};

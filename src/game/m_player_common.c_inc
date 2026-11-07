@@ -7110,9 +7110,12 @@ static void Player_actor_Culc_wade_end_pos(const xyz_t* src_pos_p, xyz_t* wade_e
     *wade_end_pos_p = *src_pos_p;
     if (mFI_Wpos2BlockNum(&bx, &bz, *src_pos_p)) {
         xyz_t wpos;
-        xyz_t lpos = { 0.0f, 0.0f, 0.0f };
-
-        mFI_LposInBKtoWpos(&wpos, lpos, bx, bz);
+#if VERSION == VER_GAFP01_00
+        static const xyz_t local_border_pos = { 0.0f, 0.0f, 0.0f };
+#else
+        xyz_t local_border_pos = { 0.0f, 0.0f, 0.0f };
+#endif
+        mFI_LposInBKtoWpos(&wpos, local_border_pos, bx, bz);
         switch (direction) {
             case mFI_MOVEDIR_RIGHT:
             case mFI_MOVEDIR_LEFT: {

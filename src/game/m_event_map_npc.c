@@ -105,7 +105,11 @@ static int mEvMN_GetDataBaseIdx(u32 block_kind) {
     int res = 0;
 
     if (block_kind == mRF_BLOCKKIND_POOL) {
+#if VERSION == VER_GAFE01_00
         res = mFI_GetPuleIdx();
+#else
+        res = mFI_GetPoolIdx();
+#endif
     }
 
     return res;

@@ -21,7 +21,11 @@ static void fRT_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* d
     }
 }
 
+#if VERSION == VER_GAFP01_00
+extern Gfx furniture_radio_DL_model[];
+#else
 extern Gfx radio_DL_model[];
+#endif
 
 static void fRT_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     static u16 radio_pal[] ATTRIBUTE_ALIGN(32) = { 
@@ -33,7 +37,11 @@ static void fRT_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* d
     Matrix_RotateY(DEG2SHORT_ANGLE(-157.5f), MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, radio_pal);
+#if VERSION == VER_GAFP01_00
+    gSPDisplayList(NEXT_POLY_OPA_DISP, furniture_radio_DL_model);
+#else
     gSPDisplayList(NEXT_POLY_OPA_DISP, radio_DL_model);
+#endif
 
     CLOSE_DISP(game->graph);
 }

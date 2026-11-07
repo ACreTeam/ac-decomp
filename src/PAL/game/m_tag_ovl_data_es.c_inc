@@ -1,0 +1,988 @@
+#ifdef __INTELLISENSE__
+#include "m_tag_ovl.h"
+#include "m_catalog_ovl.h"
+
+typedef struct tag_word_s {
+    u8 str[24];
+    mSM_MOVE_PROC move_proc;
+} mTG_tag_word_c;
+
+typedef struct tag_data_s {
+    mTG_tag_word_c** words; /* array of words for each line */
+    int lines;              /* # of lines */
+} mTG_tag_data_c;
+
+typedef struct tag_table_data_s {
+    s16 col_num;
+    s16 row_num;
+    s16* col_pos;
+    s16* row_pos;
+} mTG_tag_data_table_c;
+#endif
+
+#include "charmap.h"
+
+static s16 mTG_item_col_pos[] = { -77, -53, -29, -5, 19 };
+
+static s16 mTG_mail_col_pos[] = { 55, 79 };
+
+static s16 mTG_money_col_pos[] = { 19 };
+
+static s16 mTG_player_col_pos[] = { -59 };
+
+static s16 mTG_bg_col_pos[] = { 19 };
+
+static s16 mTG_mbox_col_pos[] = { -36, -12 };
+
+static s16 mTG_haniwa_col_pos[] = { -35, -11, 13, 37 };
+
+static s16 mTG_collect_col_pos[] = { -89, -65, -41, -17, 8, 32, 57, 81 };
+
+static s16 mTG_wchange_col_pos[] = { 105 };
+
+static s16 mTG_cpmail_col_pos[] = { -16, 8, 32, 56 };
+
+static s16 mTG_cpmail_wc_col_pos[] = { 98 };
+
+static s16 mTG_cpmail_ti_col_pos[] = { 24 };
+
+static s16 mTG_cpedit_col_pos[] = { 20 };
+
+static s16 mTG_cpedit_end_col_pos[] = { 20 };
+
+static s16 mTG_catalog_col_pos[] = { 65 };
+
+static s16 mTG_catalog_wc_col_pos[] = { 93 };
+
+static s16 mTG_music_main_col_pos[] = { -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100 };
+
+static s16 mTG_needlework_col_pos[] = { -19, 19 };
+
+static s16 mTG_cporiginal_col_pos[] = { 0, 32, 64 };
+
+static s16 mTG_inventory_wc_org_col_pos[] = { -105 };
+
+static s16 mTG_cporiginal_nw_col_pos[] = { -88, -56 };
+
+static s16 mTG_cporiginal_wc_col_pos[] = { 102 };
+
+static s16 mTG_cporiginal_ti_col_pos[] = { 32 };
+
+static s16 mTG_gba_col_pos[] = { -97, -67, -37, -7 };
+
+static s16 mTG_gba_nw_col_pos[] = { 48, 80 };
+
+static s16 mTG_card_col_pos[] = { -45 };
+
+static s16 mTG_item_line_pos[] = { -10, -34, -58 };
+
+static s16 mTG_mail_line_pos[] = { 38, 14, -10, -34, -58 };
+
+static s16 mTG_money_line_pos[] = { 18 };
+
+static s16 mTG_player_line_pos[] = { 63 };
+
+static s16 mTG_bg_line_pos[] = { -90 };
+
+static s16 mTG_mbox_line_pos[] = { 39, 15, -9, -33, -57 };
+
+static s16 mTG_haniwa_line_pos[] = { 46 };
+
+static s16 mTG_collect_line_pos[] = { 42, 18, -6, -30, -54 };
+
+static s16 mTG_wchange_line_pos[] = { 37, 0, -37 };
+
+static s16 mTG_cpmail_wc_line_pos[] = { 50, 35, 20, 5, -10, -25, -40, -55 };
+
+static s16 mTG_cpmail_ti_line_pos[] = { 71 };
+
+static s16 mTG_cpedit_line_pos[] = { 50, 18, -14 };
+
+static s16 mTG_cpedit_end_line_pos[] = { -49 };
+
+static s16 mTG_catalog_line_pos[] = { 60, 42, 24, 6, -12, -30, -48 };
+
+static s16 mTG_catalog_wc_line_pos[] = { 64, 48, 32, 16, 0, -16, -32, -48, -64 };
+
+static s16 mTG_music_main_line_pos[] = { 25, 5, -15, -35, -55 };
+
+static s16 mTG_needlework_line_pos[] = { 50, 16, -18, -52 };
+
+static s16 mTG_cporiginal_line_pos[] = { 44, 15, -14, -43 };
+
+static s16 mTG_inventory_wc_org_line_pos[] = { 0 };
+
+static s16 mTG_cporiginal_nw_line_pos[] = { 45, 16, -13, -42 };
+
+static s16 mTG_cporiginal_wc_line_pos[] = { 53, 40, 24, 10, -4, -18, -34, -47 };
+
+static s16 mTG_cporiginal_ti_line_pos[] = { 74 };
+
+static s16 mTG_gba_line_pos[] = { 6, -25 };
+
+static s16 mTG_gba_nw_line_pos[] = { 40, 11, -18, -47 };
+
+static s16 mTG_card_line_pos[] = { -10 };
+
+static mTG_tag_data_table_c mTG_table_data[] = {
+    { 5, 3, mTG_item_col_pos, mTG_item_line_pos },
+    { 2, 5, mTG_mail_col_pos, mTG_mail_line_pos },
+    { 1, 1, mTG_money_col_pos, mTG_money_line_pos },
+    { 1, 1, mTG_player_col_pos, mTG_player_line_pos },
+    { 1, 1, mTG_bg_col_pos, mTG_bg_line_pos },
+    { 2, 5, mTG_mbox_col_pos, mTG_mbox_line_pos },
+    { 4, 1, mTG_haniwa_col_pos, mTG_haniwa_line_pos },
+    { 8, 5, mTG_collect_col_pos, mTG_collect_line_pos },
+    { 1, 3, mTG_wchange_col_pos, mTG_wchange_line_pos },
+    { 4, 5, mTG_cpmail_col_pos, mTG_mail_line_pos },
+    { 1, 8, mTG_cpmail_wc_col_pos, mTG_cpmail_wc_line_pos },
+    { 1, 1, mTG_cpmail_ti_col_pos, mTG_cpmail_ti_line_pos },
+    { 1, 3, mTG_cpedit_col_pos, mTG_cpedit_line_pos },
+    { 1, 1, mTG_cpedit_end_col_pos, mTG_cpedit_end_line_pos },
+    { 1, 7, mTG_catalog_col_pos, mTG_catalog_line_pos },
+    { 1, 9, mTG_catalog_wc_col_pos, mTG_catalog_wc_line_pos },
+    { 11, 5, mTG_music_main_col_pos, mTG_music_main_line_pos },
+    { 2, 4, mTG_needlework_col_pos, mTG_needlework_line_pos },
+    { 3, 4, mTG_cporiginal_col_pos, mTG_cporiginal_line_pos },
+    { 1, 1, mTG_inventory_wc_org_col_pos, mTG_inventory_wc_org_line_pos },
+    { 2, 4, mTG_cporiginal_nw_col_pos, mTG_cporiginal_nw_line_pos },
+    { 1, 8, mTG_cporiginal_wc_col_pos, mTG_cporiginal_wc_line_pos },
+    { 1, 1, mTG_cporiginal_ti_col_pos, mTG_cporiginal_ti_line_pos },
+    { 4, 2, mTG_gba_col_pos, mTG_gba_line_pos },
+    { 2, 4, mTG_gba_nw_col_pos, mTG_gba_nw_line_pos },
+    { 1, 1, mTG_card_col_pos, mTG_card_line_pos },
+    { 2, 4, mTG_gba_nw_col_pos, mTG_gba_nw_line_pos },
+};
+
+static u8 str_omikuji[9] = {
+    'F', 'u', 't', 'u', 'r', 'o', CHAR_SPACE, 'd',
+    'e',
+};
+
+static u8 str_happy_room[3] = {
+    'l', 'a', CHAR_SPACE_3,
+};
+
+static u8 str_happy_room2[3] = {
+    'A', 'A', 'D',
+};
+
+static u8 str_postoffice[21] = {
+    'l', 'a', CHAR_SPACE, 'o', 'f', 'i', 'c', 'i',
+    'n', 'a', CHAR_SPACE, 'd', 'e', CHAR_SPACE, 'c', 'o',
+    'r', 'r', 'e', 'o', 's',
+};
+
+static u8 str_home[4] = {
+    'c', 'a', 's', 'a',
+};
+
+static u8 str_otodokemono[10] = {
+    'E', 'n', 't', 'r', 'e', 'g', 'a', CHAR_SPACE,
+    'd', 'e',
+};
+
+static u8 str_otegami[8] = {
+    'C', 'a', 'r', 't', 'a', CHAR_SPACE, 'd', 'e',
+};
+
+static u8 str_otegami2[9] = {
+    'C', 'a', 'r', 't', 'a', CHAR_SPACE, 'd', 'e',
+    'l',
+};
+
+static u8 str_to[6] = {
+    'p', 'a', 'r', 'a', CHAR_SPACE_3, CHAR_SPACE,
+};
+
+static u8 str_to2[6] = {
+    's', 'e', 'g', CHAR_ACUTE_u, 'n', CHAR_SPACE_3,
+};
+
+static u8 str_to3[6] = {
+    'e', 'l', CHAR_SPACE_3, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+};
+
+static void mTG_1catch_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_bury_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_cancel_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_carpet_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_catch_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_change_original_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_cover_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_cp_data_delete_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_cpmail_change_mail_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_drop_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_dump_item_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_dump_mail_mark_conf_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_dump_mail_mark_exe_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_dump_mail_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_field_put_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_fly_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_free_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_get_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_give_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_hukubukuro_open_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_m10000_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_m1000_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_m100_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_m30000_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_mailbox_change_mail_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_music_listen_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_music_takeout_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_next_open_needlework_sel_put_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_next_open_needlework_sel_stick_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_next_open_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_room_put_manekin_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_room_put_umbrella_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_select_this_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_st_umbrella_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_st_wear_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_nw_stk_pat_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_order_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_password_item_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_plant_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_present_open_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_present_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_priceset_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_put_all_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_putin_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_read_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_release_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_rewrite_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_room_put_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_sell_all_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_sell_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_send_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_show_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_stick_select_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_tag_remove_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_take_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_write_proc(Submenu*, mSM_MenuInfo_c*);
+
+static mTG_tag_word_c mTG_tag_word_akeru = {
+    {
+        'A', 'b', 'r', 'i', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_present_open_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_ageru = {
+    {
+        'D', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_give_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_itadaku = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_get_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_dump_item = {
+    {
+        'S', CHAR_ACUTE_i, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_dump_item_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_field_sign = {
+    {
+        'C', 'o', 'l', 'o', 'c', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_field_put_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_dump_mail = {
+    {
+        'S', CHAR_ACUTE_i, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_dump_mail_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_sell = {
+    {
+        'V', 'e', 'n', 'd', 'e', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_sell_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_sell_all = {
+    {
+        'V', 'e', 'n', 'd', 'e', 'r', CHAR_SPACE, 't',
+        'o', 'd', 'o', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_sell_all_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_okuru = {
+    {
+        'E', 'n', 'v', 'i', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_send_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_kakinaosu = {
+    {
+        'R', 'e', 'e', 's', 'c', 'r', 'i', 'b',
+        'i', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_rewrite_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_kabeniharu = {
+    {
+        'C', 'o', 'l', 'o', 'c', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cover_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_korewoireru = {
+    {
+        'G', 'u', 'a', 'r', 'd', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_putin_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_zimenniueru = {
+    {
+        'P', 'l', 'a', 'n', 't', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_plant_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_zimennioku = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_field_put_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_suteru = {
+    {
+        'T', 'i', 'r', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_next_open_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_tada = {
+    {
+        'R', 'e', 'g', 'a', 'l', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_free_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_tukamu = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_catch_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_tegamiwokaku = {
+    {
+        'E', 's', 'c', 'r', 'i', 'b', 'i', 'r',
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_write_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nedanwotukeru = {
+    {
+        'V', 'e', 'n', 'd', 'e', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_priceset_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_present = {
+    {
+        'R', 'e', 'g', 'a', 'l', 'o', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_present_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_miserudake = {
+    {
+        'M', 'o', 's', 't', 'r', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_show_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_yameru = {
+    {
+        'S', 'a', 'l', 'i', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cancel_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_heyanioku = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_room_put_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_yukanisiku = {
+    {
+        'C', 'o', 'l', 'o', 'c', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_carpet_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_yomu = {
+    {
+        'L', 'e', 'e', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_read_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_watasu = {
+    {
+        'D', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_take_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_100 = {
+    {
+        '1', '0', '0', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_m100_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_1000 = {
+    {
+        '1', '.', '0', '0', '0', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_m1000_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_10000 = {
+    {
+        '1', '0', '.', '0', '0', '0', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_m10000_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_30000 = {
+    {
+        '3', '0', '.', '0', '0', '0', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_m30000_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_okane = {
+    {
+        'P', 'r', 'e', 'c', 'i', 'o', ':', CHAR_SPACE_3,
+        CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE_3, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    NULL,
+};
+
+static mTG_tag_word_c mTG_tag_word_beru = {
+    {
+        'b', 'a', 'y', 'a', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    NULL,
+};
+
+static mTG_tag_word_c mTG_tag_word_osameru = {
+    {
+        'D', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_putin_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_zenbutukamu = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, 't', 'o',
+        'd', 'o', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_catch_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_1maitukamu = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, 'u', 'n',
+        'o', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_1catch_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_1tamatukamu = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_1catch_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_order = {
+    {
+        'P', 'e', 'd', 'i', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_order_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_zimenniumeru = {
+    {
+        'E', 'n', 't', 'e', 'r', 'r', 'a', 'r',
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_bury_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nigasu = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_release_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_fly = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_fly_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_akeru2 = {
+    {
+        'A', 'b', 'r', 'i', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_hukubukuro_open_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_kesu = {
+    {
+        '?', '?', '?', '?', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_next_open_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_hai = {
+    {
+        'S', CHAR_ACUTE_i, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cp_data_delete_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_iie = {
+    {
+        'N', 'o', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cancel_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_dump_mail_mark_conf = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, 't',
+        'o', 'd', 'o', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_dump_mail_mark_conf_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_dump_mail_mark_conf2 = {
+    {
+        'T', 'i', 'r', 'a', 'r', CHAR_SPACE, 't', 'o',
+        'd', 'a', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_dump_mail_mark_conf_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_dump_mail_mark_exe = {
+    {
+        'S', CHAR_ACUTE_i, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_dump_mail_mark_exe_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_mailbox_change_mail = {
+    {
+        'M', 'o', 'v', 'e', 'r', CHAR_SPACE, 't', 'o',
+        'd', 'a', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_mailbox_change_mail_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_cpmail_change_mail = {
+    {
+        'M', 'o', 'v', 'e', 'r', CHAR_SPACE, 't', 'o',
+        'd', 'a', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cpmail_change_mail_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_music_listen = {
+    {
+        'E', 's', 'c', 'u', 'c', 'h', 'a', 'r',
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_music_listen_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_music_takeout = {
+    {
+        'Q', 'u', 'i', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_music_takeout_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_music_takeout_all = {
+    {
+        'Q', 'u', 'i', 't', 'a', 'r', CHAR_SPACE, 't',
+        'o', 'd', 'o', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_music_takeout_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_hand_over_curator = {
+    {
+        'D', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_give_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_select_this = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_select_this_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_select_put = {
+    {
+        'M', 'o', 's', 't', 'r', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_next_open_needlework_sel_put_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_select_change = {
+    {
+        'C', 'a', 'm', 'b', 'i', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_select_this_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_st_wear = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, 'e', 'n', CHAR_SPACE,
+        'r', 'o', 'p', 'a', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_st_wear_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_st_umbrella = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, 'e', 'n', CHAR_SPACE,
+        'p', 'a', 'r', 'a', 'g', 'u', 'a', 's',
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_st_umbrella_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_cover = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, 'e', 'n', CHAR_SPACE,
+        'p', 'a', 'r', 'e', 'd', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_stick_select_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_carpet = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, 'e', 'n', CHAR_SPACE,
+        's', 'u', 'e', 'l', 'o', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_stick_select_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_catch = {
+    {
+        'C', 'o', 'g', 'e', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_catch_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_mr_sel_stick = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_next_open_needlework_sel_stick_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_or_sel_stick = {
+    {
+        'U', 's', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_next_open_needlework_sel_stick_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_sel_put = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_select_this_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_put_umbrella = {
+    {
+        'M', 'o', 's', 't', 'r', 'a', 'r', CHAR_SPACE,
+        'e', 'n', CHAR_SPACE, 'p', 'a', 'r', 'a', 'g',
+        'u', 'a', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_room_put_umbrella_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_put_wear = {
+    {
+        'M', 'o', 's', 't', 'r', 'a', 'r', CHAR_SPACE,
+        'e', 'n', CHAR_SPACE, 'r', 'o', 'p', 'a', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_room_put_manekin_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_stk_pat_nrml = {
+    {
+        'B', CHAR_ACUTE_a, 's', 'i', 'c', 'o', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_stk_pat_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_nw_stk_pat_turn = {
+    {
+        'S', 'i', 'm', CHAR_ACUTE_e, 't', 'r', 'i', 'c',
+        'o', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_nw_stk_pat_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_remove = {
+    {
+        'Q', 'u', 'i', 't', 'a', 'r', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_tag_remove_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_put_all = {
+    {
+        'S', 'o', 'l', 't', 'a', 'r', CHAR_SPACE, 't',
+        'o', 'd', 'o', 's', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_put_all_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_put_chk = {
+    {
+        'E', 's', 't', CHAR_ACUTE_a, CHAR_SPACE, 'b', 'i', 'e',
+        'n', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_drop_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_never_mind = {
+    {
+        'M', 'e', 'j', 'o', 'r', CHAR_SPACE, 'n', 'o',
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_cancel_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_change_original = {
+    {
+        'C', 'a', 'm', 'b', 'i', 'a', 'r', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_change_original_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_password_item = {
+    {
+        'D', 'a', 'r', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+    },
+    &mTG_password_item_proc,
+};
+
+static u8 mTG_tag_str_suteruno[7] = {
+    CHAR_INVERT_QUESTIONMARK, 'T', 'i', 'r', 'a', 'r', '?',
+};
+
+static u8 mTG_tag_str_hontoni[6] = {
+    '?', '?', '?', '?', '?', '?',
+};
+
+static u8 mTG_tag_str_iidesuka[6] = {
+    '?', '?', '?', '?', '?', '?',
+};
+
+static u8 mTG_tag_str_put_chk1[8] = {
+    'P', 'e', 'r', 'd', 'e', 'r', CHAR_ACUTE_a, 's',
+};
+
+static u8 mTG_tag_str_put_chk2[9] = {
+    'e', 'l', CHAR_SPACE, 'd', 'i', 's', 'e', CHAR_TILDE_n,
+    'o',
+};
+
+static u8 mTG_catalog_str[][10] = {
+    {
+        'M', 'o', 'b', 'i', 'l', 'i', 'a', 'r',
+        'i', 'o',
+    },
+    {
+        'E', 'm', 'p', 'a', 'p', 'e', 'l', 'a',
+        'd', 'o',
+    },
+    {
+        'A', 'l', 'f', 'o', 'm', 'b', 'r', 'a',
+        's', CHAR_SPACE,
+    },
+    {
+        'R', 'o', 'p', 'a', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE,
+    },
+    {
+        'O', 'b', 'j', 'e', 't', 'o', 's', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE,
+    },
+    {
+        'P', 'a', 'p', 'e', 'l', 'e', 'r', CHAR_ACUTE_i,
+        'a', CHAR_SPACE,
+    },
+    {
+        'G', 'i', 'r', 'o', 'i', 'd', 'e', 's',
+        CHAR_SPACE, CHAR_SPACE,
+    },
+    {
+        'F', CHAR_ACUTE_o, 's', 'i', 'l', 'e', 's', CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE,
+    },
+    {
+        'M', CHAR_ACUTE_u, 's', 'i', 'c', 'a', CHAR_SPACE, CHAR_SPACE,
+        CHAR_SPACE, CHAR_SPACE,
+    },
+};
+

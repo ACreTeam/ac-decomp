@@ -1,3 +1,15 @@
+#ifdef __INTELLISENSE__
+#include "m_choice.h"
+
+#include "audio.h"
+#include "jsyswrap.h"
+#include "libultra/libultra.h"
+#include "m_common_data.h"
+#include "m_font.h"
+#include "m_msg.h"
+#include "sys_matrix.h"
+#endif
+
 extern mChoice_c* mChoice_Get_base_window_p() {
     return &mMsg_Get_base_window_p()->choice_window;
 }
@@ -181,9 +193,11 @@ extern void mChoice_Clear_ChoseNum(mChoice_c* choice) {
 static void mChoice_check_ct(mChoice_c* choice) {
 }
 
+#if VERSION != VER_GAFP01_00
 static void mChoice_Get_StringDataAddressAndSize(int idx, u32* addr, u32* size) {
     mMsg_Get_BodyParam(Choice_table_rom_start, Choice_rom_start, idx, addr, size);
 }
+#endif
 
 static int mChoice_Put_String_PLAYER_NAME(u8* data, int idx, int max_size, ACTOR* actor) {
     return mMsg_CopyPlayerName(data, idx, max_size, FALSE);
@@ -235,7 +249,11 @@ static int mChoice_Put_String_SEC(u8* data, int idx, int max_size, ACTOR* actor)
 }
 
 static int mChoice_Put_String_FREE(u8* data, int idx, int max_size, ACTOR* actor, int free_idx) {
+#if VERSION == VER_GAFP01_00
+    return mMsg_CopyFree(mMsg_Get_base_window_p(), free_idx, data, idx, max_size, mMsg_ARTICLE_DEFAULT, FALSE);
+#else
     return mMsg_CopyFree(mMsg_Get_base_window_p(), free_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
+#endif
 }
 
 static int mChoice_Put_String_FREE0(u8* data, int idx, int max_size, ACTOR* actor) {
@@ -331,7 +349,11 @@ static int mChoice_Put_String_RAMDOM_NUMBER2(u8* data, int idx, int max_size, AC
 }
 
 static int mChoice_Put_String_ITEM(u8* data, int idx, int max_size, ACTOR* actor, int item_idx) {
+#if VERSION == VER_GAFP01_00
+    return mMsg_CopyItem(mMsg_Get_base_window_p(), item_idx, data, idx, max_size, mMsg_ARTICLE_DEFAULT, FALSE);
+#else
     return mMsg_CopyItem(mMsg_Get_base_window_p(), item_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
+#endif
 }
 
 static int mChoice_Put_String_ITEM0(u8* data, int idx, int max_size, ACTOR* actor) {
@@ -364,7 +386,11 @@ static int mChoice_Put_String_AMPM(u8* data, int idx, int max_size, ACTOR* actor
 
 typedef int (*mChoice_PUT_STRING_PROC)(u8*, int, int, ACTOR*);
 
+#if VERSION == VER_GAFP01_00
+static int mChoice_ContPut_String(u8* data, int idx, int max_size, ACTOR* actor) {
+#else
 static int mChoice_Put_String(u8* data, int idx, int max_size, ACTOR* actor) {
+#endif
     static const mChoice_PUT_STRING_PROC proc[mFont_CONT_CODE_NUM] = {
         NULL,
         NULL,
@@ -500,6 +526,295 @@ static int mChoice_Put_String(u8* data, int idx, int max_size, ACTOR* actor) {
     return max_size;
 }
 
+#if VERSION == VER_GAFP01_00
+static int mChoice_Str_PlayerName(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_PLAYER_NAME(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_NpcName(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_TALK_NAME(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Tail(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_TAIL(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Determination(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_DETERMINATION(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_CountryName(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_COUNTRY_NAME(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_IslandName(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ISLAND_NAME(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Year(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_YEAR(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Mounth(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_MONTH(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Week(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_WEEK(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Day(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_DAY(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Hour(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_HOUR(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Min(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_MIN(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Sec(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_SEC(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_RandomNum(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_RAMDOM_NUMBER2(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_AmPm(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_AMPM(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free0(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE0(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free1(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE1(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free2(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE2(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free3(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE3(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free4(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE4(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free5(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE5(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free6(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE6(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free7(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE7(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free8(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE8(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free9(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE9(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free10(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE10(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free11(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE11(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free12(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE12(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free13(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE13(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free14(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE14(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free15(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE15(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free16(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE16(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free17(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE17(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free18(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE18(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Free19(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_FREE19(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Item0(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ITEM0(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Item1(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ITEM1(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Item2(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ITEM2(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Item3(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ITEM3(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_Item4(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Put_String_ITEM4(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_OwnIslandName(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mMsg_CopyOwnIslandName(data, idx, max_size, FALSE);
+}
+
+static int mChoice_Str_PlClothType(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mMsg_CopyPlClothType(data, idx, max_size, FALSE);
+}
+
+static int mChoice_Str_TruthTail(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mChoice_Str_Tail(data, idx, max_size, actor);
+}
+
+static int mChoice_Str_CountryNameKana(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mMsg_CopyCountryName(data, idx, max_size, FALSE);
+}
+
+static int mMsgTag_Grm_InflectPl(u8* data, int idx, int max_size, ACTOR* actor) {
+    return mMsg_InflectGender(data, idx, max_size, Now_Private->gender != mPr_SEX_MALE);
+}
+
+static int mChoice_TagPut_String(u8* data, int* idx, int max_size, ACTOR* actor) {
+    static const mChoice_PUT_STRING_PROC str_proc[mFont_TAG_STR_NUM] = {
+        &mChoice_Str_PlayerName,
+        &mChoice_Str_NpcName,
+        &mChoice_Str_Tail,
+        &mChoice_Str_Determination,
+        NULL,
+        &mChoice_Str_CountryName,
+        &mChoice_Str_IslandName,
+        &mChoice_Str_Year,
+        &mChoice_Str_Mounth,
+        &mChoice_Str_Week,
+        &mChoice_Str_Day,
+        &mChoice_Str_Hour,
+        &mChoice_Str_Min,
+        &mChoice_Str_Sec,
+        &mChoice_Str_RandomNum,
+        &mChoice_Str_AmPm,
+        NULL,
+        NULL,
+        &mChoice_Str_Free0,
+        &mChoice_Str_Free1,
+        &mChoice_Str_Free2,
+        &mChoice_Str_Free3,
+        &mChoice_Str_Free4,
+        &mChoice_Str_Free5,
+        &mChoice_Str_Free6,
+        &mChoice_Str_Free7,
+        &mChoice_Str_Free8,
+        &mChoice_Str_Free9,
+        &mChoice_Str_Free10,
+        &mChoice_Str_Free11,
+        &mChoice_Str_Free12,
+        &mChoice_Str_Free13,
+        &mChoice_Str_Free14,
+        &mChoice_Str_Free15,
+        &mChoice_Str_Free16,
+        &mChoice_Str_Free17,
+        &mChoice_Str_Free18,
+        &mChoice_Str_Free19,
+        &mChoice_Str_Item0,
+        &mChoice_Str_Item1,
+        &mChoice_Str_Item2,
+        &mChoice_Str_Item3,
+        &mChoice_Str_Item4,
+        NULL,
+        NULL,
+        NULL,
+        &mChoice_Str_OwnIslandName,
+        &mChoice_Str_PlClothType,
+        NULL,
+        NULL,
+        &mChoice_Str_TruthTail,
+        &mChoice_Str_CountryNameKana,
+    };
+
+    static const mChoice_PUT_STRING_PROC grm_proc[] = {
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, &mMsgTag_Grm_InflectPl, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+    };
+
+    u8* str = data + *idx;
+    int group;
+    int id;
+    mChoice_PUT_STRING_PROC put_proc;
+
+    group = mFont_Get_TagGroup(str);
+    id = mFont_Get_TagId(str);
+    mFont_Get_TagSize(str); // @unused
+    put_proc = NULL;
+
+    if (group == mFont_TAG_GROUP_STR) {
+        put_proc = str_proc[id];
+    } else if (group == mFont_TAG_GROUP_GRM) {
+        put_proc = grm_proc[id];
+    }
+
+    if (put_proc != NULL) {
+        return (*put_proc)(data, *idx, max_size, actor);
+    } else {
+        *idx += mFont_Get_TagSize(str);
+    }
+
+    return max_size;
+}
+#endif
+
+#if VERSION == VER_GAFP01_00
+static void mChoice_Change_ControlCode(u8* data, int max_size, ACTOR* actor) {
+    int new_max_idx = max_size;
+    int idx = 0;
+
+    while (idx < new_max_idx) {
+        if (data[idx] == CHAR_CONTROL_CODE) {
+            new_max_idx = mChoice_ContPut_String(data, idx, new_max_idx, actor);
+        } else if (data[idx] == CHAR_MESSAGE_TAG) {
+            new_max_idx = mChoice_TagPut_String(data, &idx, new_max_idx, actor);
+        } else {
+            idx++;
+        }
+    }
+}
+#else
 static void mChoice_Change_ControlCode(u8* data, int max_size, ACTOR* actor) {
     u8* src_p = data;
     int new_max_size = max_size;
@@ -517,7 +832,20 @@ static void mChoice_Change_ControlCode(u8* data, int max_size, ACTOR* actor) {
         }
     }
 }
+#endif
 
+#if VERSION == VER_GAFP01_00
+extern void mChoice_Load_ChoseStringFromRom(mChoice_c* choice, u8* str, int str_no, ACTOR* actor) {
+    mMsg_bmg_info_c bmg_info;
+    u8 chose_str[216];
+
+    mem_clear(chose_str, sizeof(chose_str), CHAR_SPACE);
+    mMsgLoad_bmg_init(&bmg_info, Choice_rom_start, str_no, chose_str, sizeof(chose_str));
+    mMsgLoad_bmg_load(&bmg_info);
+    mChoice_Change_ControlCode(chose_str, sizeof(chose_str), actor);
+    bcopy(chose_str, str, mChoice_CHOICE_STRING_LEN);
+}
+#else
 extern void mChoice_Load_ChoseStringFromRom(mChoice_c* choice, u8* str, int str_no, ACTOR* actor) {
     if (str_no >= 0 && str_no < mChoice_SELECT_STR_NUM) {
         u32 addr;
@@ -562,6 +890,7 @@ extern void mChoice_Load_ChoseStringFromRom(mChoice_c* choice, u8* str, int str_
         }
     }
 }
+#endif
 
 extern void mChoice_no_b_set(mChoice_c* choice) {
     choice->no_b_flag = TRUE;

@@ -28,9 +28,13 @@ static void aNP_set_talk_info(ACTOR* actor) {
     u8 name[ANIMAL_NAME_LEN];
 
     mNpc_GetAnimalPlateName(name, actor->world.position);
-    mMsg_Set_free_str(mMsg_Get_base_window_p(), 0, name, ANIMAL_NAME_LEN);
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR0, name, sizeof(name), 0, mNpc_GetPlateGender(actor->world.position));
+#else
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, name, ANIMAL_NAME_LEN);
+#endif
     mDemo_Set_msg_num(MSG_4969);
-    mDemo_Set_talk_display_name(0);
+    mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();
     mDemo_Set_camera(TRUE);
     mPlib_Set_able_hand_all_item_in_demo(TRUE);

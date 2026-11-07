@@ -10,6 +10,9 @@
 #include "save_menu.h"
 #include "famicom_emu.h"
 #include "m_prenmi.h"
+#if VERSION == VER_GAFP01_00
+#include "reload_data.h"
+#endif
 
 #define DLFTBL_MAKE(name, class) \
     { NULL, 0, 0, NULL, NULL, NULL, name##_init, name##_cleanup, NULL, NULL, NULL, sizeof(GAME_##class) }
@@ -26,5 +29,8 @@ DLFTBL_GAME game_dlftbls[] = {
   DLFTBL_MAKE(player_select, PLAYER_SELECT),
   DLFTBL_MAKE(save_menu, SAVE_MENU),
   DLFTBL_MAKE(famicom_emu, FAMICOM_EMU),
-  DLFTBL_MAKE(prenmi, PRENMI)
+  DLFTBL_MAKE(prenmi, PRENMI),
+#if VERSION == VER_GAFP01_00
+  DLFTBL_MAKE(reload_data, RELOAD_DATA)
+#endif
 };

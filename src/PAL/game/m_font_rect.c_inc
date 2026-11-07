@@ -1,0 +1,19 @@
+extern void mFont_gppSetRectMode(Gfx** gfx_pp) {
+  static Gfx disp[] = {
+    gsDPPipeSync(),
+    gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetCombineMode(mFont_CC_FONT, mFont_CC_FONT),
+    gsDPSetRenderMode(G_RM_AA_DEC_LINE, G_RM_AA_DEC_LINE2),
+    gsDPSetPrimColor(0, 0, 255, 255, 255, 255),
+    gsSPEndDisplayList(),
+  };
+
+  gSPDisplayList((*gfx_pp)++, disp);
+}

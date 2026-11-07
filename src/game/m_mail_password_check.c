@@ -1112,6 +1112,11 @@ static int mMpswd_check_present_other(mActor_name_t item) {
                     break;
                 }
 
+#if VERSION == VER_GAFP01_00
+                case ITEM1_CAT_PAPER:
+                    res = TRUE;
+                    break;
+#else
                 case ITEM1_CAT_PAPER: {
                     int amount = item - ITM_PAPER_START;
                     if (amount / 64 + 1 >= 4) {
@@ -1120,6 +1125,7 @@ static int mMpswd_check_present_other(mActor_name_t item) {
 
                     break;
                 }
+#endif
 
                 case ITEM1_CAT_FISH: {
                     /* fish are not allowed */

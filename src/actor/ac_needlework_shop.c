@@ -42,7 +42,7 @@ ACTOR_PROFILE Needlework_Shop_Profile = {
 };
 // clang-format on
 
-static u8 aNW_shadow_vtx_fix_flg_table[8] = { TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE };
+static u8 aNW_shadow_vtx_fix_flg_table[] = { TRUE, FALSE, TRUE, FALSE, TRUE, FALSE };
 
 extern Vtx obj_s_tailor_shadow_v[];
 extern Gfx obj_s_tailor_shadowT_model[];

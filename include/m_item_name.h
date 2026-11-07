@@ -4,6 +4,10 @@
 #include "types.h"
 #include "m_actor_type.h"
 
+#if VERSION >= VER_GAFP01_00
+#include "m_gender.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,6 +35,9 @@ extern u8 ftrName_table[];
 extern u8 ftrName2_table[];
 
 enum item_article {
+#if VERSION >= VER_GAFP01_00
+  mIN_ARTICLE_UNSPECIFIED = -1,
+#endif
   mIN_ARTICLE_NONE,
   mIN_ARTICLE_A,
   mIN_ARTICLE_AN,
@@ -42,6 +49,11 @@ enum item_article {
 
 extern void mIN_copy_name_str(u8* str, mActor_name_t item_no);
 extern int mIN_get_item_article(mActor_name_t item_no);
+#if VERSION >= VER_GAFP01_00
+extern int mIN_get_item_article_def(mActor_name_t item_no);
+extern int mIN_get_item_article_indef(mActor_name_t item_no);
+extern int mIN_get_item_gender(mActor_name_t item_no);
+#endif
 
 #ifdef __cplusplus
 }

@@ -81,7 +81,7 @@ static u8 Shadow_vtx_fix_flg_cottage_my[] = {
     TRUE, TRUE, FALSE, FALSE,
     FALSE, FALSE, TRUE, TRUE,
     TRUE, FALSE, TRUE, FALSE,
-    FALSE, TRUE, FALSE, FALSE
+    FALSE, TRUE
 };
 // clang-format on
 

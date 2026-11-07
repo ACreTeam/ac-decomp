@@ -16,6 +16,10 @@
 #include "m_name_table.h"
 #include "ac_npc_h.h"
 
+#if VERSION >= VER_GAFP01_00
+#include "m_gender.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -498,6 +502,13 @@ extern void mNpc_set_addd_edit_bit(int bit);
 extern void mNpc_set_addd_edit_info(int mtype, int disp_add);
 extern void mNpc_SetTalkAnimalIdx_fdebug(AnmPersonalID_c* anm_id);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);
+
+#if VERSION == VER_GAFP01_00
+extern int mNpc_Sex2Gender(int sex);
+extern int mNpc_Looks2Gender(u8 looks);
+extern int mNpc_Name2Gender(mActor_name_t name);
+extern int mNpc_GetPlateGender(xyz_t pos);
+#endif
 
 #ifdef __cplusplus
 }

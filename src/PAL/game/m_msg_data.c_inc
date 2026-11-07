@@ -1,0 +1,97 @@
+static u8 con_kaiwa2_w1_tex[] ATTRIBUTE_ALIGN(32) = {
+  #include "assets/msg/con_kaiwa2_w1_tex.inc"
+};
+
+static u8 con_kaiwa2_w2_tex[] ATTRIBUTE_ALIGN(32) = {
+  #include "assets/msg/con_kaiwa2_w2_tex.inc"
+};
+
+static u8 con_kaiwa2_w3_tex[] ATTRIBUTE_ALIGN(32) = {
+  #include "assets/msg/con_kaiwa2_w3_tex.inc"
+};
+
+static Vtx con_kaiwa2_v[] = {
+  #include "assets/msg/con_kaiwa2_v.inc"
+};
+
+static Gfx con_kaiwa2_modelT[] = {
+  gsSPTexture(0, 0, 0, 0, G_ON),
+  gsDPLoadTextureBlock_4b_Dolphin(con_kaiwa2_w3_tex, G_IM_FMT_I, 128, 64, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+  gsSPVertex(&con_kaiwa2_v[0], 24, 0),
+  gsSPNTrianglesInit_5b(
+    4, // tri count
+    0, 1, 2, // tri0
+    2, 3, 0, // tri1
+    4, 5, 6 // tri2
+  ),
+  gsSPNTriangles_5b(
+    6, 7, 4, // tri0
+    0, 0, 0, // tri1
+    0, 0, 0, // tri2
+    0, 0, 0 // tri3
+  ),
+  gsDPLoadTextureBlock_4b_Dolphin(con_kaiwa2_w2_tex, G_IM_FMT_I, 128, 64, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+  gsSPNTrianglesInit_5b(
+    4, // tri count
+    8, 9, 10, // tri0
+    10, 11, 8, // tri1
+    12, 13, 14 // tri2
+  ),
+  gsSPNTriangles_5b(
+    14, 15, 12, // tri0
+    0, 0, 0, // tri1
+    0, 0, 0, // tri2
+    0, 0, 0 // tri3
+  ),
+  gsDPLoadTextureBlock_4b_Dolphin(con_kaiwa2_w1_tex, G_IM_FMT_I, 64, 64, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+  gsSPNTrianglesInit_5b(
+    4, // tri count
+    16, 17, 18, // tri0
+    18, 19, 16, // tri1
+    20, 21, 22 // tri2
+  ),
+  gsSPNTriangles_5b(
+    22, 23, 20, // tri0
+    0, 0, 0, // tri1
+    0, 0, 0, // tri2
+    0, 0, 0 // tri3
+  ),
+  gsSPEndDisplayList(),
+};
+
+static u8 con_namefuti_TXT[] ATTRIBUTE_ALIGN(32) = {
+  #include "assets/msg/con_namefuti_TXT.inc"
+};
+
+static Vtx con_kaiwaname_v[] = {
+  #include "assets/msg/con_kaiwaname_v.inc"
+};
+
+static Gfx con_kaiwaname_modelT[] = {
+  gsSPTexture(0, 0, 0, 0, G_ON),
+  gsDPLoadTextureBlock_4b_Dolphin(con_namefuti_TXT, G_IM_FMT_I, 64, 32, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+  gsSPVertex(&con_kaiwaname_v[0], 4, 0),
+  gsSPNTrianglesInit_5b(
+    2, // tri count
+    0, 1, 2, // tri0
+    2, 3, 0, // tri1
+    0, 0, 0 // tri2
+  ),
+  gsSPEndDisplayList(),
+};
+
+static Gfx mMsg_init_disp[] = {
+  gsDPPipeSync(),
+  gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+  gsDPSetTextureLOD(G_TL_TILE),
+  gsDPSetTextureConvert(G_TC_FILT),
+  gsDPSetTextureFilter(G_TF_BILERP),
+  gsDPSetCycleType(G_CYC_1CYCLE),
+  gsDPSetTexturePersp(G_TP_PERSP),
+  gsDPSetAlphaDither(G_AD_DISABLE),
+  gsDPSetColorDither(G_CD_DISABLE),
+  gsDPSetCombineKey(G_CK_NONE),
+  gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
+  gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+  gsSPEndDisplayList(),
+};

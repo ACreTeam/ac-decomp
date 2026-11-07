@@ -250,7 +250,7 @@ extern int mFI_CheckBgDma(int bx, int bz);
 extern f32 mFI_UtNum2BaseHeight(int ut_x, int ut_z);
 extern f32 mFI_BkNum2BaseHeight(int bx, int bz);
 extern u8 mFI_BkNum2BlockType(int bx, int bz);
-#if VERSION != VER_GAFU01_00
+#if VERSION == VER_GAFE01_00
 extern int mFI_GetPuleIdx();
 #else
 extern int mFI_GetPoolIdx();

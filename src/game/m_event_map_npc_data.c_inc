@@ -579,7 +579,7 @@ static mEvMN_npc_data_c l_gh_set_npc = { 0b011111, EMPTY_NO };
 static mEvMN_data_c l_gh_set_data = { 0, 4, 1, 6, l_gh_set_dt_table, &l_gh_set_npc, mRF_BLOCKKIND_SHRINE };
 
 // hm - Harvest Moon
-static mActor_name_t l_hm_set_actor0[] = {
+static mActor_name_t l_hm_set_actor[] = {
     SP_NPC_EV_TUKIMI_0,
     SP_NPC_EV_TUKIMI_1,
     SP_NPC_EV_TUKIMI_2,
@@ -595,7 +595,7 @@ static mEvMN_actor_pos_c l_hm_pule1_map[] = {
     {  7, 12 },
 };
 
-static mEvMN_actor_info_c l_hm_pule1_set_dt = { l_hm_set_actor0, l_hm_pule1_map };
+static mEvMN_actor_info_c l_hm_pule1_set_dt = { l_hm_set_actor, l_hm_pule1_map };
 
 static mEvMN_actor_pos_c l_hm_pule2_map[] = {
     {  3,  8 },
@@ -605,7 +605,7 @@ static mEvMN_actor_pos_c l_hm_pule2_map[] = {
     { 14,  2 },
 };
 
-static mEvMN_actor_info_c l_hm_pule2_set_dt = { l_hm_set_actor0, l_hm_pule2_map };
+static mEvMN_actor_info_c l_hm_pule2_set_dt = { l_hm_set_actor, l_hm_pule2_map };
 
 static mEvMN_actor_pos_c l_hm_pule3_map[] = {
     {  9, 13 },
@@ -615,7 +615,7 @@ static mEvMN_actor_pos_c l_hm_pule3_map[] = {
     { 11,  8 },
 };
 
-static mEvMN_actor_info_c l_hm_pule3_set_dt = { l_hm_set_actor0, l_hm_pule3_map };
+static mEvMN_actor_info_c l_hm_pule3_set_dt = { l_hm_set_actor, l_hm_pule3_map };
 
 static mEvMN_actor_pos_c l_hm_pule4_map[] = {
     {  9, 12 },
@@ -625,7 +625,7 @@ static mEvMN_actor_pos_c l_hm_pule4_map[] = {
     { 11, 11 },
 };
 
-static mEvMN_actor_info_c l_hm_pule4_set_dt = { l_hm_set_actor0, l_hm_pule4_map };
+static mEvMN_actor_info_c l_hm_pule4_set_dt = { l_hm_set_actor, l_hm_pule4_map };
 
 static mEvMN_actor_pos_c l_hm_pule5_map[] = {
     {  9,  2 },
@@ -635,7 +635,7 @@ static mEvMN_actor_pos_c l_hm_pule5_map[] = {
     {  2, 13 },
 };
 
-static mEvMN_actor_info_c l_hm_pule5_set_dt = { l_hm_set_actor0, l_hm_pule5_map };
+static mEvMN_actor_info_c l_hm_pule5_set_dt = { l_hm_set_actor, l_hm_pule5_map };
 
 static mEvMN_actor_pos_c l_hm_pule6_map[] = {
     { 12,  8 },
@@ -645,7 +645,7 @@ static mEvMN_actor_pos_c l_hm_pule6_map[] = {
     { 11,  9 },
 };
 
-static mEvMN_actor_info_c l_hm_pule6_set_dt = { l_hm_set_actor0, l_hm_pule6_map };
+static mEvMN_actor_info_c l_hm_pule6_set_dt = { l_hm_set_actor, l_hm_pule6_map };
 
 static mEvMN_actor_pos_c l_hm_pule7_map[] = {
     {  3,  7 },
@@ -655,7 +655,7 @@ static mEvMN_actor_pos_c l_hm_pule7_map[] = {
     {  2,  8 },
 };
 
-static mEvMN_actor_info_c l_hm_pule7_set_dt = { l_hm_set_actor0, l_hm_pule7_map };
+static mEvMN_actor_info_c l_hm_pule7_set_dt = { l_hm_set_actor, l_hm_pule7_map };
 
 static mEvMN_actor_info_c* l_hm_set_dt_table[] = {
     &l_hm_pule1_set_dt,

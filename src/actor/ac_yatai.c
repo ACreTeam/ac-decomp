@@ -26,7 +26,7 @@ ACTOR_PROFILE Yatai_Profile = {
     NULL,
 };
 
-static u8 aYAT_shadow_vtx_fix_flg_table[] = { TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE };
+static u8 aYAT_shadow_vtx_fix_flg_table[] = { TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, };
 
 extern Vtx obj_e_yatai_shadow_l_v[];
 extern Gfx obj_e_yatai_shadow_l_modelT[];

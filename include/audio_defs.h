@@ -476,7 +476,7 @@ typedef enum bgm_e {
     BGM_119,
     BGM_120,
     BGM_121,
-    BGM_122,
+    BGM_DON_RESETTI,
     BGM_123,
     BGM_124,
     BGM_125,

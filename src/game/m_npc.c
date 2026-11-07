@@ -56,7 +56,11 @@ static mNpc_Sp_Npc_Name_c l_sp_actor_name[] = {
     { SP_NPC_GYPSY, mPr_SEX_FEMALE, 0x207, 2 },
     { SP_NPC_EV_MIKO, mPr_SEX_FEMALE, 0x207, 2 },
     // Saharah
+#if VERSION == VER_GAFP01_00
+    { SP_NPC_CARPETPEDDLER, mPr_SEX_FEMALE, 0x208, 4 },
+#else
     { SP_NPC_CARPETPEDDLER, mPr_SEX_MALE, 0x208, 2 },
+#endif
     // Wendell
     { SP_NPC_ARTIST, mPr_SEX_MALE, 0x209, 3 },
     // Jingle
@@ -1469,26 +1473,53 @@ static void mNpc_SetRemailFreeString(PersonalID_c* pid, AnmPersonalID_c* anm_id,
     /* number of string entries per type */
     static f32 rand_max_table[11] = { 32.0f, 32.0f, 32.0f, 40.0f, 40.0f, 32.0f, 32.0f, 32.0f, 32.0f, 32.0f, 32.0f };
 
+#if VERSION == VER_GAFP01_00
+    u8 free_str[mHandbill_FREE_STR_LEN];
+#else
     u8 free_str[16];
+#endif
     AnmPersonalID_c* other_id;
     int i;
+#if VERSION == VER_GAFP01_00
+    int gender = GENDER_UNSPECIFIED;
+#endif
 
     mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
 
     if (remail == NULL) {
         mNpc_GetNpcWorldNameAnm(free_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, free_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, free_str, ANIMAL_NAME_LEN);
+#endif
         other_id = mNpc_GetOtherAnimalPersonalID(anm_id, 1);
 
         if (other_id != NULL) {
             mNpc_GetNpcWorldNameAnm(free_str, other_id);
+#if VERSION == VER_GAFP01_00
+            gender = mNpc_Looks2Gender(other_id->looks);
+            mHandbill_Set_free_str_npc(mHandbill_FREE_STR2, free_str, ANIMAL_NAME_LEN, gender);
+#else
             mHandbill_Set_free_str(mHandbill_FREE_STR2, free_str, ANIMAL_NAME_LEN);
+#endif
         }
     } else {
         mHandbill_Set_free_str(mHandbill_FREE_STR1, remail->name, ANIMAL_NAME_LEN); // foreign npc name
         other_id = mNpc_GetOtherAnimalPersonalID(NULL, 0);
         mNpc_GetNpcWorldNameAnm(free_str, other_id);
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (other_id != NULL) {
+            gender = mNpc_Looks2Gender(other_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR2, free_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR2, free_str, ANIMAL_NAME_LEN);          // random player town npc name
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR14, remail->land_name, LAND_NAME_SIZE); // foreign town name
         mHandbill_Set_free_str(mHandbill_FREE_STR15, mLd_GetLandName(), LAND_NAME_SIZE); // player town name
     }
@@ -1832,15 +1863,29 @@ static void mNpc_GetBirthdayCard(Mail_c* mail, PersonalID_c* pid, AnmPersonalID_
     static u8 animal_name[ANIMAL_NAME_LEN];
 
     u8 item_name[mIN_ITEM_NAME_LEN];
+#if VERSION == VER_GAFP01_00
+    int gender = GENDER_UNSPECIFIED;
+#endif
     int mail_no = 0xEA + anm_id->looks * 3 + RANDOM(3);
     mActor_name_t present;
 
     mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
     mNpc_GetNpcWorldNameAnm(animal_name, anm_id);
+#if VERSION == VER_GAFP01_00
+    if (anm_id != NULL) {
+        gender = mNpc_Looks2Gender(anm_id->looks);
+    }
+    mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, animal_name, ANIMAL_NAME_LEN, gender);
+#else
     mHandbill_Set_free_str(mHandbill_FREE_STR1, animal_name, ANIMAL_NAME_LEN);
+#endif
     mNpc_GetBirthdayPresent(&present);
     mIN_copy_name_str(item_name, present);
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_art2(mHandbill_FREE_STR2, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(present), mIN_get_item_article_def(present), mIN_get_item_gender(present));
+#else
     mHandbill_Set_free_str(mHandbill_FREE_STR2, item_name, mIN_ITEM_NAME_LEN);
+#endif
     mNpc_LoadMailDataCommon2(mail, pid, anm_id, present, mNpc_GetPaperType(), mail_no);
 }
 
@@ -3477,6 +3522,9 @@ static int mNpc_SetGoodbyMailData(Mail_c* mail, PersonalID_c* pid, AnmPersonalID
 
     u8 looks = anm_id->looks;
     int mail_no;
+#if VERSION == VER_GAFP01_00
+    int gender;
+#endif
     int res = FALSE;
 
     if (looks < mNpc_LOOKS_NUM) {
@@ -3484,7 +3532,16 @@ static int mNpc_SetGoodbyMailData(Mail_c* mail, PersonalID_c* pid, AnmPersonalID
         mail_no += mQst_GetRandom(3);
         mNpc_GetNpcWorldNameAnm(animal_name, anm_id);
         mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
+
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, animal_name, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, animal_name, ANIMAL_NAME_LEN);
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR3, Save_Get(land_info).name, LAND_NAME_SIZE);
         mNpc_LoadMailDataCommon2(mail, pid, anm_id, EMPTY_NO, mNpc_GetPaperType(), mail_no);
         res = TRUE;
@@ -4095,6 +4152,72 @@ extern int mNpc_GetNpcSex(ACTOR* actor) {
 
     return mNpc_GetActorSex(actor->npc_id);
 }
+
+#if VERSION == VER_GAFP01_00
+extern int mNpc_Sex2Gender(int sex) {
+#if GAME_LANGUAGE == GAME_LANG_EN
+    static int gender_table[] = { GENDER_UNSPECIFIED, GENDER_UNSPECIFIED, GENDER_UNSPECIFIED };
+#elif GAME_LANGUAGE == GAME_LANG_DE
+    static int gender_table[] = { GENDER_MALE, GENDER_FEMALE, GENDER_NEUTER };
+#else
+    static int gender_table[] = { GENDER_MALE, GENDER_FEMALE, GENDER_UNSPECIFIED };
+#endif
+    int ret = GENDER_UNSPECIFIED;
+
+    if (sex >= 0 && sex < mPr_SEX_ALL) {
+        ret = gender_table[sex];
+    }
+
+    return ret;
+}
+
+extern int mNpc_Looks2Gender(u8 looks) {
+    return mNpc_Sex2Gender(mNpc_GetLooks2Sex(looks));
+}
+
+extern int mNpc_Name2Gender(mActor_name_t name) {
+    if (ITEM_NAME_GET_TYPE(name) == NAME_TYPE_NPC) {
+        return mNpc_Looks2Gender(mNpc_GetLooks(name));
+    } else {
+        return mNpc_Sex2Gender(mNpc_GetActorSex(name));
+    }
+}
+
+extern int mNpc_GetPlateGender(xyz_t pos) {
+    int bx;
+    int bz;
+    int ux;
+    int uz;
+    Animal_c* animals = Save_Get(animals);
+    Animal_c* animal = NULL;
+    int i;
+    int ret = GENDER_UNSPECIFIED;
+
+    if (mFI_Wpos2BkandUtNuminBlock(&bx, &bz, &ux, &uz, pos) == TRUE) {
+        if (mFI_CheckBlockKind_OR(bx, bz, mRF_BLOCKKIND_OCEAN) == TRUE) {
+            animal = &Save_Get(island).animal;
+        } else {
+            ux++; // House is one unit left from the plate location.
+            for (i = 0; i < ANIMAL_NUM_MAX; i++, animals++) {
+                if (!mNpc_CheckFreeAnimalInfo(animals)) {
+                    Anmhome_c* home_p = &animals->home_info;
+
+                    if (home_p->block_x == bx && home_p->block_z == bz && home_p->ut_x == ux && home_p->ut_z == uz) {
+                        animal = animals;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if (animal != NULL) {
+        ret = mNpc_Looks2Gender(animal->id.looks);
+    }
+
+    return ret;
+}
+#endif
 
 static int mNpc_GetNpcSoundSpecNotAnimal(mActor_name_t npc_id) {
     mNpc_Sp_Npc_Name_c* sp_name_info = l_sp_actor_name;
@@ -6700,6 +6823,9 @@ static int mNpc_SendHPMailNum_famicom(PersonalID_c* pid, AnmPersonalID_c* anm_id
     int mail_no;
     mActor_name_t present = EMPTY_NO;
     int res = FALSE;
+#if VERSION == VER_GAFP01_00
+    int gender = GENDER_UNSPECIFIED;
+#endif
 
     if (mPO_get_keep_mail_sum() < mPO_MAIL_STORAGE_SIZE) {
         mMl_clear_mail(hp_mail);
@@ -6718,20 +6844,40 @@ static int mNpc_SendHPMailNum_famicom(PersonalID_c* pid, AnmPersonalID_c* anm_id
         mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN);
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR2, password->str1, PLAYER_NAME_LEN);
         mHandbill_Set_free_str(mHandbill_FREE_STR3, password->str0, PLAYER_NAME_LEN);
 
         if (present != EMPTY_NO) {
             mNpc_ClearBufSpace1(name_str, mIN_ITEM_NAME_LEN);
             mIN_copy_name_str(name_str, present);
+#if VERSION == VER_GAFP01_00
+            mHandbill_Set_free_str_art2(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(present), mIN_get_item_article_def(present), mIN_get_item_gender(present));
+#else
             mHandbill_Set_free_str(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN);
+#endif
         }
 
         /* Why is free string 6 the same as free string 1? */
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN);
+#endif
 
         mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, present, mNpc_GetPaperType(), mail_no);
         res = mPO_receipt_proc(hp_mail, mPO_SENDTYPE_MAIL);
@@ -6751,14 +6897,24 @@ static int mNpc_SendHPMailNum_popular(PersonalID_c* pid, AnmPersonalID_c* anm_id
     u8 valid;
     u8 special;
     mActor_name_t target_npc_id;
+#if VERSION == VER_GAFP01_00
+    u16 npc_idx;
+#else
     int npc_idx;
+#endif
     int looks;
     int res;
+#if VERSION == VER_GAFP01_00
+    int gender;
+#endif
 
     present = EMPTY_NO;
     res = FALSE;
     valid = FALSE;
     special = FALSE;
+#if VERSION == VER_GAFP01_00
+    gender = GENDER_UNSPECIFIED;
+#endif
 
     if (mPO_get_keep_mail_sum() < mPO_MAIL_STORAGE_SIZE) {
         mMl_clear_mail(hp_mail);
@@ -6789,6 +6945,9 @@ static int mNpc_SendHPMailNum_popular(PersonalID_c* pid, AnmPersonalID_c* anm_id
                 }
 
                 mNpc_GetNpcWorldNameTableNo(name_str, NPC_START | password->npc_code);
+#if VERSION == VER_GAFP01_00
+                gender = mNpc_Name2Gender(NPC_START | password->npc_code);
+#endif
                 mNpc_GetNpcWorldNameTableNo(submenu_name_str, NPC_START | password->npc_code);
                 valid = TRUE;
             } else {
@@ -6796,6 +6955,9 @@ static int mNpc_SendHPMailNum_popular(PersonalID_c* pid, AnmPersonalID_c* anm_id
                 mail_no = 0x268 + password->npc_code;
                 npc_id = mMpswd_get_sp_npc_num(password->npc_code);
                 mNpc_GetActorWorldName(name_str, npc_id);
+#if VERSION == VER_GAFP01_00
+                gender = mNpc_Name2Gender(npc_id);
+#endif
                 mNpc_GetActorWorldName(submenu_name_str, npc_id);
 
                 /* Leftover from JP, replace ちん (-san) honorific with spaces */
@@ -6817,20 +6979,36 @@ static int mNpc_SendHPMailNum_popular(PersonalID_c* pid, AnmPersonalID_c* anm_id
         }
 
         mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
+#if VERSION == VER_GAFP01_00
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN);
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR2, password->str1, PLAYER_NAME_LEN);
         mHandbill_Set_free_str(mHandbill_FREE_STR3, password->str0, PLAYER_NAME_LEN);
 
         if (present != EMPTY_NO) {
             mNpc_ClearBufSpace1(name_str, mIN_ITEM_NAME_LEN);
             mIN_copy_name_str(name_str, present);
+#if VERSION == VER_GAFP01_00
+            mHandbill_Set_free_str_art2(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(present), mIN_get_item_article_def(present), mIN_get_item_gender(present));
+#else
             mHandbill_Set_free_str(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN);
+#endif
         }
 
         /* Why is free string 6 the same as free string 1? */
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN);
+#endif
 
         mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, present, mNpc_GetPaperType(), mail_no);
 
@@ -7048,14 +7226,29 @@ static int mNpc_SendHPMailNum_NG(PersonalID_c* pid, AnmPersonalID_c* anm_id) {
     Mail_c* hp_mail = &l_npc_hp_mail;
     int mail_no;
     int res = FALSE;
+#if VERSION == VER_GAFP01_00
+    int gender;
+#endif
 
     if (anm_id != NULL && mPO_get_keep_mail_sum() < mPO_MAIL_STORAGE_SIZE) {
         mMl_clear_mail(hp_mail);
+#if VERSION == VER_GAFP01_00
+        mail_no = 0x2AC + anm_id->looks;
+#else
         mail_no = 0x3BE + anm_id->looks;
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN);
+#endif
         mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, EMPTY_NO, mNpc_GetPaperType(), mail_no);
         res = mPO_receipt_proc(hp_mail, mPO_SENDTYPE_MAIL);
     }
@@ -7067,15 +7260,36 @@ static int mNpc_SendHPMailNum_cardE_mini_user_password_common(PersonalID_c* pid,
     static u8 name_str[ANIMAL_NAME_LEN];
 
     Mail_c* hp_mail = &l_npc_hp_mail;
+#if VERSION == VER_GAFP01_00
+    int mail_no;
+#endif
     int looks = anm_id->looks;
     int res = FALSE;
+#if VERSION == VER_GAFP01_00
+    int gender;
+#endif
 
     if (mPO_get_keep_mail_sum() < mPO_MAIL_STORAGE_SIZE && looks < mNpc_LOOKS_NUM) {
         mMl_clear_mail(hp_mail);
+#if VERSION == VER_GAFP01_00
+        mail_no = 0x3D0 + looks;
+#endif
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN);
+#endif
+#if VERSION == VER_GAFP01_00
+        mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, EMPTY_NO, mNpc_GetPaperType(), mail_no);
+#else
         mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, EMPTY_NO, mNpc_GetPaperType(), 0x3D0 + looks);
+#endif
         res = mPO_receipt_proc(hp_mail, mPO_SENDTYPE_MAIL);
     }
 
@@ -7106,6 +7320,9 @@ static int mNpc_SendHPMailNum_magazine(PersonalID_c* pid, AnmPersonalID_c* anm_i
     int mail_no;
     mActor_name_t present = EMPTY_NO;
     int res = FALSE;
+#if VERSION == VER_GAFP01_00
+    int gender = GENDER_UNSPECIFIED;
+#endif
 
     if (mPO_get_keep_mail_sum() < mPO_MAIL_STORAGE_SIZE) {
         mMl_clear_mail(hp_mail);
@@ -7134,20 +7351,39 @@ static int mNpc_SendHPMailNum_magazine(PersonalID_c* pid, AnmPersonalID_c* anm_i
         mHandbill_Set_free_str(mHandbill_FREE_STR0, pid->player_name, PLAYER_NAME_LEN);
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, name_str, ANIMAL_NAME_LEN);
+#endif
         mHandbill_Set_free_str(mHandbill_FREE_STR2, password->str1, PLAYER_NAME_LEN);
         mHandbill_Set_free_str(mHandbill_FREE_STR3, password->str0, PLAYER_NAME_LEN);
 
         if (present != EMPTY_NO) {
             mNpc_ClearBufSpace1(name_str, mIN_ITEM_NAME_LEN);
             mIN_copy_name_str(name_str, present);
+#if VERSION == VER_GAFP01_00
+            mHandbill_Set_free_str_art2(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(present), mIN_get_item_article_def(present), mIN_get_item_gender(present));
+#else
             mHandbill_Set_free_str(mHandbill_FREE_STR4, name_str, mIN_ITEM_NAME_LEN);
+#endif
         }
 
         /* Why is free string 6 the same as free string 1? */
         mNpc_ClearBufSpace1(name_str, ANIMAL_NAME_LEN);
         mNpc_GetNpcWorldNameAnm(name_str, anm_id);
+#if VERSION == VER_GAFP01_00
+        gender = GENDER_UNSPECIFIED;
+        if (anm_id != NULL) {
+            gender = mNpc_Looks2Gender(anm_id->looks);
+        }
+        mHandbill_Set_free_str_npc(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN, gender);
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR6, name_str, ANIMAL_NAME_LEN);
+#endif
 
         mNpc_LoadMailDataCommon2(hp_mail, pid, anm_id, present, mNpc_GetPaperType(), mail_no);
         res = mPO_receipt_proc(hp_mail, mPO_SENDTYPE_MAIL);
@@ -7159,10 +7395,18 @@ static int mNpc_SendHPMailNum_magazine(PersonalID_c* pid, AnmPersonalID_c* anm_i
 typedef int (*mNpc_HPMAIL_SEND_PROC)(PersonalID_c*, AnmPersonalID_c*, mMpswd_password_c*);
 
 static int mNpc_SendHPMail_analysis(PersonalID_c* pid, AnmPersonalID_c* anm_id, AnmHPMail_c* hp_mail) {
+#if VERSION == VER_GAFP01_00
+    static mNpc_HPMAIL_SEND_PROC send_proc[mMpswd_CODETYPE_NUM] = {
+        // @UB - casting functions with different argument types is UB
+        &mNpc_SendHPMailNum_famicom,  &mNpc_SendHPMailNum_popular,       (mNpc_HPMAIL_SEND_PROC)&mNpc_SendHPMailNum_NG,
+        &mNpc_SendHPMailNum_magazine, &mNpc_SendHPMailNum_user_password, (mNpc_HPMAIL_SEND_PROC)&mNpc_SendHPMailNum_NG,
+    };
+#else
     static mNpc_HPMAIL_SEND_PROC send_proc[mMpswd_CODETYPE_NUM] = {
         &mNpc_SendHPMailNum_famicom,  &mNpc_SendHPMailNum_popular,       &mNpc_SendHPMailNum_cardE,
-        &mNpc_SendHPMailNum_magazine, &mNpc_SendHPMailNum_user_password, &mNpc_SendHPMailNum_cardE_mini
+        &mNpc_SendHPMailNum_magazine, &mNpc_SendHPMailNum_user_password, &mNpc_SendHPMailNum_cardE_mini,
     };
+#endif
 
     mMpswd_password_c password;
 

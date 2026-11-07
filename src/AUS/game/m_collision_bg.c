@@ -455,7 +455,7 @@ static void mCoBG_CarryOutReverse(ACTOR* actor, xyz_t rev_pos, s16 type) {
 #endif
         xyz_t pos = actor->world.position;
 
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
         f32 water_height = mCoBG_GetWaterHeight_File(pos, __FILE__, 1399);
 #elif VERSION == VER_GAFE01_00
         f32 water_height = mCoBG_GetWaterHeight_File(pos, __FILE__, 1303);

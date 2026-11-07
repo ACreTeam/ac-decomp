@@ -172,7 +172,7 @@ static void aKKR_wait(STRUCTURE_ACTOR* kamakura, GAME_PLAY* play) {
 
 static void aKKR_setup_action(STRUCTURE_ACTOR* kamakura, int action) {
     static aSTR_MOVE_PROC process[] = {
-        &aKKR_wait, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        &aKKR_wait,
     };
 
     kamakura->action_proc = process[action];

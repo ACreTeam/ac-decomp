@@ -163,7 +163,7 @@ typedef void (*eDashAsimoto_PROC)(eEC_Effect_c*, GAME*);
 
 static void eDashAsimoto_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     // clang-format off
-    static eDashAsimoto_PROC asimoto_func_table[mEnv_WEATHER_NUM] = {
+    static eDashAsimoto_PROC asimoto_func_table[] = {
         &eDashAsimoto_FineDay,
         &eDashAsimoto_RainDay,
         &eDashAsimoto_FineDay,
@@ -171,7 +171,7 @@ static void eDashAsimoto_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
         /* @BUG - the step effect process func for 'leaves' weather is left as NULL */
         #ifdef BUGFIXES
         &eDashAsimoto_FineDay,
-        #else
+        #elif VERSION != VER_GAFP01_00
         NULL,
         #endif
     };

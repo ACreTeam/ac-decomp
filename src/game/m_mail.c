@@ -10,7 +10,11 @@
 #include "libultra/libultra.h"
 
 /* TODO: fix bss ordering*/
+#if VERSION == VER_GAFP01_00
+static u8 free_str[24];
+#else
 static u8 free_str[16];
+#endif
 static Mail_c l_ml_mail;
 static u8 footer[MAIL_FOOTER2_LEN];
 static u8 header[MAIL_HEADER2_LEN];

@@ -17,7 +17,7 @@
 
 // TODO: add PAL version to this check
 // Adjusts values based on regional frame rate (Hz)
-#if VERSION == VER_GAFU01_00
+#if VERSION == VER_GAFU01_00 || VERSION == VER_GAFP01_00
 #define FRAMERATE_ADJ(n) (((n) * 60) / 50) // less frames so more value
 #define FRAMERATE_TIMER(n) (((n) * 50) / 60) // less frames so less timer
 #define FRAMERATE_SELECT(f60, f50) (f50)

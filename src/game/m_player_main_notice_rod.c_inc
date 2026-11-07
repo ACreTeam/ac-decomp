@@ -1,3 +1,7 @@
+#ifdef __INTELLISENSE__
+#include "m_player_lib.h"
+#endif
+
 static int Player_actor_request_main_notice_rod(GAME* game, s16 angle, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_NOTICE_ROD, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
@@ -161,12 +165,18 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
             if (type < aGYO_TYPE_NUM + 1) {
                 if (player->now_main_index == mPlayer_INDEX_NOTICE_ROD) {
                     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+#if VERSION != VER_GAFP01_00
                     u8 str[mIN_ITEM_NAME_LEN];
+#endif
 
-                    if (main_notice->already_collected) {
+                    if (main_notice->already_collected) {        
+#if VERSION == VER_GAFP01_00
+                        mMsg_Set_item_str_default(win, mMsg_ITEM_STR0, uki->get_fish_type_proc(&uki->actor_class));
+#else
                         mIN_copy_name_str(str, uki->get_fish_type_proc(&uki->actor_class));
                         mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str),
                                               mIN_get_item_article(uki->get_fish_type_proc(&uki->actor_class)));
+#endif
                         msg_no = 0x1349;
                     } else {
                         msg_no = Player_actor_Get_sakana_msg_num(type);

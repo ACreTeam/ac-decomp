@@ -60,6 +60,7 @@ class Object:
             "extra_clang_flags": [],
             "lib": None,
             "mw_version": None,
+            "objdiff": None,
             "progress_category": None,
             "scratch_preset_id": None,
             "shift_jis": None,
@@ -92,6 +93,7 @@ class Object:
         set_default("asm_dir", config.asm_dir)
         set_default("extab_padding", None)
         set_default("mw_version", config.linker_version)
+        set_default("objdiff", True)
         set_default("scratch_preset_id", config.scratch_preset_id)
         set_default("shift_jis", config.shift_jis)
         set_default("src_dir", config.src_dir)
@@ -981,7 +983,11 @@ def generate_build_ninja(
             variables = {
                 "mw_version": Path(obj.options["mw_version"]),
                 "cflags": cflags_str,
-                "basedir": os.path.dirname(obj.src_obj_path),
+                # MWCC otherwise emits the source stem even when the TU is named differently.
+                "basedir": (
+                    obj.src_obj_path if src_path.stem != obj.src_obj_path.stem
+                    else os.path.dirname(obj.src_obj_path)
+                ),
                 "basefile": obj.src_obj_path.with_suffix(""),
             }
 
@@ -996,6 +1002,9 @@ def generate_build_ninja(
                 build_rule = "mwcc_extab"
                 build_implcit = mwcc_extab_implicit
                 variables["extab_padding"] = "".join(f"{i:02x}" for i in obj.options["extab_padding"])
+            if obj.options["mw_version"] == "GC/1.3.2f1":
+                # The source-backed driver replacements live in this DLL.
+                build_implcit = [*build_implcit, compilers / "GC/1.3.2f1/lmgr326b.dll"]
             n.comment(f"{obj.name}: {lib_name} (linked {obj.completed})")
             n.build(
                 outputs=obj.src_obj_path,
@@ -1562,19 +1571,29 @@ def generate_objdiff_config(
         "min_version": "2.0.0-beta.5",
         "custom_make": ninja,
         "build_target": False,
+        # Watch project inputs, not generated headers or compiler experiments.
         "watch_patterns": [
-            "*.c",
-            "*.cp",
-            "*.cpp",
-            "*.h",
-            "*.hpp",
-            "*.inc",
-            "*.py",
-            "*.yml",
-            "*.txt",
-            "*.json",
-            "*.c_inc",
-            "*.cc",
+            "src/**/*",
+            "include/**/*",
+            "config/**/*",
+            "tools/**/*.py",
+            "assets/**/*",
+            "configure.py",
+        ],
+        "ignore_patterns": [
+            "build",
+            "build/**/*",
+            "temp",
+            "temp/**/*",
+            "orig",
+            "orig/**/*",
+            ".git",
+            ".git/**/*",
+            ".cache",
+            ".cache/**/*",
+            ".tmp",
+            ".tmp/**/*",
+            "**/__pycache__/**/*",
         ],
         "units": [],
         "progress_categories": [],
@@ -1590,6 +1609,7 @@ def generate_objdiff_config(
         "GC/1.2.5n": "mwcc_233_163n",
         "GC/1.3": "mwcc_242_53",
         "GC/1.3.2": "mwcc_242_81",
+        "GC/1.3.2f1": "mwcc_242_81",
         "GC/1.3.2r": "mwcc_242_81r",
         "GC/2.0": "mwcc_247_92",
         "GC/2.0p1": "mwcc_247_92p1",
@@ -1654,7 +1674,9 @@ def generate_objdiff_config(
 
         src_exists = obj.src_path is not None and obj.src_path.exists()
         if src_exists:
-            unit_config["base_path"] = obj.src_obj_path
+            # Mapped sources can remain visible before they are ready to compile.
+            if obj.options["objdiff"]:
+                unit_config["base_path"] = obj.src_obj_path
             unit_config["metadata"]["source_path"] = obj.src_path
 
         # Filter out include directories

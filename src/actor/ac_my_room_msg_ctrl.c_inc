@@ -1,9 +1,119 @@
+#ifdef __INTELLISENSE__
+#include "ac_my_room.h"
+
+#include "m_bgm.h"
+#include "m_name_table.h"
+#include "ac_furniture.h"
+#include "f_furniture.h"
+#include "m_common_data.h"
+#include "libultra/libultra.h"
+#include "m_malloc.h"
+#include "m_cockroach.h"
+#include "m_msg.h"
+#include "dolphin/card.h"
+#include "m_string.h"
+#include "m_house.h"
+#include "m_player_lib.h"
+#include "GBA2/gba2.h"
+#include "m_debug.h"
+#include "m_mark_room.h"
+#include "sys_matrix.h"
+#include "m_rcp.h"
+
+enum {
+    aMR_MSG_STATE_NONE,
+    aMR_MSG_STATE_WAIT_MSG,
+    aMR_MSG_STATE_OWNER_NO_ITEM,
+    aMR_MSG_STATE_OWNER_EXIST_ITEM,
+    aMR_MSG_STATE_OWNER_EXIST_ITEM_ITEM_COUNT2,
+    aMR_MSG_STATE_OWNER_WHICH_PUT_OUT1,
+    aMR_MSG_STATE_OWNER_WHICH_PUT_OUT2,
+    aMR_MSG_STATE_OWNER_WHICH_PUT_OUT3,
+    aMR_MSG_STATE_OWNER_WAIT_WHICH_PUT_OUT,
+    aMR_MSG_STATE_OTHER_NO_ITEM,
+    aMR_MSG_STATE_OTHER_EXIST_ITEM1,
+    aMR_MSG_STATE_OTHER_EXIST_ITEM2,
+    aMR_MSG_STATE_OTHER_EXIST_ITEM3,
+    aMR_MSG_STATE_FULL_PLAYER_ITEM,
+    aMR_MSG_STATE_OPEN_SUBMENU,
+    aMR_MSG_STATE_ITEM_PUT_IN,
+    aMR_MSG_STATE_WAIT_CLOSE_FTR,
+    aMR_MSG_STATE_REQUEST_CLOSE_FTR,
+    aMR_MSG_STATE_REQUEST_FULL_BAG,
+    aMR_MSG_STATE_CAN_NOT_CLEAN,
+    aMR_MSG_STATE_CAN_NOT_CLEAN_MD,
+    aMR_MSG_STATE_OPEN_SET_ITEM_SUBMENU,
+    aMR_MSG_STATE_ITEM_SET_SUBMENU,
+    aMR_MSG_STATE_WAIT_MD,
+    aMR_MSG_STATE_OWNER_NO_MD,
+    aMR_MSG_STATE_OWNER_EXIST_MD,
+    aMR_MSG_STATE_OWNER_EXIST_MD2,
+    aMR_MSG_STATE_OTHER_NO_MD,
+    aMR_MSG_STATE_OTHER_EXIST_MD,
+    aMR_MSG_STATE_FULL_PLAYER_MD,
+    aMR_MSG_STATE_OPENMD_SUBMENU,
+    aMR_MSG_STATE_MD_PUT_IN,
+    aMR_MSG_STATE_OPEN_MUSIC_BOX,
+    aMR_MSG_STATE_MUSIC_BOX_MD_PUT_IN,
+    aMR_MSG_STATE_WAIT_CLOSE_MD,
+    aMR_MSG_STATE_REQUEST_CLOSE_MD,
+    aMR_MSG_STATE_REQUEST_FULL_BAG_MD,
+    aMR_MSG_STATE_CAN_NOT_MD_CLEAN,
+    aMR_MSG_STATE_OPEN_EXCHANGE_MD_SUBMENU,
+    aMR_MSG_STATE_MD_EXCHANGE_SUBMENU,
+    aMR_MSG_STATE_QQQ_EMULATOR,
+    aMR_MSG_STATE_EXPLAIN_EMULATOR,
+    aMR_MSG_STATE_QQQ_EMULATOR_MEMORY1,
+    aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY,
+    aMR_MSG_STATE_QQQ_EMULATOR_MEMORY2,
+    aMR_MSG_STATE_QQQ_EMULATOR_MEMORY_OVER3,
+    aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1,
+    aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1_2,
+    aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2,
+    aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2_2,
+    aMR_MSG_STATE_NO_PACK_NO_DATA,
+    aMR_MSG_STATE_WARNING_CANNOT_MAKE_SAVE_FILE,
+    aMR_MSG_STATE_NO_PACK_NO_DATA1,
+    aMR_MSG_STATE_NO_PACK_NO_DATA2,
+    aMR_MSG_STATE_HITOKOTO,
+    aMR_MSG_STATE_HITOKOTO1,
+    aMR_MSG_STATE_HITOKOTO2,
+    aMR_MSG_STATE_SAVE_FAMICOM,
+    aMR_MSG_STATE_WAIT_FAMICOM_BATU,
+    aMR_MSG_STATE_PREPARE_COMMUNICATION,
+    aMR_MSG_STATE_NOT_CONNECT_AGB,
+    aMR_MSG_STATE_CHECK_AGB_PROGRAM,
+    aMR_MSG_STATE_DELETE_AGB_PROGRAMQ,
+    aMR_MSG_STATE_START_EMU_DOWN_LOAD,
+    aMR_MSG_STATE_RECHECK_AGB_CONNECT,
+
+    aMR_MSG_STATE_NUM
+};
+
+#define aMR_FTR_BANK_NUM 100
+#define aMR_FTR_BANK_SIZE 0x800
+
+typedef struct my_room_work_s {
+    FTR_ACTOR* ftr_actor_list;
+    u8* used_list;
+    int list_size;
+} aMR_work_c;
+
+static aMR_work_c l_aMR_work;
+static u8 l_bank_index_table[FTR_NUM];
+static u8* l_bank_address_table[aMR_FTR_BANK_NUM];
+#endif
+
 static void aMR_SetSlotString(void) {
+#if VERSION == VER_GAFP01_00
+    u8 str[mMsg_STRING_TAG_BUFFER_SIZE];
+#else
     u8 str[mMsg_FREE_STRING_LEN];
+#endif
     int slot = famicom_getErrorChan();
 
-    mString_Load_StringFromRom(str, mMsg_FREE_STRING_LEN, 0x6CD + (slot & 1));
-    mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR4, str, mMsg_FREE_STRING_LEN);
+    mString_Load_StringFromRom(str, sizeof(str), 0x6CD + (slot & 1));
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR4, str, sizeof(str));
 }
 
 static int aMR_GetCardFamicomCount(void) {
@@ -220,8 +330,12 @@ static void aMR_MsgInitOwnerWhichPutOut(ACTOR* actorx) {
     if (my_room->msg_type == aMR_MSG_STATE_OWNER_WHICH_PUT_OUT1) {
         for (i = 0; i < aFTR_KEEP_ITEM_COUNT; i++) {
             if (ftr_actor->items[i] != EMPTY_NO) {
+#if VERSION == VER_GAFP01_00
+                mMsg_Set_item_str_default(mMsg_Get_base_window_p(), i, ftr_actor->items[i]);
+#else
                 mMsg_Set_item_str_art(mMsg_Get_base_window_p(), i, item_name_table[i], mIN_ITEM_NAME_LEN,
                                       mIN_get_item_article(ftr_actor->items[i]));
+#endif
             }
         }
     }
@@ -299,9 +413,13 @@ static void aMR_MsgInitOwnerExistItem(ACTOR* actorx) {
 
     for (i = 0; i < aFTR_KEEP_ITEM_COUNT; i++) {
         if (ftr_actor->items[i] != EMPTY_NO) {
+#if VERSION == VER_GAFP01_00
+            mMsg_Set_item_str_default(mMsg_Get_base_window_p(), i, ftr_actor->items[i]);
+#else
             mIN_copy_name_str(item_str, ftr_actor->items[i]);
             mMsg_Set_item_str_art(mMsg_Get_base_window_p(), i, item_str, mIN_ITEM_NAME_LEN,
                                   mIN_get_item_article(ftr_actor->items[i]));
+#endif
         }
     }
 }
@@ -568,8 +686,12 @@ static void aMR_MsgInitOwnerExistMD(ACTOR* actorx) {
     mActor_name_t item = ftr_actor->items[0];
     u8 item_name[mIN_ITEM_NAME_LEN];
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item);
+#else
     mIN_copy_name_str(item_name, item);
     mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR0, item_name, mIN_ITEM_NAME_LEN, item);
+#endif
 }
 
 static void aMR_MsgControlOwnerExistMD(ACTOR* actorx, GAME* game) {
@@ -1075,7 +1197,11 @@ static void aMR_MsgControlExplainEmulator(ACTOR* actorx, GAME* game) {
 static void aMR_MsgInitQqqEmulatorMemory1(ACTOR* actorx) {
     MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_free_str_cl_art2(mMsg_Get_base_window_p(), mMsg_FREE_STR1, aMR_GetNameString(my_room, 0), mIN_ITEM_NAME_LEN, 5, mMsg_ARTICLE_DEFAULT, mMsg_ARTICLE_DEFAULT, GENDER_UNSPECIFIED);
+#else
     mMsg_SET_FREE_STR_CL(mMsg_FREE_STR1, aMR_GetNameString(my_room, 0), mIN_ITEM_NAME_LEN, 5);
+#endif
 }
 
 static void aMR_MsgControlQqqEmulatorMemory1(ACTOR* actorx, GAME* game) {
@@ -1394,7 +1520,11 @@ static void aMR_MsgInitSaveFamicom(ACTOR* actorx) {
     my_room->emu_info.external_rom = (Common_Get(my_room_message_control_flags >> 3) & 1) ^ 1;
     Common_Get(my_room_message_control_flags) &= ~(1 << 3);
     Common_Get(my_room_message_control_flags) &= ~(1 << 4);
+#if VERSION == VER_GAFP01_00
+    my_room->emu_info.emu_save_msg_ready = FALSE;
+#else
     mMsg_SET_LOCKCONTINUE();
+#endif
     aMR_SetSlotString();
 }
 
@@ -1407,7 +1537,18 @@ static void aMR_MsgControlSaveFamicom(ACTOR* actorx, GAME* game) {
         my_room->emu_info.save_msg_timer = 0;
     }
 
+#if VERSION == VER_GAFP01_00
+    if (my_room->emu_info.emu_save_msg_ready == FALSE && mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9) != 0) {
+        my_room->emu_info.emu_save_msg_ready = TRUE;
+        mMsg_SET_LOCKCONTINUE();
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+
+    if (my_room->emu_info.save_msg_timer == 0 && my_room->emu_info.emu_save_msg_ready == TRUE && mMsg_CHECK_MAINNORMALCONTINUE()) {
+#else
+
     if (my_room->emu_info.save_msg_timer == 0 && mMsg_CHECK_MAINNORMALCONTINUE()) {
+#endif
         int save_res;
 
         if (my_room->emu_info.external_rom == FALSE) {

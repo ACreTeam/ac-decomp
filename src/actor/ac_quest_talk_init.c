@@ -929,8 +929,13 @@ static void aQMgr_actor_set_free_str(QUEST_MANAGER_ACTOR* manager, int regist_id
 
     if (target->quest_item != EMPTY_NO) {
         mIN_copy_name_str(str2, target->quest_item);
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_free_str_cl_art2(mMsg_Get_base_window_p(), mMsg_FREE_STR2, str2, sizeof(str2), 2,
+                                 mIN_get_item_article_indef(target->quest_item), mIN_get_item_article_def(target->quest_item), mIN_get_item_gender(target->quest_item));
+#else
         mMsg_Set_free_str_cl_art(mMsg_Get_base_window_p(), mMsg_FREE_STR2, str2, sizeof(str2), 2,
-                                 mIN_get_item_article(target->quest_item));
+                            mIN_get_item_article(target->quest_item));
+#endif
     }
 
     mLd_SetFreeStrLandMuraName(target->from_id->land_name, mMsg_FREE_STR4);

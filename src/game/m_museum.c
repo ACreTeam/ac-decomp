@@ -13,8 +13,14 @@
 #include "m_common_data.h"
 
 static u8 l_museum_name_str[PLAYER_NAME_LEN] = {
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES || GAME_LANGUAGE == GAME_LANG_IT)
+    CHAR_m, CHAR_u, CHAR_s, CHAR_e, CHAR_o, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+    CHAR_m, CHAR_u, CHAR_s, CHAR_ACUTE_e, CHAR_e, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE
+#else
     CHAR_M, CHAR_u, CHAR_s, CHAR_e, CHAR_u, CHAR_m, CHAR_SPACE, CHAR_SPACE
-}; /* "Museum  " */
+#endif
+};
 
 static u8 present_name[mIN_ITEM_NAME_LEN]; /* TODO: reversed bss order */
 static Mail_c l_mmsm_mail;
@@ -251,7 +257,11 @@ static void mMsm_SendResultMail() {
                     item = remail_info->items[idx];
                     if (item != EMPTY_NO) {
                         mIN_copy_name_str(present_name, item);
+#if VERSION == VER_GAFP01_00
+                        mHandbill_Set_free_str_art2(mHandbill_FREE_STR1, present_name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(remail_info->items[idx]), mIN_get_item_article_def(remail_info->items[idx]), mIN_get_item_gender(remail_info->items[idx]));
+#else
                         mHandbill_Set_free_str(mHandbill_FREE_STR1, present_name, mIN_ITEM_NAME_LEN);
+#endif
 
                         if (remail_kind != mMsm_REMAIL_KIND_DONATED) {
                             present = remail_info->items[idx];

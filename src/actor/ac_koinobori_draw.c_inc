@@ -1,8 +1,8 @@
-u16 aKOI_obj_e_koinobori_a_pal[] = {
+u16 aKOI_obj_e_koinobori_a_pal[] ATTRIBUTE_ALIGN(32) = {
     #include "assets/aKOI_obj_e_koinobori_a_pal.inc"
 };
 
-u16 obj_e_koinobori_b_pal[] = {
+u16 obj_e_koinobori_b_pal[] ATTRIBUTE_ALIGN(32) = {
     #include "assets/obj_e_koinobori_b_pal.inc"
 };
 

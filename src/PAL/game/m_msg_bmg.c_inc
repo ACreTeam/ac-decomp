@@ -1,0 +1,197 @@
+#ifdef __INTELLISENSE__
+#include "m_msg.h"
+#include "m_font.h"
+#include "jsyswrap.h"
+#include "m_flashrom.h"
+#include "m_msg_data.h"
+#include "m_string.h"
+#include "m_handbill.h"
+#include "libultra/libultra.h"
+#endif
+
+#define mMsg_BMG_BUF_SIZE 0x1040
+
+static u8 L_tmp_buff[mMsg_BMG_BUF_SIZE] ATTRIBUTE_ALIGN(32);
+
+extern u8* mMsgLoad_get_buff(void) {
+    return L_tmp_buff;
+}
+
+extern u32 mMsgLoad_get_buffSize(void) {
+    return mMsg_BMG_BUF_SIZE;
+}
+
+extern void mMsgLoad_clr_buff(u8 clear_char) {
+    mem_clear(L_tmp_buff, sizeof(L_tmp_buff), clear_char);
+}
+
+static void mMsgLoad_get_res(u32 address, u32 offset, u32 size, void* buf) {
+    _JW_GetResourceAram(address + ALIGN_PREV(offset, 32), L_tmp_buff, ALIGN_NEXT((offset & 31) + size, 32));
+    bcopy(L_tmp_buff + (offset & 31), buf, size);
+}
+
+static void mMsgLoad_bmg_init_sub(mMsg_bmg_info_c* bmg_info, u32 address, int index, u8* buf, u32 buf_size) {
+    bmg_info->address = address;
+    bmg_info->index = index;
+    bmg_info->buf = buf;
+    bmg_info->buf_size = buf_size;
+}
+
+extern void mMsgLoad_bmg_init(mMsg_bmg_info_c* bmg_info, u32 address, int index, u8* buf, u32 buf_size) {
+    mMsgLoad_bmg_init_sub(bmg_info, address, index, buf, buf_size);
+}
+
+#define mMsg_BMG_HEADER_SIZE 32
+
+extern int mMsgLoad_bmg_load(mMsg_bmg_info_c* bmg_info) {
+    mMsg_bmg_info_section_c inf_section;
+    mMsg_bmg_data_section_c dat_section;
+    u32 entry[2]; // target dat_offset, next dat_offset
+    u32 dat_base_offset;
+    int last_entry;
+    
+    mMsgLoad_get_res(bmg_info->address, mMsg_BMG_HEADER_SIZE, sizeof(mMsg_bmg_info_section_c), &inf_section);
+    if (bmg_info->index == inf_section.entry_cnt - 1) {
+        last_entry = TRUE;
+    } else {
+        last_entry = FALSE;
+    }
+
+    if (last_entry) {
+        mMsgLoad_get_res(bmg_info->address, mMsg_BMG_HEADER_SIZE + sizeof(mMsg_bmg_info_section_c) + (inf_section.entry_size * bmg_info->index), sizeof(u32), &entry);
+    } else {
+        mMsgLoad_get_res(bmg_info->address, mMsg_BMG_HEADER_SIZE + sizeof(mMsg_bmg_info_section_c) + (inf_section.entry_size * bmg_info->index), 2 * sizeof(u32), &entry);
+    }
+
+    dat_base_offset = ALIGN_NEXT(mMsg_BMG_HEADER_SIZE + sizeof(mMsg_bmg_info_section_c) + (inf_section.entry_size * inf_section.entry_cnt), 32);
+    if (last_entry) {
+        mMsgLoad_get_res(bmg_info->address, dat_base_offset, sizeof(mMsg_bmg_data_section_c), &dat_section);
+        entry[1] = dat_section.size;
+    }
+
+    dat_base_offset += entry[0] + sizeof(mMsg_bmg_data_section_c);
+    if (entry[1] - entry[0] <= bmg_info->buf_size) {
+        bmg_info->load_size = entry[1] - entry[0];
+    } else {
+        bmg_info->load_size = bmg_info->buf_size;
+    }
+
+    mMsgLoad_get_res(bmg_info->address, dat_base_offset, bmg_info->load_size, bmg_info->buf);
+    return TRUE;
+}
+
+typedef struct msg_bmc_cache_s {
+    int id;
+    u32 life;
+    rgba_t color;
+} BMCCache_c;
+
+static BMCCache_c BMCCache_buf[10];
+
+static void BMCCache_ct(void) {
+    BMCCache_c* cache_p;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(BMCCache_buf); i++) {
+        cache_p = &BMCCache_buf[i];
+        cache_p->id = -1;
+        cache_p->life = 0;
+        cache_p->color = (rgba_t){ 0, 0, 0, 0 };
+    }
+}
+
+static void BMCCache_life_add(void) {
+    BMCCache_c* cache_p;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(BMCCache_buf); i++) {
+        cache_p = &BMCCache_buf[i];
+
+        if (cache_p->id != -1) {
+            cache_p->life++;
+        }
+    }
+}
+
+static BMCCache_c* BMCCache_search_id(int id) {
+    BMCCache_c* ret = NULL;
+    BMCCache_c* cache_p;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(BMCCache_buf); i++) {
+        cache_p = &BMCCache_buf[i];
+
+        if (cache_p->id == id) {
+            ret = cache_p;
+            break;
+        }
+    }
+
+    return ret;
+}
+
+static BMCCache_c* BMCCache_search_vacancy(void) {
+    BMCCache_c* ret = NULL;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(BMCCache_buf); i++) {
+        BMCCache_c* cache_p = &BMCCache_buf[i];
+        if (cache_p->id == -1) {
+            ret = cache_p;
+            break;
+        }
+    }
+
+    if (ret == NULL) {
+        BMCCache_c* max_p = &BMCCache_buf[0];
+
+        for (i = 1; i < ARRAY_COUNT(BMCCache_buf); i++) {
+            BMCCache_c* cache_p = &BMCCache_buf[i];
+            if (cache_p->life > max_p->life) {
+                max_p = cache_p;
+            }
+        }
+        ret = max_p;
+    }
+
+    return ret;
+}
+
+static void mMsgLoad_bmc_ct(void) {
+    BMCCache_ct();
+}
+
+extern void mMsgLoad_bmc_init(mMsg_bmc_info_c* bmc_info, u32 start_addr, int idx) {
+    bmc_info->start_addr = start_addr;
+    bmc_info->entry_idx = idx;
+}
+
+#define mMsg_BMC_HEADER_SIZE 32
+#define mMsg_BMC_CL1_SECT_SIZE 12
+
+static void mMsgLoad_bmc_load_sub(mMsg_bmc_info_c* bmc_info) {
+    u32 color;
+
+    mMsgLoad_get_res(bmc_info->start_addr, mMsg_BMC_HEADER_SIZE + mMsg_BMC_CL1_SECT_SIZE + bmc_info->entry_idx * sizeof(u32), sizeof(u32), &color);
+    bmc_info->color.r = (color >> 24) & 0xFF;
+    bmc_info->color.g = (color >> 16) & 0xFF;
+    bmc_info->color.b = (color >> 8) & 0xFF;
+    bmc_info->color.a = color & 0xFF;
+}
+
+extern void mMsgLoad_bmc_load(mMsg_bmc_info_c* bmc_info) {
+    BMCCache_c* entry;
+    
+    BMCCache_life_add();
+    entry = BMCCache_search_id(bmc_info->entry_idx);
+    if (entry != NULL) {
+        rgba_t_move(&bmc_info->color, &entry->color);
+    } else {
+        entry = BMCCache_search_vacancy();
+        mMsgLoad_bmc_load_sub(bmc_info);
+        rgba_t_move(&entry->color, &bmc_info->color);
+        entry->id = bmc_info->entry_idx;
+    }
+
+    entry->life = 0;
+}

@@ -153,6 +153,22 @@ extern void mLd_CopyLandName(u8* dst, u8* src) {
  * @param name_len Length of the town name.
  * @return The length of the new town name with "Mura" (むら/村) added.
  */
+#if VERSION == VER_GAFP01_00
+extern int mLd_AddMuraString(u8* name, int name_len) {
+    u8 buf[mMsg_STRING_TAG_BUFFER_SIZE];
+    u8* buf_p = buf;
+    int size;
+
+    mString_Load_StringFromRom(buf_p, sizeof(buf), 0x1E4); /* TODO: str_no should probably be enum or something */
+    size = mMsg_Get_Length_String(buf_p, sizeof(buf));
+    if (size > 2) {
+        size = 2;
+    }
+    mem_copy(name + name_len, buf_p, size);
+
+    return size + name_len;
+}
+#else
 extern int mLd_AddMuraString(u8* name, int name_len) {
     u8 buf[16];
     int size;
@@ -163,6 +179,7 @@ extern int mLd_AddMuraString(u8* name, int name_len) {
 
     return size + name_len;
 }
+#endif
 
 /**
  * @brief Gets the town name with "Mura" (むら/村) added.

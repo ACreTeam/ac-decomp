@@ -8,6 +8,7 @@
 #include "m_font.h"
 #include "m_string.h"
 #include "m_house.h"
+#include "m_msg.h"
 
 typedef struct series_info_s {
     u8 type;
@@ -2884,10 +2885,17 @@ static int mMkRm_CountCharactor(u8* str, int len, int forward) {
 
 static void mMkRm_SendMarkLetter(mHm_hs_c* house, int points, int room_size, u8* series_name, mActor_name_t base_item,
                                  mActor_name_t theme_item) {
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mMsg_STRING_TAG_BUFFER_SIZE];
+    int header_back_start;
+    u8 year_str[4];
+    u8 day_str[mMsg_STRING_TAG_BUFFER_SIZE];
+#else
     u8 month_str[9];
     int header_back_start;
     u8 year_str[4];
     u8 day_str[4];
+#endif
     u8 item_str[mIN_ITEM_NAME_LEN];
     u8 points_str[10];
 
@@ -2902,16 +2910,27 @@ static void mMkRm_SendMarkLetter(mHm_hs_c* house, int points, int room_size, u8*
     handbill_no = mMkRm_DecideLetterNo(&present, house, points, room_size);
     time = Common_Get(time.rtc_time);
 
+#if VERSION == VER_GAFP01_00
+    mFont_UnintToString(points_str, 10, points, 10, TRUE, FALSE, TRUE);
+#else
     mFont_UnintToString(points_str, 10, points, 10, FALSE, FALSE, TRUE);
+#endif
+
     mHandbill_Set_free_str(mHandbill_FREE_STR0, points_str, 10);
 
     {
-        mActor_name_t set_item_no = mMkRm_GetSetItemNo(base_item, theme_item);
         int character;
+        mActor_name_t set_item_no = mMkRm_GetSetItemNo(base_item, theme_item);
 
         mIN_copy_name_str(item_str, set_item_no);
         character = mMkRm_CountCharactor(item_str, mIN_ITEM_NAME_LEN, FALSE);
+#if VERSION == VER_GAFP01_00
+        if (set_item_no != EMPTY_NO) {
+            mHandbill_set_item_str(mHandbill_FREE_STR1, item_str, character, set_item_no);
+        }
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR1, item_str, character);
+#endif
     }
 
     {
@@ -2923,11 +2942,11 @@ static void mMkRm_SendMarkLetter(mHm_hs_c* house, int points, int room_size, u8*
     mFont_UnintToString(year_str, 4, time.year, 4, FALSE, FALSE, FALSE);
     mHandbill_Set_free_str(mHandbill_FREE_STR3, year_str, 4);
 
-    mString_Load_StringFromRom(month_str, 9, time.month + mString_MONTH_START - 1);
-    mHandbill_Set_free_str(mHandbill_FREE_STR4, month_str, 9);
+    mString_Load_StringFromRom(month_str, sizeof(month_str), time.month + mString_MONTH_START - 1);
+    mHandbill_Set_free_str(mHandbill_FREE_STR4, month_str, sizeof(month_str));
 
-    mString_Load_StringFromRom(day_str, 4, time.day + mString_DAY_START - 1);
-    mHandbill_Set_free_str(mHandbill_FREE_STR5, day_str, 4);
+    mString_Load_StringFromRom(day_str, sizeof(day_str), time.day + mString_DAY_START - 1);
+    mHandbill_Set_free_str(mHandbill_FREE_STR5, day_str, sizeof(day_str));
 
     mMl_clear_mail(&letter);
     mHandbill_Load_HandbillFromRom(letter.content.header, &header_back_start, letter.content.footer,

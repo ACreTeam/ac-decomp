@@ -16,7 +16,11 @@ static void aRSV_set_talk_info(ACTOR* actor) {
             item = mIN_get_item_article(Save_Get(fruit));
             mMsg_Set_free_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR0, str, mIN_ITEM_NAME_LEN, item);
             mNpc_GetActorWorldName(str2, SP_NPC_SHOP_MASTER);
+#if VERSION == VER_GAFP01_00
+            mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str2, sizeof(str2), 0, mNpc_Name2Gender(SP_NPC_SHOP_MASTER));
+#else
             mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str2, ANIMAL_NAME_LEN);
+#endif
         }
         mDemo_Set_msg_num(reserve->structure_class.arg0 + MSG_11053);
     }

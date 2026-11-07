@@ -1,0 +1,3325 @@
+#ifdef __INTELLISENSE__
+#include "m_msg.h"
+#include "charmap.h"
+#include "m_font.h"
+#include "audio.h"
+#include "m_common_data.h"
+#include "m_bgm.h"
+
+typedef int (*mMsg_CONTROL_CODE_PROC)(mMsg_Window_c*, int*);
+#endif
+
+static int mMsg_Check_CancelOrder(mMsg_Window_c* msg_p) {
+    if (msg_p->cancelable_flag != FALSE && msg_p->cancel_flag == FALSE &&
+        (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+        if (chkTrigger(BUTTON_A) || chkTrigger(BUTTON_B)) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static int mMsg_Main_Cursol_Check_ControlCursol(mMsg_Window_c* msg_p, int idx) {
+    if (mFont_Check_Cont(msg_p->msg_data->text_buf.data[idx])) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static int mMsg_Main_Cursol_Check_TagCursol(mMsg_Window_c* msg_p, int idx) {
+    return mFont_Check_Tag(msg_p->msg_data->text_buf.data[idx]);
+}
+
+static int mMsg_Main_Cursol_Last_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    msg_p->end_text_cursor_idx = *idx_p;
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_LAST_DELAY)) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_FALSE;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_Continue_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    msg_p->end_text_cursor_idx = *idx_p;
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_LAST_DELAY)) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_FALSE;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_Clear_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    mMsg_Clear_CursolIndex(msg_p);
+    mMsg_SetTimer(msg_p, 20.0f);
+    return mMsg_RESULT_TRUE;
+}
+
+static int mMsg_Main_Cursol_CursolSetTime_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    f32 set_time = mMsg_Get_CursolSetTimeCode(msg_p, *idx_p);
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+
+    if (msg_p->cancel_flag) {
+        return mMsg_RESULT_VOID;
+    }
+
+    if (set_time > 0.0f) {
+        msg_p->cursor_timer = set_time;
+
+        if ((msg_p->status_flags & mMsg_STATUS_FLAG_FAST_TEXT) &&
+            (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+            mMsg_sound_MessageSpeedForce(1.0f);
+        } else {
+            mMsg_sound_MessageSpeedForce(set_time);
+        }
+
+        return mMsg_RESULT_TRUE;
+    }
+
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_Button_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_LAST_DELAY)) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_FALSE;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_LAST_DELAY;
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_Color_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    int displayed_line = msg_p->now_display_line;
+    rgba_t* text_color;
+
+    if (displayed_line >= 0 && displayed_line < mMsg_MAX_LINE) {
+        text_color = &msg_p->font_color[displayed_line];
+    } else {
+        text_color = &msg_p->font_color[0];
+    }
+
+    mMsg_Get_ColorCode(msg_p, *idx_p, &text_color->r, &text_color->g, &text_color->b);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_AbleCancel_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->cancelable_flag = TRUE;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_UnableCancel_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->cancel_flag = FALSE;
+    msg_p->cancelable_flag = FALSE;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetDemoOrder_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, int demo_type) {
+    int idx;
+    u16 val;
+
+    mMsg_Get_OrderCode(msg_p, *idx_p, &idx, &val);
+    mDemo_Set_OrderValue(demo_type, idx, val);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetDemoOrderPlayer_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetDemoOrder_ControlCursol(msg_p, idx_p, mDemo_ORDER_PLAYER);
+}
+
+static int mMsg_Main_Cursol_SetDemoOrderNpc0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetDemoOrder_ControlCursol(msg_p, idx_p, mDemo_ORDER_NPC0);
+}
+
+static int mMsg_Main_Cursol_SetDemoOrderNpc1_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetDemoOrder_ControlCursol(msg_p, idx_p, mDemo_ORDER_NPC1);
+}
+
+static int mMsg_Main_Cursol_SetDemoOrderNpc2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetDemoOrder_ControlCursol(msg_p, idx_p, mDemo_ORDER_NPC2);
+}
+
+static int mMsg_Main_Cursol_SetDemoOrderQuest_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetDemoOrder_ControlCursol(msg_p, idx_p, mDemo_ORDER_QUEST);
+}
+
+static int mMsg_Main_Cursol_SetSelectWindow_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    mChoice_Change_request_main_index(&msg_p->choice_window, mChoice_MAIN_APPEAR);
+    return mMsg_RESULT_TRUE;
+}
+
+static int mMsg_Main_Cursol_SetNextMessage_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, int select_no) {
+    u16 msg_no;
+    u8* data = msg_p->msg_data->text_buf.data;
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    msg_no = data[(*idx_p) + 2] << 8;
+    msg_no |= (0xFF & (data[(*idx_p) + 3]));
+
+    if (select_no == 0xFF || select_no == choice_no) {
+        if (msg_no != 0xFFFF) {
+            mMsg_Set_continue_msg_num(msg_p, msg_no);
+        } else {
+            mMsg_Set_CancelNormalContinue(msg_p);
+        }
+    }
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetNextMessageF_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 0xFF);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 0);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage1_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 1);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 2);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 3);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 4);
+}
+
+static int mMsg_Main_Cursol_SetNextMessage5_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessage_ControlCursol(msg_p, idx_p, 5);
+}
+
+static int mMsg_Main_Cursol_SetNextMessageRamdomCommon_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, int max) {
+    u16 msg_tbl[4];
+    u8* data = msg_p->msg_data->text_buf.data;
+    int selected = get_random_timer(0, max);
+    int i;
+
+    for (i = 0; i < max; i++) {
+        msg_tbl[i] = data[(*idx_p) + 2 + i * 2] << 8;
+        msg_tbl[i] |= 0xFF & data[(*idx_p) + 3 + i * 2];
+    }
+
+    if (selected < 0 || selected >= max) {
+        selected = 0;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_tbl[selected]);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetNextMessageRamdom2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessageRamdomCommon_ControlCursol(msg_p, idx_p, 2);
+}
+
+static int mMsg_Main_Cursol_SetNextMessageRamdom3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessageRamdomCommon_ControlCursol(msg_p, idx_p, 3);
+}
+
+static int mMsg_Main_Cursol_SetNextMessageRamdom4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetNextMessageRamdomCommon_ControlCursol(msg_p, idx_p, 4);
+}
+
+static int mMsg_Main_Cursol_SetSelectString_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, int select_count) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int id_tbl[mChoice_CHOICE_NUM];
+    u16 id;
+
+    id = data[(*idx_p) + 2] << 8;
+    id |= 0xFF & data[(*idx_p) + 3];
+    id_tbl[0] = id;
+
+    id = data[(*idx_p) + 4] << 8;
+    id |= 0xFF & data[(*idx_p) + 5];
+    id_tbl[1] = id;
+
+    if (select_count > 2) {
+        id = data[(*idx_p) + 6] << 8;
+        id |= 0xFF & data[(*idx_p) + 7];
+        id_tbl[2] = id;
+    }
+
+    if (select_count > 3) {
+        id = data[(*idx_p) + 8] << 8;
+        id |= 0xFF & data[(*idx_p) + 9];
+        id_tbl[3] = id;
+    }
+
+    if (select_count > 4) {
+        id = data[(*idx_p) + 10] << 8;
+        id |= 0xFF & data[(*idx_p) + 11];
+        id_tbl[4] = id;
+    }
+
+    if (select_count > 5) {
+        id = data[(*idx_p) + 12] << 8;
+        id |= 0xFF & data[(*idx_p) + 13];
+        id_tbl[5] = id;
+    }
+
+    if (select_count >= 2 && select_count <= mChoice_CHOICE_NUM) {
+        static u8 str[mChoice_CHOICE_NUM][mChoice_CHOICE_STRING_LEN];
+        int i;
+        ACTOR* actor = msg_p->client_actor_p;
+
+        for (i = 0; i < select_count; i++) {
+            mChoice_Load_ChoseStringFromRom(mChoice_Get_base_window_p(), str[i], id_tbl[i], actor);
+        }
+
+        {
+            u8* str0 = str[0];
+            u8* str1 = str[1];
+            u8* str2 = select_count > 2 ? str[2] : NULL;
+            u8* str3 = select_count > 3 ? str[3] : NULL;
+            u8* str4 = select_count > 4 ? str[4] : NULL;
+            u8* str5 = select_count > 5 ? str[5] : NULL;
+
+            mChoice_Set_choice_data(mChoice_Get_base_window_p(), str0, mChoice_CHOICE_STRING_LEN, str1,
+                                    mChoice_CHOICE_STRING_LEN, str2, mChoice_CHOICE_STRING_LEN, str3,
+                                    mChoice_CHOICE_STRING_LEN, str4, mChoice_CHOICE_STRING_LEN, str5,
+                                    mChoice_CHOICE_STRING_LEN);
+        }
+    }
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetSelectString2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetSelectString_ControlCursol(msg_p, idx_p, 2);
+}
+
+static int mMsg_Main_Cursol_SetSelectString3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetSelectString_ControlCursol(msg_p, idx_p, 3);
+}
+
+static int mMsg_Main_Cursol_SetSelectString4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetSelectString_ControlCursol(msg_p, idx_p, 4);
+}
+
+static int mMsg_Main_Cursol_SetSelectString5_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetSelectString_ControlCursol(msg_p, idx_p, 5);
+}
+
+static int mMsg_Main_Cursol_SetSelectString6_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetSelectString_ControlCursol(msg_p, idx_p, 6);
+}
+
+static int mMsg_Main_Cursol_SetForceNext_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_Set_ForceNext(msg_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_PlayerName_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    mMsg_Data_c* msg_data = msg_p->msg_data;
+    u8* data = msg_data->text_buf.data;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_data->msg_len = mMsg_Set_PlayerNameColor(data, idx_p, msg_data->msg_len);
+    msg_data->msg_len = mMsg_CopyPlayerName(data, *idx_p, msg_data->msg_len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_TalkName_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyTalkName(msg_p->client_actor_p, data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Tail_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyTail(msg_p->client_actor_p, data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Year_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyYear(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Month_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyMonth(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Week_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyWeek(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Day_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyDay(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Hour_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int hour = Common_Get(time.rtc_time.hour);
+
+    if (hour < 12) {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_USE_AM;
+    } else {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_USE_AM;
+    }
+
+    msg_p->msg_data->msg_len = mMsg_CopyHour(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Min_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyMin(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Sec_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopySec(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Free(mMsg_Window_c* msg_p, int idx, int free_str_no) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int article = msg_p->article;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->article = 0;
+    msg_p->msg_data->msg_len = mMsg_CopyFree(msg_p, free_str_no, data, idx, len, article, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Free_cl(mMsg_Window_c* msg_p, int* idx_p, int free_str_no, int cl_id) {
+    if (cl_id != 0) {
+        mMsg_Data_c* msg_data = msg_p->msg_data;
+        int article = msg_p->article;
+
+        msg_data->msg_len = mMsg_Set_PfColor(msg_data->text_buf.data, idx_p, msg_data->msg_len,
+                                             &msg_p->free_str[free_str_no], cl_id, article);
+    }
+
+    mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, free_str_no);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Free0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR0);
+}
+
+static int mMsg_Main_Cursol_PutString_Free1_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free_cl(msg_p, idx_p, mMsg_FREE_STR1, msg_p->free_str_color_idx[0]);
+}
+
+static int mMsg_Main_Cursol_PutString_Free2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free_cl(msg_p, idx_p, mMsg_FREE_STR2, msg_p->free_str_color_idx[1]);
+}
+
+static int mMsg_Main_Cursol_PutString_Free3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR3);
+}
+
+static int mMsg_Main_Cursol_PutString_Free4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR4);
+}
+
+static int mMsg_Main_Cursol_PutString_Free5_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free_cl(msg_p, idx_p, mMsg_FREE_STR5, msg_p->free_str_color_idx[2]);
+}
+
+static int mMsg_Main_Cursol_PutString_Free6_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR6);
+}
+
+static int mMsg_Main_Cursol_PutString_Free7_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR7);
+}
+
+static int mMsg_Main_Cursol_PutString_Free8_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR8);
+}
+
+static int mMsg_Main_Cursol_PutString_Free9_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR9);
+}
+
+static int mMsg_Main_Cursol_PutString_Free10_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR10);
+}
+
+static int mMsg_Main_Cursol_PutString_Free11_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR11);
+}
+
+static int mMsg_Main_Cursol_PutString_Free12_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free_cl(msg_p, idx_p, mMsg_FREE_STR12, msg_p->free_str_color_idx[3]);
+}
+
+static int mMsg_Main_Cursol_PutString_Free13_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR13);
+}
+
+static int mMsg_Main_Cursol_PutString_Free14_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR14);
+}
+
+static int mMsg_Main_Cursol_PutString_Free15_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR15);
+}
+
+static int mMsg_Main_Cursol_PutString_Free16_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR16);
+}
+
+static int mMsg_Main_Cursol_PutString_Free17_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR17);
+}
+
+static int mMsg_Main_Cursol_PutString_Free18_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR18);
+}
+
+static int mMsg_Main_Cursol_PutString_Free19_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free(msg_p, *idx_p, mMsg_FREE_STR19);
+}
+
+static int mMsg_Main_Cursol_PutString_Determination_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyDetermination(msg_p, data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_CountryName_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyCountryName(data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_RamdomNumber2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+
+    msg_p->msg_data->msg_len = mMsg_CopyRamdomNumber2(data, *idx_p, len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Item(mMsg_Window_c* msg_p, int idx, int item_str_no) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int article = msg_p->article;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->article = 0;
+    msg_p->msg_data->msg_len = mMsg_CopyItem(msg_p, item_str_no, data, idx, len, article, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Item0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item(msg_p, *idx_p, mMsg_ITEM_STR0);
+}
+
+static int mMsg_Main_Cursol_PutString_Item1_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item(msg_p, *idx_p, mMsg_ITEM_STR1);
+}
+
+static int mMsg_Main_Cursol_PutString_Item2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item(msg_p, *idx_p, mMsg_ITEM_STR2);
+}
+
+static int mMsg_Main_Cursol_PutString_Item3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item(msg_p, *idx_p, mMsg_ITEM_STR3);
+}
+
+static int mMsg_Main_Cursol_PutString_Item4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item(msg_p, *idx_p, mMsg_ITEM_STR4);
+}
+
+static int mMsg_Main_Cursol_PutString_Mail(mMsg_Window_c* msg_p, int idx, int mail_str_no) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyMail(msg_p, mail_str_no, data, idx, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_Mail0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Mail(msg_p, *idx_p, mMsg_MAIL_STR0);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, s8 destiny) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mDemo_Set_change_player_destiny(destiny);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny0_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_NORMAL);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny1_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_POPULAR);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_UNPOPULAR);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny3_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_BAD_LUCK);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny4_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_MONEY_LUCK);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny5_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, mPr_DESTINY_GOODS_LUCK);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny6_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, 6);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny7_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, 7);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny8_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, 8);
+}
+
+static int mMsg_Main_Cursol_SetPlayerDestiny9_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny_ControlCursol(msg_p, idx_p, 9);
+}
+
+static int mMsg_Main_Cursol_SetMessageContents_ControlCursol(mMsg_Window_c* msg_p, int* idx_p, u8 status) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_sound_MessageStatus(status);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsNormal_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_NORMAL);
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsAngry_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_ANGRY);
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsSad_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_SAD);
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsFun_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_FUN);
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsSleepy_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_SLEEPY);
+}
+
+static int mMsg_Main_Cursol_SetColorChar_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SoundCut_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    if (mMsg_Get_SoundCutCode(msg_p, *idx_p)) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_SOUND_CUT;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_SOUND_CUT;
+    }
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetLineOffset_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetLineType_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetCharScale_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_Button2_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_LAST_DELAY)) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        msg_p->end_text_cursor_idx = *idx_p;
+        msg_p->status_flags |= mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI;
+        return mMsg_RESULT_FALSE;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_LAST_DELAY;
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_BgmMake_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    int bgm_no;
+    int stop_type;
+
+    mMsg_Get_bgm_make(msg_p, *idx_p, &bgm_no, &stop_type);
+    mMsg_sound_bgm_make(bgm_no, stop_type);
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_BgmDelete_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    int bgm_no;
+    int stop_type;
+
+    mMsg_Get_bgm_delete(msg_p, *idx_p, &bgm_no, &stop_type);
+    mMsg_sound_bgm_delete(bgm_no, stop_type);
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_MsgTimeEnd_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    msg_p->end_text_cursor_idx = *idx_p;
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_LAST_DELAY)) {
+        int time = mMsg_Get_MsgTimeEnd_time(msg_p, *idx_p);
+
+        if (time > 0) {
+            time--;
+        }
+
+        msg_p->end_timer = (time << 2) + 1;
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_FALSE;
+    } else {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_LAST_DELAY;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_SoundTrgSys_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    int se_no;
+
+    mMsg_Get_sound_trg_sys(msg_p, *idx_p, &se_no);
+    mMsg_sound_sound_trg_sys(se_no);
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetLineScale_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SoundNoPage_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->status_flags |= mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_VoiceTrue_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_sound_spec_change_true(msg_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_VoiceFalse_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_sound_spec_change_false(msg_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SelectNoB_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mChoice_no_b_set(mChoice_Get_base_window_p());
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_GiveOpen_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    if (mMsg_Check_give_item() != FALSE) {
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_VOID;
+    } else {
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_GiveClose_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    if (mMsg_Check_give_item() == FALSE) {
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_VOID;
+    } else {
+        msg_p->end_text_cursor_idx = *idx_p;
+        return mMsg_RESULT_TRUE;
+    }
+}
+
+static int mMsg_Main_Cursol_SetMessageContentsGloomy_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContents_ControlCursol(msg_p, idx_p, VOICE_STATUS_GLOOMY);
+}
+
+static int mMsg_Main_Cursol_SelectNoBClose_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mChoice_no_b_close_set(mChoice_Get_base_window_p());
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetNextMessageRamdomSection_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int num;
+    int base;
+    int max;
+    int msg_no;
+
+    base = ((data[*idx_p + 2] << 8) & 0xFF00) | (0xFF & data[*idx_p + 3]);
+    max = ((data[*idx_p + 4] << 8) & 0xFF00) | (0xFF & data[*idx_p + 5]);
+    num = (max - base) + 1;
+    msg_no = get_random_timer(base, num);
+    mMsg_Set_continue_msg_num(msg_p, msg_no);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_AgbDummy_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_Space_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_MaleFemaleCheck_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8 b0;
+    u8 b1;
+    u8* data = msg_p->msg_data->text_buf.data;
+    int msg_no;
+
+    /* These don't match the previous ones, fake match? */
+    if (Common_Get(now_private)->gender == mPr_SEX_MALE) {
+        b0 = data[*idx_p + 2];
+        b1 = data[*idx_p + 3];
+        msg_no = (b0 << 8) | (0xFF & b1);
+    } else {
+        b0 = data[*idx_p + 4];
+        b1 = data[*idx_p + 5];
+        msg_no = (b0 << 8) | (0xFF & b1);
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_no);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_IslandName_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    mMsg_Data_c* msg_data = msg_p->msg_data;
+    u8* data = msg_data->text_buf.data;
+    int len = msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyIslandName(data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_SetCursolJust_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_set_cursol_just(msg_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_ClrCursolJust_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    mMsg_unset_cursol_just(msg_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_CutArticle_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->article = 2;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_CapitalLetter_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->status_flags |= mMsg_STATUS_FLAG_CAPITALIZE;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_PutString_AmPm_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    mMsg_Data_c* msg_data = msg_p->msg_data;
+    u8* data = msg_data->text_buf.data;
+
+    msg_p->msg_data->msg_len = mMsg_CopyAmPm(msg_p, data, *idx_p, msg_data->msg_len);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_9bit_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_FontKigou_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsg_Main_Cursol_Proc_ControlCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+
+    if (data[*idx_p] == CHAR_CONTROL_CODE) {
+        static const mMsg_CONTROL_CODE_PROC proc[mFont_CONT_CODE_NUM] = {
+            &mMsg_Main_Cursol_Last_ControlCursol,
+            &mMsg_Main_Cursol_Continue_ControlCursol,
+            &mMsg_Main_Cursol_Clear_ControlCursol,
+            &mMsg_Main_Cursol_CursolSetTime_ControlCursol,
+            &mMsg_Main_Cursol_Button_ControlCursol,
+            &mMsg_Main_Cursol_Color_ControlCursol,
+            &mMsg_Main_Cursol_AbleCancel_ControlCursol,
+            &mMsg_Main_Cursol_UnableCancel_ControlCursol,
+            &mMsg_Main_Cursol_SetDemoOrderPlayer_ControlCursol,
+            &mMsg_Main_Cursol_SetDemoOrderNpc0_ControlCursol,
+            &mMsg_Main_Cursol_SetDemoOrderNpc1_ControlCursol,
+            &mMsg_Main_Cursol_SetDemoOrderNpc2_ControlCursol,
+            &mMsg_Main_Cursol_SetDemoOrderQuest_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectWindow_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessageF_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage0_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage1_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage2_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage3_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessageRamdom2_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessageRamdom3_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessageRamdom4_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectString2_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectString3_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectString4_ControlCursol,
+            &mMsg_Main_Cursol_SetForceNext_ControlCursol,
+            &mMsg_Main_Cursol_PutString_PlayerName_ControlCursol,
+            &mMsg_Main_Cursol_PutString_TalkName_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Tail_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Year_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Month_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Week_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Day_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Hour_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Min_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Sec_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free0_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free1_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free2_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free3_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free4_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free5_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free6_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free7_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free8_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free9_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Determination_ControlCursol,
+            &mMsg_Main_Cursol_PutString_CountryName_ControlCursol,
+            &mMsg_Main_Cursol_PutString_RamdomNumber2_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Item0_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Item1_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Item2_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Item3_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Item4_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free10_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free11_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free12_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free13_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free14_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free15_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free16_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free17_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free18_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Free19_ControlCursol,
+            &mMsg_Main_Cursol_PutString_Mail0_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny0_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny1_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny2_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny3_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny4_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny5_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny6_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny7_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny8_ControlCursol,
+            &mMsg_Main_Cursol_SetPlayerDestiny9_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsNormal_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsAngry_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsSad_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsFun_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsSleepy_ControlCursol,
+            &mMsg_Main_Cursol_SetColorChar_ControlCursol,
+            &mMsg_Main_Cursol_SoundCut_ControlCursol,
+            &mMsg_Main_Cursol_SetLineOffset_ControlCursol,
+            &mMsg_Main_Cursol_SetLineType_ControlCursol,
+            &mMsg_Main_Cursol_SetCharScale_ControlCursol,
+            &mMsg_Main_Cursol_Button2_ControlCursol,
+            &mMsg_Main_Cursol_BgmMake_ControlCursol,
+            &mMsg_Main_Cursol_BgmDelete_ControlCursol,
+            &mMsg_Main_Cursol_MsgTimeEnd_ControlCursol,
+            &mMsg_Main_Cursol_SoundTrgSys_ControlCursol,
+            &mMsg_Main_Cursol_SetLineScale_ControlCursol,
+            &mMsg_Main_Cursol_SoundNoPage_ControlCursol,
+            &mMsg_Main_Cursol_VoiceTrue_ControlCursol,
+            &mMsg_Main_Cursol_VoiceFalse_ControlCursol,
+            &mMsg_Main_Cursol_SelectNoB_ControlCursol,
+            &mMsg_Main_Cursol_GiveOpen_ControlCursol,
+            &mMsg_Main_Cursol_GiveClose_ControlCursol,
+            &mMsg_Main_Cursol_SetMessageContentsGloomy_ControlCursol,
+            &mMsg_Main_Cursol_SelectNoBClose_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessageRamdomSection_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_Space_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_MaleFemaleCheck_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_AgbDummy_ControlCursol,
+            &mMsg_Main_Cursol_PutString_IslandName_ControlCursol,
+            &mMsg_Main_Cursol_SetCursolJust_ControlCursol,
+            &mMsg_Main_Cursol_ClrCursolJust_ControlCursol,
+            &mMsg_Main_Cursol_CutArticle_ControlCursol,
+            &mMsg_Main_Cursol_CapitalLetter_ControlCursol,
+            &mMsg_Main_Cursol_PutString_AmPm_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage4_ControlCursol,
+            &mMsg_Main_Cursol_SetNextMessage5_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectString5_ControlCursol,
+            &mMsg_Main_Cursol_SetSelectString6_ControlCursol,
+            &mMsg_Main_Cursol_9bit_ControlCursol,
+            &mMsg_Main_Cursol_FontKigou_ControlCursol,
+        };
+
+        int type = data[(*idx_p) + 1];
+
+        if (type < 0 || type >= mFont_CONT_CODE_NUM || proc[type] == NULL) {
+            return mMsg_RESULT_VOID;
+        } else {
+            return (*proc[type])(msg_p, idx_p);
+        }
+    } else {
+        return mMsg_RESULT_VOID;
+    }
+}
+
+static int mMsgTag_dummy_proc(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_set_demoOrder(mMsg_Window_c* msg_p, int* idx_p, int demo_type, int demo_idx, u16 demo_val) {
+    mDemo_Set_OrderValue(demo_type, demo_idx, demo_val);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Gaiji(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_MsgStart(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_MsgLast(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Last_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_MsgContinue(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Continue_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_ClrCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Clear_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_TimeInterval(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_CursolSetTime_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_KanjiCom(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_KanjiPlLvSet(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_KanjiPlLvInc(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_KanjiPlLvDec(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_LineOffset(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetLineOffset_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_PixSpace(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Space_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base_MsgWaitLast(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_MsgTimeEnd_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Base(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_BASE_NUM] = {
+        &mMsgTag_Base_MsgStart,
+        &mMsgTag_Base_MsgLast,
+        &mMsgTag_Base_MsgContinue,
+        &mMsgTag_Base_ClrCursol,
+        &mMsgTag_Base_TimeInterval,
+        &mMsgTag_Base_KanjiCom,
+        &mMsgTag_Base_KanjiPlLvSet,
+        &mMsgTag_Base_KanjiPlLvInc,
+        &mMsgTag_Base_KanjiPlLvDec,
+        &mMsgTag_Base_LineOffset,
+        &mMsgTag_Base_PixSpace,
+        &mMsgTag_Base_MsgWaitLast,
+    };
+
+    int type = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[type])(msg_p, idx_p);
+}
+
+static int mMsgTag_Choice_Option(mMsg_Window_c* msg_p, int* idx_p, int count) {
+    int id_tbl[mChoice_CHOICE_NUM];
+    u8* str_p[mChoice_CHOICE_NUM];
+    u8 choice_str[mChoice_CHOICE_NUM][mChoice_CHOICE_STRING_LEN];
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    int i;
+    ACTOR* actor = msg_p->client_actor_p;
+
+    for (i = 0; i < count; i++) {
+        id_tbl[i] = (data[5 + i * 2] << 8) | data[5 + i * 2 + 1];
+        mChoice_Load_ChoseStringFromRom(mChoice_Get_base_window_p(), choice_str[i], id_tbl[i], actor);
+    }
+
+    for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+        if (i < count) {
+            str_p[i] = choice_str[i];
+        } else {
+            str_p[i] = NULL;
+        }
+    }
+
+    mChoice_Set_choice_data(mChoice_Get_base_window_p(), str_p[0], mChoice_CHOICE_STRING_LEN, str_p[1], mChoice_CHOICE_STRING_LEN, str_p[2],
+                            mChoice_CHOICE_STRING_LEN, str_p[3], mChoice_CHOICE_STRING_LEN, str_p[4],
+                            mChoice_CHOICE_STRING_LEN, str_p[5], mChoice_CHOICE_STRING_LEN);
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Choice_Answer(mMsg_Window_c* msg_p, int* idx_p, int choice_idx) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+    u16 msg_no = mFont_Get_TagPrmU16(data);
+
+    if (choice_idx == 0xFF || choice_idx == choice_no) {
+        if (msg_no != 0xFFFF) {
+            mMsg_Set_continue_msg_num(msg_p, msg_no);
+        } else {
+            mMsg_Set_CancelNormalContinue(msg_p);
+        }
+    }
+
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Choice_Op2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Option(msg_p, idx_p, 2);
+}
+
+static int mMsgTag_Choice_Op3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Option(msg_p, idx_p, 3);
+}
+
+static int mMsgTag_Choice_Op4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Option(msg_p, idx_p, 4);
+}
+
+static int mMsgTag_Choice_Op5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Option(msg_p, idx_p, 5);
+}
+
+static int mMsgTag_Choice_Op6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Option(msg_p, idx_p, 6);
+}
+
+static int mMsgTag_Choice_Ans0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 0);
+}
+
+static int mMsgTag_Choice_Ans1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 1);
+}
+
+static int mMsgTag_Choice_Ans2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 2);
+}
+
+static int mMsgTag_Choice_Ans3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 3);
+}
+
+static int mMsgTag_Choice_Ans4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 4);
+}
+
+static int mMsgTag_Choice_Ans5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 5);
+}
+
+static int mMsgTag_Choice(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_CHOICE_NUM] = {
+        &mMsgTag_Choice_Op2,
+        &mMsgTag_Choice_Op3,
+        &mMsgTag_Choice_Op4,
+        &mMsgTag_Choice_Op5,
+        &mMsgTag_Choice_Op6,
+        &mMsgTag_Choice_Ans0,
+        &mMsgTag_Choice_Ans1,
+        &mMsgTag_Choice_Ans2,
+        &mMsgTag_Choice_Ans3,
+        &mMsgTag_Choice_Ans4,
+        &mMsgTag_Choice_Ans5,
+    };
+
+    int type = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[type])(msg_p, idx_p);
+}
+
+static int mMsgTag_NpcEm_Fun(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, mNpc_FEEL_HAPPY);
+}
+
+static int mMsgTag_NpcEm_Angry(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, mNpc_FEEL_ANGRY);
+}
+
+static int mMsgTag_NpcEm_Sad(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, mNpc_FEEL_SAD);
+}
+
+static int mMsgTag_NpcEm_Sleepy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, mNpc_FEEL_SLEEPY);
+}
+
+static int mMsgTag_NpcEm_Normal(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, 5);
+}
+
+static int mMsgTag_NpcEm_Gloomy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 2, 7);
+}
+
+static int mMsgTag_NpcEm_Continue(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 8, mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p));
+}
+
+static int mMsgTag_NpcEm(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_NPC_EM_NUM] = {
+        &mMsgTag_NpcEm_Fun,
+        &mMsgTag_NpcEm_Angry,
+        &mMsgTag_NpcEm_Sad,
+        &mMsgTag_NpcEm_Sleepy,
+        &mMsgTag_NpcEm_Normal,
+        &mMsgTag_NpcEm_Gloomy,
+        &mMsgTag_NpcEm_Continue,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    int type = mFont_Get_TagId(data + *idx_p);
+    return (*proc[type])(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_PlayerName(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_PlayerName_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_NpcName(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_TalkName_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Tail(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Tail_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Determination(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Determination_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Mail(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Mail0_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_CountryName(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_CountryName_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_IslandName(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_IslandName_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Year(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Year_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Mounth(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Month_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Week(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Week_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Day(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Day_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Hour(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Hour_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Min(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Min_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Sec(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Sec_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_RandomNum(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_RamdomNumber2_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_AmPm(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_AmPm_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Capital(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_CapitalLetter_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_ArticleCut(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_CutArticle_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free0_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free1_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free2_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free3_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free4_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free5_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free6_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free7(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free7_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free8(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free8_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free9(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free9_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free10(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free10_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free11(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free11_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free12(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free12_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free13(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free13_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free14(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free14_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free15(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free15_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free16(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free16_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free17(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free17_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free18(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free18_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Free19(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Free19_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Item0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item0_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Item1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item1_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Item2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item2_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Item3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item3_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Item4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_PutString_Item4_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_NpcNamePersonal(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_NpcNameTribe(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_Opln(mMsg_Window_c* msg_p, int* idx_p) {
+    int player_no = Common_Get(player_no);
+    int houseIdx;
+    int num_owned_houses = 0;
+    int house_owner_idx_tbl[PLAYER_NUM];
+    int str_no;
+    u8 player_name[PLAYER_NAME_LEN];
+
+    for (houseIdx = 0; houseIdx < PLAYER_NUM; houseIdx++) {
+        house_owner_idx_tbl[houseIdx] = -1;
+    }
+
+    for (houseIdx = 0; houseIdx < PLAYER_NUM; houseIdx++) {
+        int owner = mHS_get_pl_no_detail(houseIdx);
+
+        if (owner >= 0 && owner != player_no) {
+            house_owner_idx_tbl[num_owned_houses] = owner;
+            num_owned_houses++;
+        }
+    }
+
+    str_no = 1;
+    while (num_owned_houses > 0 && str_no <= 3) {
+        int i;
+        int pick_idx;
+        int rnd;
+
+        rnd = get_random_timer(0, num_owned_houses);
+        for (i = 0, pick_idx = -1; i < PLAYER_NUM; i++) {
+            if (house_owner_idx_tbl[i] != -1) {
+                pick_idx++;
+            }
+
+            if (rnd == pick_idx) {
+                mPr_GetPlayerName(player_name, house_owner_idx_tbl[i]);
+                mMsg_Set_free_str(msg_p, str_no, player_name, PLAYER_NAME_LEN);
+                house_owner_idx_tbl[i] = -1;
+                str_no++;
+                break;
+            }
+        }
+        num_owned_houses--;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_OwnIslandName(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyOwnIslandName(data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Str_PlClothType(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    int capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyPlClothType(data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Str_NpcNamePersonalPass(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_NpcNameTribePass(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_TruthTail(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Str_CountryNameKana(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    int len = msg_p->msg_data->msg_len;
+    u32 capitalize = msg_p->status_flags & mMsg_STATUS_FLAG_CAPITALIZE;
+
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+    msg_p->msg_data->msg_len = mMsg_CopyCountryName(data, *idx_p, len, capitalize);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Str(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_STR_NUM] = {
+        &mMsgTag_Str_PlayerName,
+        &mMsgTag_Str_NpcName,
+        &mMsgTag_Str_Tail,
+        &mMsgTag_Str_Determination,
+        &mMsgTag_Str_Mail,
+        &mMsgTag_Str_CountryName,
+        &mMsgTag_Str_IslandName,
+        &mMsgTag_Str_Year,
+        &mMsgTag_Str_Mounth,
+        &mMsgTag_Str_Week,
+        &mMsgTag_Str_Day,
+        &mMsgTag_Str_Hour,
+        &mMsgTag_Str_Min,
+        &mMsgTag_Str_Sec,
+        &mMsgTag_Str_RandomNum,
+        &mMsgTag_Str_AmPm,
+        &mMsgTag_Str_Capital,
+        &mMsgTag_Str_ArticleCut,
+        &mMsgTag_Str_Free0,
+        &mMsgTag_Str_Free1,
+        &mMsgTag_Str_Free2,
+        &mMsgTag_Str_Free3,
+        &mMsgTag_Str_Free4,
+        &mMsgTag_Str_Free5,
+        &mMsgTag_Str_Free6,
+        &mMsgTag_Str_Free7,
+        &mMsgTag_Str_Free8,
+        &mMsgTag_Str_Free9,
+        &mMsgTag_Str_Free10,
+        &mMsgTag_Str_Free11,
+        &mMsgTag_Str_Free12,
+        &mMsgTag_Str_Free13,
+        &mMsgTag_Str_Free14,
+        &mMsgTag_Str_Free15,
+        &mMsgTag_Str_Free16,
+        &mMsgTag_Str_Free17,
+        &mMsgTag_Str_Free18,
+        &mMsgTag_Str_Free19,
+        &mMsgTag_Str_Item0,
+        &mMsgTag_Str_Item1,
+        &mMsgTag_Str_Item2,
+        &mMsgTag_Str_Item3,
+        &mMsgTag_Str_Item4,
+        &mMsgTag_Str_NpcNamePersonal,
+        &mMsgTag_Str_NpcNameTribe,
+        &mMsgTag_Str_Opln,
+        &mMsgTag_Str_OwnIslandName,
+        &mMsgTag_Str_PlClothType,
+        &mMsgTag_Str_NpcNamePersonalPass,
+        &mMsgTag_Str_NpcNameTribePass,
+        &mMsgTag_Str_TruthTail,
+        &mMsgTag_Str_CountryNameKana,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_Button(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Button_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_ButtonNoSE(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_Button2_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_BCancel(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SelectNoB_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_BCancelClose(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SelectNoBClose_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_AbleCancel(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_AbleCancel_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_UnableCancel(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_UnableCancel_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_OpenChoice(mMsg_Window_c* msg_p, int* idx_p) {
+    u32 status = msg_p->status_flags;
+
+    if ((status & mMsg_STATUS_FLAG_19) != 0) {
+        msg_p->status_flags = status & ~mMsg_STATUS_FLAG_19;
+        return mMsg_Main_Cursol_SetSelectWindow_ControlCursol(msg_p, idx_p);
+    }
+
+    if ((status & mMsg_STATUS_FLAG_LAST_DELAY) != 0) {
+        msg_p->status_flags = status & ~mMsg_STATUS_FLAG_LAST_DELAY;
+        msg_p->end_text_cursor_idx = *idx_p;
+        msg_p->status_flags |= mMsg_STATUS_FLAG_19;
+        return mMsg_RESULT_FALSE;
+    }
+
+    msg_p->status_flags = status | mMsg_STATUS_FLAG_LAST_DELAY;
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_TRUE;
+}
+
+static int mMsgTag_Com_ForceNextSet(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetForceNext_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_LineTypeTop(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetLineType_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_LineTypeCenter(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetLineType_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_LineTypeBottom(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetLineType_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_GiveOpen(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_GiveOpen_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_GiveClose(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_GiveClose_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_CursolJustSet(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetCursolJust_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_CursolJustClr(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_ClrCursolJust_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_DemoNpc0_3_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 3, 1);
+}
+
+static int mMsgTag_Com_DemoNpc0_3_255(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 3, 255);
+}
+
+static int mMsgTag_Com_DemoNpc0_4_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 4, 1);
+}
+
+static int mMsgTag_Com_DemoNpc0_4_255(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 4, 255);
+}
+
+static int mMsgTag_Com_StartKeyChk(mMsg_Window_c* msg_p, int* idx_p) {
+    msg_p->status_flags |= mMsg_STATUS_FLAG_KEYCNT;
+    msg_p->keyCnt_a = 0;
+    msg_p->keyCnt_b = 0;
+    msg_p->keyCnt_x = 0;
+    msg_p->keyCnt_y = 0;
+    msg_p->keyCnt_other = 0;
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Com_StopKeyChk(mMsg_Window_c* msg_p, int* idx_p) {
+    u8 str[16];
+    
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_KEYCNT;
+    mFont_UnintToString(str, sizeof(str), msg_p->keyCnt_a, 4, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR0, str, sizeof(str));
+    mFont_UnintToString(str, sizeof(str), msg_p->keyCnt_b, 4, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, str, sizeof(str));
+    mFont_UnintToString(str, sizeof(str), msg_p->keyCnt_x, 4, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR2, str, sizeof(str));
+    mFont_UnintToString(str, sizeof(str), msg_p->keyCnt_y, 4, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR3, str, sizeof(str));
+    mFont_UnintToString(str, sizeof(str), msg_p->keyCnt_a + msg_p->keyCnt_b + msg_p->keyCnt_x + msg_p->keyCnt_y, 4, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR4, str, sizeof(str));
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Com(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_COM_NUM] = {
+        &mMsgTag_Com_Button,
+        &mMsgTag_Com_ButtonNoSE,
+        &mMsgTag_Com_BCancel,
+        &mMsgTag_Com_BCancelClose,
+        &mMsgTag_Com_AbleCancel,
+        &mMsgTag_Com_UnableCancel,
+        &mMsgTag_Com_OpenChoice,
+        &mMsgTag_Com_ForceNextSet,
+        &mMsgTag_Com_LineTypeTop,
+        &mMsgTag_Com_LineTypeCenter,
+        &mMsgTag_Com_LineTypeBottom,
+        &mMsgTag_Com_GiveOpen,
+        &mMsgTag_Com_GiveClose,
+        &mMsgTag_Com_CursolJustSet,
+        &mMsgTag_Com_CursolJustClr,
+        &mMsgTag_Com_DemoNpc0_3_1,
+        &mMsgTag_Com_DemoNpc0_3_255,
+        &mMsgTag_Com_DemoNpc0_4_1,
+        &mMsgTag_Com_DemoNpc0_4_255,
+        &mMsgTag_Com_StartKeyChk,
+        &mMsgTag_Com_StopKeyChk,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Manpu(mMsg_Window_c* msg_p, int* idx_p) {
+    static const u8 prm[45] = {
+        0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+        0xFD, 0xFE, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
+        0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x2A,
+        0x25, 0x26, 0x27, 0x28, 0x29,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 0, prm[id]);
+}
+
+static int mMsgTag_Tm(mMsg_Window_c* msg_p, int* idx_p) {
+    static const u8 prm[] = {
+        0x01, 0x02, 0x03, 0x06, 0x07, 0x08, 0x09, 0x0D,
+        0x0A, 0x0B, 0x0C, 0x0E, 0x0F, 0x10,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    int id = mFont_Get_TagId(data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 1, prm[id]);
+}
+
+static int mMsgTag_PlSt_Destiny0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny0_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_Destiny1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny1_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_Destiny2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny2_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_Destiny3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny3_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_Destiny4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny4_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_Destiny5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetPlayerDestiny5_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_PlSt_DemoPl_0_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_PLAYER, 0, 2);
+}
+
+static int mMsgTag_PlSt_DemoPl_0_253(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_PLAYER, 0, 253);
+}
+
+static int mMsgTag_PlSt_DemoPl_0_254(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_PLAYER, 0, 254);
+}
+
+static int mMsgTag_PlSt_DemoPl_0_255(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_PLAYER, 0, 255);
+}
+
+static int mMsgTag_PlSt(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_PLST_NUM] = {
+        &mMsgTag_PlSt_Destiny0,
+        &mMsgTag_PlSt_Destiny1,
+        &mMsgTag_PlSt_Destiny2,
+        &mMsgTag_PlSt_Destiny3,
+        &mMsgTag_PlSt_Destiny4,
+        &mMsgTag_PlSt_Destiny5,
+        &mMsgTag_PlSt_DemoPl_0_2,
+        &mMsgTag_PlSt_DemoPl_0_253,
+        &mMsgTag_PlSt_DemoPl_0_254,
+        &mMsgTag_PlSt_DemoPl_0_255,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Spec_VoiceFalse(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_VoiceFalse_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Spec_VoiceTrue(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_VoiceTrue_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Spec_DemoNpc0_1_4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 1, 4);
+}
+
+static int mMsgTag_Spec_DemoNpc0_7_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 7, 1);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 0);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 1);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 2);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 3);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 4);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 5);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 6);
+}
+
+static int mMsgTag_Spec_DemoNpc0_9_7(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 9, 7);
+}
+
+static int mMsgTag_Spec(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_SPEC_NUM] = {
+        &mMsgTag_Spec_VoiceFalse,
+        &mMsgTag_Spec_VoiceTrue,
+        &mMsgTag_Spec_DemoNpc0_1_4,
+        &mMsgTag_Spec_DemoNpc0_7_1,
+        &mMsgTag_Spec_DemoNpc0_9_0,
+        &mMsgTag_Spec_DemoNpc0_9_1,
+        &mMsgTag_Spec_DemoNpc0_9_2,
+        &mMsgTag_Spec_DemoNpc0_9_3,
+        &mMsgTag_Spec_DemoNpc0_9_4,
+        &mMsgTag_Spec_DemoNpc0_9_5,
+        &mMsgTag_Spec_DemoNpc0_9_6,
+        &mMsgTag_Spec_DemoNpc0_9_7,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_SeTrg(mMsg_Window_c* msg_p, int* idx_p, int se_no) {
+    mMsg_sound_sound_trg_sys(se_no);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Sound_VoiceNormal(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsNormal_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_VoiceAngry(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsAngry_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_VoiceSad(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsSad_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_VoiceFun(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsFun_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_VoiceSleepy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsSleepy_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_VoiceGloomy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SetMessageContentsGloomy_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_MindOn(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SoundCut_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_MindOff(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SoundCut_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_Se_0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 0);
+}
+
+static int mMsgTag_Sound_Se_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 1);
+}
+
+static int mMsgTag_Sound_Se_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 2);
+}
+
+static int mMsgTag_Sound_Se_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 3);
+}
+
+static int mMsgTag_Sound_Se_4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 4);
+}
+
+static int mMsgTag_Sound_Se_5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 5);
+}
+
+static int mMsgTag_Sound_Se_6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 6);
+}
+
+static int mMsgTag_Sound_Se_7(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 0);
+}
+
+static int mMsgTag_Sound_Se_8(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_SeTrg(msg_p, idx_p, 6);
+}
+
+static int mMsgTag_Sound_NoSePage(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_SoundNoPage_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_BgmDelete(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_BgmDelete_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound_BgmMake(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsg_Main_Cursol_BgmMake_ControlCursol(msg_p, idx_p);
+}
+
+static int mMsgTag_Sound(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_SOUND_NUM] = {
+        &mMsgTag_Sound_VoiceNormal,
+        &mMsgTag_Sound_VoiceAngry,
+        &mMsgTag_Sound_VoiceSad,
+        &mMsgTag_Sound_VoiceFun,
+        &mMsgTag_Sound_VoiceSleepy,
+        &mMsgTag_Sound_VoiceGloomy,
+        &mMsgTag_Sound_MindOn,
+        &mMsgTag_Sound_MindOff,
+        &mMsgTag_Sound_Se_0,
+        &mMsgTag_Sound_Se_1,
+        &mMsgTag_Sound_Se_2,
+        &mMsgTag_Sound_Se_3,
+        &mMsgTag_Sound_Se_4,
+        &mMsgTag_Sound_Se_5,
+        &mMsgTag_Sound_Se_6,
+        &mMsgTag_Sound_Se_7,
+        &mMsgTag_Sound_Se_8,
+        &mMsgTag_Sound_NoSePage,
+        &mMsgTag_Sound_BgmDelete,
+        &mMsgTag_Sound_BgmMake,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Quest_DemoQ_2(mMsg_Window_c* msg_p, int* idx_p) {
+    int val = mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 2, val);
+}
+
+static int mMsgTag_Quest_DemoQ_3(mMsg_Window_c* msg_p, int* idx_p) {
+    int val = mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 3, val);
+}
+
+static int mMsgTag_Quest_DemoQ_9(mMsg_Window_c* msg_p, int* idx_p) {
+    int val = mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 9, val);
+}
+
+static int mMsgTag_Quest_FriendUp(mMsg_Window_c* msg_p, int* idx_p) {
+    u8 val = mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 5, val);
+}
+
+static int mMsgTag_Quest_FriendDown(mMsg_Window_c* msg_p, int* idx_p) {
+    u8 val = mFont_Get_TagPrmU8(msg_p->msg_data->text_buf.data + *idx_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 5, val + 100);
+}
+
+static int mMsgTag_Quest_DemoQ_0_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 2);
+}
+
+static int mMsgTag_Quest_GiveMap(mMsg_Window_c* msg_p, int* idx_p) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, 0x251D);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 1);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Quest_DemoQ_0_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_0_2b(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 2);
+}
+
+static int mMsgTag_Quest_DemoQ_0_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 3);
+}
+
+static int mMsgTag_Quest_DemoQ_0_4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 4);
+}
+
+static int mMsgTag_Quest_DemoQ_0_5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 5);
+}
+
+static int mMsgTag_Quest_DemoQ_0_6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 6);
+}
+
+static int mMsgTag_Quest_DemoQ_0_7(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 7);
+}
+
+static int mMsgTag_Quest_DemoQ_0_8(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 8);
+}
+
+static int mMsgTag_Quest_DemoQ_0_9(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 9);
+}
+
+static int mMsgTag_Quest_DemoQ_0_10(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 10);
+}
+
+static int mMsgTag_Quest_DemoQ_0_11(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 11);
+}
+
+static int mMsgTag_Quest_DemoQ_0_12(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 0, 12);
+}
+
+static int mMsgTag_Quest_DemoQ_1_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 1, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_1_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 1, 2);
+}
+
+static int mMsgTag_Quest_DemoQ_4_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 4, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_6_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 6, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_7_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 7, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_8_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 8, 1);
+}
+
+static int mMsgTag_Quest_DemoQ_8_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 8, 2);
+}
+
+static int mMsgTag_Quest_Nnkc(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Quest(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_QUEST_NUM] = {
+        &mMsgTag_Quest_DemoQ_2,
+        &mMsgTag_Quest_DemoQ_3,
+        &mMsgTag_Quest_DemoQ_9,
+        &mMsgTag_Quest_FriendUp,
+        &mMsgTag_Quest_FriendDown,
+        &mMsgTag_Quest_DemoQ_0_2,
+        &mMsgTag_Quest_GiveMap,
+        &mMsgTag_Quest_DemoQ_0_1,
+        &mMsgTag_Quest_DemoQ_0_2b,
+        &mMsgTag_Quest_DemoQ_0_3,
+        &mMsgTag_Quest_DemoQ_0_4,
+        &mMsgTag_Quest_DemoQ_0_5,
+        &mMsgTag_Quest_DemoQ_0_6,
+        &mMsgTag_Quest_DemoQ_0_7,
+        &mMsgTag_Quest_DemoQ_0_8,
+        &mMsgTag_Quest_DemoQ_0_9,
+        &mMsgTag_Quest_DemoQ_0_10,
+        &mMsgTag_Quest_DemoQ_0_11,
+        &mMsgTag_Quest_DemoQ_0_12,
+        &mMsgTag_Quest_DemoQ_1_1,
+        &mMsgTag_Quest_DemoQ_1_2,
+        &mMsgTag_Quest_DemoQ_4_1,
+        &mMsgTag_Quest_DemoQ_6_1,
+        &mMsgTag_Quest_DemoQ_7_1,
+        &mMsgTag_Quest_DemoQ_8_1,
+        &mMsgTag_Quest_DemoQ_8_2,
+        &mMsgTag_Quest_Nnkc,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_set_NextRand(mMsg_Window_c* msg_p, int* idx_p, int count) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg_tbl[4];
+    int i;
+    int rand_idx = get_random_timer(0, count);
+
+    for (i = 0; i < count; i++) {
+        msg_tbl[i] = (data[5 + i * 2] << 8) | data[5 + i * 2 + 1];
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_tbl[rand_idx]);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int get_compatriot_num(void) {
+    int i;
+    int count = 0;
+
+    for (i = 0; i < 4; i++) {
+        if (mPr_NullCheckPersonalID(&Save_Get(homes[i].ownerID)) == FALSE) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static int mMsgTag_Jump_NextForce(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Choice_Answer(msg_p, idx_p, 0xFF);
+}
+
+static int mMsgTag_Jump_NextRandSec(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg_min;
+    u16 msg_max;
+
+    mFont_Get_TagPrmU16U16(data, &msg_min, &msg_max);
+    mMsg_Set_continue_msg_num(msg_p, (u16)get_random_timer(msg_min, (msg_max - msg_min) + 1));
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump_NextRand2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_NextRand(msg_p, idx_p, 2);
+}
+
+static int mMsgTag_Jump_NextRand3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_NextRand(msg_p, idx_p, 3);
+}
+
+static int mMsgTag_Jump_NextRand4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_NextRand(msg_p, idx_p, 4);
+}
+
+static int mMsgTag_Jump_Ifsj(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifjj(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg_success;
+    u16 msg_fail;
+    u16 id;
+
+    mFont_Get_TagPrmU16U16(data, &msg_success, &msg_fail);
+    if (mLd_PlayerManKindCheck() == NATIVE) {
+        id = msg_success;
+    } else {
+        id = msg_fail; 
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, id);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump_Ifsx(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg_male;
+    u16 msg_female;
+    u16 id;
+
+    mFont_Get_TagPrmU16U16(data, &msg_male, &msg_female);
+    if (Now_Private->gender == mPr_SEX_MALE) {
+        id = msg_male;
+    } else {
+        id = msg_female;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, id);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump_Iftl(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    int shop_level = mSP_GetShopLevel();
+    u16 msg0;
+    u16 msg1;
+    u16 msg2;
+    u16 msg3;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU16U16U16U16(data, &msg0, &msg1, &msg2, &msg3);
+    if (shop_level == mSP_SHOP_TYPE_ZAKKA) {
+        msg_no = msg0;
+    } else if (shop_level == mSP_SHOP_TYPE_COMBINI) {
+        msg_no = msg1;
+    } else if (shop_level == mSP_SHOP_TYPE_SUPER) {
+        msg_no = msg2;
+    } else {
+        msg_no = msg3;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_no);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump_Ifhl(mMsg_Window_c* msg_p, int* idx_p) {
+    mHm_hs_c* house = Common_Get(now_home);
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg0;
+    u16 msg1;
+    u16 msg2;
+    u16 msg3;
+    u16 msg_no;
+    
+    mFont_Get_TagPrmU16U16U16U16(data, &msg0, &msg1, &msg2, &msg3);
+    
+    if (house != NULL) {
+        int house_level = house->size_info.size;
+
+        if (house_level == mHm_HOMESIZE_SMALL) {
+            msg_no = msg0;
+        } else if (house_level == mHm_HOMESIZE_MEDIUM) {
+            msg_no = msg1;
+        } else if (house_level == mHm_HOMESIZE_LARGE) {
+            msg_no = msg2;
+        } else {
+            msg_no = msg3;
+        }
+
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifbl(mMsg_Window_c* msg_p, int* idx_p) {
+    mHm_hs_c* house = Common_Get(now_home);
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u16 msg_basement;
+    u16 msg_no_basement;
+    u16 id;
+    
+    mFont_Get_TagPrmU16U16(data, &msg_basement, &msg_no_basement);
+    if (house != NULL) {
+        if (house->flags.has_basement) {
+            id = msg_basement;
+        } else {
+            id = msg_no_basement;
+        }
+
+        mMsg_Set_continue_msg_num(msg_p, id);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifil(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ific(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Iffc(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifpn(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    int player_num = get_compatriot_num();
+    u16 msg0;
+    u16 msg1;
+    u16 msg2;
+    u16 msg3;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU16U16U16U16(data, &msg0, &msg1, &msg2, &msg3);
+    if (player_num == 1) {
+        msg_no = msg0;
+    } else if (player_num == 2) {
+        msg_no = msg1;
+    } else if (player_num == 3) {
+        msg_no = msg2;
+    } else if (player_num == 4) {
+        msg_no = msg3;
+    } else {
+        msg_no = msg0;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_no);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump_Ifdj(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifkj(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mActor_name_t fruit_start[] = {
+        EMPTY_NO,
+        TREE_APPLE_NOFRUIT_0,
+        TREE_ORANGE_NOFRUIT_0,
+        TREE_CHERRY_NOFRUIT_0,
+        TREE_PEAR_NOFRUIT_0,
+        TREE_PEACH_NOFRUIT_0,
+        TREE_PALM_NOFRUIT_0,
+    };
+    
+    static const mActor_name_t fruit_end[] = {
+        EMPTY_NO,
+        TREE_APPLE_FRUIT,
+        TREE_ORANGE_FRUIT,
+        TREE_CHERRY_FRUIT,
+        TREE_PEAR_FRUIT,
+        TREE_PEACH_FRUIT,
+        TREE_PALM_FRUIT,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u8 fruit_idx;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &fruit_idx, &msg_no);
+    if (mFI_GetItemNumField_BCT(fruit_start[fruit_idx], fruit_end[fruit_idx]) != 0) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifgk(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifmt(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    const u8 month = Common_Get(time.rtc_time.month);
+    u8 tag_month;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &tag_month, &msg_no);
+    if (month == tag_month) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifda(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    const u8 day = Common_Get(time.rtc_time.day);
+    u8 tag_day;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &tag_day, &msg_no);
+    if (day == tag_day) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Iftm(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    const u8 hour = Common_Get(time.rtc_time.hour);
+    u8 tag_hour;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &tag_hour, &msg_no);
+    if (hour == tag_hour) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifwj(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    const s16 weather = Common_Get(weather);
+    u8 tag_weather;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &tag_weather, &msg_no);
+    tag_weather--;
+    if (weather == tag_weather) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifhf(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mActor_name_t fruits_tbl[] = {
+        EMPTY_NO,
+        ITM_FOOD_APPLE,
+        ITM_FOOD_ORANGE,
+        ITM_FOOD_CHERRY,
+        ITM_FOOD_PEAR,
+        ITM_FOOD_PEACH,
+        ITM_FOOD_COCONUT,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    u8 fruit_idx;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data, &fruit_idx, &msg_no);
+    if (mPr_GetPossessionItemIdx(Now_Private, fruits_tbl[fruit_idx]) >= 0) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifmd(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifsd(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifpl(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Ifmo(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_ChkBKey(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8 key_min;
+    u16 msg_no;
+
+    mFont_Get_TagPrmU8U16(data + *idx_p, &key_min, &msg_no);
+    if (msg_p->keyCnt_b >= key_min) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_ChkAllKey(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8 key_min;
+    u16 msg_no;
+    int key_sum;
+
+    key_sum = msg_p->keyCnt_a + msg_p->keyCnt_b + msg_p->keyCnt_x + msg_p->keyCnt_y + msg_p->keyCnt_other;
+    mFont_Get_TagPrmU8U16(data + *idx_p, &key_min, &msg_no);
+    if (key_sum >= key_min) {
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+        return mMsg_RESULT_VOID;
+    }
+
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Jump_Happy(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    u16 msg_hra;
+    u16 msg_no_hra;
+    u16 id;
+    int hra_check;
+
+    if (mEv_CheckArbeit() == FALSE) {
+        hra_check = TRUE;
+    } else {
+        hra_check = FALSE;
+    }
+
+    mFont_Get_TagPrmU16U16(data_p, &msg_hra, &msg_no_hra);
+    if (hra_check) {
+        id = msg_hra;
+    } else {
+        id = msg_no_hra;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, id);
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Jump(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_JUMP_NUM] = {
+        &mMsgTag_Jump_NextForce,
+        &mMsgTag_Jump_NextRandSec,
+        &mMsgTag_Jump_NextRand2,
+        &mMsgTag_Jump_NextRand3,
+        &mMsgTag_Jump_NextRand4,
+        &mMsgTag_Jump_Ifsj,
+        &mMsgTag_Jump_Ifjj,
+        &mMsgTag_Jump_Ifsx,
+        &mMsgTag_Jump_Iftl,
+        &mMsgTag_Jump_Ifhl,
+        &mMsgTag_Jump_Ifbl,
+        &mMsgTag_Jump_Ifil,
+        &mMsgTag_Jump_Ific,
+        &mMsgTag_Jump_Iffc,
+        &mMsgTag_Jump_Ifpn,
+        &mMsgTag_Jump_Ifdj,
+        &mMsgTag_Jump_Ifkj,
+        &mMsgTag_Jump_Ifgk,
+        &mMsgTag_Jump_Ifmt,
+        &mMsgTag_Jump_Ifda,
+        &mMsgTag_Jump_Iftm,
+        &mMsgTag_Jump_Ifwj,
+        &mMsgTag_Jump_Ifhf,
+        &mMsgTag_Jump_Ifmd,
+        &mMsgTag_Jump_Ifsd,
+        &mMsgTag_Jump_Ifpl,
+        &mMsgTag_Jump_Ifmo,
+        &mMsgTag_Jump_ChkBKey,
+        &mMsgTag_Jump_ChkAllKey,
+        &mMsgTag_Jump_Happy,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Talk3_3pbj(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Talk3_DemoQ_7_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 7, 2);
+}
+
+static int mMsgTag_Talk3_DemoNpc0_5_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 2);
+}
+
+static int mMsgTag_Talk3_DemoNpc0_5_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 1);
+}
+
+static int mMsgTag_Talk3_DemoNpc2_5_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 5, 2);
+}
+
+static int mMsgTag_Talk3_DemoNpc2_5_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 5, 1);
+}
+
+static int mMsgTag_Talk3_DemoQ_9_5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_QUEST, 9, 5);
+}
+
+static int mMsgTag_Talk3_DemoNpc0_5_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 3);
+}
+
+static int mMsgTag_Talk3_DemoNpc0_6_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 6, 2);
+}
+
+static int mMsgTag_Talk3_DemoNpc0_6_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 6, 1);
+}
+
+static int mMsgTag_Talk3(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_TALK3_NUM] = {
+        &mMsgTag_Talk3_3pbj,
+        &mMsgTag_Talk3_DemoQ_7_2,
+        &mMsgTag_Talk3_DemoNpc0_5_2,
+        &mMsgTag_Talk3_DemoNpc0_5_1,
+        &mMsgTag_Talk3_DemoNpc2_5_2,
+        &mMsgTag_Talk3_DemoNpc2_5_1,
+        &mMsgTag_Talk3_DemoQ_9_5,
+        &mMsgTag_Talk3_DemoNpc0_5_3,
+        &mMsgTag_Talk3_DemoNpc0_6_2,
+        &mMsgTag_Talk3_DemoNpc0_6_1,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Body_DemoNpc0_5_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 1);
+}
+
+static int mMsgTag_Body_DemoNpc0_5_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 2);
+}
+
+static int mMsgTag_Body_DemoNpc0_5_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 5, 3);
+}
+
+static int mMsgTag_Body_DemoNpc0_6_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 6, 1);
+}
+
+static int mMsgTag_Body_DemoNpc0_6_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 6, 2);
+}
+
+static int mMsgTag_Body_DemoNpc0_6_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC0, 6, 3);
+}
+
+static int mMsgTag_Body(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_BODY_NUM] = {
+        &mMsgTag_Body_DemoNpc0_5_1,
+        &mMsgTag_Body_DemoNpc0_5_2,
+        &mMsgTag_Body_DemoNpc0_5_3,
+        &mMsgTag_Body_DemoNpc0_6_1,
+        &mMsgTag_Body_DemoNpc0_6_2,
+        &mMsgTag_Body_DemoNpc0_6_3,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_NpcEmSub_Fun(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 1);
+}
+
+static int mMsgTag_NpcEmSub_Angry(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 2);
+}
+
+static int mMsgTag_NpcEmSub_Sad(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 3);
+}
+
+static int mMsgTag_NpcEmSub_Sleepy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 4);
+}
+
+static int mMsgTag_NpcEmSub_Normal(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 5);
+}
+
+static int mMsgTag_NpcEmSub_Gloomy(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 2, 7);
+}
+
+static int mMsgTag_NpcEmSub_Continue(mMsg_Window_c* msg_p, int* idx_p) {
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 8, mFont_Get_TagPrmU8(data_p));
+}
+
+static int mMsgTag_NpcEmSub(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_NPC_EM_SUB_NUM] = {
+        &mMsgTag_NpcEmSub_Fun,
+        &mMsgTag_NpcEmSub_Angry,
+        &mMsgTag_NpcEmSub_Sad,
+        &mMsgTag_NpcEmSub_Sleepy,
+        &mMsgTag_NpcEmSub_Normal,
+        &mMsgTag_NpcEmSub_Gloomy,
+        &mMsgTag_NpcEmSub_Continue,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_ManpuSub(mMsg_Window_c* msg_p, int* idx_p) {
+    static const u8 prm[] = {
+        0xFF, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 0, prm[id]);
+}
+
+static int mMsgTag_TmSub(mMsg_Window_c* msg_p, int* idx_p) {
+    static const u8 prm[14] = {
+        0x01, 0x02, 0x03, 0x06, 0x07, 0x08, 0x09, 0x0D,
+        0x0A, 0x0B, 0x0C, 0x0E, 0x0F, 0x10,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 1, prm[id]);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_5_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 5, 1);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_5_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 5, 2);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_5_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 5, 3);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_6_1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 6, 1);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_6_2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 6, 2);
+}
+
+static int mMsgTag_BodySub_DemoNpc2_6_3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_set_demoOrder(msg_p, idx_p, mDemo_ORDER_NPC2, 6, 3);
+}
+
+static int mMsgTag_BodySub(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_BODY_SUB_NUM] = {
+        &mMsgTag_BodySub_DemoNpc2_5_1,
+        &mMsgTag_BodySub_DemoNpc2_5_2,
+        &mMsgTag_BodySub_DemoNpc2_5_3,
+        &mMsgTag_BodySub_DemoNpc2_6_1,
+        &mMsgTag_BodySub_DemoNpc2_6_2,
+        &mMsgTag_BodySub_DemoNpc2_6_3,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsgTag_Grm_Inflect(mMsg_Window_c* msg_p, int* idx_p, int gender) {
+    mMsg_Data_c* data = msg_p->msg_data;
+
+    data->msg_len = mMsg_InflectGender(data->text_buf.data, *idx_p, data->msg_len, gender);
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Grm_ArtDef(mMsg_Window_c* msg_p, int* idx_p) {
+    (*idx_p) += mMsg_Set_SizeCode(msg_p, *idx_p);
+    msg_p->end_text_cursor_idx = *idx_p;
+    msg_p->article = mMsg_ARTICLE_DEFINITE;
+    return mMsg_RESULT_VOID;
+}
+
+static int mMsgTag_Grm_ArtNon(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Str_ArticleCut(msg_p, idx_p);
+}
+
+static int mMsgTag_Grm_Capital(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Str_Capital(msg_p, idx_p);
+}
+
+static int mMsgTag_Grm_InflectPl(mMsg_Window_c* msg_p, int* idx_p) {
+    Private_c* player = Common_Get(now_private);
+    int gender;
+
+    if (player != NULL) {
+        if (player->gender == mPr_SEX_MALE) {
+            gender = mPr_SEX_MALE;
+        } else {
+            gender = mPr_SEX_FEMALE;
+        }
+    } else {
+        gender = mPr_SEX_FEMALE;
+    }
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, gender);
+}
+
+static int mMsgTag_Grm_InflectFree0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR0].gender);
+}
+
+static int mMsgTag_Grm_InflectFree1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR1].gender);
+}
+
+static int mMsgTag_Grm_InflectFree2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR2].gender);
+}
+
+static int mMsgTag_Grm_InflectFree3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR3].gender);
+}
+
+static int mMsgTag_Grm_InflectFree4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR4].gender);
+}
+
+static int mMsgTag_Grm_InflectFree5(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR5].gender);
+}
+
+static int mMsgTag_Grm_InflectFree6(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR6].gender);
+}
+
+static int mMsgTag_Grm_InflectFree7(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR7].gender);
+}
+
+static int mMsgTag_Grm_InflectFree8(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR8].gender);
+}
+
+static int mMsgTag_Grm_InflectFree9(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR9].gender);
+}
+
+static int mMsgTag_Grm_InflectFree10(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR10].gender);
+}
+
+static int mMsgTag_Grm_InflectFree11(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR11].gender);
+}
+
+static int mMsgTag_Grm_InflectFree12(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR12].gender);
+}
+
+static int mMsgTag_Grm_InflectFree13(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR13].gender);
+}
+
+static int mMsgTag_Grm_InflectFree14(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR14].gender);
+}
+
+static int mMsgTag_Grm_InflectFree15(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR15].gender);
+}
+
+static int mMsgTag_Grm_InflectFree16(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR16].gender);
+}
+
+static int mMsgTag_Grm_InflectFree17(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR17].gender);
+}
+
+static int mMsgTag_Grm_InflectFree18(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR18].gender);
+}
+
+static int mMsgTag_Grm_InflectFree19(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->free_str[mMsg_FREE_STR19].gender);
+}
+
+static int mMsgTag_Grm_InflectItem0(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->item_str[mMsg_ITEM_STR0].gender);
+}
+
+static int mMsgTag_Grm_InflectItem1(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->item_str[mMsg_ITEM_STR1].gender);
+}
+
+static int mMsgTag_Grm_InflectItem2(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->item_str[mMsg_ITEM_STR2].gender);
+}
+
+static int mMsgTag_Grm_InflectItem3(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->item_str[mMsg_ITEM_STR3].gender);
+}
+
+static int mMsgTag_Grm_InflectItem4(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_Grm_Inflect(msg_p, idx_p, msg_p->item_str[mMsg_ITEM_STR4].gender);
+}
+
+static int mMsgTag_Grm(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_GRM_NUM] = {
+        &mMsgTag_Grm_ArtDef,
+        &mMsgTag_Grm_ArtNon,
+        &mMsgTag_Grm_Capital,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &mMsgTag_Grm_InflectPl,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &mMsgTag_Grm_InflectFree0,
+        &mMsgTag_Grm_InflectFree1,
+        &mMsgTag_Grm_InflectFree2,
+        &mMsgTag_Grm_InflectFree3,
+        &mMsgTag_Grm_InflectFree4,
+        &mMsgTag_Grm_InflectFree5,
+        &mMsgTag_Grm_InflectFree6,
+        &mMsgTag_Grm_InflectFree7,
+        &mMsgTag_Grm_InflectFree8,
+        &mMsgTag_Grm_InflectFree9,
+        &mMsgTag_Grm_InflectFree10,
+        &mMsgTag_Grm_InflectFree11,
+        &mMsgTag_Grm_InflectFree12,
+        &mMsgTag_Grm_InflectFree13,
+        &mMsgTag_Grm_InflectFree14,
+        &mMsgTag_Grm_InflectFree15,
+        &mMsgTag_Grm_InflectFree16,
+        &mMsgTag_Grm_InflectFree17,
+        &mMsgTag_Grm_InflectFree18,
+        &mMsgTag_Grm_InflectFree19,
+        &mMsgTag_Grm_InflectItem0,
+        &mMsgTag_Grm_InflectItem1,
+        &mMsgTag_Grm_InflectItem2,
+        &mMsgTag_Grm_InflectItem3,
+        &mMsgTag_Grm_InflectItem4,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data;
+    u8* data_p = data + *idx_p;
+    int id = mFont_Get_TagId(data_p);
+    mMsg_CONTROL_CODE_PROC func = proc[id];
+
+    if (func != NULL) {
+        return (*func)(msg_p, idx_p);
+    }
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Sys_Color(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Sys_Scale(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Sys_Ruby(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Sys_Font(mMsg_Window_c* msg_p, int* idx_p) {
+    return mMsgTag_dummy_proc(msg_p, idx_p);
+}
+
+static int mMsgTag_Sys(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_TAG_SYS_NUM] = {
+        &mMsgTag_Sys_Color,
+        &mMsgTag_Sys_Scale,
+        &mMsgTag_Sys_Ruby,
+        &mMsgTag_Sys_Font,
+    };
+
+    int id = mFont_Get_TagId(msg_p->msg_data->text_buf.data + *idx_p);
+    return (*proc[id])(msg_p, idx_p);
+}
+
+static int mMsg_Main_Cursol_Proc_TagCursol(mMsg_Window_c* msg_p, int* idx_p) {
+    static const mMsg_CONTROL_CODE_PROC usr_proc[mFont_TAG_GROUP_NUM] = {
+        &mMsgTag_Gaiji,
+        &mMsgTag_Base,
+        &mMsgTag_Choice,
+        &mMsgTag_NpcEm,
+        &mMsgTag_Str,
+        &mMsgTag_Com,
+        &mMsgTag_Manpu,
+        &mMsgTag_Tm,
+        &mMsgTag_PlSt,
+        &mMsgTag_Spec,
+        &mMsgTag_Sound,
+        &mMsgTag_Quest,
+        &mMsgTag_Jump,
+        &mMsgTag_Talk3,
+        &mMsgTag_Body,
+        &mMsgTag_NpcEmSub,
+        &mMsgTag_ManpuSub,
+        &mMsgTag_TmSub,
+        &mMsgTag_BodySub,
+        &mMsgTag_Grm,
+    };
+
+    u8* data = msg_p->msg_data->text_buf.data + *idx_p;
+    int group = data[2];
+    mMsg_CONTROL_CODE_PROC proc_func;
+
+    if (group == mFont_TAG_GROUP_SYS) {
+        proc_func = &mMsgTag_Sys;
+    } else {
+        proc_func = usr_proc[group];
+    }
+
+    return (*proc_func)(msg_p, idx_p);
+}
+
+static int mMsg_Main_Cursol_ControlCursol(mMsg_Window_c* msg_p) {
+    int idx = msg_p->end_text_cursor_idx;
+    f32* cursor_timer = &msg_p->cursor_timer;
+    int choice_hidden = mChoice_check_main_index(&msg_p->choice_window) == mChoice_MAIN_HIDE;
+    int res = TRUE;
+
+    msg_p->status_flags &= ~(mMsg_STATUS_FLAG_20 | mMsg_STATUS_FLAG_21);
+
+    if (chkTrigger(BUTTON_B) && (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_FAST_TEXT;
+    }
+
+    if (mMsg_Check_CancelOrder(msg_p)) {
+        msg_p->cancel_flag = TRUE;
+    }
+
+    if (msg_p->cancel_flag && (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+        *cursor_timer = 0.0f;
+    } else if ((msg_p->status_flags & mMsg_STATUS_FLAG_FAST_TEXT) &&
+               (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+        *cursor_timer = 0.0f;
+    } else {
+        (*cursor_timer) -= 1.0f;
+
+        if (*cursor_timer <= 0.0f) {
+            *cursor_timer = 0.0f;
+        }
+    }
+
+    if (choice_hidden) {
+        if (msg_p->hide_choice_window_timer > 0) {
+            msg_p->hide_choice_window_timer--;
+        }
+    } else {
+        msg_p->hide_choice_window_timer = 3;
+    }
+
+    mMsg_Unset_NowUtter(msg_p);
+    msg_p->force_voice_enable_flag = FALSE;
+
+    if ((*cursor_timer <= 0.0f) && choice_hidden) {
+        while (TRUE) {
+            u8 code = msg_p->msg_data->text_buf.data[idx];
+
+            if (mMsg_Check_CancelOrder(msg_p)) {
+                msg_p->cancel_flag = TRUE;
+            } else if (code == CHAR_NEW_LINE) {
+                idx += mMsg_Set_SizeCode(msg_p, idx);
+                msg_p->now_display_line++;
+            } else {
+                int is_control_cursol;
+                int is_tag_cursol;
+
+                if ((is_control_cursol = mMsg_Main_Cursol_Check_ControlCursol(msg_p, idx)) != FALSE || (is_tag_cursol = mMsg_Main_Cursol_Check_TagCursol(msg_p, idx)) != FALSE) {
+                    int proc_res; // @BUG - proc_res is not initialized, however we should enter this block in an invalid state.
+
+                    if (is_control_cursol) {
+                        proc_res = mMsg_Main_Cursol_Proc_ControlCursol(msg_p, &idx);
+                    } else if (is_tag_cursol) {
+                        proc_res = mMsg_Main_Cursol_Proc_TagCursol(msg_p, &idx);
+                    }
+
+                    if (proc_res == mMsg_RESULT_FALSE) {
+                        if (msg_p->hide_choice_window_timer == 0 && msg_p->_3F8[0] == 1) {
+                            mMsg_sound_voice_endcode_set(msg_p);
+                        }
+
+                        res = FALSE;
+                        break;
+                    } else if (proc_res == mMsg_RESULT_TRUE) {
+                        msg_p->force_voice_enable_flag = TRUE;
+                        break;
+                    }
+                } else {
+                    int cur_idx = idx;
+                    int voice_entry = FALSE;
+
+                    if ((msg_p->status_flags & mMsg_STATUS_FLAG_FAST_TEXT) != 0 &&
+                        (msg_p->status_flags & mMsg_STATUS_FLAG_CURSOL_JUST) == 0) {
+                        mMsg_sound_MessageSpeedClear(1);
+                        msg_p->status_flags &= ~mMsg_STATUS_FLAG_NOT_PAUSE_FRAME;
+                    } else {
+                        mMsg_sound_MessageSpeedClear(2);
+                    }
+
+                    /* Only move on to the next character every other frame unless forced */
+                    if ((msg_p->status_flags & mMsg_STATUS_FLAG_NOT_PAUSE_FRAME) == 0) {
+                        idx += mMsg_Set_SizeCode(msg_p, idx);
+                        voice_entry = TRUE;
+                    }
+
+                    msg_p->end_text_cursor_idx = idx;
+                    msg_p->status_flags ^= mMsg_STATUS_FLAG_NOT_PAUSE_FRAME;
+                    msg_p->status_flags |= mMsg_STATUS_FLAG_20;
+
+                    if (msg_p->cancel_flag == FALSE) {
+                        if (mMsg_sound_CodeVoice(msg_p, cur_idx, voice_entry)) {
+                            msg_p->status_flags |= mMsg_STATUS_FLAG_21;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_20) == 0) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_NOT_PAUSE_FRAME;
+    }
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_21) != 0) {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_UTTER;
+    } else {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_UTTER;
+    }
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_21) != 0 || (msg_p->status_flags & mMsg_STATUS_FLAG_UTTER)) {
+        mMsg_Set_NowUtter(msg_p);
+    }
+
+    return res;
+}
+
+static void mMsg_request_main_index_fromCursol(mMsg_Window_c* msg_p, int processing) {
+    if (processing == FALSE) {
+        mMsg_request_main_normal(msg_p, FALSE, 5);
+    }
+}
+
+static void mMsg_Main_Cursol(mMsg_Window_c* msg_p, GAME* game) {
+    int processing = mMsg_Main_Cursol_ControlCursol(msg_p);
+
+    mMsg_request_main_index_fromCursol(msg_p, processing);
+    mMsg_MainSetup_Window(msg_p, game);
+
+    if (msg_p->main_index != mMsg_INDEX_CURSOL) {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_FAST_TEXT;
+    }
+}
+
+static void mMsg_MainSetup_Cursol(mMsg_Window_c* msg_p, GAME* game) {
+    mMsg_Request_MainCursor_Data_c* request_data = &msg_p->request_data.request_main_cursor;
+    int wait_flag = request_data->wait_flag;
+
+    msg_p->main_index = mMsg_INDEX_CURSOL;
+    msg_p->draw_flag = TRUE;
+    msg_p->requested_main_index = -1;
+    msg_p->requested_priority = 4;
+    msg_p->voice_sfx_idx = -1;
+    msg_p->_3F8[0] = 0; // shouldn't this be 3?
+    msg_p->end_timer = 0;
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_LAST_DELAY;
+    msg_p->article = 0;
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_CAPITALIZE;
+
+    if (wait_flag != TRUE) {
+        msg_p->show_continue_button = FALSE;
+    }
+
+    msg_p->hide_choice_window_timer = 0;
+}

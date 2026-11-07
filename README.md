@@ -105,14 +105,16 @@ Building
 
   To use a version other than `GAFE01_00` (USA), specify it with `--version`.
 
-  Stock GC 2.6 with the external SJIS wrapper is the default. To use the optimized
-  compiler with built-in SJIS conversion, run
-  `python configure.py --version GAFU01_00 --fast-mwcc`.
-  This uses the compiler set in `build/GAFU01_00/compilers` (including `GC/2.6f1`),
-  or the directory specified by `--compilers`. Versions without GC 2.6 are unaffected.
+  Stock compilers with the external SJIS wrapper are the default. To use optimized
+  GC 1.3.2f1 or 2.6f1 with built-in SJIS conversion, add `--fast-mwcc`, for example
+  `python configure.py --version GAFE01_00 --fast-mwcc` for US or
+  `python configure.py --version GAFU01_00 --fast-mwcc` for Australia.
+  This uses the compiler set in `build/<version>/compilers` (including `GC/1.3.2f1`
+  or `GC/2.6f1`), or the directory specified by `--compilers`.
+  Other compiler versions are unaffected.
   Omit `--fast-mwcc` when configuring to return to stock.
-  The GC/2.6f1 compiler is an unreleased modification,
-  so most users should stick to stock GC/2.6.
+  The f1 compiler builds are unreleased modifications,
+  so most users should stick to stock compilers.
 
   PAL has five language targets. Extract each language TGC into
   `orig/GAFP01_00_en`, `orig/GAFP01_00_fr`, `orig/GAFP01_00_de`,
@@ -129,6 +131,16 @@ Building
   `forestd`, `foresti`, and `foresto`). Matching PAL sources are shared across
   languages; unmatched units still use original split objects. TGC rebuilding
   is not included.
+
+  PAL comparison targets prefer Australian sources, falling back to shared US
+  sources. The asset RELs have individual source splits and module-specific
+  extraction directories. Sources that still need a PAL port are listed in
+  `tools/pal.py`; their source paths remain recorded, while comparisons and
+  `all_source` wait until they compile. Only verified PAL objects are linked.
+
+  PAL source and header overrides mirror the base paths under `src/PAL/`
+  and `include/PAL/`. PAL include directories are searched before the shared
+  Australian/US directories for every PAL object.
 
 - Build:
 

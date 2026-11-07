@@ -17,7 +17,7 @@ Gfx obj_e_mikanbox_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 64, 32, obj_e_mikanbox_tex),
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
 #else
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
@@ -30,7 +30,7 @@ Gfx obj_e_mikanbox_model[] = {
     gsSPEndDisplayList(),
 };
 
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 u8 end_pp_nin1_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/end_pp_nin1_tex.inc"
 };

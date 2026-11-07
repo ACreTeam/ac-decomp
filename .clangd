@@ -2,7 +2,25 @@ If:
   PathExclude: agb/.*
 
 CompileFlags:
-  Add: [ "-fdeclspec", "-D__INTELLISENSE__", "-DVERSION=0", "-DDEBUG=0", "-DNDEBUG", "-DF3DEX_GBI_2", "-D_LANGUAGE_C" ]
+  # Re-add the shared paths after PAL, preserving generated per-object paths.
+  Remove: [ "-Iinclude/PAL", "-Iinclude/PAL/dolphin", "-Isrc/PAL/static", "-Iinclude/AUS", "-Isrc/AUS/static", "-Iinclude", "-Iinclude/dolphin", "-Iinclude/libc", "-Isrc/static/dolphin", "-DVERSION=*", "-DVER_GAFP01_00=*" ]
+  Add:
+    - "-Iinclude/PAL"
+    - "-Iinclude/PAL/dolphin"
+    - "-Isrc/PAL/static"
+    - "-Iinclude/AUS"
+    - "-Isrc/AUS/static"
+    - "-Iinclude"
+    - "-Iinclude/dolphin"
+    - "-Iinclude/libc"
+    - "-Isrc/static/dolphin"
+    - "-fdeclspec"
+    - "-D__INTELLISENSE__"
+    - "-DVERSION=2"
+    - "-DDEBUG=0"
+    - "-DNDEBUG"
+    - "-DF3DEX_GBI_2"
+    - "-D_LANGUAGE_C"
 
 Diagnostics:
   UnusedIncludes: None

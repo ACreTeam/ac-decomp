@@ -59,7 +59,8 @@ enum {
     mPr_SEX_FEMALE,
     mPr_SEX_OTHER,
 
-    mPr_SEX_NUM = mPr_SEX_OTHER
+    mPr_SEX_NUM = mPr_SEX_OTHER,
+    mPr_SEX_ALL
 };
 
 enum {

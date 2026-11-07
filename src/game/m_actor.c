@@ -751,9 +751,15 @@ static void restore_fgdata(ACTOR* actor, GAME_PLAY* play) {
 }
 
 static int restore_flag[ACTOR_PART_NUM] = {
+#if VERSION >= VER_GAFP01_00
+    FALSE, /* FG */
+    TRUE,  /* ITEM */
+    TRUE,  /* PLAYER */
+#else
     TRUE,  /* FG */
     TRUE,  /* ITEM */
     FALSE, /* PLAYER */
+#endif
     FALSE, /* 3 */
     FALSE, /* NPC */
     FALSE, /* BG */

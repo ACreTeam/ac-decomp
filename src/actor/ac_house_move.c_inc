@@ -341,7 +341,7 @@ static void aHUS_set_bgOffset(ACTOR* actorx, int idx) {
     int i;
 
     for (i = 0; i < 3; i++) {
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
         pos.z = actorx->home.position.z + addZ[i];
 
         pos.x = actorx->home.position.x + addX[0];

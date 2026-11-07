@@ -127,16 +127,22 @@ extern void mEv_fishRecord_set(PersonalID_c* pid, int size) {
     lbRTC_TimeCopy(&record->time, rtc_time);
 }
 
+#if VERSION == VER_GAFP01_00
+#define mFR_UNIT_CONV(cm) ((cm))
+#else
+#define mFR_UNIT_CONV(cm) ((cm) / 2.54f)
+#endif
+
 extern int mFR_fish_rndsize(int fish_size) {
     f32 rng = fqrand();
 
     switch (fish_size) {
         case mFR_SIZE_LARGE:
-            return (50.0f + 20.0f * rng * rng) / 2.54f;
+            return mFR_UNIT_CONV(50.0f + 20.0f * rng * rng);
         case mFR_SIZE_MEDIUM:
-            return (30.0f + 20.0f * rng) / 2.54f;
+            return mFR_UNIT_CONV(30.0f + 20.0f * rng);
         default: /* mFR_SIZE_SMALL */
-            return (30.0f - 20.0f * rng * rng) / 2.54f;
+            return mFR_UNIT_CONV(30.0f - 20.0f * rng * rng);
     }
 }
 
@@ -423,7 +429,12 @@ static void mFR_GetFishPresentMail(mFR_record_c* record, Mail_c* mail) {
     mMl_clear_mail(mail);
     present = mSP_SelectFishginPresent(mPr_GetPrivateIdx(&record->pid));
     mIN_copy_name_str(present_name, present);
+
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_art2(mHandbill_FREE_STR0, present_name, sizeof(present_name), mIN_get_item_article_indef(present), mIN_get_item_article_def(present), mIN_get_item_gender(present));
+#else
     mHandbill_Set_free_str(mHandbill_FREE_STR0, present_name, mIN_ITEM_NAME_LEN);
+#endif
     mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
                                    0x23E + (((record->time.day - 1) / 7) & 3));
 

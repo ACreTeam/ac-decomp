@@ -44,14 +44,16 @@ dvderr.o:
 	.data       start:0x800BC000 end:0x800C5E40
 	.bss        start:0x800F0D18 end:0x800F1110
 
-bootdata.obj:
-	.text       start:0x80008A54 end:0x80008A54
-	.text       start:0x80008A54 end:0x80008A54
-	.text       start:0x80008A54 end:0x80008A54
-	.text       start:0x80008A54 end:0x80008A54
+bootdata/gam_win1.c:
 	.data       start:0x800C5E40 end:0x800C8200
+
+bootdata/gam_win2.c:
 	.data       start:0x800C8200 end:0x800CA520
+
+bootdata/gam_win3.c:
 	.data       start:0x800CA520 end:0x800CB160
+
+bootdata/logo_nin.c:
 	.data       start:0x800CB160 end:0x800CFE40
 
 nintendo_hi_0_frn.o:

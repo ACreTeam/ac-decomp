@@ -207,21 +207,21 @@ static void LightsN__diffuse_proc(LightsN* lights, LightParams* lightInfo) {
 
 extern void LightsN_list_check(LightsN* lights, Light_list* node, xyz_t* pos) {
 
-    const static light_point_proc poslight_type_proc[] = { LightsN__point_proc, (light_point_proc)LightsN__diffuse_proc,
+    const static light_point_proc light_type_proc[] = { LightsN__point_proc, (light_point_proc)LightsN__diffuse_proc,
                                                            LightsN__point_proc };
 
-    const static light_P_point_proc light_type_proc[] = { LightsN__P_point_proc,
+    const static light_P_point_proc poslight_type_proc[] = { LightsN__P_point_proc,
                                                           (light_P_point_proc)LightsN__diffuse_proc,
                                                           LightsN__P_point_proc };
 
     if (pos == NULL) {
         while (node != NULL) {
-            light_type_proc[node->info->type](lights, &node->info->lights, pos);
+            poslight_type_proc[node->info->type](lights, &node->info->lights, pos);
             node = node->next;
         }
     } else {
         while (node != NULL) {
-            poslight_type_proc[node->info->type](lights, &node->info->lights, pos);
+            light_type_proc[node->info->type](lights, &node->info->lights, pos);
             node = node->next;
         }
     }

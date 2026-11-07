@@ -1,7 +1,7 @@
 #include "jsyswrap_cpp.h"
 
 #include "JSystem/JSystem.h"
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 #include "JSystem/JFramework/JFWSystem.h"
 #endif
 #include "JSystem/JUtility/JUTGamePad.h"
@@ -38,7 +38,7 @@ static u16 video_pan_height = 0;
 
 static u32 SystemHeapSize = 0x16C7000;
 static u32 gameheap_len = 0x380000;
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 static GXRenderModeObj customized_GXPal224Ds = {
     VI_TVMODE_PAL_DS, 640, 224, 224, 30, 31, 660, 448,
     VI_XFBMODE_SF, 0, 0,
@@ -243,7 +243,7 @@ static void ReportDiskID() {
                        disk_id->diskNumber, disk_id->gameVersion);
 }
 
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 extern void JW_UpdateVideoMode() {
     GXRenderModeObj* renderMode;
     if (video_famicom) {
@@ -639,7 +639,7 @@ extern void JW_Init() {
              soundAramSize + graphAramSize);
     JC_JFWSystem_setAramAudioBufSize(soundAramSize);
     JC_JFWSystem_setAramGraphBufSize(graphAramSize);
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     JFWSystem::setRenderMode(&customized_GXPal528IntDf);
 #endif
     JC_JFWSystem_init();
@@ -647,7 +647,7 @@ extern void JW_Init() {
     jc_sysConsole = JC_JFWSystem_getSystemConsole();
     JC_JUTConsole_setOutput(jc_sysConsole, 3);
     JC_JUTConsole_setPosition(jc_sysConsole, 32, 42);
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     void* display_manager = JC_JFWDisplay_createManager_0(JC_JFWSystem_getSystemHeap(), 2, 1);
 #else
     void* display_manager = JC_JFWDisplay_createManager_0(&GXNtsc480IntDf, JC_JFWSystem_getSystemHeap(), 2, 1);
@@ -655,7 +655,7 @@ extern void JW_Init() {
     JC_JUTProcBar_setVisible(JC_JUTProcBar_getManager(), FALSE);
     JC_JUTProcBar_setVisibleHeapBar(JC_JUTProcBar_getManager(), FALSE);
     jc_gport = JC_J2DOrthoGraph_new();
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     GXColor color = TCOLOR_BLACK;
 #else
     u32 color = TCOLOR_BLACK;
@@ -665,7 +665,7 @@ extern void JW_Init() {
     JC_JFWDisplay_setFader(display_manager, jc_fader);
     JC_JFWDisplay_setClearColor(display_manager, TCOLOR_BLACK);
     JC_JFWDisplay_setGamma(display_manager, 0);
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     JW_SetVideoPan(20, 6, 598, 562);
 #else
     JW_SetVideoPan(20, 6, 598, 464);

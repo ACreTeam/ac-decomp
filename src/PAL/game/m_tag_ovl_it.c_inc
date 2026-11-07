@@ -1,0 +1,363 @@
+typedef struct tag_str_info_s {
+    u8 str[mTG_TAG_SEL_STRING_LEN];
+    int str_len;
+    int color_idx;
+} mTG_str_info_c;
+
+enum {
+    mTG_MAIL_TYPE_NONE,
+    mTG_MAIL_TYPE_FROM,
+    mTG_MAIL_TYPE_FROM_HOME,
+    mTG_MAIL_TYPE_FROM_MUSEUM,
+    mTG_MAIL_TYPE_FROM_HRA,
+    mTG_MAIL_TYPE_TO_MUSEUM,
+    mTG_MAIL_TYPE_FROM_POST_OFFICE,
+    mTG_MAIL_TYPE_FROM_OMIKUJI,
+    mTG_MAIL_TYPE_DELIVERY,
+
+    mTG_MAIL_TYPE_NUM
+};
+
+enum {
+    mTG_MAIL_NAME_COLOR_RED,
+    mTG_MAIL_NAME_COLOR_VIOLET,
+    mTG_MAIL_NAME_COLOR_GREEN,
+    mTG_MAIL_NAME_COLOR_PURPLE,
+    mTG_MAIL_NAME_COLOR_INDIGO,
+    mTG_MAIL_NAME_COLOR_PINK,
+    mTG_MAIL_NAME_COLOR_BLACK,
+
+    mTG_MAIL_NAME_COLOR_NUM
+};
+
+static int mTG_init_tag_data_item_win_sub_mail_item_mail(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    int type = mTG_MAIL_TYPE_FROM;
+
+    mTG_strcpy(str_infos[1].str, mail->header.sender.personalID.player_name, mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+
+    if (mail->header.recipient.type == mMl_NAME_TYPE_MUSEUM) {
+        str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_VIOLET;
+        tag->str2_type = mTG_QSTR_TYPE_TO_MUSEUM;
+        type = mTG_MAIL_TYPE_TO_MUSEUM;
+    } else if (mail->header.sender.type == mMl_NAME_TYPE_MUSEUM) {
+        str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
+        tag->str2_type = mTG_QSTR_TYPE_FROM_MUSEUM;
+        type = mTG_MAIL_TYPE_FROM_MUSEUM;
+    } else {
+        str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_VIOLET;
+        tag->str2_type = mTG_QSTR_TYPE_MAIL;
+    }
+
+    return type;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_xmas(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_SANTA), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_tanukiti(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_SHOP_MASTER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
+    tag->str2_type = mTG_QSTR_TYPE_SHOP;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_tunekiti(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_BROKER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
+    tag->str2_type = mTG_QSTR_TYPE_SHOP;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_mother(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, str_home, mTG_TAG_SEL_STRING_LEN, sizeof(str_home));
+    str_infos[1].str_len = sizeof(str_home);
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
+    tag->str2_type = mTG_QSTR_TYPE_MOTHER;
+
+    return mTG_MAIL_TYPE_FROM_HOME;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_omikuji(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_EV_MIKO), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
+    tag->str2_type = mTG_QSTR_TYPE_OMIKUJI;
+
+    return mTG_MAIL_TYPE_FROM_OMIKUJI;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_happy(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, str_happy_room, mTG_TAG_SEL_STRING_LEN, sizeof(str_happy_room));
+    str_infos[1].str_len = sizeof(str_happy_room);
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
+    tag->str2_type = mTG_QSTR_TYPE_HAPPY_ROOM;
+
+    return mTG_MAIL_TYPE_FROM_HRA;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_snowman(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(ETC_SNOWMAN_BALL_A), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_angler(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_ANGLER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
+    tag->str2_type = mTG_QSTR_TYPE_ANGLER;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_postoffice(mTG_tag_c* tag, mTG_str_info_c* str_infos,
+                                                               Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, str_postoffice, mTG_TAG_SEL_STRING_LEN, sizeof(str_postoffice));
+    str_infos[1].str_len = sizeof(str_postoffice);
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
+    tag->str2_type = mTG_QSTR_TYPE_POST_OFFICE;
+
+    return mTG_MAIL_TYPE_FROM_POST_OFFICE;
+}
+
+static int mTG_init_tag_data_item_win_sub_mail_item_sp_npc(mTG_tag_c* tag, mTG_str_info_c* str_infos, Mail_c* mail) {
+    mTG_strcpy(str_infos[1].str, mail->header.sender.personalID.player_name, mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
+    str_infos[1].str_len = PLAYER_NAME_LEN;
+    str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
+
+    return mTG_MAIL_TYPE_FROM;
+}
+
+static void mTG_init_tag_data_item_win_sub_mail_item_set_string(mTG_tag_c* tag, mTG_str_info_c* str_infos, int type) {
+    switch (type) {
+        case mTG_MAIL_TYPE_FROM: {
+            mTG_strcpy(tag->str2, str_otegami, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from0, mTG_TAG_SEL_STRING_LEN, sizeof(str_from0));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_FROM_HOME: {
+            mTG_strcpy(tag->str2, str_otegami2, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami2));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from0, mTG_TAG_SEL_STRING_LEN, sizeof(str_from0));
+            mTG_strcat_color(tag->str1, str_home, mTG_TAG_SEL_STRING_LEN, sizeof(str_home),
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_FROM_MUSEUM: {
+            mTG_strcpy(tag->str2, str_otegami, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from2, mTG_TAG_SEL_STRING_LEN, sizeof(str_from2));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_FROM_HRA: {
+            mTG_strcpy(tag->str2, str_otegami, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from3, mTG_TAG_SEL_STRING_LEN, sizeof(str_from3));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_TO_MUSEUM: {
+            mTG_strcpy(tag->str2, str_otegami3, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami3));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from0, mTG_TAG_SEL_STRING_LEN, sizeof(str_from0));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_FROM_POST_OFFICE: {
+            mTG_strcpy(tag->str2, str_otegami2, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami2));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from1, mTG_TAG_SEL_STRING_LEN, sizeof(str_from1));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_FROM_OMIKUJI: {
+            mTG_strcpy(tag->str2, str_omikuji, mTG_TAG_SEL_STRING_LEN, sizeof(str_omikuji));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from4, mTG_TAG_SEL_STRING_LEN, sizeof(str_from4));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+        case mTG_MAIL_TYPE_DELIVERY: {
+            mTG_strcpy(tag->str2, str_otodokemono, mTG_TAG_SEL_STRING_LEN, sizeof(str_otodokemono));
+            mTG_strcat_color(tag->str0, str_infos[0].str, mTG_TAG_SEL_STRING_LEN, str_infos[0].str_len,
+                             &str_color[str_infos[0].color_idx]);
+            mTG_strcpy(tag->str1, str_from0, mTG_TAG_SEL_STRING_LEN, sizeof(str_from0));
+            mTG_strcat_color(tag->str1, str_infos[1].str, mTG_TAG_SEL_STRING_LEN, str_infos[1].str_len,
+                             &str_color[str_infos[1].color_idx]);
+
+            break;
+        }
+
+    }
+}
+
+typedef int (*mTG_ITEM_WIN_SUB_MAIL_ITEM_PROC)(mTG_tag_c*, mTG_str_info_c*, Mail_c*);
+
+static void mTG_init_tag_data_item_win_sub_mail_item(Submenu* submenu, mTG_tag_c* tag, Mail_c* mail,
+                                                     mActor_name_t itemNo, int itemCond, int idx) {
+    static mTG_ITEM_WIN_SUB_MAIL_ITEM_PROC proc[] = {
+        &mTG_init_tag_data_item_win_sub_mail_item_mail,       &mTG_init_tag_data_item_win_sub_mail_item_xmas,
+        &mTG_init_tag_data_item_win_sub_mail_item_tanukiti,   &mTG_init_tag_data_item_win_sub_mail_item_tunekiti,
+        &mTG_init_tag_data_item_win_sub_mail_item_mother,     &mTG_init_tag_data_item_win_sub_mail_item_omikuji,
+        &mTG_init_tag_data_item_win_sub_mail_item_happy,      &mTG_init_tag_data_item_win_sub_mail_item_tanukiti,
+        &mTG_init_tag_data_item_win_sub_mail_item_snowman,    &mTG_init_tag_data_item_win_sub_mail_item_angler,
+        &mTG_init_tag_data_item_win_sub_mail_item_postoffice, &mTG_init_tag_data_item_win_sub_mail_item_sp_npc,
+    };
+    static u8 present_str[6] = "Regalo";
+
+    int str0_len;
+    int str1_len;
+    int str2_len;
+    f32 scale = 0.875f;
+    int win_type = mTG_WIN_TYPE_ITEM;
+    int mail_type = mTG_MAIL_TYPE_NONE;
+    mTG_str_info_c str_infos[3];
+    int i;
+
+    tag->str2_type = mTG_QSTR_TYPE_NONE;
+
+    mem_clear(str_infos[0].str, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+    mem_clear(str_infos[1].str, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+    mem_clear(str_infos[2].str, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+
+    if (itemNo == EMPTY_NO) {
+        scale = 0.75f;
+        win_type = mTG_WIN_TYPE_SELECT;
+        mTG_strcpy(str_infos[0].str, mail->header.recipient.personalID.player_name, mTG_TAG_SEL_STRING_LEN,
+                   PLAYER_NAME_LEN);
+        str_infos[0].str_len = PLAYER_NAME_LEN;
+
+        if (mail->content.mail_type == mMl_TYPE_MAIL && mail->header.recipient.type == mMl_NAME_TYPE_MUSEUM) {
+            str_infos[0].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
+        } else {
+            str_infos[0].color_idx = mTG_MAIL_NAME_COLOR_RED;
+        }
+
+        mail_type = (*proc[mail->content.mail_type])(tag, str_infos, mail);
+    } else if (tag->table == mTG_TABLE_ITEM) {
+        win_type = mTG_WIN_TYPE_SELECT;
+
+        /* Show quest item info */
+        if ((itemCond & mPr_ITEM_COND_QUEST)) {
+            u8 str0[mTG_TAG_SEL_STRING_LEN];
+            u8 str1[mTG_TAG_SEL_STRING_LEN];
+
+            mem_clear(str0, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+            mem_clear(str1, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+
+            if (mQst_GetToFromName(str0, str1, idx) == TRUE) {
+                mTG_strcpy(str_infos[0].str, str0, mTG_TAG_SEL_STRING_LEN, mTG_TAG_SEL_STRING_LEN);
+                str_infos[0].str_len = mTG_TAG_SEL_STRING_LEN;
+                str_infos[0].color_idx = mTG_MAIL_NAME_COLOR_RED;
+
+                mTG_strcpy(str_infos[1].str, str1, mTG_TAG_SEL_STRING_LEN, mTG_TAG_SEL_STRING_LEN);
+                str_infos[1].str_len = mTG_TAG_SEL_STRING_LEN;
+                str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_VIOLET;
+
+                scale = 0.75f;
+                mail_type = mTG_MAIL_TYPE_DELIVERY;
+                tag->str2_type = mTG_QSTR_TYPE_ITEM;
+            }
+        }
+    }
+
+    if (tag->str2_type == mTG_QSTR_TYPE_NONE) {
+        if (itemCond == mPr_ITEM_COND_PRESENT) {
+            mem_copy(tag->str0, present_str, sizeof(present_str));
+        } else if (itemNo >= ITM_MY_ORG_UMBRELLA0 && itemNo <= ITM_MY_ORG_UMBRELLA7) {
+            mem_copy(tag->str0, Now_Private->my_org[(itemNo - ITM_MY_ORG_UMBRELLA0) & 7].name,
+                     mNW_ORIGINAL_DESIGN_NAME_LEN);
+        } else {
+            mIN_copy_name_str(tag->str0, itemNo);
+        }
+
+        win_type = mTG_WIN_TYPE_ITEM;
+    } else {
+        mTG_init_tag_data_item_win_sub_mail_item_set_string(tag, str_infos, mail_type);
+    }
+
+
+    {
+        f32 width;
+        f32 str1_width;
+        f32 str2_width;
+
+        str0_len = mMl_strlen(tag->str0, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+        str1_len = mMl_strlen(tag->str1, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+        str2_len = mMl_strlen(tag->str2, mTG_TAG_SEL_STRING_LEN, CHAR_SPACE);
+        width = mFont_GetStringWidth2(tag->str0, str0_len, TRUE);
+        str1_width = mFont_GetStringWidth2(tag->str1, str1_len, TRUE);
+        str2_width = mFont_GetStringWidth2(tag->str2, str2_len, TRUE);
+
+        if (str1_width > width) {
+            width = str1_width;
+        }
+
+        if (str2_width > width) {
+            width = str2_width;
+        }
+
+        width *= scale;
+        mTG_set_tag_win_scale_p(tag, win_type, width, 0.0f);
+    }
+
+    if (win_type == mTG_WIN_TYPE_SELECT && mTG_quest_disp_up_check(tag) == FALSE &&
+        mTG_quest_disp_low_check(tag) == FALSE) {
+        tag->body_ofs[1] += 8.0f;
+    }
+
+    if (mTG_check_edge_right_item(tag) == TRUE) {
+        tag->arrow_dir = 1;
+    } else {
+        tag->body_ofs[0] *= -1.0f;
+        tag->arrow_dir = 2;
+    }
+
+    submenu->overlay->tag_ovl->item_name_wait_time = mTG_get_item_name_wait_time(tag);
+}
+

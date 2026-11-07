@@ -1,0 +1,18 @@
+static void mMsg_Main_Wait(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_MainSetup_Window(msg_p, game);
+}
+
+static void mMsg_MainSetup_Wait(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_Request_MainWait_Data_c* request_data = &msg_p->request_data.request_main_wait;
+  mMsg_MainWait_Data_c* main_data = &msg_p->main_data.main_wait;
+
+  main_data->last_main_index = request_data->last_main_index;
+  msg_p->main_index = mMsg_INDEX_WAIT;
+  msg_p->draw_flag = FALSE;
+  msg_p->window_scale = 0.0f;
+  msg_p->text_scale = 0.0f;
+  msg_p->timer = 0.0f;
+  msg_p->requested_main_index = -1;
+  msg_p->requested_priority = 4;
+  msg_p->status_flags &= ~mMsg_STATUS_FLAG_NO_ZOOMDOWN;
+}

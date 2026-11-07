@@ -5,979 +5,1383 @@ Sections:
 	.data       type:data align:32
 	.bss        type:bss align:8
 
+data/model/structure/palette/structure_pal_data.c:
+	.data       start:0x00000000 end:0x000014A0
+
+data/model/structure/structure_pal.c:
+	.data       start:0x000014A0 end:0x000017C0
+
+data/model/obj_yamishop_shadow.c:
+	.data       start:0x000017C0 end:0x00001AA0
+
+data/model/obj_uranai_shadow.c:
+	.data       start:0x00001AA0 end:0x00001DE0
+
+data/model/obj_e_count_shadow.c:
+	.data       start:0x00001DE0 end:0x00002080
+
+data/model/obj_s_douzou_shadow.c:
+	.data       start:0x00002080 end:0x00002260
+
+data/model/obj_dump_shadow.c:
+	.data       start:0x00002260 end:0x00002800
+
+data/model/obj_frag_shadow.c:
+	.data       start:0x00002800 end:0x00002AE0
+
+data/model/obj_e_ghog_shadow.c:
+	.data       start:0x00002AE0 end:0x00002C20
+
+data/model/obj_e_hfes_shadow_a.c:
+	.data       start:0x00002C20 end:0x000032E0
+
+data/model/obj_s_house_i_shadow.c:
+	.data       start:0x000032E0 end:0x000035A0
+
+data/model/obj_e_kago_shadow.c:
+	.data       start:0x000035A0 end:0x000038E0
+
+data/model/obj_w_kamakura_shadow.c:
+	.data       start:0x000038E0 end:0x00003CA0
+
+data/model/obj_e_koinobori_shadow.c:
+	.data       start:0x00003CA0 end:0x00003F80
+
+data/model/obj_e_mikuji_shadow.c:
+	.data       start:0x00003F80 end:0x00004260
+
+data/model/obj_museum_shadow.c:
+	.data       start:0x00004260 end:0x00004540
+
+data/model/obj_s_myhome_i_shadow.c:
+	.data       start:0x00004540 end:0x00004780
+
+data/model/obj_house1_shadow.c:
+	.data       start:0x00004780 end:0x00005C00
+
+data/model/obj_myhome1_shadowE.c:
+	.data       start:0x00005C00 end:0x00007900
+
+data/model/obj_s_kouban_shadow.c:
+	.data       start:0x00007900 end:0x00007CC0
+
+data/model/obj_s_yubinkyoku_shadow.c:
+	.data       start:0x00007CC0 end:0x00008000
+
+data/model/obj_e_radio_shadow.c:
+	.data       start:0x00008000 end:0x000082E0
+
+data/model/reserve_shadow.c:
+	.data       start:0x000082E0 end:0x00008800
+
+data/model/obj_car_shadow.c:
+	.data       start:0x00008800 end:0x00008BE0
+
+data/model/obj_shop1_shadow.c:
+	.data       start:0x00008BE0 end:0x000097E0
+
+data/model/obj_shrine_shadow.c:
+	.data       start:0x000097E0 end:0x00009B40
+
+data/model/obj_station1_shadow.c:
+	.data       start:0x00009B40 end:0x0000AD80
+
+data/model/obj_s_tailor_shadow.c:
+	.data       start:0x0000AD80 end:0x0000AEC0
+
+data/model/obj_s_tent_shadow.c:
+	.data       start:0x0000AEC0 end:0x0000B180
+
+data/model/obj_s_toudai_shadow.c:
+	.data       start:0x0000B180 end:0x0000B300
+
+data/model/obj_e_tukimi_l_shadow.c:
+	.data       start:0x0000B300 end:0x0000B8C0
+
+data/model/obj_e_turi_l_shadow.c:
+	.data       start:0x0000B8C0 end:0x0000BE40
+
+data/model/obj_e_yatai_shadow_l.c:
+	.data       start:0x0000BE40 end:0x0000C000
+
+data/model/obj_e_boat.c:
+	.data       start:0x0000C000 end:0x0000E040
+
+data/model/obj_s_yamishop.c:
+	.data       start:0x0000E040 end:0x00010FA0
+
+data/model/obj_s_bridgeA.c:
+	.data       start:0x00010FA0 end:0x00014860
+
+data/model/obj_s_uranai.c:
+	.data       start:0x00014860 end:0x00017720
+
+data/model/obj_e_count01.c:
+	.data       start:0x00017720 end:0x000197A0
+
+data/model/obj_e_count02_cl.c:
+	.data       start:0x000197A0 end:0x0001AE00
+
+data/model/obj_s_douzou.c:
+	.data       start:0x0001AE00 end:0x00020180
+
+data/model/obj_s_dump.c:
+	.data       start:0x00020180 end:0x00022C40
+
+data/model/obj_fallS.c:
+	.data       start:0x00022C40 end:0x00023EC0
+
+data/model/obj_fallSE.c:
+	.data       start:0x00023EC0 end:0x00025140
+
+data/model/obj_s_frag.c:
+	.data       start:0x00025140 end:0x00027180
+
+data/model/obj_e_ghog.c:
+	.data       start:0x00027180 end:0x00027CC0
+
+data/model/obj_e_hanami_a.c:
+	.data       start:0x00027CC0 end:0x0002A7A0
+
+data/model/obj_s_house_i.c:
+	.data       start:0x0002A7A0 end:0x0002CB20
+
+data/model/obj_e_hfes_a.c:
+	.data       start:0x0002CB20 end:0x00031260
+
+data/model/obj_e_kago_r.c:
+	.data       start:0x00031260 end:0x00034FA0
+
+data/model/obj_w_kamakura.c:
+	.data       start:0x00034FA0 end:0x00036FC0
+
+data/model/obj_e_koinobori.c:
+	.data       start:0x00036FC0 end:0x00039740
+
+data/model/obj_s_lotus.c:
+	.data       start:0x00039740 end:0x0003ACE0
+
+data/model/obj_e_mikanbox.c:
+	.data       start:0x0003ACE0 end:0x0003D340
+
+data/model/obj_e_mikuji.c:
+	.data       start:0x0003D340 end:0x0003E180
+
+data/model/obj_s_museum.c:
+	.data       start:0x0003E180 end:0x00042900
+
+data/model/obj_s_myhome_i.c:
+	.data       start:0x00042900 end:0x00044E20
+
+data/model/obj_s_house1.c:
+	.data       start:0x00044E20 end:0x0005CAA0
+
+data/model/obj_s_myhome1.c:
+	.data       start:0x0005CAA0 end:0x00070BE0
+
+data/model/obj_s_kouban.c:
+	.data       start:0x00070BE0 end:0x000749E0
+
+data/model/obj_s_yubinkyoku.c:
+	.data       start:0x000749E0 end:0x000799A0
+
+data/model/obj_e_radio.c:
+	.data       start:0x000799A0 end:0x0007AD00
+
+data/model/obj_s_buildsite.c:
+	.data       start:0x0007AD00 end:0x0007C140
+
+data/model/obj_s_car.c:
+	.data       start:0x0007C140 end:0x0007E240
+
+data/model/obj_s_shop1.c:
+	.data       start:0x0007E240 end:0x0008F660
+
+data/model/obj_s_shrine.c:
+	.data       start:0x0008F660 end:0x000985E0
+
+data/model/obj_s_station1.c:
+	.data       start:0x000985E0 end:0x000A4F00
+
+data/model/obj_s_tailor.c:
+	.data       start:0x000A4F00 end:0x000A9440
+
+data/model/obj_s_tent.c:
+	.data       start:0x000A9440 end:0x000AADA0
+
+data/model/obj_s_toudai.c:
+	.data       start:0x000AADA0 end:0x000ADCA0
+
+data/model/obj_train1_1.c:
+	.data       start:0x000ADCA0 end:0x000B0CC0
+
+data/model/obj_train_3.c:
+	.data       start:0x000B0CC0 end:0x000B3000
+
+data/model/obj_e_tukimi_r.c:
+	.data       start:0x000B3000 end:0x000B7280
+
+data/model/obj_e_turi_l.c:
+	.data       start:0x000B7280 end:0x000B9820
+
+data/model/obj_e_yatai_l.c:
+	.data       start:0x000B9820 end:0x000BCE80
+
+data/field/bg/acre/grd_s_c1_1/grd_s_c1_1.c:
+	.data       start:0x000BCE80 end:0x000BDF20
+
+data/field/bg/acre/grd_s_c1_2/grd_s_c1_2.c:
+	.data       start:0x000BDF20 end:0x000BF070
+
+data/field/bg/acre/grd_s_c1_3/grd_s_c1_3.c:
+	.data       start:0x000BF070 end:0x000C00F8
+
+data/field/bg/acre/grd_s_c1_4/grd_s_c1_4.c:
+	.data       start:0x000C00F8 end:0x000C13C8
+
+data/field/bg/acre/grd_s_c1_5/grd_s_c1_5.c:
+	.data       start:0x000C13C8 end:0x000C2298
+
+data/field/bg/acre/grd_s_c1_r1_1/grd_s_c1_r1_1_evw_anime.c:
+	.data       start:0x000C2298 end:0x000C22A8
+
+data/field/bg/acre/grd_s_c1_r1_1/grd_s_c1_r1_1.c:
+	.data       start:0x000C22A8 end:0x000C3850
+
+data/field/bg/acre/grd_s_c1_r1_2/grd_s_c1_r1_2_evw_anime.c:
+	.data       start:0x000C3850 end:0x000C3860
+
+data/field/bg/acre/grd_s_c1_r1_2/grd_s_c1_r1_2.c:
+	.data       start:0x000C3860 end:0x000C4C88
+
+data/field/bg/acre/grd_s_c1_r1_3/grd_s_c1_r1_3_evw_anime.c:
+	.data       start:0x000C4C88 end:0x000C4C98
+
+data/field/bg/acre/grd_s_c1_r1_3/grd_s_c1_r1_3.c:
+	.data       start:0x000C4C98 end:0x000C6098
+
+data/field/bg/acre/grd_s_c1_r2_1/grd_s_c1_r2_1_evw_anime.c:
+	.data       start:0x000C6098 end:0x000C60A8
+
+data/field/bg/acre/grd_s_c1_r2_1/grd_s_c1_r2_1.c:
+	.data       start:0x000C60A8 end:0x000C74C0
+
+data/field/bg/acre/grd_s_c1_r2_2/grd_s_c1_r2_2_evw_anime.c:
+	.data       start:0x000C74C0 end:0x000C74D0
+
+data/field/bg/acre/grd_s_c1_r2_2/grd_s_c1_r2_2.c:
+	.data       start:0x000C74D0 end:0x000C8928
+
+data/field/bg/acre/grd_s_c1_r2_3/grd_s_c1_r2_3_evw_anime.c:
+	.data       start:0x000C8928 end:0x000C8938
+
+data/field/bg/acre/grd_s_c1_r2_3/grd_s_c1_r2_3.c:
+	.data       start:0x000C8938 end:0x000C9FA0
+
+data/field/bg/acre/grd_s_c1_r3_1/grd_s_c1_r3_1_evw_anime.c:
+	.data       start:0x000C9FA0 end:0x000C9FB0
+
+data/field/bg/acre/grd_s_c1_r3_1/grd_s_c1_r3_1.c:
+	.data       start:0x000C9FB0 end:0x000CB068
+
+data/field/bg/acre/grd_s_c1_r3_2/grd_s_c1_r3_2_evw_anime.c:
+	.data       start:0x000CB068 end:0x000CB078
+
+data/field/bg/acre/grd_s_c1_r3_2/grd_s_c1_r3_2.c:
+	.data       start:0x000CB078 end:0x000CC370
+
+data/field/bg/acre/grd_s_c1_r3_3/grd_s_c1_r3_3_evw_anime.c:
+	.data       start:0x000CC370 end:0x000CC380
+
+data/field/bg/acre/grd_s_c1_r3_3/grd_s_c1_r3_3.c:
+	.data       start:0x000CC380 end:0x000CD7B8
+
+data/field/bg/acre/grd_s_c1_s_1/grd_s_c1_s_1.c:
+	.data       start:0x000CD7B8 end:0x000CE698
+
+data/field/bg/acre/grd_s_c1_s_2/grd_s_c1_s_2.c:
+	.data       start:0x000CE698 end:0x000CF7C0
+
+data/field/bg/acre/grd_s_c1_s_3/grd_s_c1_s_3.c:
+	.data       start:0x000CF7C0 end:0x000D0A00
+
+data/field/bg/acre/grd_s_c1_s_4/grd_s_c1_s_4.c:
+	.data       start:0x000D0A00 end:0x000D1D10
+
+data/field/bg/acre/grd_s_c2_1/grd_s_c2_1.c:
+	.data       start:0x000D1D10 end:0x000D2D30
+
+data/field/bg/acre/grd_s_c2_2/grd_s_c2_2.c:
+	.data       start:0x000D2D30 end:0x000D3D80
+
+data/field/bg/acre/grd_s_c2_3/grd_s_c2_3_evw_anime.c:
+	.data       start:0x000D3D80 end:0x000D3D90
+
+data/field/bg/acre/grd_s_c2_3/grd_s_c2_3.c:
+	.data       start:0x000D3D90 end:0x000D5108
+
+data/field/bg/acre/grd_s_c2_r1_1/grd_s_c2_r1_1_evw_anime.c:
+	.data       start:0x000D5108 end:0x000D5118
+
+data/field/bg/acre/grd_s_c2_r1_1/grd_s_c2_r1_1.c:
+	.data       start:0x000D5118 end:0x000D6500
+
+data/field/bg/acre/grd_s_c2_r1_2/grd_s_c2_r1_2_evw_anime.c:
+	.data       start:0x000D6500 end:0x000D6510
+
+data/field/bg/acre/grd_s_c2_r1_2/grd_s_c2_r1_2.c:
+	.data       start:0x000D6510 end:0x000D79D0
+
+data/field/bg/acre/grd_s_c2_r2_1/grd_s_c2_r2_1_evw_anime.c:
+	.data       start:0x000D79D0 end:0x000D79E0
+
+data/field/bg/acre/grd_s_c2_r2_1/grd_s_c2_r2_1.c:
+	.data       start:0x000D79E0 end:0x000D8CA0
+
+data/field/bg/acre/grd_s_c2_r2_2/grd_s_c2_r2_2_evw_anime.c:
+	.data       start:0x000D8CA0 end:0x000D8CB0
+
+data/field/bg/acre/grd_s_c2_r2_2/grd_s_c2_r2_2.c:
+	.data       start:0x000D8CB0 end:0x000DA1E0
+
+data/field/bg/acre/grd_s_c2_s_1/grd_s_c2_s_1.c:
+	.data       start:0x000DA1E0 end:0x000DB580
+
+data/field/bg/acre/grd_s_c2_s_2/grd_s_c2_s_2.c:
+	.data       start:0x000DB580 end:0x000DC650
+
+data/field/bg/acre/grd_s_c2_s_3/grd_s_c2_s_3.c:
+	.data       start:0x000DC650 end:0x000DD650
+
+data/field/bg/acre/grd_s_c3_1/grd_s_c3_1.c:
+	.data       start:0x000DD650 end:0x000DE7E0
+
+data/field/bg/acre/grd_s_c3_2/grd_s_c3_2_evw_anime.c:
+	.data       start:0x000DE7E0 end:0x000DE7F0
+
+data/field/bg/acre/grd_s_c3_2/grd_s_c3_2.c:
+	.data       start:0x000DE7F0 end:0x000DF8E0
+
+data/field/bg/acre/grd_s_c3_3/grd_s_c3_3.c:
+	.data       start:0x000DF8E0 end:0x000E0850
+
+data/field/bg/acre/grd_s_c3_r1_1/grd_s_c3_r1_1_evw_anime.c:
+	.data       start:0x000E0850 end:0x000E0860
+
+data/field/bg/acre/grd_s_c3_r1_1/grd_s_c3_r1_1.c:
+	.data       start:0x000E0860 end:0x000E19A8
+
+data/field/bg/acre/grd_s_c3_r1_2/grd_s_c3_r1_2_evw_anime.c:
+	.data       start:0x000E19A8 end:0x000E19B8
+
+data/field/bg/acre/grd_s_c3_r1_2/grd_s_c3_r1_2.c:
+	.data       start:0x000E19B8 end:0x000E2CA8
+
+data/field/bg/acre/grd_s_c3_r2_1/grd_s_c3_r2_1_evw_anime.c:
+	.data       start:0x000E2CA8 end:0x000E2CB8
+
+data/field/bg/acre/grd_s_c3_r2_1/grd_s_c3_r2_1.c:
+	.data       start:0x000E2CB8 end:0x000E4328
+
+data/field/bg/acre/grd_s_c3_r2_2/grd_s_c3_r2_2_evw_anime.c:
+	.data       start:0x000E4328 end:0x000E4338
+
+data/field/bg/acre/grd_s_c3_r2_2/grd_s_c3_r2_2.c:
+	.data       start:0x000E4338 end:0x000E59B0
+
+data/field/bg/acre/grd_s_c3_s_1/grd_s_c3_s_1_evw_anime.c:
+	.data       start:0x000E59B0 end:0x000E59C0
+
+data/field/bg/acre/grd_s_c3_s_1/grd_s_c3_s_1.c:
+	.data       start:0x000E59C0 end:0x000E7188
+
+data/field/bg/acre/grd_s_c4_1/grd_s_c4_1.c:
+	.data       start:0x000E7188 end:0x000E7F90
+
+data/field/bg/acre/grd_s_c4_2/grd_s_c4_2.c:
+	.data       start:0x000E7F90 end:0x000E9110
+
+data/field/bg/acre/grd_s_c4_3/grd_s_c4_3.c:
+	.data       start:0x000E9110 end:0x000EA0F8
+
+data/field/bg/acre/grd_s_c4_r1_1/grd_s_c4_r1_1_evw_anime.c:
+	.data       start:0x000EA0F8 end:0x000EA108
+
+data/field/bg/acre/grd_s_c4_r1_1/grd_s_c4_r1_1.c:
+	.data       start:0x000EA108 end:0x000EB410
+
+data/field/bg/acre/grd_s_c4_r1_2/grd_s_c4_r1_2_evw_anime.c:
+	.data       start:0x000EB410 end:0x000EB420
+
+data/field/bg/acre/grd_s_c4_r1_2/grd_s_c4_r1_2.c:
+	.data       start:0x000EB420 end:0x000EC6E0
+
+data/field/bg/acre/grd_s_c4_r2_1/grd_s_c4_r2_1_evw_anime.c:
+	.data       start:0x000EC6E0 end:0x000EC6F0
+
+data/field/bg/acre/grd_s_c4_r2_1/grd_s_c4_r2_1.c:
+	.data       start:0x000EC6F0 end:0x000EDA58
+
+data/field/bg/acre/grd_s_c4_r2_2/grd_s_c4_r2_2_evw_anime.c:
+	.data       start:0x000EDA58 end:0x000EDA68
+
+data/field/bg/acre/grd_s_c4_r2_2/grd_s_c4_r2_2.c:
+	.data       start:0x000EDA68 end:0x000EEB10
+
+data/field/bg/acre/grd_s_c4_r3_1/grd_s_c4_r3_1_evw_anime.c:
+	.data       start:0x000EEB10 end:0x000EEB20
+
+data/field/bg/acre/grd_s_c4_r3_1/grd_s_c4_r3_1.c:
+	.data       start:0x000EEB20 end:0x000EFC28
+
+data/field/bg/acre/grd_s_c4_r3_2/grd_s_c4_r3_2_evw_anime.c:
+	.data       start:0x000EFC28 end:0x000EFC38
+
+data/field/bg/acre/grd_s_c4_r3_2/grd_s_c4_r3_2.c:
+	.data       start:0x000EFC38 end:0x000F0BE8
+
+data/field/bg/acre/grd_s_c4_s_1/grd_s_c4_s_1.c:
+	.data       start:0x000F0BE8 end:0x000F1B90
+
+data/field/bg/acre/grd_s_c4_s_2/grd_s_c4_s_2.c:
+	.data       start:0x000F1B90 end:0x000F2E08
+
+data/field/bg/acre/grd_s_c5_1/grd_s_c5_1.c:
+	.data       start:0x000F2E08 end:0x000F3B08
+
+data/field/bg/acre/grd_s_c5_2/grd_s_c5_2.c:
+	.data       start:0x000F3B08 end:0x000F4D18
+
+data/field/bg/acre/grd_s_c5_3/grd_s_c5_3.c:
+	.data       start:0x000F4D18 end:0x000F5A80
+
+data/field/bg/acre/grd_s_c5_r1_1/grd_s_c5_r1_1_evw_anime.c:
+	.data       start:0x000F5A80 end:0x000F5A90
+
+data/field/bg/acre/grd_s_c5_r1_1/grd_s_c5_r1_1.c:
+	.data       start:0x000F5A90 end:0x000F7070
+
+data/field/bg/acre/grd_s_c5_r1_2/grd_s_c5_r1_2_evw_anime.c:
+	.data       start:0x000F7070 end:0x000F7080
+
+data/field/bg/acre/grd_s_c5_r1_2/grd_s_c5_r1_2.c:
+	.data       start:0x000F7080 end:0x000F8610
+
+data/field/bg/acre/grd_s_c5_r2_1/grd_s_c5_r2_1_evw_anime.c:
+	.data       start:0x000F8610 end:0x000F8620
+
+data/field/bg/acre/grd_s_c5_r2_1/grd_s_c5_r2_1.c:
+	.data       start:0x000F8620 end:0x000F9D20
+
+data/field/bg/acre/grd_s_c5_r2_2/grd_s_c5_r2_2_evw_anime.c:
+	.data       start:0x000F9D20 end:0x000F9D30
+
+data/field/bg/acre/grd_s_c5_r2_2/grd_s_c5_r2_2.c:
+	.data       start:0x000F9D30 end:0x000FB198
+
+data/field/bg/acre/grd_s_c5_r3_1/grd_s_c5_r3_1_evw_anime.c:
+	.data       start:0x000FB198 end:0x000FB1A8
+
+data/field/bg/acre/grd_s_c5_r3_1/grd_s_c5_r3_1.c:
+	.data       start:0x000FB1A8 end:0x000FC4D8
+
+data/field/bg/acre/grd_s_c5_r3_2/grd_s_c5_r3_2_evw_anime.c:
+	.data       start:0x000FC4D8 end:0x000FC4E8
+
+data/field/bg/acre/grd_s_c5_r3_2/grd_s_c5_r3_2.c:
+	.data       start:0x000FC4E8 end:0x000FD6D8
+
+data/field/bg/acre/grd_s_c5_s_1/grd_s_c5_s_1.c:
+	.data       start:0x000FD6D8 end:0x000FE680
+
+data/field/bg/acre/grd_s_c5_s_2/grd_s_c5_s_2.c:
+	.data       start:0x000FE680 end:0x000FF628
+
+data/field/bg/acre/grd_s_c6_1/grd_s_c6_1.c:
+	.data       start:0x000FF628 end:0x00100760
+
+data/field/bg/acre/grd_s_c6_2/grd_s_c6_2.c:
+	.data       start:0x00100760 end:0x00101960
+
+data/field/bg/acre/grd_s_c6_3/grd_s_c6_3.c:
+	.data       start:0x00101960 end:0x00102900
+
+data/field/bg/acre/grd_s_c6_r1_1/grd_s_c6_r1_1_evw_anime.c:
+	.data       start:0x00102900 end:0x00102910
+
+data/field/bg/acre/grd_s_c6_r1_1/grd_s_c6_r1_1.c:
+	.data       start:0x00102910 end:0x00103BE8
+
+data/field/bg/acre/grd_s_c6_r1_2/grd_s_c6_r1_2_evw_anime.c:
+	.data       start:0x00103BE8 end:0x00103BF8
+
+data/field/bg/acre/grd_s_c6_r1_2/grd_s_c6_r1_2.c:
+	.data       start:0x00103BF8 end:0x00104F48
+
+data/field/bg/acre/grd_s_c6_r3_1/grd_s_c6_r3_1_evw_anime.c:
+	.data       start:0x00104F48 end:0x00104F58
+
+data/field/bg/acre/grd_s_c6_r3_1/grd_s_c6_r3_1.c:
+	.data       start:0x00104F58 end:0x00106710
+
+data/field/bg/acre/grd_s_c6_s_1/grd_s_c6_s_1.c:
+	.data       start:0x00106710 end:0x001077F0
+
+data/field/bg/acre/grd_s_c7_1/grd_s_c7_1.c:
+	.data       start:0x001077F0 end:0x00108828
+
+data/field/bg/acre/grd_s_c7_2/grd_s_c7_2.c:
+	.data       start:0x00108828 end:0x00109BE0
+
+data/field/bg/acre/grd_s_c7_3/grd_s_c7_3_evw_anime.c:
+	.data       start:0x00109BE0 end:0x00109BF0
+
+data/field/bg/acre/grd_s_c7_3/grd_s_c7_3.c:
+	.data       start:0x00109BF0 end:0x0010AFB0
+
+data/field/bg/acre/grd_s_c7_r1_1/grd_s_c7_r1_1_evw_anime.c:
+	.data       start:0x0010AFB0 end:0x0010AFC0
+
+data/field/bg/acre/grd_s_c7_r1_1/grd_s_c7_r1_1.c:
+	.data       start:0x0010AFC0 end:0x0010C100
+
+data/field/bg/acre/grd_s_c7_r1_2/grd_s_c7_r1_2_evw_anime.c:
+	.data       start:0x0010C100 end:0x0010C110
+
+data/field/bg/acre/grd_s_c7_r1_2/grd_s_c7_r1_2.c:
+	.data       start:0x0010C110 end:0x0010D258
+
+data/field/bg/acre/grd_s_c7_r3_1/grd_s_c7_r3_1_evw_anime.c:
+	.data       start:0x0010D258 end:0x0010D268
+
+data/field/bg/acre/grd_s_c7_r3_1/grd_s_c7_r3_1.c:
+	.data       start:0x0010D268 end:0x0010E7A8
+
+data/field/bg/acre/grd_s_c7_r3_2/grd_s_c7_r3_2_evw_anime.c:
+	.data       start:0x0010E7A8 end:0x0010E7B8
+
+data/field/bg/acre/grd_s_c7_r3_2/grd_s_c7_r3_2.c:
+	.data       start:0x0010E7B8 end:0x0010FE78
+
+data/field/bg/acre/grd_s_c7_s_1/grd_s_c7_s_1.c:
+	.data       start:0x0010FE78 end:0x00111498
+
+data/field/bg/acre/grd_s_c7_s_2/grd_s_c7_s_2.c:
+	.data       start:0x00111498 end:0x00112360
+
+data/field/bg/acre/grd_s_c7_s_3/grd_s_c7_s_3.c:
+	.data       start:0x00112360 end:0x00113490
+
+data/field/bg/acre/grd_s_e1_1/grd_s_e1_1.c:
+	.data       start:0x00113490 end:0x00113B40
+
+data/field/bg/acre/grd_s_e1_r1_1/grd_s_e1_r1_1_evw_anime.c:
+	.data       start:0x00113B40 end:0x00113B50
+
+data/field/bg/acre/grd_s_e1_r1_1/grd_s_e1_r1_1.c:
+	.data       start:0x00113B50 end:0x001152D0
+
+data/field/bg/acre/grd_s_e2_1/grd_s_e2_1.c:
+	.data       start:0x001152D0 end:0x00115A68
+
+data/field/bg/acre/grd_s_e2_c1_1/grd_s_e2_c1_1.c:
+	.data       start:0x00115A68 end:0x00116228
+
+data/field/bg/acre/grd_s_e2_m_1/grd_s_e2_m_1.c:
+	.data       start:0x00116228 end:0x00116B00
+
+data/field/bg/acre/grd_s_e2_o_1/grd_s_e2_o_1.c:
+	.data       start:0x00116B00 end:0x00116DE0
+
+data/field/bg/acre/grd_s_e2_t_1/grd_s_e2_t_1.c:
+	.data       start:0x00116DE0 end:0x00117950
+
+data/field/bg/acre/grd_s_e3_1/grd_s_e3_1.c:
+	.data       start:0x00117950 end:0x00118138
+
+data/field/bg/acre/grd_s_e3_c1_1/grd_s_e3_c1_1.c:
+	.data       start:0x00118138 end:0x00118910
+
+data/field/bg/acre/grd_s_e3_m_1/grd_s_e3_m_1.c:
+	.data       start:0x00118910 end:0x00119258
+
+data/field/bg/acre/grd_s_e3_o_1/grd_s_e3_o_1.c:
+	.data       start:0x00119258 end:0x00119538
+
+data/field/bg/acre/grd_s_e3_t_1/grd_s_e3_t_1.c:
+	.data       start:0x00119538 end:0x00119FC8
+
+data/field/bg/acre/grd_s_e4_1/grd_s_e4_1.c:
+	.data       start:0x00119FC8 end:0x0011A1D0
+
+data/field/bg/acre/grd_s_e5_1/grd_s_e5_1.c:
+	.data       start:0x0011A1D0 end:0x0011A400
+
+data/field/bg/acre/grd_s_f_1/grd_s_f_1.c:
+	.data       start:0x0011A400 end:0x0011B150
+
+data/field/bg/acre/grd_s_f_10/grd_s_f_10.c:
+	.data       start:0x0011B150 end:0x0011BF38
+
+data/field/bg/acre/grd_s_f_2/grd_s_f_2.c:
+	.data       start:0x0011BF38 end:0x0011CE80
+
+data/field/bg/acre/grd_s_f_3/grd_s_f_3.c:
+	.data       start:0x0011CE80 end:0x0011D7D8
+
+data/field/bg/acre/grd_s_f_4/grd_s_f_4_evw_anime.c:
+	.data       start:0x0011D7D8 end:0x0011D7E8
+
+data/field/bg/acre/grd_s_f_4/grd_s_f_4.c:
+	.data       start:0x0011D7E8 end:0x0011E5C0
+
+data/field/bg/acre/grd_s_f_5/grd_s_f_5_evw_anime.c:
+	.data       start:0x0011E5C0 end:0x0011E5D0
+
+data/field/bg/acre/grd_s_f_5/grd_s_f_5.c:
+	.data       start:0x0011E5D0 end:0x0011F7B0
+
+data/field/bg/acre/grd_s_f_6/grd_s_f_6_evw_anime.c:
+	.data       start:0x0011F7B0 end:0x0011F7C0
+
+data/field/bg/acre/grd_s_f_6/grd_s_f_6.c:
+	.data       start:0x0011F7C0 end:0x001209E8
+
+data/field/bg/acre/grd_s_f_7/grd_s_f_7.c:
+	.data       start:0x001209E8 end:0x001221A0
+
+data/field/bg/acre/grd_s_f_8/grd_s_f_8.c:
+	.data       start:0x001221A0 end:0x001230C8
+
+data/field/bg/acre/grd_s_f_9/grd_s_f_9.c:
+	.data       start:0x001230C8 end:0x00124268
+
+data/field/bg/acre/grd_s_f_ko_1/grd_s_f_ko_1.c:
+	.data       start:0x00124268 end:0x00125368
+
+data/field/bg/acre/grd_s_f_ko_2/grd_s_f_ko_2.c:
+	.data       start:0x00125368 end:0x00125FF0
+
+data/field/bg/acre/grd_s_f_ko_3/grd_s_f_ko_3_evw_anime.c:
+	.data       start:0x00125FF0 end:0x00126000
+
+data/field/bg/acre/grd_s_f_ko_3/grd_s_f_ko_3.c:
+	.data       start:0x00126000 end:0x00127268
+
+data/field/bg/acre/grd_s_f_mh_1/grd_s_f_mh_1.c:
+	.data       start:0x00127268 end:0x001280E8
+
+data/field/bg/acre/grd_s_f_mh_2/grd_s_f_mh_2.c:
+	.data       start:0x001280E8 end:0x00129050
+
+data/field/bg/acre/grd_s_f_mh_3/grd_s_f_mh_3.c:
+	.data       start:0x00129050 end:0x00129CF0
+
+data/field/bg/acre/grd_s_f_mu_1/grd_s_f_mu_1.c:
+	.data       start:0x00129CF0 end:0x0012A8C0
+
+data/field/bg/acre/grd_s_f_mu_2/grd_s_f_mu_2.c:
+	.data       start:0x0012A8C0 end:0x0012B480
+
+data/field/bg/acre/grd_s_f_mu_3/grd_s_f_mu_3_evw_anime.c:
+	.data       start:0x0012B480 end:0x0012B490
+
+data/field/bg/acre/grd_s_f_mu_3/grd_s_f_mu_3.c:
+	.data       start:0x0012B490 end:0x0012C018
+
+data/field/bg/acre/grd_s_f_pk_1/grd_s_f_pk_1.c:
+	.data       start:0x0012C018 end:0x0012D118
+
+data/field/bg/acre/grd_s_f_pk_2/grd_s_f_pk_2.c:
+	.data       start:0x0012D118 end:0x0012E0E0
+
+data/field/bg/acre/grd_s_f_pk_3/grd_s_f_pk_3.c:
+	.data       start:0x0012E0E0 end:0x0012F370
+
+data/field/bg/acre/grd_s_hole_test/grd_s_hole_test.c:
+	.data       start:0x0012F370 end:0x00130508
+
+data/field/bg/acre/grd_s_il_1/grd_s_il_1.c:
+	.data       start:0x00130508 end:0x00131578
+
+data/field/bg/acre/grd_s_il_2/grd_s_il_2.c:
+	.data       start:0x00131578 end:0x00132EB8
+
+data/field/bg/acre/grd_s_il_3/grd_s_il_3.c:
+	.data       start:0x00132EB8 end:0x00134058
+
+data/field/bg/acre/grd_s_il_4/grd_s_il_4.c:
+	.data       start:0x00134058 end:0x00135148
+
+data/field/bg/acre/grd_s_ir_1/grd_s_ir_1.c:
+	.data       start:0x00135148 end:0x001365C0
+
+data/field/bg/acre/grd_s_ir_2/grd_s_ir_2.c:
+	.data       start:0x001365C0 end:0x00137D58
+
+data/field/bg/acre/grd_s_ir_3/grd_s_ir_3.c:
+	.data       start:0x00137D58 end:0x00139710
+
+data/field/bg/acre/grd_s_ir_4/grd_s_ir_4.c:
+	.data       start:0x00139710 end:0x0013ACB8
+
+data/field/bg/acre/grd_s_m_1/grd_s_m_1.c:
+	.data       start:0x0013ACB8 end:0x0013BE10
+
+data/field/bg/acre/grd_s_m_10/grd_s_m_10.c:
+	.data       start:0x0013BE10 end:0x0013CF98
+
+data/field/bg/acre/grd_s_m_2/grd_s_m_2.c:
+	.data       start:0x0013CF98 end:0x0013E278
+
+data/field/bg/acre/grd_s_m_3/grd_s_m_3.c:
+	.data       start:0x0013E278 end:0x0013F428
+
+data/field/bg/acre/grd_s_m_4/grd_s_m_4.c:
+	.data       start:0x0013F428 end:0x00140400
+
+data/field/bg/acre/grd_s_m_5/grd_s_m_5.c:
+	.data       start:0x00140400 end:0x001417D0
+
+data/field/bg/acre/grd_s_m_6/grd_s_m_6.c:
+	.data       start:0x001417D0 end:0x00142AC0
+
+data/field/bg/acre/grd_s_m_7/grd_s_m_7.c:
+	.data       start:0x00142AC0 end:0x00143AC0
+
+data/field/bg/acre/grd_s_m_8/grd_s_m_8.c:
+	.data       start:0x00143AC0 end:0x00144B48
+
+data/field/bg/acre/grd_s_m_9/grd_s_m_9.c:
+	.data       start:0x00144B48 end:0x00145AB8
+
+data/field/bg/acre/grd_s_m_r1_1/grd_s_m_r1_1_evw_anime.c:
+	.data       start:0x00145AB8 end:0x00145AD8
+
+data/field/bg/acre/grd_s_m_r1_1/grd_s_m_r1_1.c:
+	.data       start:0x00145AD8 end:0x00146F38
+
+data/field/bg/acre/grd_s_m_r1_2/grd_s_m_r1_2_evw_anime.c:
+	.data       start:0x00146F38 end:0x00146F58
+
+data/field/bg/acre/grd_s_m_r1_2/grd_s_m_r1_2.c:
+	.data       start:0x00146F58 end:0x00148318
+
+data/field/bg/acre/grd_s_m_r1_3/grd_s_m_r1_3_evw_anime.c:
+	.data       start:0x00148318 end:0x00148338
+
+data/field/bg/acre/grd_s_m_r1_3/grd_s_m_r1_3.c:
+	.data       start:0x00148338 end:0x00149590
+
+data/field/bg/acre/grd_s_m_r1_4/grd_s_m_r1_4_evw_anime.c:
+	.data       start:0x00149590 end:0x001495B0
+
+data/field/bg/acre/grd_s_m_r1_4/grd_s_m_r1_4.c:
+	.data       start:0x001495B0 end:0x0014AB38
+
+data/field/bg/acre/grd_s_m_r1_5/grd_s_m_r1_5_evw_anime.c:
+	.data       start:0x0014AB38 end:0x0014AB58
+
+data/field/bg/acre/grd_s_m_r1_5/grd_s_m_r1_5.c:
+	.data       start:0x0014AB58 end:0x0014C1C0
+
+data/field/bg/acre/grd_s_m_r1_b_1/grd_s_m_r1_b_1_evw_anime.c:
+	.data       start:0x0014C1C0 end:0x0014C1E0
+
+data/field/bg/acre/grd_s_m_r1_b_1/grd_s_m_r1_b_1.c:
+	.data       start:0x0014C1E0 end:0x0014D468
+
+data/field/bg/acre/grd_s_m_r1_b_2/grd_s_m_r1_b_2_evw_anime.c:
+	.data       start:0x0014D468 end:0x0014D488
+
+data/field/bg/acre/grd_s_m_r1_b_2/grd_s_m_r1_b_2.c:
+	.data       start:0x0014D488 end:0x0014EA70
+
+data/field/bg/acre/grd_s_m_r1_b_3/grd_s_m_r1_b_3_evw_anime.c:
+	.data       start:0x0014EA70 end:0x0014EA90
+
+data/field/bg/acre/grd_s_m_r1_b_3/grd_s_m_r1_b_3.c:
+	.data       start:0x0014EA90 end:0x0014FEB0
+
+data/field/bg/acre/grd_s_m_ta_1/grd_s_m_ta_1_evw_anime.c:
+	.data       start:0x0014FEB0 end:0x0014FED0
+
+data/field/bg/acre/grd_s_m_ta_1/grd_s_m_ta_1.c:
+	.data       start:0x0014FED0 end:0x00151228
+
+data/field/bg/acre/grd_s_m_ta_2/grd_s_m_ta_2_evw_anime.c:
+	.data       start:0x00151228 end:0x00151248
+
+data/field/bg/acre/grd_s_m_ta_2/grd_s_m_ta_2.c:
+	.data       start:0x00151248 end:0x00152460
+
+data/field/bg/acre/grd_s_m_ta_3/grd_s_m_ta_3_evw_anime.c:
+	.data       start:0x00152460 end:0x00152480
+
+data/field/bg/acre/grd_s_m_ta_3/grd_s_m_ta_3.c:
+	.data       start:0x00152480 end:0x001537D0
+
+data/field/bg/acre/grd_s_m_wf_1/grd_s_m_wf_1_evw_anime.c:
+	.data       start:0x001537D0 end:0x00153810
+
+data/field/bg/acre/grd_s_m_wf_1/grd_s_m_wf_1.c:
+	.data       start:0x00153810 end:0x00154E70
+
+data/field/bg/acre/grd_s_m_wf_2/grd_s_m_wf_2_evw_anime.c:
+	.data       start:0x00154E70 end:0x00154EB0
+
+data/field/bg/acre/grd_s_m_wf_2/grd_s_m_wf_2.c:
+	.data       start:0x00154EB0 end:0x00156B68
+
+data/field/bg/acre/grd_s_m_wf_3/grd_s_m_wf_3_evw_anime.c:
+	.data       start:0x00156B68 end:0x00156BA8
+
+data/field/bg/acre/grd_s_m_wf_3/grd_s_m_wf_3.c:
+	.data       start:0x00156BA8 end:0x001582E0
+
+data/field/bg/acre/grd_s_o_1/grd_s_o_1_evw_anime.c:
+	.data       start:0x001582E0 end:0x00158320
+
+data/field/bg/acre/grd_s_o_1/grd_s_o_1.c:
+	.data       start:0x00158320 end:0x00158800
+
+data/field/bg/acre/grd_s_o_10/grd_s_o_10_evw_anime.c:
+	.data       start:0x00158800 end:0x00158840
+
+data/field/bg/acre/grd_s_o_10/grd_s_o_10.c:
+	.data       start:0x00158840 end:0x00158CD8
+
+data/field/bg/acre/grd_s_o_2/grd_s_o_2_evw_anime.c:
+	.data       start:0x00158CD8 end:0x00158D18
+
+data/field/bg/acre/grd_s_o_2/grd_s_o_2.c:
+	.data       start:0x00158D18 end:0x001591B8
+
+data/field/bg/acre/grd_s_o_3/grd_s_o_3_evw_anime.c:
+	.data       start:0x001591B8 end:0x001591F8
+
+data/field/bg/acre/grd_s_o_3/grd_s_o_3.c:
+	.data       start:0x001591F8 end:0x00159660
+
+data/field/bg/acre/grd_s_o_4/grd_s_o_4_evw_anime.c:
+	.data       start:0x00159660 end:0x001596A0
+
+data/field/bg/acre/grd_s_o_4/grd_s_o_4.c:
+	.data       start:0x001596A0 end:0x00159B30
+
+data/field/bg/acre/grd_s_o_5/grd_s_o_5_evw_anime.c:
+	.data       start:0x00159B30 end:0x00159B70
+
+data/field/bg/acre/grd_s_o_5/grd_s_o_5.c:
+	.data       start:0x00159B70 end:0x00159FF0
+
+data/field/bg/acre/grd_s_o_6/grd_s_o_6_evw_anime.c:
+	.data       start:0x00159FF0 end:0x0015A030
+
+data/field/bg/acre/grd_s_o_6/grd_s_o_6.c:
+	.data       start:0x0015A030 end:0x0015A498
+
+data/field/bg/acre/grd_s_o_7/grd_s_o_7_evw_anime.c:
+	.data       start:0x0015A498 end:0x0015A4D8
+
+data/field/bg/acre/grd_s_o_7/grd_s_o_7.c:
+	.data       start:0x0015A4D8 end:0x0015A968
+
+data/field/bg/acre/grd_s_o_8/grd_s_o_8_evw_anime.c:
+	.data       start:0x0015A968 end:0x0015A9A8
+
+data/field/bg/acre/grd_s_o_8/grd_s_o_8.c:
+	.data       start:0x0015A9A8 end:0x0015AE98
+
+data/field/bg/acre/grd_s_o_9/grd_s_o_9_evw_anime.c:
+	.data       start:0x0015AE98 end:0x0015AED8
+
+data/field/bg/acre/grd_s_o_9/grd_s_o_9.c:
+	.data       start:0x0015AED8 end:0x0015B3B0
+
+data/field/bg/acre/grd_s_o_i_1/grd_s_o_i_1.c:
+	.data       start:0x0015B3B0 end:0x0015B810
+
+data/field/bg/acre/grd_s_o_i_2/grd_s_o_i_2_evw_anime.c:
+	.data       start:0x0015B810 end:0x0015B850
+
+data/field/bg/acre/grd_s_o_i_2/grd_s_o_i_2.c:
+	.data       start:0x0015B850 end:0x0015BB30
+
+data/field/bg/acre/grd_s_o_r1_1/grd_s_o_r1_1_evw_anime.c:
+	.data       start:0x0015BB30 end:0x0015BB70
+
+data/field/bg/acre/grd_s_o_r1_1/grd_s_o_r1_1.c:
+	.data       start:0x0015BB70 end:0x0015C080
+
+data/field/bg/acre/grd_s_o_r1_2/grd_s_o_r1_2_evw_anime.c:
+	.data       start:0x0015C080 end:0x0015C0C0
+
+data/field/bg/acre/grd_s_o_r1_2/grd_s_o_r1_2.c:
+	.data       start:0x0015C0C0 end:0x0015C5A0
+
+data/field/bg/acre/grd_s_o_r1_3/grd_s_o_r1_3_evw_anime.c:
+	.data       start:0x0015C5A0 end:0x0015C5E0
+
+data/field/bg/acre/grd_s_o_r1_3/grd_s_o_r1_3.c:
+	.data       start:0x0015C5E0 end:0x0015CAD8
+
+data/field/bg/acre/grd_s_o_r1_4/grd_s_o_r1_4_evw_anime.c:
+	.data       start:0x0015CAD8 end:0x0015CB18
+
+data/field/bg/acre/grd_s_o_r1_4/grd_s_o_r1_4.c:
+	.data       start:0x0015CB18 end:0x0015CFD8
+
+data/field/bg/acre/grd_s_o_r1_5/grd_s_o_r1_5_evw_anime.c:
+	.data       start:0x0015CFD8 end:0x0015D018
+
+data/field/bg/acre/grd_s_o_r1_5/grd_s_o_r1_5.c:
+	.data       start:0x0015D018 end:0x0015D3F0
+
+data/field/bg/acre/grd_s_o_r1_b_1/grd_s_o_r1_b_1_evw_anime.c:
+	.data       start:0x0015D3F0 end:0x0015D430
+
+data/field/bg/acre/grd_s_o_r1_b_1/grd_s_o_r1_b_1.c:
+	.data       start:0x0015D430 end:0x0015D710
+
+data/field/bg/acre/grd_s_o_r1_b_2/grd_s_o_r1_b_2_evw_anime.c:
+	.data       start:0x0015D710 end:0x0015D750
+
+data/field/bg/acre/grd_s_o_r1_b_2/grd_s_o_r1_b_2.c:
+	.data       start:0x0015D750 end:0x0015DA28
+
+data/field/bg/acre/grd_s_o_r1_b_3/grd_s_o_r1_b_3_evw_anime.c:
+	.data       start:0x0015DA28 end:0x0015DA68
+
+data/field/bg/acre/grd_s_o_r1_b_3/grd_s_o_r1_b_3.c:
+	.data       start:0x0015DA68 end:0x0015DD40
+
+data/field/bg/acre/grd_s_o_ta_1/grd_s_o_ta_1_evw_anime.c:
+	.data       start:0x0015DD40 end:0x0015DD80
+
+data/field/bg/acre/grd_s_o_ta_1/grd_s_o_ta_1.c:
+	.data       start:0x0015DD80 end:0x0015E288
+
+data/field/bg/acre/grd_s_o_ta_2/grd_s_o_ta_2_evw_anime.c:
+	.data       start:0x0015E288 end:0x0015E2C8
+
+data/field/bg/acre/grd_s_o_ta_2/grd_s_o_ta_2.c:
+	.data       start:0x0015E2C8 end:0x0015E6D0
+
+data/field/bg/acre/grd_s_o_ta_3/grd_s_o_ta_3_evw_anime.c:
+	.data       start:0x0015E6D0 end:0x0015E710
+
+data/field/bg/acre/grd_s_o_ta_3/grd_s_o_ta_3.c:
+	.data       start:0x0015E710 end:0x0015EB28
+
+data/field/bg/acre/grd_s_o_wf_1/grd_s_o_wf_1_evw_anime.c:
+	.data       start:0x0015EB28 end:0x0015EB68
+
+data/field/bg/acre/grd_s_o_wf_1/grd_s_o_wf_1.c:
+	.data       start:0x0015EB68 end:0x0015F098
+
+data/field/bg/acre/grd_s_o_wf_2/grd_s_o_wf_2_evw_anime.c:
+	.data       start:0x0015F098 end:0x0015F0D8
+
+data/field/bg/acre/grd_s_o_wf_2/grd_s_o_wf_2.c:
+	.data       start:0x0015F0D8 end:0x0015F638
+
+data/field/bg/acre/grd_s_o_wf_3/grd_s_o_wf_3_evw_anime.c:
+	.data       start:0x0015F638 end:0x0015F678
+
+data/field/bg/acre/grd_s_o_wf_3/grd_s_o_wf_3.c:
+	.data       start:0x0015F678 end:0x0015FB90
+
+data/field/bg/acre/grd_s_r1_1/grd_s_r1_1_evw_anime.c:
+	.data       start:0x0015FB90 end:0x0015FBA0
+
+data/field/bg/acre/grd_s_r1_1/grd_s_r1_1.c:
+	.data       start:0x0015FBA0 end:0x00160988
+
+data/field/bg/acre/grd_s_r1_2/grd_s_r1_2_evw_anime.c:
+	.data       start:0x00160988 end:0x00160998
+
+data/field/bg/acre/grd_s_r1_2/grd_s_r1_2.c:
+	.data       start:0x00160998 end:0x001618C0
+
+data/field/bg/acre/grd_s_r1_3/grd_s_r1_3_evw_anime.c:
+	.data       start:0x001618C0 end:0x001618D0
+
+data/field/bg/acre/grd_s_r1_3/grd_s_r1_3.c:
+	.data       start:0x001618D0 end:0x001628F0
+
+data/field/bg/acre/grd_s_r1_4/grd_s_r1_4_evw_anime.c:
+	.data       start:0x001628F0 end:0x00162900
+
+data/field/bg/acre/grd_s_r1_4/grd_s_r1_4.c:
+	.data       start:0x00162900 end:0x00163608
+
+data/field/bg/acre/grd_s_r1_b_1/grd_s_r1_b_1_evw_anime.c:
+	.data       start:0x00163608 end:0x00163618
+
+data/field/bg/acre/grd_s_r1_b_1/grd_s_r1_b_1.c:
+	.data       start:0x00163618 end:0x00164640
+
+data/field/bg/acre/grd_s_r1_b_2/grd_s_r1_b_2_evw_anime.c:
+	.data       start:0x00164640 end:0x00164650
+
+data/field/bg/acre/grd_s_r1_b_2/grd_s_r1_b_2.c:
+	.data       start:0x00164650 end:0x00165A80
+
+data/field/bg/acre/grd_s_r1_b_3/grd_s_r1_b_3_evw_anime.c:
+	.data       start:0x00165A80 end:0x00165A90
+
+data/field/bg/acre/grd_s_r1_b_3/grd_s_r1_b_3.c:
+	.data       start:0x00165A90 end:0x00166D70
+
+data/field/bg/acre/grd_s_r1_p_1/grd_s_r1_p_1_evw_anime.c:
+	.data       start:0x00166D70 end:0x00166D80
+
+data/field/bg/acre/grd_s_r1_p_1/grd_s_r1_p_1.c:
+	.data       start:0x00166D80 end:0x00168010
+
+data/field/bg/acre/grd_s_r2_1/grd_s_r2_1_evw_anime.c:
+	.data       start:0x00168010 end:0x00168020
+
+data/field/bg/acre/grd_s_r2_1/grd_s_r2_1.c:
+	.data       start:0x00168020 end:0x00168E38
+
+data/field/bg/acre/grd_s_r2_2/grd_s_r2_2_evw_anime.c:
+	.data       start:0x00168E38 end:0x00168E48
+
+data/field/bg/acre/grd_s_r2_2/grd_s_r2_2.c:
+	.data       start:0x00168E48 end:0x00169C98
+
+data/field/bg/acre/grd_s_r2_3/grd_s_r2_3_evw_anime.c:
+	.data       start:0x00169C98 end:0x00169CA8
+
+data/field/bg/acre/grd_s_r2_3/grd_s_r2_3.c:
+	.data       start:0x00169CA8 end:0x0016AD08
+
+data/field/bg/acre/grd_s_r2_4/grd_s_r2_4_evw_anime.c:
+	.data       start:0x0016AD08 end:0x0016AD18
+
+data/field/bg/acre/grd_s_r2_4/grd_s_r2_4.c:
+	.data       start:0x0016AD18 end:0x0016BD20
+
+data/field/bg/acre/grd_s_r2_b_1/grd_s_r2_b_1_evw_anime.c:
+	.data       start:0x0016BD20 end:0x0016BD30
+
+data/field/bg/acre/grd_s_r2_b_1/grd_s_r2_b_1.c:
+	.data       start:0x0016BD30 end:0x0016D360
+
+data/field/bg/acre/grd_s_r2_b_2/grd_s_r2_b_2_evw_anime.c:
+	.data       start:0x0016D360 end:0x0016D370
+
+data/field/bg/acre/grd_s_r2_b_2/grd_s_r2_b_2.c:
+	.data       start:0x0016D370 end:0x0016E6C8
+
+data/field/bg/acre/grd_s_r2_b_3/grd_s_r2_b_3_evw_anime.c:
+	.data       start:0x0016E6C8 end:0x0016E6D8
+
+data/field/bg/acre/grd_s_r2_b_3/grd_s_r2_b_3.c:
+	.data       start:0x0016E6D8 end:0x0016FBC0
+
+data/field/bg/acre/grd_s_r2_p_1/grd_s_r2_p_1_evw_anime.c:
+	.data       start:0x0016FBC0 end:0x0016FBD0
+
+data/field/bg/acre/grd_s_r2_p_1/grd_s_r2_p_1.c:
+	.data       start:0x0016FBD0 end:0x00171430
+
+data/field/bg/acre/grd_s_r3_1/grd_s_r3_1_evw_anime.c:
+	.data       start:0x00171430 end:0x00171440
+
+data/field/bg/acre/grd_s_r3_1/grd_s_r3_1.c:
+	.data       start:0x00171440 end:0x001724D8
+
+data/field/bg/acre/grd_s_r3_2/grd_s_r3_2_evw_anime.c:
+	.data       start:0x001724D8 end:0x001724E8
+
+data/field/bg/acre/grd_s_r3_2/grd_s_r3_2.c:
+	.data       start:0x001724E8 end:0x001733D8
+
+data/field/bg/acre/grd_s_r3_3/grd_s_r3_3_evw_anime.c:
+	.data       start:0x001733D8 end:0x001733E8
+
+data/field/bg/acre/grd_s_r3_3/grd_s_r3_3.c:
+	.data       start:0x001733E8 end:0x00174320
+
+data/field/bg/acre/grd_s_r3_4/grd_s_r3_4_evw_anime.c:
+	.data       start:0x00174320 end:0x00174330
+
+data/field/bg/acre/grd_s_r3_4/grd_s_r3_4.c:
+	.data       start:0x00174330 end:0x00175180
+
+data/field/bg/acre/grd_s_r3_b_1/grd_s_r3_b_1_evw_anime.c:
+	.data       start:0x00175180 end:0x00175190
+
+data/field/bg/acre/grd_s_r3_b_1/grd_s_r3_b_1.c:
+	.data       start:0x00175190 end:0x00176378
+
+data/field/bg/acre/grd_s_r3_b_2/grd_s_r3_b_2_evw_anime.c:
+	.data       start:0x00176378 end:0x00176388
+
+data/field/bg/acre/grd_s_r3_b_2/grd_s_r3_b_2.c:
+	.data       start:0x00176388 end:0x001778A0
+
+data/field/bg/acre/grd_s_r3_b_3/grd_s_r3_b_3_evw_anime.c:
+	.data       start:0x001778A0 end:0x001778B0
+
+data/field/bg/acre/grd_s_r3_b_3/grd_s_r3_b_3.c:
+	.data       start:0x001778B0 end:0x00178CD0
+
+data/field/bg/acre/grd_s_r3_p_1/grd_s_r3_p_1_evw_anime.c:
+	.data       start:0x00178CD0 end:0x00178CE0
+
+data/field/bg/acre/grd_s_r3_p_1/grd_s_r3_p_1.c:
+	.data       start:0x00178CE0 end:0x0017A380
+
+data/field/bg/acre/grd_s_r4_1/grd_s_r4_1_evw_anime.c:
+	.data       start:0x0017A380 end:0x0017A390
+
+data/field/bg/acre/grd_s_r4_1/grd_s_r4_1.c:
+	.data       start:0x0017A390 end:0x0017B2B8
+
+data/field/bg/acre/grd_s_r4_2/grd_s_r4_2_evw_anime.c:
+	.data       start:0x0017B2B8 end:0x0017B2C8
+
+data/field/bg/acre/grd_s_r4_2/grd_s_r4_2.c:
+	.data       start:0x0017B2C8 end:0x0017C230
+
+data/field/bg/acre/grd_s_r4_3/grd_s_r4_3_evw_anime.c:
+	.data       start:0x0017C230 end:0x0017C240
+
+data/field/bg/acre/grd_s_r4_3/grd_s_r4_3.c:
+	.data       start:0x0017C240 end:0x0017D058
+
+data/field/bg/acre/grd_s_r4_b_1/grd_s_r4_b_1_evw_anime.c:
+	.data       start:0x0017D058 end:0x0017D068
+
+data/field/bg/acre/grd_s_r4_b_1/grd_s_r4_b_1.c:
+	.data       start:0x0017D068 end:0x0017DD58
+
+data/field/bg/acre/grd_s_r4_b_2/grd_s_r4_b_2_evw_anime.c:
+	.data       start:0x0017DD58 end:0x0017DD68
+
+data/field/bg/acre/grd_s_r4_b_2/grd_s_r4_b_2.c:
+	.data       start:0x0017DD68 end:0x0017EF38
+
+data/field/bg/acre/grd_s_r4_p_1/grd_s_r4_p_1_evw_anime.c:
+	.data       start:0x0017EF38 end:0x0017EF48
+
+data/field/bg/acre/grd_s_r4_p_1/grd_s_r4_p_1.c:
+	.data       start:0x0017EF48 end:0x00180488
+
+data/field/bg/acre/grd_s_r5_1/grd_s_r5_1_evw_anime.c:
+	.data       start:0x00180488 end:0x00180498
+
+data/field/bg/acre/grd_s_r5_1/grd_s_r5_1.c:
+	.data       start:0x00180498 end:0x00181480
+
+data/field/bg/acre/grd_s_r5_2/grd_s_r5_2_evw_anime.c:
+	.data       start:0x00181480 end:0x00181490
+
+data/field/bg/acre/grd_s_r5_2/grd_s_r5_2.c:
+	.data       start:0x00181490 end:0x00182570
+
+data/field/bg/acre/grd_s_r5_3/grd_s_r5_3_evw_anime.c:
+	.data       start:0x00182570 end:0x00182580
+
+data/field/bg/acre/grd_s_r5_3/grd_s_r5_3.c:
+	.data       start:0x00182580 end:0x00183628
+
+data/field/bg/acre/grd_s_r5_b_1/grd_s_r5_b_1_evw_anime.c:
+	.data       start:0x00183628 end:0x00183638
+
+data/field/bg/acre/grd_s_r5_b_1/grd_s_r5_b_1.c:
+	.data       start:0x00183638 end:0x001848F8
+
+data/field/bg/acre/grd_s_r5_b_2/grd_s_r5_b_2_evw_anime.c:
+	.data       start:0x001848F8 end:0x00184908
+
+data/field/bg/acre/grd_s_r5_b_2/grd_s_r5_b_2.c:
+	.data       start:0x00184908 end:0x00185C00
+
+data/field/bg/acre/grd_s_r5_p_1/grd_s_r5_p_1_evw_anime.c:
+	.data       start:0x00185C00 end:0x00185C10
+
+data/field/bg/acre/grd_s_r5_p_1/grd_s_r5_p_1.c:
+	.data       start:0x00185C10 end:0x00187090
+
+data/field/bg/acre/grd_s_r6_1/grd_s_r6_1_evw_anime.c:
+	.data       start:0x00187090 end:0x001870A0
+
+data/field/bg/acre/grd_s_r6_1/grd_s_r6_1.c:
+	.data       start:0x001870A0 end:0x00187DB8
+
+data/field/bg/acre/grd_s_r6_2/grd_s_r6_2_evw_anime.c:
+	.data       start:0x00187DB8 end:0x00187DC8
+
+data/field/bg/acre/grd_s_r6_2/grd_s_r6_2.c:
+	.data       start:0x00187DC8 end:0x00188B48
+
+data/field/bg/acre/grd_s_r6_3/grd_s_r6_3_evw_anime.c:
+	.data       start:0x00188B48 end:0x00188B58
+
+data/field/bg/acre/grd_s_r6_3/grd_s_r6_3.c:
+	.data       start:0x00188B58 end:0x001898C0
+
+data/field/bg/acre/grd_s_r6_b_1/grd_s_r6_b_1_evw_anime.c:
+	.data       start:0x001898C0 end:0x001898D0
+
+data/field/bg/acre/grd_s_r6_b_1/grd_s_r6_b_1.c:
+	.data       start:0x001898D0 end:0x0018A738
+
+data/field/bg/acre/grd_s_r6_b_2/grd_s_r6_b_2_evw_anime.c:
+	.data       start:0x0018A738 end:0x0018A748
+
+data/field/bg/acre/grd_s_r6_b_2/grd_s_r6_b_2.c:
+	.data       start:0x0018A748 end:0x0018BC88
+
+data/field/bg/acre/grd_s_r6_p_1/grd_s_r6_p_1_evw_anime.c:
+	.data       start:0x0018BC88 end:0x0018BC98
+
+data/field/bg/acre/grd_s_r6_p_1/grd_s_r6_p_1.c:
+	.data       start:0x0018BC98 end:0x0018D308
+
+data/field/bg/acre/grd_s_r7_1/grd_s_r7_1_evw_anime.c:
+	.data       start:0x0018D308 end:0x0018D318
+
+data/field/bg/acre/grd_s_r7_1/grd_s_r7_1.c:
+	.data       start:0x0018D318 end:0x0018E200
+
+data/field/bg/acre/grd_s_r7_2/grd_s_r7_2_evw_anime.c:
+	.data       start:0x0018E200 end:0x0018E210
+
+data/field/bg/acre/grd_s_r7_2/grd_s_r7_2.c:
+	.data       start:0x0018E210 end:0x0018F010
+
+data/field/bg/acre/grd_s_r7_3/grd_s_r7_3_evw_anime.c:
+	.data       start:0x0018F010 end:0x0018F020
+
+data/field/bg/acre/grd_s_r7_3/grd_s_r7_3.c:
+	.data       start:0x0018F020 end:0x0018FDB8
+
+data/field/bg/acre/grd_s_r7_b_1/grd_s_r7_b_1_evw_anime.c:
+	.data       start:0x0018FDB8 end:0x0018FDC8
+
+data/field/bg/acre/grd_s_r7_b_1/grd_s_r7_b_1.c:
+	.data       start:0x0018FDC8 end:0x00190D78
+
+data/field/bg/acre/grd_s_r7_b_2/grd_s_r7_b_2_evw_anime.c:
+	.data       start:0x00190D78 end:0x00190D88
+
+data/field/bg/acre/grd_s_r7_b_2/grd_s_r7_b_2.c:
+	.data       start:0x00190D88 end:0x00192320
+
+data/field/bg/acre/grd_s_r7_p_1/grd_s_r7_p_1_evw_anime.c:
+	.data       start:0x00192320 end:0x00192330
+
+data/field/bg/acre/grd_s_r7_p_1/grd_s_r7_p_1.c:
+	.data       start:0x00192330 end:0x00193748
+
+data/field/bg/acre/grd_s_t_1/grd_s_t_1_evw_anime.c:
+	.data       start:0x00193748 end:0x00193758
+
+data/field/bg/acre/grd_s_t_1/grd_s_t_1.c:
+	.data       start:0x00193758 end:0x001943B8
+
+data/field/bg/acre/grd_s_t_10/grd_s_t_10.c:
+	.data       start:0x001943B8 end:0x00195458
+
+data/field/bg/acre/grd_s_t_2/grd_s_t_2.c:
+	.data       start:0x00195458 end:0x00196368
+
+data/field/bg/acre/grd_s_t_3/grd_s_t_3.c:
+	.data       start:0x00196368 end:0x00196EC8
+
+data/field/bg/acre/grd_s_t_4/grd_s_t_4_evw_anime.c:
+	.data       start:0x00196EC8 end:0x00196ED8
+
+data/field/bg/acre/grd_s_t_4/grd_s_t_4.c:
+	.data       start:0x00196ED8 end:0x00198050
+
+data/field/bg/acre/grd_s_t_5/grd_s_t_5_evw_anime.c:
+	.data       start:0x00198050 end:0x00198060
+
+data/field/bg/acre/grd_s_t_5/grd_s_t_5.c:
+	.data       start:0x00198060 end:0x001992D0
+
+data/field/bg/acre/grd_s_t_6/grd_s_t_6.c:
+	.data       start:0x001992D0 end:0x0019A6D8
+
+data/field/bg/acre/grd_s_t_7/grd_s_t_7.c:
+	.data       start:0x0019A6D8 end:0x0019BAA8
+
+data/field/bg/acre/grd_s_t_8/grd_s_t_8.c:
+	.data       start:0x0019BAA8 end:0x0019C908
+
+data/field/bg/acre/grd_s_t_9/grd_s_t_9.c:
+	.data       start:0x0019C908 end:0x0019D7E8
+
+data/field/bg/acre/grd_s_t_po_1/grd_s_t_po_1.c:
+	.data       start:0x0019D7E8 end:0x0019E478
+
+data/field/bg/acre/grd_s_t_po_2/grd_s_t_po_2.c:
+	.data       start:0x0019E478 end:0x0019F0C8
+
+data/field/bg/acre/grd_s_t_po_3/grd_s_t_po_3_evw_anime.c:
+	.data       start:0x0019F0C8 end:0x0019F0D8
+
+data/field/bg/acre/grd_s_t_po_3/grd_s_t_po_3.c:
+	.data       start:0x0019F0D8 end:0x001A0230
+
+data/field/bg/acre/grd_s_t_r1_1/grd_s_t_r1_1_evw_anime.c:
+	.data       start:0x001A0230 end:0x001A0240
+
+data/field/bg/acre/grd_s_t_r1_1/grd_s_t_r1_1.c:
+	.data       start:0x001A0240 end:0x001A1438
+
+data/field/bg/acre/grd_s_t_r1_2/grd_s_t_r1_2_evw_anime.c:
+	.data       start:0x001A1438 end:0x001A1448
+
+data/field/bg/acre/grd_s_t_r1_2/grd_s_t_r1_2.c:
+	.data       start:0x001A1448 end:0x001A28C8
+
+data/field/bg/acre/grd_s_t_r1_3/grd_s_t_r1_3_evw_anime.c:
+	.data       start:0x001A28C8 end:0x001A28D8
+
+data/field/bg/acre/grd_s_t_r1_3/grd_s_t_r1_3.c:
+	.data       start:0x001A28D8 end:0x001A3D80
+
+data/field/bg/acre/grd_s_t_r1_4/grd_s_t_r1_4_evw_anime.c:
+	.data       start:0x001A3D80 end:0x001A3D90
+
+data/field/bg/acre/grd_s_t_r1_4/grd_s_t_r1_4.c:
+	.data       start:0x001A3D90 end:0x001A50D8
+
+data/field/bg/acre/grd_s_t_r1_5/grd_s_t_r1_5_evw_anime.c:
+	.data       start:0x001A50D8 end:0x001A50E8
+
+data/field/bg/acre/grd_s_t_r1_5/grd_s_t_r1_5.c:
+	.data       start:0x001A50E8 end:0x001A6598
+
+data/field/bg/acre/grd_s_t_sh_1/grd_s_t_sh_1.c:
+	.data       start:0x001A6598 end:0x001A71C8
+
+data/field/bg/acre/grd_s_t_sh_2/grd_s_t_sh_2_evw_anime.c:
+	.data       start:0x001A71C8 end:0x001A71D8
+
+data/field/bg/acre/grd_s_t_sh_2/grd_s_t_sh_2.c:
+	.data       start:0x001A71D8 end:0x001A8170
+
+data/field/bg/acre/grd_s_t_sh_3/grd_s_t_sh_3.c:
+	.data       start:0x001A8170 end:0x001A8DD0
+
+data/field/bg/acre/grd_s_t_st1_1/grd_s_t_st1_1.c:
+	.data       start:0x001A8DD0 end:0x001A9C50
+
+data/field/bg/acre/grd_s_t_st1_2/grd_s_t_st1_2.c:
+	.data       start:0x001A9C50 end:0x001AADE0
+
+data/field/bg/acre/grd_s_t_st1_3/grd_s_t_st1_3.c:
+	.data       start:0x001AADE0 end:0x001ABCF0
+
 executor.o:
 	.text       start:0x00000000 end:0x00000060
 	.bss        start:0x00000000 end:0x00000004
-
-dataobject_outdoor.obj:
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.text       start:0x00000060 end:0x00000060
-	.data       start:0x00000000 end:0x000014A0
-	.data       start:0x000014A0 end:0x000017C0
-	.data       start:0x000017C0 end:0x00001AA0
-	.data       start:0x00001AA0 end:0x00001DE0
-	.data       start:0x00001DE0 end:0x00002080
-	.data       start:0x00002080 end:0x00002260
-	.data       start:0x00002260 end:0x00002800
-	.data       start:0x00002800 end:0x00002AE0
-	.data       start:0x00002AE0 end:0x00002C20
-	.data       start:0x00002C20 end:0x000032E0
-	.data       start:0x000032E0 end:0x000035A0
-	.data       start:0x000035A0 end:0x000038E0
-	.data       start:0x000038E0 end:0x00003CA0
-	.data       start:0x00003CA0 end:0x00003F80
-	.data       start:0x00003F80 end:0x00004260
-	.data       start:0x00004260 end:0x00004540
-	.data       start:0x00004540 end:0x00004780
-	.data       start:0x00004780 end:0x00005C00
-	.data       start:0x00005C00 end:0x00007900
-	.data       start:0x00007900 end:0x00007CC0
-	.data       start:0x00007CC0 end:0x00008000
-	.data       start:0x00008000 end:0x000082E0
-	.data       start:0x000082E0 end:0x00008800
-	.data       start:0x00008800 end:0x00008BE0
-	.data       start:0x00008BE0 end:0x000097E0
-	.data       start:0x000097E0 end:0x00009B40
-	.data       start:0x00009B40 end:0x0000AD80
-	.data       start:0x0000AD80 end:0x0000AEC0
-	.data       start:0x0000AEC0 end:0x0000B180
-	.data       start:0x0000B180 end:0x0000B300
-	.data       start:0x0000B300 end:0x0000B8C0
-	.data       start:0x0000B8C0 end:0x0000BE40
-	.data       start:0x0000BE40 end:0x0000C000
-	.data       start:0x0000C000 end:0x0000C000
-	.data       start:0x0000C000 end:0x0000E040
-	.data       start:0x0000E040 end:0x00010FA0
-	.data       start:0x00010FA0 end:0x00014860
-	.data       start:0x00014860 end:0x00017720
-	.data       start:0x00017720 end:0x000197A0
-	.data       start:0x000197A0 end:0x0001AE00
-	.data       start:0x0001AE00 end:0x00020180
-	.data       start:0x00020180 end:0x00022C40
-	.data       start:0x00022C40 end:0x00023EC0
-	.data       start:0x00023EC0 end:0x00025140
-	.data       start:0x00025140 end:0x00027180
-	.data       start:0x00027180 end:0x00027CC0
-	.data       start:0x00027CC0 end:0x0002A7A0
-	.data       start:0x0002A7A0 end:0x0002CB20
-	.data       start:0x0002CB20 end:0x00031260
-	.data       start:0x00031260 end:0x00034FA0
-	.data       start:0x00034FA0 end:0x00036FC0
-	.data       start:0x00036FC0 end:0x00039740
-	.data       start:0x00039740 end:0x0003ACE0
-	.data       start:0x0003ACE0 end:0x0003D340
-	.data       start:0x0003D340 end:0x0003E180
-	.data       start:0x0003E180 end:0x00042900
-	.data       start:0x00042900 end:0x00044E20
-	.data       start:0x00044E20 end:0x0005CAA0
-	.data       start:0x0005CAA0 end:0x00070BE0
-	.data       start:0x00070BE0 end:0x000749E0
-	.data       start:0x000749E0 end:0x000799A0
-	.data       start:0x000799A0 end:0x0007AD00
-	.data       start:0x0007AD00 end:0x0007C140
-	.data       start:0x0007C140 end:0x0007E240
-	.data       start:0x0007E240 end:0x0008F660
-	.data       start:0x0008F660 end:0x000985E0
-	.data       start:0x000985E0 end:0x000A4F00
-	.data       start:0x000A4F00 end:0x000A9440
-	.data       start:0x000A9440 end:0x000AADA0
-	.data       start:0x000AADA0 end:0x000ADCA0
-	.data       start:0x000ADCA0 end:0x000B0CC0
-	.data       start:0x000B0CC0 end:0x000B3000
-	.data       start:0x000B3000 end:0x000B7280
-	.data       start:0x000B7280 end:0x000B9820
-	.data       start:0x000B9820 end:0x000BCE80
-	.data       start:0x000BCE80 end:0x000BCE80
-	.data       start:0x000BCE80 end:0x000BDF20
-	.data       start:0x000BDF20 end:0x000BDF20
-	.data       start:0x000BDF20 end:0x000BF070
-	.data       start:0x000BF070 end:0x000C00F8
-	.data       start:0x000C00F8 end:0x000C13C8
-	.data       start:0x000C13C8 end:0x000C2298
-	.data       start:0x000C2298 end:0x000C22A8
-	.data       start:0x000C22A8 end:0x000C3850
-	.data       start:0x000C3850 end:0x000C3860
-	.data       start:0x000C3860 end:0x000C4C88
-	.data       start:0x000C4C88 end:0x000C4C98
-	.data       start:0x000C4C98 end:0x000C6098
-	.data       start:0x000C6098 end:0x000C60A8
-	.data       start:0x000C60A8 end:0x000C74C0
-	.data       start:0x000C74C0 end:0x000C74D0
-	.data       start:0x000C74D0 end:0x000C8928
-	.data       start:0x000C8928 end:0x000C8938
-	.data       start:0x000C8938 end:0x000C9FA0
-	.data       start:0x000C9FA0 end:0x000C9FB0
-	.data       start:0x000C9FB0 end:0x000CB068
-	.data       start:0x000CB068 end:0x000CB078
-	.data       start:0x000CB078 end:0x000CC370
-	.data       start:0x000CC370 end:0x000CC380
-	.data       start:0x000CC380 end:0x000CD7B8
-	.data       start:0x000CD7B8 end:0x000CE698
-	.data       start:0x000CE698 end:0x000CF7C0
-	.data       start:0x000CF7C0 end:0x000D0A00
-	.data       start:0x000D0A00 end:0x000D1D10
-	.data       start:0x000D1D10 end:0x000D2D30
-	.data       start:0x000D2D30 end:0x000D3D80
-	.data       start:0x000D3D80 end:0x000D3D90
-	.data       start:0x000D3D90 end:0x000D5108
-	.data       start:0x000D5108 end:0x000D5118
-	.data       start:0x000D5118 end:0x000D6500
-	.data       start:0x000D6500 end:0x000D6510
-	.data       start:0x000D6510 end:0x000D79D0
-	.data       start:0x000D79D0 end:0x000D79E0
-	.data       start:0x000D79E0 end:0x000D8CA0
-	.data       start:0x000D8CA0 end:0x000D8CB0
-	.data       start:0x000D8CB0 end:0x000DA1E0
-	.data       start:0x000DA1E0 end:0x000DB580
-	.data       start:0x000DB580 end:0x000DC650
-	.data       start:0x000DC650 end:0x000DD650
-	.data       start:0x000DD650 end:0x000DE7E0
-	.data       start:0x000DE7E0 end:0x000DE7F0
-	.data       start:0x000DE7F0 end:0x000DF8E0
-	.data       start:0x000DF8E0 end:0x000E0850
-	.data       start:0x000E0850 end:0x000E0860
-	.data       start:0x000E0860 end:0x000E19A8
-	.data       start:0x000E19A8 end:0x000E19B8
-	.data       start:0x000E19B8 end:0x000E2CA8
-	.data       start:0x000E2CA8 end:0x000E2CB8
-	.data       start:0x000E2CB8 end:0x000E4328
-	.data       start:0x000E4328 end:0x000E4338
-	.data       start:0x000E4338 end:0x000E59B0
-	.data       start:0x000E59B0 end:0x000E59C0
-	.data       start:0x000E59C0 end:0x000E7188
-	.data       start:0x000E7188 end:0x000E7F90
-	.data       start:0x000E7F90 end:0x000E9110
-	.data       start:0x000E9110 end:0x000EA0F8
-	.data       start:0x000EA0F8 end:0x000EA108
-	.data       start:0x000EA108 end:0x000EB410
-	.data       start:0x000EB410 end:0x000EB420
-	.data       start:0x000EB420 end:0x000EC6E0
-	.data       start:0x000EC6E0 end:0x000EC6F0
-	.data       start:0x000EC6F0 end:0x000EDA58
-	.data       start:0x000EDA58 end:0x000EDA68
-	.data       start:0x000EDA68 end:0x000EEB10
-	.data       start:0x000EEB10 end:0x000EEB20
-	.data       start:0x000EEB20 end:0x000EFC28
-	.data       start:0x000EFC28 end:0x000EFC38
-	.data       start:0x000EFC38 end:0x000F0BE8
-	.data       start:0x000F0BE8 end:0x000F1B90
-	.data       start:0x000F1B90 end:0x000F2E08
-	.data       start:0x000F2E08 end:0x000F3B08
-	.data       start:0x000F3B08 end:0x000F4D18
-	.data       start:0x000F4D18 end:0x000F5A80
-	.data       start:0x000F5A80 end:0x000F5A90
-	.data       start:0x000F5A90 end:0x000F7070
-	.data       start:0x000F7070 end:0x000F7080
-	.data       start:0x000F7080 end:0x000F8610
-	.data       start:0x000F8610 end:0x000F8620
-	.data       start:0x000F8620 end:0x000F9D20
-	.data       start:0x000F9D20 end:0x000F9D30
-	.data       start:0x000F9D30 end:0x000FB198
-	.data       start:0x000FB198 end:0x000FB1A8
-	.data       start:0x000FB1A8 end:0x000FC4D8
-	.data       start:0x000FC4D8 end:0x000FC4E8
-	.data       start:0x000FC4E8 end:0x000FD6D8
-	.data       start:0x000FD6D8 end:0x000FE680
-	.data       start:0x000FE680 end:0x000FF628
-	.data       start:0x000FF628 end:0x00100760
-	.data       start:0x00100760 end:0x00101960
-	.data       start:0x00101960 end:0x00102900
-	.data       start:0x00102900 end:0x00102910
-	.data       start:0x00102910 end:0x00103BE8
-	.data       start:0x00103BE8 end:0x00103BF8
-	.data       start:0x00103BF8 end:0x00104F48
-	.data       start:0x00104F48 end:0x00104F58
-	.data       start:0x00104F58 end:0x00106710
-	.data       start:0x00106710 end:0x001077F0
-	.data       start:0x001077F0 end:0x00108828
-	.data       start:0x00108828 end:0x00109BE0
-	.data       start:0x00109BE0 end:0x00109BF0
-	.data       start:0x00109BF0 end:0x0010AFB0
-	.data       start:0x0010AFB0 end:0x0010AFC0
-	.data       start:0x0010AFC0 end:0x0010C100
-	.data       start:0x0010C100 end:0x0010C110
-	.data       start:0x0010C110 end:0x0010D258
-	.data       start:0x0010D258 end:0x0010D268
-	.data       start:0x0010D268 end:0x0010E7A8
-	.data       start:0x0010E7A8 end:0x0010E7B8
-	.data       start:0x0010E7B8 end:0x0010FE78
-	.data       start:0x0010FE78 end:0x00111498
-	.data       start:0x00111498 end:0x00112360
-	.data       start:0x00112360 end:0x00113490
-	.data       start:0x00113490 end:0x00113B40
-	.data       start:0x00113B40 end:0x00113B50
-	.data       start:0x00113B50 end:0x001152D0
-	.data       start:0x001152D0 end:0x00115A68
-	.data       start:0x00115A68 end:0x00116228
-	.data       start:0x00116228 end:0x00116228
-	.data       start:0x00116228 end:0x00116B00
-	.data       start:0x00116B00 end:0x00116B00
-	.data       start:0x00116B00 end:0x00116DE0
-	.data       start:0x00116DE0 end:0x00117950
-	.data       start:0x00117950 end:0x00118138
-	.data       start:0x00118138 end:0x00118910
-	.data       start:0x00118910 end:0x00118910
-	.data       start:0x00118910 end:0x00119258
-	.data       start:0x00119258 end:0x00119258
-	.data       start:0x00119258 end:0x00119538
-	.data       start:0x00119538 end:0x00119FC8
-	.data       start:0x00119FC8 end:0x0011A1D0
-	.data       start:0x0011A1D0 end:0x0011A400
-	.data       start:0x0011A400 end:0x0011B150
-	.data       start:0x0011B150 end:0x0011BF38
-	.data       start:0x0011BF38 end:0x0011CE80
-	.data       start:0x0011CE80 end:0x0011D7D8
-	.data       start:0x0011D7D8 end:0x0011D7E8
-	.data       start:0x0011D7E8 end:0x0011E5C0
-	.data       start:0x0011E5C0 end:0x0011E5D0
-	.data       start:0x0011E5D0 end:0x0011F7B0
-	.data       start:0x0011F7B0 end:0x0011F7C0
-	.data       start:0x0011F7C0 end:0x001209E8
-	.data       start:0x001209E8 end:0x001221A0
-	.data       start:0x001221A0 end:0x001230C8
-	.data       start:0x001230C8 end:0x00124268
-	.data       start:0x00124268 end:0x00125368
-	.data       start:0x00125368 end:0x00125FF0
-	.data       start:0x00125FF0 end:0x00126000
-	.data       start:0x00126000 end:0x00127268
-	.data       start:0x00127268 end:0x001280E8
-	.data       start:0x001280E8 end:0x00129050
-	.data       start:0x00129050 end:0x00129CF0
-	.data       start:0x00129CF0 end:0x0012A8C0
-	.data       start:0x0012A8C0 end:0x0012B480
-	.data       start:0x0012B480 end:0x0012B490
-	.data       start:0x0012B490 end:0x0012C018
-	.data       start:0x0012C018 end:0x0012D118
-	.data       start:0x0012D118 end:0x0012E0E0
-	.data       start:0x0012E0E0 end:0x0012F370
-	.data       start:0x0012F370 end:0x00130508
-	.data       start:0x00130508 end:0x00130508
-	.data       start:0x00130508 end:0x00131578
-	.data       start:0x00131578 end:0x00131578
-	.data       start:0x00131578 end:0x00132EB8
-	.data       start:0x00132EB8 end:0x00132EB8
-	.data       start:0x00132EB8 end:0x00134058
-	.data       start:0x00134058 end:0x00134058
-	.data       start:0x00134058 end:0x00135148
-	.data       start:0x00135148 end:0x00135148
-	.data       start:0x00135148 end:0x001365C0
-	.data       start:0x001365C0 end:0x001365C0
-	.data       start:0x001365C0 end:0x00137D58
-	.data       start:0x00137D58 end:0x00137D58
-	.data       start:0x00137D58 end:0x00139710
-	.data       start:0x00139710 end:0x00139710
-	.data       start:0x00139710 end:0x0013ACB8
-	.data       start:0x0013ACB8 end:0x0013ACB8
-	.data       start:0x0013ACB8 end:0x0013BE10
-	.data       start:0x0013BE10 end:0x0013BE10
-	.data       start:0x0013BE10 end:0x0013CF98
-	.data       start:0x0013CF98 end:0x0013CF98
-	.data       start:0x0013CF98 end:0x0013E278
-	.data       start:0x0013E278 end:0x0013E278
-	.data       start:0x0013E278 end:0x0013F428
-	.data       start:0x0013F428 end:0x0013F428
-	.data       start:0x0013F428 end:0x00140400
-	.data       start:0x00140400 end:0x00140400
-	.data       start:0x00140400 end:0x001417D0
-	.data       start:0x001417D0 end:0x001417D0
-	.data       start:0x001417D0 end:0x00142AC0
-	.data       start:0x00142AC0 end:0x00142AC0
-	.data       start:0x00142AC0 end:0x00143AC0
-	.data       start:0x00143AC0 end:0x00143AC0
-	.data       start:0x00143AC0 end:0x00144B48
-	.data       start:0x00144B48 end:0x00144B48
-	.data       start:0x00144B48 end:0x00145AB8
-	.data       start:0x00145AB8 end:0x00145AD8
-	.data       start:0x00145AD8 end:0x00146F38
-	.data       start:0x00146F38 end:0x00146F58
-	.data       start:0x00146F58 end:0x00148318
-	.data       start:0x00148318 end:0x00148338
-	.data       start:0x00148338 end:0x00149590
-	.data       start:0x00149590 end:0x001495B0
-	.data       start:0x001495B0 end:0x0014AB38
-	.data       start:0x0014AB38 end:0x0014AB58
-	.data       start:0x0014AB58 end:0x0014C1C0
-	.data       start:0x0014C1C0 end:0x0014C1E0
-	.data       start:0x0014C1E0 end:0x0014D468
-	.data       start:0x0014D468 end:0x0014D488
-	.data       start:0x0014D488 end:0x0014EA70
-	.data       start:0x0014EA70 end:0x0014EA90
-	.data       start:0x0014EA90 end:0x0014FEB0
-	.data       start:0x0014FEB0 end:0x0014FED0
-	.data       start:0x0014FED0 end:0x00151228
-	.data       start:0x00151228 end:0x00151248
-	.data       start:0x00151248 end:0x00152460
-	.data       start:0x00152460 end:0x00152480
-	.data       start:0x00152480 end:0x001537D0
-	.data       start:0x001537D0 end:0x00153810
-	.data       start:0x00153810 end:0x00154E70
-	.data       start:0x00154E70 end:0x00154EB0
-	.data       start:0x00154EB0 end:0x00156B68
-	.data       start:0x00156B68 end:0x00156BA8
-	.data       start:0x00156BA8 end:0x001582E0
-	.data       start:0x001582E0 end:0x00158320
-	.data       start:0x00158320 end:0x00158800
-	.data       start:0x00158800 end:0x00158840
-	.data       start:0x00158840 end:0x00158CD8
-	.data       start:0x00158CD8 end:0x00158D18
-	.data       start:0x00158D18 end:0x001591B8
-	.data       start:0x001591B8 end:0x001591F8
-	.data       start:0x001591F8 end:0x00159660
-	.data       start:0x00159660 end:0x001596A0
-	.data       start:0x001596A0 end:0x00159B30
-	.data       start:0x00159B30 end:0x00159B70
-	.data       start:0x00159B70 end:0x00159FF0
-	.data       start:0x00159FF0 end:0x0015A030
-	.data       start:0x0015A030 end:0x0015A498
-	.data       start:0x0015A498 end:0x0015A4D8
-	.data       start:0x0015A4D8 end:0x0015A968
-	.data       start:0x0015A968 end:0x0015A9A8
-	.data       start:0x0015A9A8 end:0x0015AE98
-	.data       start:0x0015AE98 end:0x0015AED8
-	.data       start:0x0015AED8 end:0x0015B3B0
-	.data       start:0x0015B3B0 end:0x0015B3B0
-	.data       start:0x0015B3B0 end:0x0015B810
-	.data       start:0x0015B810 end:0x0015B850
-	.data       start:0x0015B850 end:0x0015BB30
-	.data       start:0x0015BB30 end:0x0015BB70
-	.data       start:0x0015BB70 end:0x0015C080
-	.data       start:0x0015C080 end:0x0015C0C0
-	.data       start:0x0015C0C0 end:0x0015C5A0
-	.data       start:0x0015C5A0 end:0x0015C5E0
-	.data       start:0x0015C5E0 end:0x0015CAD8
-	.data       start:0x0015CAD8 end:0x0015CB18
-	.data       start:0x0015CB18 end:0x0015CFD8
-	.data       start:0x0015CFD8 end:0x0015D018
-	.data       start:0x0015D018 end:0x0015D3F0
-	.data       start:0x0015D3F0 end:0x0015D430
-	.data       start:0x0015D430 end:0x0015D710
-	.data       start:0x0015D710 end:0x0015D750
-	.data       start:0x0015D750 end:0x0015DA28
-	.data       start:0x0015DA28 end:0x0015DA68
-	.data       start:0x0015DA68 end:0x0015DD40
-	.data       start:0x0015DD40 end:0x0015DD80
-	.data       start:0x0015DD80 end:0x0015E288
-	.data       start:0x0015E288 end:0x0015E2C8
-	.data       start:0x0015E2C8 end:0x0015E6D0
-	.data       start:0x0015E6D0 end:0x0015E710
-	.data       start:0x0015E710 end:0x0015EB28
-	.data       start:0x0015EB28 end:0x0015EB68
-	.data       start:0x0015EB68 end:0x0015F098
-	.data       start:0x0015F098 end:0x0015F0D8
-	.data       start:0x0015F0D8 end:0x0015F638
-	.data       start:0x0015F638 end:0x0015F678
-	.data       start:0x0015F678 end:0x0015FB90
-	.data       start:0x0015FB90 end:0x0015FBA0
-	.data       start:0x0015FBA0 end:0x00160988
-	.data       start:0x00160988 end:0x00160998
-	.data       start:0x00160998 end:0x001618C0
-	.data       start:0x001618C0 end:0x001618D0
-	.data       start:0x001618D0 end:0x001628F0
-	.data       start:0x001628F0 end:0x00162900
-	.data       start:0x00162900 end:0x00163608
-	.data       start:0x00163608 end:0x00163618
-	.data       start:0x00163618 end:0x00164640
-	.data       start:0x00164640 end:0x00164650
-	.data       start:0x00164650 end:0x00165A80
-	.data       start:0x00165A80 end:0x00165A90
-	.data       start:0x00165A90 end:0x00166D70
-	.data       start:0x00166D70 end:0x00166D80
-	.data       start:0x00166D80 end:0x00168010
-	.data       start:0x00168010 end:0x00168020
-	.data       start:0x00168020 end:0x00168E38
-	.data       start:0x00168E38 end:0x00168E48
-	.data       start:0x00168E48 end:0x00169C98
-	.data       start:0x00169C98 end:0x00169CA8
-	.data       start:0x00169CA8 end:0x0016AD08
-	.data       start:0x0016AD08 end:0x0016AD18
-	.data       start:0x0016AD18 end:0x0016BD20
-	.data       start:0x0016BD20 end:0x0016BD30
-	.data       start:0x0016BD30 end:0x0016D360
-	.data       start:0x0016D360 end:0x0016D370
-	.data       start:0x0016D370 end:0x0016E6C8
-	.data       start:0x0016E6C8 end:0x0016E6D8
-	.data       start:0x0016E6D8 end:0x0016FBC0
-	.data       start:0x0016FBC0 end:0x0016FBD0
-	.data       start:0x0016FBD0 end:0x00171430
-	.data       start:0x00171430 end:0x00171440
-	.data       start:0x00171440 end:0x001724D8
-	.data       start:0x001724D8 end:0x001724E8
-	.data       start:0x001724E8 end:0x001733D8
-	.data       start:0x001733D8 end:0x001733E8
-	.data       start:0x001733E8 end:0x00174320
-	.data       start:0x00174320 end:0x00174330
-	.data       start:0x00174330 end:0x00175180
-	.data       start:0x00175180 end:0x00175190
-	.data       start:0x00175190 end:0x00176378
-	.data       start:0x00176378 end:0x00176388
-	.data       start:0x00176388 end:0x001778A0
-	.data       start:0x001778A0 end:0x001778B0
-	.data       start:0x001778B0 end:0x00178CD0
-	.data       start:0x00178CD0 end:0x00178CE0
-	.data       start:0x00178CE0 end:0x0017A380
-	.data       start:0x0017A380 end:0x0017A390
-	.data       start:0x0017A390 end:0x0017B2B8
-	.data       start:0x0017B2B8 end:0x0017B2C8
-	.data       start:0x0017B2C8 end:0x0017C230
-	.data       start:0x0017C230 end:0x0017C240
-	.data       start:0x0017C240 end:0x0017D058
-	.data       start:0x0017D058 end:0x0017D068
-	.data       start:0x0017D068 end:0x0017DD58
-	.data       start:0x0017DD58 end:0x0017DD68
-	.data       start:0x0017DD68 end:0x0017EF38
-	.data       start:0x0017EF38 end:0x0017EF48
-	.data       start:0x0017EF48 end:0x00180488
-	.data       start:0x00180488 end:0x00180498
-	.data       start:0x00180498 end:0x00181480
-	.data       start:0x00181480 end:0x00181490
-	.data       start:0x00181490 end:0x00182570
-	.data       start:0x00182570 end:0x00182580
-	.data       start:0x00182580 end:0x00183628
-	.data       start:0x00183628 end:0x00183638
-	.data       start:0x00183638 end:0x001848F8
-	.data       start:0x001848F8 end:0x00184908
-	.data       start:0x00184908 end:0x00185C00
-	.data       start:0x00185C00 end:0x00185C10
-	.data       start:0x00185C10 end:0x00187090
-	.data       start:0x00187090 end:0x001870A0
-	.data       start:0x001870A0 end:0x00187DB8
-	.data       start:0x00187DB8 end:0x00187DC8
-	.data       start:0x00187DC8 end:0x00188B48
-	.data       start:0x00188B48 end:0x00188B58
-	.data       start:0x00188B58 end:0x001898C0
-	.data       start:0x001898C0 end:0x001898D0
-	.data       start:0x001898D0 end:0x0018A738
-	.data       start:0x0018A738 end:0x0018A748
-	.data       start:0x0018A748 end:0x0018BC88
-	.data       start:0x0018BC88 end:0x0018BC98
-	.data       start:0x0018BC98 end:0x0018D308
-	.data       start:0x0018D308 end:0x0018D318
-	.data       start:0x0018D318 end:0x0018E200
-	.data       start:0x0018E200 end:0x0018E210
-	.data       start:0x0018E210 end:0x0018F010
-	.data       start:0x0018F010 end:0x0018F020
-	.data       start:0x0018F020 end:0x0018FDB8
-	.data       start:0x0018FDB8 end:0x0018FDC8
-	.data       start:0x0018FDC8 end:0x00190D78
-	.data       start:0x00190D78 end:0x00190D88
-	.data       start:0x00190D88 end:0x00192320
-	.data       start:0x00192320 end:0x00192330
-	.data       start:0x00192330 end:0x00193748
-	.data       start:0x00193748 end:0x00193758
-	.data       start:0x00193758 end:0x001943B8
-	.data       start:0x001943B8 end:0x00195458
-	.data       start:0x00195458 end:0x00196368
-	.data       start:0x00196368 end:0x00196EC8
-	.data       start:0x00196EC8 end:0x00196ED8
-	.data       start:0x00196ED8 end:0x00198050
-	.data       start:0x00198050 end:0x00198060
-	.data       start:0x00198060 end:0x001992D0
-	.data       start:0x001992D0 end:0x0019A6D8
-	.data       start:0x0019A6D8 end:0x0019BAA8
-	.data       start:0x0019BAA8 end:0x0019C908
-	.data       start:0x0019C908 end:0x0019D7E8
-	.data       start:0x0019D7E8 end:0x0019E478
-	.data       start:0x0019E478 end:0x0019F0C8
-	.data       start:0x0019F0C8 end:0x0019F0D8
-	.data       start:0x0019F0D8 end:0x001A0230
-	.data       start:0x001A0230 end:0x001A0240
-	.data       start:0x001A0240 end:0x001A1438
-	.data       start:0x001A1438 end:0x001A1448
-	.data       start:0x001A1448 end:0x001A28C8
-	.data       start:0x001A28C8 end:0x001A28D8
-	.data       start:0x001A28D8 end:0x001A3D80
-	.data       start:0x001A3D80 end:0x001A3D90
-	.data       start:0x001A3D90 end:0x001A50D8
-	.data       start:0x001A50D8 end:0x001A50E8
-	.data       start:0x001A50E8 end:0x001A6598
-	.data       start:0x001A6598 end:0x001A71C8
-	.data       start:0x001A71C8 end:0x001A71D8
-	.data       start:0x001A71D8 end:0x001A8170
-	.data       start:0x001A8170 end:0x001A8DD0
-	.data       start:0x001A8DD0 end:0x001A9C50
-	.data       start:0x001A9C50 end:0x001AADE0
-	.data       start:0x001AADE0 end:0x001ABCF0

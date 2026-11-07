@@ -47,7 +47,7 @@ static u8 aPOFF_shadow_vtx_fix_flg_table[] = {
     TRUE, FALSE, FALSE, TRUE, 
     FALSE, TRUE, FALSE, TRUE,
     TRUE, FALSE, TRUE,  FALSE,
-    FALSE, TRUE, FALSE, FALSE
+    FALSE, TRUE,
 };
 // clang-format on
 

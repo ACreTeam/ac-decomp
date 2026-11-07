@@ -16,6 +16,9 @@ enum {
     mEE_TYPE_MSCORE,
     mEE_TYPE_CPACK,
     mEE_TYPE_ORIGINAL_DESIGN,
+#if VERSION == VER_GAFP01_00
+    mEE_TYPE_CPORIGINAL,
+#endif
 
     mEE_TYPE_NUM
 };

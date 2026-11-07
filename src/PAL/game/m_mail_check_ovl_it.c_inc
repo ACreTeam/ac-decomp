@@ -1,0 +1,357 @@
+/* Italian trigram suffixes and trigger table. */
+
+static u8 str_A_table[] = {
+    CHAR_b, CHAR_b, CHAR_b, CHAR_o, CHAR_c, CHAR_c, CHAR_c, CHAR_i,
+    CHAR_c, CHAR_q, CHAR_c, CHAR_u, CHAR_d, CHAR_a, CHAR_d, CHAR_d,
+    CHAR_d, CHAR_o, CHAR_f, CHAR_f, CHAR_g, CHAR_e, CHAR_g, CHAR_g,
+    CHAR_g, CHAR_o, CHAR_g, CHAR_r, CHAR_g, CHAR_u, CHAR_i, CHAR_u,
+    CHAR_l, CHAR_b, CHAR_l, CHAR_c, CHAR_l, CHAR_i, CHAR_l, CHAR_l,
+    CHAR_l, CHAR_t, CHAR_l, CHAR_z, CHAR_m, CHAR_a, CHAR_m, CHAR_b,
+    CHAR_m, CHAR_i, CHAR_m, CHAR_m, CHAR_m, CHAR_o, CHAR_m, CHAR_p,
+    CHAR_n, CHAR_d, CHAR_n, CHAR_g, CHAR_n, CHAR_i, CHAR_n, CHAR_n,
+    CHAR_n, CHAR_o, CHAR_n, CHAR_t, CHAR_p, CHAR_p, CHAR_p, CHAR_r,
+    CHAR_r, CHAR_c, CHAR_r, CHAR_d, CHAR_r, CHAR_g, CHAR_r, CHAR_m,
+    CHAR_r, CHAR_r, CHAR_r, CHAR_t, CHAR_s, CHAR_c, CHAR_s, CHAR_p,
+    CHAR_s, CHAR_s, CHAR_s, CHAR_t, CHAR_t, CHAR_t, CHAR_u, CHAR_g,
+    CHAR_u, CHAR_t, CHAR_v, CHAR_v, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_B_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_c, CHAR_a, CHAR_d, CHAR_a, CHAR_f,
+    CHAR_a, CHAR_g, CHAR_a, CHAR_i, CHAR_a, CHAR_l, CHAR_a, CHAR_m,
+    CHAR_a, CHAR_n, CHAR_a, CHAR_o, CHAR_a, CHAR_r, CHAR_a, CHAR_s,
+    CHAR_a, CHAR_t, CHAR_a, CHAR_u, CHAR_a, CHAR_v, CHAR_e, CHAR_a,
+    CHAR_e, CHAR_b, CHAR_e, CHAR_f, CHAR_e, CHAR_g, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_n, CHAR_e, CHAR_r, CHAR_e, CHAR_v, CHAR_i, CHAR_a,
+    CHAR_i, CHAR_b, CHAR_i, CHAR_c, CHAR_i, CHAR_d, CHAR_i, CHAR_f,
+    CHAR_i, CHAR_g, CHAR_i, CHAR_l, CHAR_i, CHAR_m, CHAR_i, CHAR_n,
+    CHAR_i, CHAR_o, CHAR_i, CHAR_p, CHAR_i, CHAR_r, CHAR_i, CHAR_s,
+    CHAR_i, CHAR_t, CHAR_i, CHAR_v, CHAR_i, CHAR_z, CHAR_l, CHAR_o,
+    CHAR_o, CHAR_l, CHAR_o, CHAR_m, CHAR_o, CHAR_n, CHAR_o, CHAR_r,
+    CHAR_o, CHAR_t, CHAR_r, CHAR_a, CHAR_r, CHAR_e, CHAR_r, CHAR_o,
+    CHAR_r, CHAR_u, CHAR_u, CHAR_f, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_C_table[] = {
+    CHAR_a, CHAR_f, CHAR_a, CHAR_g, CHAR_a, CHAR_l, CHAR_a, CHAR_m,
+    CHAR_a, CHAR_n, CHAR_a, CHAR_p, CHAR_a, CHAR_r, CHAR_a, CHAR_s,
+    CHAR_a, CHAR_v, CHAR_a, CHAR_z, CHAR_e, CHAR_n, CHAR_e, CHAR_r,
+    CHAR_e, CHAR_s, CHAR_h, CHAR_i, CHAR_i, CHAR_a, CHAR_i, CHAR_b,
+    CHAR_i, CHAR_c, CHAR_i, CHAR_g, CHAR_i, CHAR_l, CHAR_i, CHAR_m,
+    CHAR_i, CHAR_n, CHAR_i, CHAR_o, CHAR_i, CHAR_p, CHAR_i, CHAR_r,
+    CHAR_i, CHAR_t, CHAR_i, CHAR_u, CHAR_i, CHAR_v, CHAR_l, CHAR_a,
+    CHAR_l, CHAR_e, CHAR_l, CHAR_i, CHAR_l, CHAR_o, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_d, CHAR_o, CHAR_g, CHAR_o, CHAR_l, CHAR_o, CHAR_m,
+    CHAR_o, CHAR_n, CHAR_o, CHAR_p, CHAR_o, CHAR_r, CHAR_o, CHAR_s,
+    CHAR_o, CHAR_t, CHAR_o, CHAR_v, CHAR_r, CHAR_a, CHAR_r, CHAR_e,
+    CHAR_r, CHAR_i, CHAR_r, CHAR_o, CHAR_u, CHAR_b, CHAR_u, CHAR_c,
+    CHAR_u, CHAR_l, CHAR_u, CHAR_r, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_D_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_l, CHAR_a, CHAR_m, CHAR_a, CHAR_n,
+    CHAR_a, CHAR_p, CHAR_a, CHAR_t, CHAR_a, CHAR_v, CHAR_e, CHAR_b,
+    CHAR_e, CHAR_c, CHAR_e, CHAR_d, CHAR_e, CHAR_f, CHAR_e, CHAR_g,
+    CHAR_e, CHAR_l, CHAR_e, CHAR_m, CHAR_e, CHAR_p, CHAR_e, CHAR_s,
+    CHAR_e, CHAR_t, CHAR_e, CHAR_v, CHAR_i, CHAR_a, CHAR_i, CHAR_c,
+    CHAR_i, CHAR_d, CHAR_i, CHAR_e, CHAR_i, CHAR_f, CHAR_i, CHAR_g,
+    CHAR_i, CHAR_l, CHAR_i, CHAR_m, CHAR_i, CHAR_n, CHAR_i, CHAR_r,
+    CHAR_i, CHAR_s, CHAR_i, CHAR_v, CHAR_o, CHAR_c, CHAR_o, CHAR_d,
+    CHAR_o, CHAR_g, CHAR_o, CHAR_l, CHAR_o, CHAR_m, CHAR_o, CHAR_n,
+    CHAR_o, CHAR_p, CHAR_o, CHAR_r, CHAR_o, CHAR_t, CHAR_o, CHAR_v,
+    CHAR_r, CHAR_a, CHAR_r, CHAR_e, CHAR_r, CHAR_i, CHAR_r, CHAR_o,
+    CHAR_u, CHAR_b, CHAR_u, CHAR_c, CHAR_u, CHAR_e, CHAR_u, CHAR_n,
+    CHAR_u, CHAR_p, CHAR_u, CHAR_r, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_E_table[] = {
+    CHAR_b, CHAR_b, CHAR_c, CHAR_c, CHAR_d, CHAR_u, CHAR_f, CHAR_f,
+    CHAR_l, CHAR_a, CHAR_l, CHAR_e, CHAR_m, CHAR_o, CHAR_n, CHAR_i,
+    CHAR_n, CHAR_t, CHAR_p, CHAR_i, CHAR_q, CHAR_u, CHAR_r, CHAR_b,
+    CHAR_r, CHAR_c, CHAR_r, CHAR_e, CHAR_r, CHAR_o, CHAR_s, CHAR_a,
+    CHAR_s, CHAR_e, CHAR_s, CHAR_i, CHAR_s, CHAR_o, CHAR_s, CHAR_p,
+    CHAR_s, CHAR_s, CHAR_s, CHAR_t, CHAR_t, CHAR_a, CHAR_t, CHAR_e,
+    CHAR_t, CHAR_n, CHAR_u, CHAR_r, CHAR_v, CHAR_a, CHAR_v, CHAR_e,
+    CHAR_v, CHAR_i, CHAR_x, CHAR_t, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_F_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_c, CHAR_a, CHAR_g, CHAR_a, CHAR_l,
+    CHAR_a, CHAR_m, CHAR_a, CHAR_n, CHAR_a, CHAR_r, CHAR_a, CHAR_s,
+    CHAR_a, CHAR_t, CHAR_a, CHAR_v, CHAR_a, CHAR_z, CHAR_e, CHAR_b,
+    CHAR_e, CHAR_c, CHAR_e, CHAR_d, CHAR_e, CHAR_g, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_m, CHAR_e, CHAR_n, CHAR_e, CHAR_r, CHAR_e, CHAR_s,
+    CHAR_e, CHAR_t, CHAR_e, CHAR_u, CHAR_i, CHAR_a, CHAR_i, CHAR_b,
+    CHAR_i, CHAR_c, CHAR_i, CHAR_d, CHAR_i, CHAR_e, CHAR_i, CHAR_g,
+    CHAR_i, CHAR_l, CHAR_i, CHAR_n, CHAR_i, CHAR_o, CHAR_i, CHAR_r,
+    CHAR_i, CHAR_s, CHAR_i, CHAR_t, CHAR_i, CHAR_u, CHAR_l, CHAR_a,
+    CHAR_l, CHAR_e, CHAR_l, CHAR_o, CHAR_l, CHAR_u, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_g, CHAR_o, CHAR_l, CHAR_o, CHAR_n, CHAR_o, CHAR_r,
+    CHAR_o, CHAR_s, CHAR_o, CHAR_t, CHAR_r, CHAR_a, CHAR_r, CHAR_e,
+    CHAR_r, CHAR_i, CHAR_r, CHAR_o, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_G_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_g, CHAR_a, CHAR_l, CHAR_a, CHAR_m,
+    CHAR_a, CHAR_n, CHAR_a, CHAR_r, CHAR_a, CHAR_s, CHAR_a, CHAR_t,
+    CHAR_a, CHAR_v, CHAR_a, CHAR_z, CHAR_e, CHAR_c, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_m, CHAR_e, CHAR_n, CHAR_e, CHAR_o, CHAR_e, CHAR_r,
+    CHAR_e, CHAR_s, CHAR_e, CHAR_t, CHAR_h, CHAR_e, CHAR_h, CHAR_i,
+    CHAR_i, CHAR_a, CHAR_i, CHAR_g, CHAR_i, CHAR_l, CHAR_i, CHAR_n,
+    CHAR_i, CHAR_o, CHAR_i, CHAR_r, CHAR_i, CHAR_t, CHAR_i, CHAR_u,
+    CHAR_l, CHAR_a, CHAR_l, CHAR_e, CHAR_l, CHAR_i, CHAR_l, CHAR_o,
+    CHAR_l, CHAR_u, CHAR_n, CHAR_o, CHAR_o, CHAR_b, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_d, CHAR_o, CHAR_l, CHAR_o, CHAR_m, CHAR_o, CHAR_n,
+    CHAR_o, CHAR_r, CHAR_o, CHAR_v, CHAR_r, CHAR_a, CHAR_r, CHAR_e,
+    CHAR_r, CHAR_i, CHAR_u, CHAR_a, CHAR_u, CHAR_e, CHAR_u, CHAR_i,
+    CHAR_u, CHAR_r, CHAR_u, CHAR_s, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_H_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_i, CHAR_a, CHAR_l, CHAR_a, CHAR_m,
+    CHAR_a, CHAR_n, CHAR_a, CHAR_p, CHAR_a, CHAR_r, CHAR_a, CHAR_u,
+    CHAR_e, CHAR_n, CHAR_i, CHAR_g, CHAR_i, CHAR_n, CHAR_i, CHAR_p,
+    CHAR_i, CHAR_t, CHAR_o, CHAR_b, CHAR_o, CHAR_c, CHAR_o, CHAR_l,
+    CHAR_o, CHAR_m, CHAR_o, CHAR_n, CHAR_o, CHAR_p, CHAR_o, CHAR_r,
+    CHAR_o, CHAR_s, CHAR_o, CHAR_t, CHAR_u, CHAR_m, CHAR_u, CHAR_s,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_I_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_l, CHAR_a, CHAR_t, CHAR_b, CHAR_e,
+    CHAR_b, CHAR_i, CHAR_b, CHAR_r, CHAR_c, CHAR_e, CHAR_c, CHAR_o,
+    CHAR_d, CHAR_e, CHAR_d, CHAR_i, CHAR_d, CHAR_o, CHAR_d, CHAR_r,
+    CHAR_l, CHAR_l, CHAR_m, CHAR_b, CHAR_m, CHAR_i, CHAR_m, CHAR_m,
+    CHAR_m, CHAR_p, CHAR_n, CHAR_a, CHAR_n, CHAR_c, CHAR_n, CHAR_d,
+    CHAR_n, CHAR_e, CHAR_n, CHAR_f, CHAR_n, CHAR_g, CHAR_n, CHAR_i,
+    CHAR_n, CHAR_n, CHAR_n, CHAR_o, CHAR_n, CHAR_s, CHAR_n, CHAR_t,
+    CHAR_n, CHAR_u, CHAR_n, CHAR_v, CHAR_n, CHAR_z, CHAR_o, CHAR_d,
+    CHAR_o, CHAR_n, CHAR_p, CHAR_e, CHAR_p, CHAR_o, CHAR_p, CHAR_p,
+    CHAR_r, CHAR_i, CHAR_r, CHAR_o, CHAR_r, CHAR_r, CHAR_s, CHAR_c,
+    CHAR_s, CHAR_o, CHAR_s, CHAR_p, CHAR_s, CHAR_t, CHAR_t, CHAR_a,
+    CHAR_t, CHAR_i, CHAR_t, CHAR_t, CHAR_u, CHAR_g, CHAR_u, CHAR_t,
+    CHAR_v, CHAR_a, CHAR_v, CHAR_o, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_J_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_z, CHAR_e, CHAR_t, CHAR_i, CHAR_n,
+    CHAR_o, CHAR_g, CHAR_u, CHAR_d, CHAR_u, CHAR_k, CHAR_u, CHAR_n,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_K_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_j, CHAR_a, CHAR_l, CHAR_a, CHAR_m,
+    CHAR_a, CHAR_r, CHAR_a, CHAR_y, CHAR_e, CHAR_b, CHAR_e, CHAR_t,
+    CHAR_i, CHAR_m, CHAR_i, CHAR_n, CHAR_i, CHAR_t, CHAR_i, CHAR_w,
+    CHAR_r, CHAR_a, CHAR_u, CHAR_n, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_L_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_g, CHAR_a, CHAR_n, CHAR_a, CHAR_p,
+    CHAR_a, CHAR_s, CHAR_a, CHAR_u, CHAR_a, CHAR_v, CHAR_e, CHAR_c,
+    CHAR_e, CHAR_g, CHAR_e, CHAR_n, CHAR_e, CHAR_r, CHAR_e, CHAR_s,
+    CHAR_e, CHAR_t, CHAR_i, CHAR_b, CHAR_i, CHAR_c, CHAR_i, CHAR_m,
+    CHAR_i, CHAR_n, CHAR_i, CHAR_r, CHAR_i, CHAR_t, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_d, CHAR_o, CHAR_g, CHAR_o, CHAR_m, CHAR_o, CHAR_n,
+    CHAR_o, CHAR_t, CHAR_u, CHAR_c, CHAR_u, CHAR_m, CHAR_u, CHAR_n,
+    CHAR_u, CHAR_p, CHAR_u, CHAR_r, CHAR_u, CHAR_s, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_M_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_d, CHAR_a, CHAR_f, CHAR_a, CHAR_g,
+    CHAR_a, CHAR_l, CHAR_a, CHAR_m, CHAR_a, CHAR_n, CHAR_a, CHAR_r,
+    CHAR_a, CHAR_s, CHAR_a, CHAR_t, CHAR_e, CHAR_c, CHAR_e, CHAR_d,
+    CHAR_e, CHAR_g, CHAR_e, CHAR_m, CHAR_e, CHAR_n, CHAR_e, CHAR_r,
+    CHAR_e, CHAR_s, CHAR_e, CHAR_t, CHAR_i, CHAR_e, CHAR_i, CHAR_g,
+    CHAR_i, CHAR_l, CHAR_i, CHAR_n, CHAR_i, CHAR_o, CHAR_i, CHAR_s,
+    CHAR_o, CHAR_b, CHAR_o, CHAR_d, CHAR_o, CHAR_l, CHAR_o, CHAR_n,
+    CHAR_o, CHAR_r, CHAR_o, CHAR_s, CHAR_o, CHAR_t, CHAR_o, CHAR_v,
+    CHAR_o, CHAR_z, CHAR_u, CHAR_c, CHAR_u, CHAR_l, CHAR_u, CHAR_n,
+    CHAR_u, CHAR_o, CHAR_u, CHAR_r, CHAR_u, CHAR_s, CHAR_u, CHAR_t,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_N_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_f, CHAR_a, CHAR_n, CHAR_a, CHAR_p,
+    CHAR_a, CHAR_r, CHAR_a, CHAR_s, CHAR_a, CHAR_t, CHAR_a, CHAR_u,
+    CHAR_a, CHAR_v, CHAR_a, CHAR_z, CHAR_e, CHAR_b, CHAR_e, CHAR_c,
+    CHAR_e, CHAR_f, CHAR_e, CHAR_g, CHAR_e, CHAR_o, CHAR_e, CHAR_p,
+    CHAR_e, CHAR_r, CHAR_e, CHAR_s, CHAR_e, CHAR_t, CHAR_e, CHAR_u,
+    CHAR_e, CHAR_v, CHAR_i, CHAR_c, CHAR_i, CHAR_d, CHAR_i, CHAR_e,
+    CHAR_i, CHAR_g, CHAR_i, CHAR_n, CHAR_i, CHAR_p, CHAR_i, CHAR_t,
+    CHAR_o, CHAR_b, CHAR_o, CHAR_c, CHAR_o, CHAR_d, CHAR_o, CHAR_i,
+    CHAR_o, CHAR_l, CHAR_o, CHAR_m, CHAR_o, CHAR_n, CHAR_o, CHAR_r,
+    CHAR_o, CHAR_s, CHAR_o, CHAR_t, CHAR_o, CHAR_v, CHAR_o, CHAR_z,
+    CHAR_u, CHAR_b, CHAR_u, CHAR_c, CHAR_u, CHAR_d, CHAR_u, CHAR_l,
+    CHAR_u, CHAR_m, CHAR_u, CHAR_o, CHAR_u, CHAR_r, CHAR_u, CHAR_t,
+    CHAR_u, CHAR_v, CHAR_u, CHAR_z, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_O_table[] = {
+    CHAR_a, CHAR_s, CHAR_b, CHAR_b, CHAR_b, CHAR_e, CHAR_b, CHAR_i,
+    CHAR_b, CHAR_l, CHAR_b, CHAR_o, CHAR_c, CHAR_a, CHAR_c, CHAR_c,
+    CHAR_c, CHAR_e, CHAR_c, CHAR_u, CHAR_d, CHAR_o, CHAR_f, CHAR_f,
+    CHAR_f, CHAR_i, CHAR_f, CHAR_t, CHAR_g, CHAR_g, CHAR_g, CHAR_i,
+    CHAR_g, CHAR_n, CHAR_l, CHAR_e, CHAR_l, CHAR_f, CHAR_l, CHAR_i,
+    CHAR_l, CHAR_o, CHAR_l, CHAR_t, CHAR_m, CHAR_a, CHAR_m, CHAR_b,
+    CHAR_m, CHAR_i, CHAR_m, CHAR_o, CHAR_n, CHAR_c, CHAR_n, CHAR_d,
+    CHAR_n, CHAR_i, CHAR_n, CHAR_n, CHAR_n, CHAR_o, CHAR_p, CHAR_a,
+    CHAR_p, CHAR_e, CHAR_p, CHAR_i, CHAR_p, CHAR_o, CHAR_p, CHAR_p,
+    CHAR_p, CHAR_t, CHAR_r, CHAR_a, CHAR_r, CHAR_b, CHAR_r, CHAR_c,
+    CHAR_r, CHAR_d, CHAR_r, CHAR_e, CHAR_r, CHAR_g, CHAR_r, CHAR_i,
+    CHAR_r, CHAR_l, CHAR_r, CHAR_n, CHAR_s, CHAR_c, CHAR_s, CHAR_s,
+    CHAR_s, CHAR_t, CHAR_t, CHAR_t, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_P_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_d, CHAR_a, CHAR_e, CHAR_a, CHAR_g,
+    CHAR_a, CHAR_l, CHAR_a, CHAR_n, CHAR_a, CHAR_p, CHAR_a, CHAR_r,
+    CHAR_a, CHAR_s, CHAR_a, CHAR_t, CHAR_a, CHAR_u, CHAR_a, CHAR_v,
+    CHAR_a, CHAR_z, CHAR_e, CHAR_c, CHAR_e, CHAR_g, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_n, CHAR_e, CHAR_p, CHAR_e, CHAR_r, CHAR_e, CHAR_s,
+    CHAR_e, CHAR_z, CHAR_i, CHAR_a, CHAR_i, CHAR_c, CHAR_i, CHAR_e,
+    CHAR_i, CHAR_g, CHAR_i, CHAR_n, CHAR_i, CHAR_o, CHAR_i, CHAR_p,
+    CHAR_i, CHAR_s, CHAR_i, CHAR_u, CHAR_i, CHAR_z, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_d, CHAR_o, CHAR_g, CHAR_o, CHAR_l, CHAR_o, CHAR_m,
+    CHAR_o, CHAR_n, CHAR_o, CHAR_p, CHAR_o, CHAR_r, CHAR_o, CHAR_s,
+    CHAR_o, CHAR_t, CHAR_o, CHAR_v, CHAR_o, CHAR_z, CHAR_r, CHAR_a,
+    CHAR_r, CHAR_e, CHAR_r, CHAR_i, CHAR_r, CHAR_o, CHAR_u, CHAR_b,
+    CHAR_u, CHAR_g, CHAR_u, CHAR_z, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_Q_table[] = {
+    CHAR_u, CHAR_a, CHAR_u, CHAR_e, CHAR_u, CHAR_i, CHAR_u, CHAR_o,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_R_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_c, CHAR_a, CHAR_d, CHAR_a, CHAR_f,
+    CHAR_a, CHAR_g, CHAR_a, CHAR_l, CHAR_a, CHAR_m, CHAR_a, CHAR_n,
+    CHAR_a, CHAR_p, CHAR_a, CHAR_r, CHAR_a, CHAR_s, CHAR_a, CHAR_t,
+    CHAR_a, CHAR_v, CHAR_a, CHAR_z, CHAR_e, CHAR_a, CHAR_e, CHAR_b,
+    CHAR_e, CHAR_c, CHAR_e, CHAR_d, CHAR_e, CHAR_f, CHAR_e, CHAR_g,
+    CHAR_e, CHAR_i, CHAR_e, CHAR_l, CHAR_e, CHAR_m, CHAR_e, CHAR_n,
+    CHAR_e, CHAR_p, CHAR_e, CHAR_q, CHAR_e, CHAR_s, CHAR_e, CHAR_t,
+    CHAR_e, CHAR_v, CHAR_i, CHAR_a, CHAR_i, CHAR_b, CHAR_i, CHAR_c,
+    CHAR_i, CHAR_d, CHAR_i, CHAR_e, CHAR_i, CHAR_f, CHAR_i, CHAR_g,
+    CHAR_i, CHAR_l, CHAR_i, CHAR_m, CHAR_i, CHAR_n, CHAR_i, CHAR_p,
+    CHAR_i, CHAR_s, CHAR_i, CHAR_t, CHAR_i, CHAR_v, CHAR_i, CHAR_z,
+    CHAR_o, CHAR_b, CHAR_o, CHAR_c, CHAR_o, CHAR_d, CHAR_o, CHAR_m,
+    CHAR_o, CHAR_s, CHAR_o, CHAR_v, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_S_table[] = {
+    CHAR_a, CHAR_l, CHAR_a, CHAR_l, CHAR_a, CHAR_n, CHAR_a, CHAR_r,
+    CHAR_b, CHAR_a, CHAR_b, CHAR_e, CHAR_b, CHAR_r, CHAR_c, CHAR_a,
+    CHAR_c, CHAR_a, CHAR_c, CHAR_e, CHAR_c, CHAR_i, CHAR_c, CHAR_o,
+    CHAR_c, CHAR_u, CHAR_e, CHAR_c, CHAR_e, CHAR_l, CHAR_e, CHAR_p,
+    CHAR_e, CHAR_r, CHAR_e, CHAR_s, CHAR_e, CHAR_v, CHAR_e, CHAR_x,
+    CHAR_i, CHAR_c, CHAR_i, CHAR_m, CHAR_i, CHAR_n, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_l, CHAR_o, CHAR_r, CHAR_p, CHAR_a, CHAR_p, CHAR_e,
+    CHAR_p, CHAR_o, CHAR_p, CHAR_r, CHAR_p, CHAR_u, CHAR_t, CHAR_a,
+    CHAR_t, CHAR_e, CHAR_t, CHAR_o, CHAR_t, CHAR_r, CHAR_t, CHAR_u,
+    CHAR_u, CHAR_l, CHAR_e, CHAR_n, CHAR_i, CHAR_r, CHAR_u, CHAR_p,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_T_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_c, CHAR_a, CHAR_g, CHAR_a, CHAR_l,
+    CHAR_a, CHAR_m, CHAR_a, CHAR_n, CHAR_a, CHAR_p, CHAR_a, CHAR_r,
+    CHAR_a, CHAR_s, CHAR_a, CHAR_v, CHAR_e, CHAR_c, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_m, CHAR_e, CHAR_n, CHAR_e, CHAR_o, CHAR_e, CHAR_r,
+    CHAR_e, CHAR_s, CHAR_e, CHAR_t, CHAR_i, CHAR_m, CHAR_i, CHAR_n,
+    CHAR_i, CHAR_p, CHAR_i, CHAR_r, CHAR_i, CHAR_s, CHAR_i, CHAR_t,
+    CHAR_o, CHAR_c, CHAR_o, CHAR_g, CHAR_o, CHAR_n, CHAR_o, CHAR_p,
+    CHAR_o, CHAR_r, CHAR_o, CHAR_s, CHAR_o, CHAR_t, CHAR_r, CHAR_a,
+    CHAR_r, CHAR_e, CHAR_r, CHAR_i, CHAR_r, CHAR_o, CHAR_r, CHAR_u,
+    CHAR_u, CHAR_b, CHAR_u, CHAR_n, CHAR_u, CHAR_r, CHAR_u, CHAR_t,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_U_table[] = {
+    CHAR_b, CHAR_b, CHAR_b, CHAR_e, CHAR_b, CHAR_i, CHAR_b, CHAR_r,
+    CHAR_c, CHAR_c, CHAR_d, CHAR_e, CHAR_d, CHAR_i, CHAR_f, CHAR_f,
+    CHAR_f, CHAR_o, CHAR_g, CHAR_g, CHAR_g, CHAR_o, CHAR_g, CHAR_u,
+    CHAR_l, CHAR_c, CHAR_l, CHAR_i, CHAR_l, CHAR_t, CHAR_l, CHAR_u,
+    CHAR_m, CHAR_a, CHAR_m, CHAR_b, CHAR_m, CHAR_i, CHAR_m, CHAR_o,
+    CHAR_n, CHAR_a, CHAR_n, CHAR_c, CHAR_n, CHAR_d, CHAR_n, CHAR_g,
+    CHAR_n, CHAR_i, CHAR_n, CHAR_t, CHAR_o, CHAR_m, CHAR_p, CHAR_e,
+    CHAR_r, CHAR_a, CHAR_r, CHAR_b, CHAR_r, CHAR_g, CHAR_r, CHAR_i,
+    CHAR_r, CHAR_l, CHAR_r, CHAR_t, CHAR_s, CHAR_a, CHAR_s, CHAR_c,
+    CHAR_s, CHAR_i, CHAR_s, CHAR_o, CHAR_s, CHAR_t, CHAR_t, CHAR_e,
+    CHAR_t, CHAR_i, CHAR_t, CHAR_o, CHAR_t, CHAR_r, CHAR_v, CHAR_a,
+    CHAR_v, CHAR_e, CHAR_v, CHAR_i, CHAR_v, CHAR_u, CHAR_x, CHAR_o,
+    CHAR_z, CHAR_b, CHAR_z, CHAR_z, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_V_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_g, CHAR_a, CHAR_l, CHAR_a, CHAR_n,
+    CHAR_a, CHAR_p, CHAR_a, CHAR_r, CHAR_a, CHAR_s, CHAR_a, CHAR_t,
+    CHAR_e, CHAR_c, CHAR_e, CHAR_d, CHAR_e, CHAR_g, CHAR_e, CHAR_l,
+    CHAR_e, CHAR_n, CHAR_e, CHAR_r, CHAR_e, CHAR_s, CHAR_e, CHAR_t,
+    CHAR_i, CHAR_a, CHAR_i, CHAR_b, CHAR_i, CHAR_c, CHAR_i, CHAR_d,
+    CHAR_i, CHAR_e, CHAR_i, CHAR_g, CHAR_i, CHAR_l, CHAR_i, CHAR_n,
+    CHAR_i, CHAR_o, CHAR_i, CHAR_p, CHAR_i, CHAR_r, CHAR_i, CHAR_s,
+    CHAR_i, CHAR_t, CHAR_i, CHAR_v, CHAR_i, CHAR_z, CHAR_o, CHAR_c,
+    CHAR_o, CHAR_g, CHAR_o, CHAR_l, CHAR_o, CHAR_m, CHAR_o, CHAR_r,
+    CHAR_o, CHAR_t, CHAR_u, CHAR_l, CHAR_u, CHAR_o, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_W_table[] = {
+    CHAR_a, CHAR_f, CHAR_a, CHAR_d, CHAR_a, CHAR_g, CHAR_a, CHAR_h,
+    CHAR_a, CHAR_l, CHAR_a, CHAR_p, CHAR_a, CHAR_r, CHAR_a, CHAR_s,
+    CHAR_a, CHAR_t, CHAR_a, CHAR_w, CHAR_e, CHAR_b, CHAR_e, CHAR_e,
+    CHAR_e, CHAR_l, CHAR_e, CHAR_r, CHAR_e, CHAR_s, CHAR_h, CHAR_i,
+    CHAR_i, CHAR_d, CHAR_i, CHAR_l, CHAR_i, CHAR_n, CHAR_o, CHAR_l,
+    CHAR_o, CHAR_t, CHAR_u, CHAR_r, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_X_table[] = {
+    CHAR_m, CHAR_a, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_Y_table[] = {
+    CHAR_a, CHAR_c, CHAR_a, CHAR_n, CHAR_u, CHAR_c, CHAR_u, CHAR_p,
+    CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static u8 str_Z_table[] = {
+    CHAR_a, CHAR_b, CHAR_a, CHAR_f, CHAR_a, CHAR_g, CHAR_a, CHAR_i,
+    CHAR_a, CHAR_m, CHAR_a, CHAR_n, CHAR_a, CHAR_p, CHAR_a, CHAR_t,
+    CHAR_a, CHAR_v, CHAR_e, CHAR_c, CHAR_e, CHAR_l, CHAR_e, CHAR_p,
+    CHAR_e, CHAR_r, CHAR_e, CHAR_z, CHAR_i, CHAR_b, CHAR_i, CHAR_g,
+    CHAR_i, CHAR_n, CHAR_i, CHAR_p, CHAR_i, CHAR_r, CHAR_i, CHAR_t,
+    CHAR_i, CHAR_z, CHAR_o, CHAR_c, CHAR_o, CHAR_d, CHAR_o, CHAR_l,
+    CHAR_o, CHAR_m, CHAR_o, CHAR_n, CHAR_o, CHAR_o, CHAR_o, CHAR_p,
+    CHAR_o, CHAR_t, CHAR_o, CHAR_z, CHAR_u, CHAR_c, CHAR_u, CHAR_f,
+    CHAR_u, CHAR_l, CHAR_u, CHAR_p, CHAR_u, CHAR_z, CHAR_CONTROL_CODE, CHAR_CONTROL_CODE,
+};
+
+static mMck_cmp_str_table_c cmp_str_table_c[26] = {
+    { CHAR_a, CHAR_A, str_A_table },
+    { CHAR_b, CHAR_B, str_B_table },
+    { CHAR_c, CHAR_C, str_C_table },
+    { CHAR_d, CHAR_D, str_D_table },
+    { CHAR_e, CHAR_E, str_E_table },
+    { CHAR_f, CHAR_F, str_F_table },
+    { CHAR_g, CHAR_G, str_G_table },
+    { CHAR_h, CHAR_H, str_H_table },
+    { CHAR_i, CHAR_I, str_I_table },
+    { CHAR_j, CHAR_J, str_J_table },
+    { CHAR_k, CHAR_K, str_K_table },
+    { CHAR_l, CHAR_L, str_L_table },
+    { CHAR_m, CHAR_M, str_M_table },
+    { CHAR_n, CHAR_N, str_N_table },
+    { CHAR_o, CHAR_O, str_O_table },
+    { CHAR_p, CHAR_P, str_P_table },
+    { CHAR_q, CHAR_Q, str_Q_table },
+    { CHAR_r, CHAR_R, str_R_table },
+    { CHAR_s, CHAR_S, str_S_table },
+    { CHAR_t, CHAR_T, str_T_table },
+    { CHAR_u, CHAR_U, str_U_table },
+    { CHAR_v, CHAR_V, str_V_table },
+    { CHAR_w, CHAR_W, str_W_table },
+    { CHAR_x, CHAR_X, str_X_table },
+    { CHAR_y, CHAR_Y, str_Y_table },
+    { CHAR_z, CHAR_Z, str_Z_table },
+};

@@ -12,7 +12,10 @@ typedef void (*mChoice_MAIN_PROC)(mChoice_c*, GAME*);
 
 static void mChoice_MainSetup(mChoice_c* choice, GAME* game);
 
+#if VERSION != VER_GAFP01_00
 static u32 Choice_table_rom_start = 0;
+#endif
+
 static u32 Choice_rom_start = 0;
 
 static void mChoice_MainSetup_Hide(mChoice_c*, GAME*);
@@ -85,7 +88,9 @@ extern void mChoice_Draw(mChoice_c* choice, GAME* game, int mode) {
 }
 
 extern void mChoice_aram_init() {
+#if VERSION != VER_GAFP01_00
     Choice_table_rom_start = JW_GetAramAddress(RESOURCE_SELECT_TABLE);
+#endif
     Choice_rom_start = JW_GetAramAddress(RESOURCE_SELECT);
 }
 

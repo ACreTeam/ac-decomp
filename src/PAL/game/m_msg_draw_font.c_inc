@@ -1,0 +1,190 @@
+#ifdef __INTELLISENSE__
+#include "m_msg.h"
+#include "m_font.h"
+#endif
+
+static float mMsg_Get_StartScale(mMsg_Window_c* msg_p) {
+    int max;
+    int i;
+    u8* data;
+    u8* data_p;
+    float scale;
+
+    i = 0;
+    max = msg_p->start_text_cursor_idx;
+    scale = 1.0f;
+    data = msg_p->msg_data->text_buf.data;
+    do {
+        data_p = data + i;
+        if (mFont_Check_TagId(data_p, sizeof(u16), mFont_TAG_GROUP_SYS, mFont_TAG_SYS_SCALE)) {
+            int tag_scale = (int)mFont_Get_TagPrmU16(data_p);
+            scale = tag_scale * 0.01f;
+        }
+
+        i += mFont_CodeSize_get(data_p);
+    } while (i < max);
+
+    return scale;
+}
+
+static int mMsg_Get_StartColorId(mMsg_Window_c* msg_p) {
+    int color_id;
+    int max;
+    int i;
+    u8* data;
+    u8* data_p;
+
+    color_id = 0;
+    max = msg_p->start_text_cursor_idx;
+    i = 0;
+    data = msg_p->msg_data->text_buf.data;
+    do {
+        data_p = data + i;
+        if (mFont_Check_TagId(data_p, sizeof(u8), mFont_TAG_GROUP_SYS, mFont_TAG_SYS_COLOR)) {
+            color_id = mFont_Get_TagPrmU8(data_p);
+        }
+
+        i += mFont_CodeSize_get(data_p);
+    } while (i < max);
+
+    return color_id;
+}
+
+static int mMsg_Count_LineSize(u8* start_p, u8* last_p, int* line_size) {
+    int done;
+    u8* p = start_p;
+    int end_flag;
+    int code_size;
+
+    end_flag = FALSE;
+    done = FALSE;
+
+    *line_size = 0;
+
+    while (p < last_p && done == FALSE) {
+        if (*p == CHAR_NEW_LINE) {
+            done = TRUE;
+        } else {
+            if (mFont_Check_Cont(*p)) {
+                u8 cont_type = p[1];
+
+                // LAST/CONTINUE end the current sentence segment, MSG_TIME_END also ends.
+                if (cont_type == mFont_CONT_CODE_LAST || cont_type == mFont_CONT_CODE_CONTINUE || cont_type == mFont_CONT_CODE_MSG_TIME_END) {
+                    done = TRUE;
+                    end_flag = TRUE;
+                }
+            } else {
+                // Some base tags also terminate the current sentence segment.
+                if (mFont_Check_TagId(p, 0, mFont_TAG_GROUP_BASE, mFont_TAG_BASE_MSG_LAST) ||
+                    mFont_Check_TagId(p, 0, mFont_TAG_GROUP_BASE, mFont_TAG_BASE_MSG_CONTINUE) ||
+                    mFont_Check_TagId(p, sizeof(u16), mFont_TAG_GROUP_BASE, mFont_TAG_BASE_MSG_WAIT_LAST)) {
+                    done = TRUE;
+                    end_flag = TRUE;
+                }
+            }
+        }
+
+        code_size = mFont_CodeSize_get(p);
+        p += code_size;
+        *line_size += code_size;
+    }
+
+    if (p >= last_p) {
+        end_flag = TRUE;
+    }
+
+    return end_flag;
+}
+
+static void mMsg_print_font_nes(mMsg_Window_c* msg_p) {
+    // empty -- probably debug
+}
+
+static void mMsg_draw_font_nes(mMsg_Window_c* msg_p, GAME* game) {
+    mFontSentence sentence;
+    u8* data_p = msg_p->msg_data->text_buf.data;
+    u8* last_p = &data_p[msg_p->end_text_cursor_idx];
+    u8* start_p = &data_p[msg_p->start_text_cursor_idx];
+    int line_num;
+    int line_len;
+    int total_len;
+    xy_t scale;
+    xy_t pos;
+    Gfx* gfx;
+    int sentence_finished_flag;
+    u32 sentence_flags;
+    int sentence_voice_idx = msg_p->voice_sfx_idx - msg_p->start_text_cursor_idx;
+    int voice = FALSE;
+
+    if (fabsf(msg_p->text_scale) < 0.001f) {
+        return;
+    }
+
+    OPEN_DISP(game->graph);
+
+    gfx = NOW_FONT_DISP;
+
+    scale.x = msg_p->text_scale;
+    scale.y = msg_p->text_scale;
+
+    pos.x = msg_p->center_x - (96.0f * scale.x);
+    pos.y = msg_p->center_y - (32.0f * scale.y);
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_VOICE_ENTRY)) {
+        if ((msg_p->status_flags & mMsg_STATUS_FLAG_18)) {
+            mMsg_print_font_nes(msg_p);
+            voice = TRUE;
+        } else {
+            if (!F32_IS_ZERO(msg_p->cursor_timer) || msg_p->force_voice_enable_flag == TRUE) {
+                voice = TRUE;
+            }
+            mMsg_print_font_nes(msg_p);
+        }
+    }
+
+    mFont_CurrentScale_push();
+    mFont_CurrentScale_set(mMsg_Get_StartScale(msg_p));
+    mFont_CurrentColor_push();
+    mFont_CurrentColor_set(mMsg_Get_StartColorId(msg_p));
+
+    line_num = 0;
+    sentence_finished_flag = FALSE;
+    total_len = 0;
+
+    while (line_num < msg_p->text_lines && sentence_finished_flag == FALSE) {
+        sentence_finished_flag = mMsg_Count_LineSize(start_p, last_p, &line_len);
+
+        if (line_num == 0) {
+            sentence_flags = mFont_SENTENCE_SKIP_DRAW_NEW_LINE | mFont_SENTENCE_FLAG_CUT;
+        } else {
+            sentence_flags = mFont_SENTENCE_SKIP_DRAW_NEW_LINE | mFont_SENTENCE_FLAG_NO_COMBINE |
+                             mFont_SENTENCE_FLAG_3 | mFont_SENTENCE_FLAG_CUT;
+        }
+
+        // Add voice SE marker for the line containing the voice SE index.
+        if (voice && sentence_voice_idx >= total_len && sentence_voice_idx < (total_len + line_len)) {
+            sentence_flags |= mFont_SENTENCE_FLAG_VOICE_SE;
+            msg_p->status_flags &= ~(mMsg_STATUS_FLAG_18 | mMsg_STATUS_FLAG_VOICE_ENTRY);
+        }
+
+        mFontSentence_set(&sentence, start_p, line_len, sentence_flags, &pos, mFont_LineType_Top, &scale,
+                          &msg_p->font_color[line_num], sentence_voice_idx - total_len, msg_p->voice_idx, msg_p->voice2_idx, msg_p->voice3_idx, msg_p->animal_voice_idx);
+
+        mFontSentence_gppDraw(&sentence, game, &gfx);
+
+        pos.y += 16.0f * scale.y;
+        start_p = start_p + line_len;
+        line_num++;
+        total_len += line_len;
+    }
+
+    mFont_CurrentColor_pop();
+    mFont_CurrentScale_pop();
+
+    SET_FONT_DISP(gfx);
+    CLOSE_DISP(game->graph);
+}
+
+static void mMsg_draw_font(mMsg_Window_c* msg_p, GAME* game) {
+    mMsg_draw_font_nes(msg_p, game);
+}

@@ -684,7 +684,7 @@ extern u8 mFI_BkNum2BlockType(int bx, int bz) {
 
 // 25%
 
-#if VERSION != VER_GAFU01_00
+#if VERSION == VER_GAFE01_00
 static int mFI_GetPuleTypeIdx(u8 type) {
     u32 kind = mRF_Type2BlockInfo(type);
     int idx = -1;

@@ -1,3 +1,10 @@
+#ifdef __INTELLISENSE__
+#include "m_common_data.h"
+#include "m_player_lib.h"
+#include "m_bgm.h"
+#include "m_msg.h"
+#endif
+
 static int Player_actor_request_main_get_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_GET_SCOOP, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
@@ -161,11 +168,16 @@ static void Player_actor_Get_scoop_demo_ct(ACTOR* actor) {
     mMsg_Window_c* win = mMsg_Get_base_window_p();
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
-    u8 str[mIN_ITEM_NAME_LEN];
     mActor_name_t item = main_scoop->item;
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(win, mMsg_ITEM_STR0, item);
+#else
+    u8 str[mIN_ITEM_NAME_LEN];
+
     mIN_copy_name_str(str, item);
-    mMsg_Set_item_str_art(win, 0, str, sizeof(str), mIN_get_item_article(item));
+    mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str), mIN_get_item_article(item));
+#endif
     mDemo_Set_msg_num(0x17AF);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_ITEM);

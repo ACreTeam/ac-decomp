@@ -1,0 +1,8 @@
+static void mMsg_Main_Hide(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_MainSetup_Window(msg_p, game);
+}
+
+static void mMsg_MainSetup_Hide(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_init(game);
+  emu64_refresh();
+}

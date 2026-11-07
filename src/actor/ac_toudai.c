@@ -32,7 +32,7 @@ extern Vtx obj_s_toudai_shadow_v[];
 extern Gfx obj_s_toudai_shadow_1_model[];
 
 u8 aTOU_shadow_vtx_fix_flg_table[] = {
-    1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0,
+    1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 
 };
 
 bIT_ShadowData_c aTOU_shadow_data = {

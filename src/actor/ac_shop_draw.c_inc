@@ -15,7 +15,11 @@ static int aSHOP_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, i
     shop = (STRUCTURE_ACTOR*)arg;
     graph = game->graph;
 
+#if VERSION == VER_GAFP01_00
+    if (joint_idx == 3) {
+#else
     if (joint_idx == 5) {
+#endif
         angle = shop->arg0;
         if (angle == DEG2SHORT_ANGLE(90.0f) - 1) { // 0x3FFF
             r = 255;

@@ -548,13 +548,25 @@ static int aQMgr_actor_talk_check(ACTOR* client) {
 static int aQMgr_get_time_kind(int hour) {
     int res = aQMgr_TIME_MORNING;
     
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    if (hour >= 14 && hour < 19) {
+#else
     if (hour >= 12 && hour < 17) {
+#endif
         res = aQMgr_TIME_DAY;
     }
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    else if (hour >= 19 && hour < 24) {
+#else
     else if (hour >= 17 && hour < 24) {
+#endif
         res = aQMgr_TIME_EVENING;
     }
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    else if (hour >= 0 && hour < 6) {
+#else
     else if (hour >= 0 && hour < 5) {
+#endif
         res = aQMgr_TIME_NIGHT;
     }
 

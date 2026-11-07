@@ -2,7 +2,7 @@ static void aKOI_wait(STRUCTURE_ACTOR* actorx, GAME_PLAY* play) {
 }
 
 static void aKOI_setup_action(KOINOBORI_ACTOR* koinobori, int action) {
-    static aSTR_MOVE_PROC process[8] = { &aKOI_wait, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+    static aSTR_MOVE_PROC process[] = { &aKOI_wait };
 
     cKF_SkeletonInfo_R_init(&koinobori->structure_class.keyframe, koinobori->structure_class.keyframe.skeleton,
                             &cKF_ba_r_obj_e_koinobori, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, TRUE, NULL);

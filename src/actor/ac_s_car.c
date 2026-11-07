@@ -27,9 +27,9 @@ ACTOR_PROFILE S_Car_Profile = {
     NULL,
 };
 
-u8 aSCR_shadow_vtx_fix_flg_table0[24] = {
+u8 aSCR_shadow_vtx_fix_flg_table0[] = {
     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,
-    TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+    TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
 };
 
 extern Vtx obj_car_shadow_v[];

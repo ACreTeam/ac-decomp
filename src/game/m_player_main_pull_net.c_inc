@@ -1,3 +1,10 @@
+#ifdef __INTELLISENSE__
+#include "m_common_data.h"
+#include "m_player_lib.h"
+#include "m_bgm.h"
+#include "m_msg.h"
+#endif
+
 static int Player_actor_request_main_pull_net(GAME* game, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_PULL_NET, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
@@ -126,24 +133,37 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
                 msg_no = Common_Get(now_private)->inventory.pockets[item_idx] + 0x1DC;
             }
         } else if (main_index == mPlayer_INDEX_PULL_NET) {
+#if VERSION != VER_GAFP01_00
             u8 str[mIN_ITEM_NAME_LEN];
+#endif
             mActor_name_t item;
             mPlayer_main_pull_net_c* main_pull = &player->main_data.pull_net;
 
             if (main_pull->already_collected) {
                 if (type != 0) {
                     if (idx != aINS_INSECT_TYPE_COMMON_BUTTERFLY) {
+#if VERSION != VER_GAFP01_00
                         mIN_copy_name_str(str, ITM_INSECT08);
+#endif
                         item = ITM_INSECT08;
                     } else {
+#if VERSION != VER_GAFP01_00
                         mIN_copy_name_str(str, ITM_INSECT38);
+#endif
                         item = ITM_INSECT38;
                     }
                 } else {
+#if VERSION != VER_GAFP01_00
                     mIN_copy_name_str(str, ((aINS_INSECT_ACTOR*)label)->item);
+#endif
                     item = ((aINS_INSECT_ACTOR*)label)->item;
                 }
+
+#if VERSION == VER_GAFP01_00
+                mMsg_Set_item_str_default(win, mMsg_ITEM_STR0, item);
+#else
                 mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str), mIN_get_item_article(item));
+#endif
                 msg_no = 0xA4E;
             } else {
                 msg_no = Player_actor_Get_mushi_msg_num(idx);

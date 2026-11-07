@@ -32,7 +32,7 @@
 
 #if VERSION == VER_GAFE01_00
 #define aAL_IN_FRAMES 121.0f
-#elif VERSION == VER_GAFU01_00
+#elif VERSION >= VER_GAFU01_00
 #define aAL_IN_FRAMES 101.0f
 #endif
 
@@ -426,7 +426,7 @@ static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {
 
   CLOSE_DISP(graph);
 }
-#elif VERSION == VER_GAFU01_00
+#elif VERSION >= VER_GAFU01_00
 extern Gfx logo_nin_copyT_model[];
 
 static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {

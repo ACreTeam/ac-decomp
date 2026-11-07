@@ -224,8 +224,13 @@ static void BG_draw_Minsect_niwa(ACTOR* actor, GAME_PLAY* play) {
     Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_LOAD);
     Global_kankyo_set_room_prim((GAME*)play);
     OPEN_DISP(graph);
+#if VERSION == VER_GAFP01_00
+    gSPMatrix(NEXT_BG_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_BG_OPA_DISP, rom_museum4_model);
+#else
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_OPA_DISP, rom_museum4_model);
+#endif
 
     CLOSE_DISP(graph);
 }

@@ -49,7 +49,7 @@ static u8 aBGY_shadow_vtx_fix_flg_table[] = {
     TRUE, TRUE, FALSE, TRUE,
     FALSE, FALSE, TRUE, FALSE,
     FALSE, TRUE, TRUE, FALSE,
-    TRUE, FALSE, FALSE, FALSE
+    TRUE, FALSE,
 };
 // clang-format on
 
