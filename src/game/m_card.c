@@ -1493,11 +1493,17 @@ static int mCD_rename_file_fg(const char* new_filename, const char* filename, s3
 
 static u16 l_mcd_copy_protect = 0xFFFF;
 
+#if VERSION == VER_GAFP01_00
+#define mCD_CARD_FONT_SPACE 0x20
+#else
+#define mCD_CARD_FONT_SPACE 0xa0
+#endif
+
 // clang-format off
 static u8 l_mcd_font_1[256] ATTRIBUTE_ALIGN(4) = {
     0xa1, 0xbf, 0xc4, 0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce,
     0xcf, 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdf, 0xde, 0xe0,
-    0xa0, 0x21, 0x94, 0xe1, 0xe2, 0x25, 0x26, 0xb4, 0x28, 0x29, 0x7e, 0x97, 0x82, 0x2d, 0x2e, 0x97,
+    mCD_CARD_FONT_SPACE, 0x21, 0x94, 0xe1, 0xe2, 0x25, 0x26, 0xb4, 0x28, 0x29, 0x7e, 0x97, 0x82, 0x2d, 0x2e, 0x97,
     0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x97, 0x3c, 0x3d, 0x3e, 0x3f,
     0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f,
     0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0xe3, 0x97, 0xe4, 0xe5, 0x5f,
@@ -1508,20 +1514,63 @@ static u8 l_mcd_font_1[256] ATTRIBUTE_ALIGN(4) = {
     0xaf, 0xac, 0xc6, 0xe6, 0x84, 0xbb, 0xab, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x2f, 0x97,
     0x97, 0x97, 0x97, 0x97, 0x2b, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97,
     0x97, 0xf7, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97,
-    0x3b, 0x23, 0xa0, 0xa0, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97,
+    0x3b, 0x23, mCD_CARD_FONT_SPACE, mCD_CARD_FONT_SPACE, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97,
     0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97,
     0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97, 0x97
 };
 // clang-format on
 
+#if VERSION == VER_GAFP01_00
+#if GAME_LANGUAGE == GAME_LANG_FR
+#define mCD_COMMENT_TOWN "Donn\xe9" "es de "
+#define mCD_COMMENT_DESIGNS "Donn\xe9" "es lettres et motifs"
+#define mCD_COMMENT_TRAVEL " voyage"
+#define mCD_PRESENT_LETTER_IDX 1
+#elif GAME_LANGUAGE == GAME_LANG_DE
+#define mCD_COMMENT_TOWN "-Stadtdaten"
+#define mCD_COMMENT_DESIGNS "Brief- und Designdaten"
+#define mCD_COMMENT_TRAVEL " verreist!"
+#define mCD_PRESENT_LETTER_IDX 2
+#elif GAME_LANGUAGE == GAME_LANG_IT
+#define mCD_COMMENT_TOWN "Dati "
+#define mCD_COMMENT_DESIGNS "Dati lettere e modelli"
+#define mCD_COMMENT_TRAVEL " \xe8 in viaggio"
+#define mCD_PRESENT_LETTER_IDX 3
+#elif GAME_LANGUAGE == GAME_LANG_ES
+#define mCD_COMMENT_TOWN "Datos de "
+#define mCD_COMMENT_DESIGNS "Cartas y dise\xf1os"
+#define mCD_COMMENT_TRAVEL " est\xe1 de viaje"
+#define mCD_PRESENT_LETTER_IDX 4
+#endif
+#define mCD_COMMENT_PRESENT "Bonus: "
+#define mCD_COMMENT_GIFT "Gift: "
+#ifndef mCD_PRESENT_LETTER_IDX
+#define mCD_PRESENT_LETTER_IDX 0
+#endif
+#if GAME_LANGUAGE == GAME_LANG_FR || GAME_LANGUAGE == GAME_LANG_IT || GAME_LANGUAGE == GAME_LANG_ES
+#define mCD_COMMENT_TOWN_PREFIX TRUE
+#else
+#define mCD_COMMENT_TOWN_PREFIX FALSE
+#endif
+#else
+#define mCD_COMMENT_PRESENT "Bonus Letters:"
+#define mCD_COMMENT_GIFT "Gift Letters:"
+#endif
+
+#ifndef mCD_COMMENT_TOWN
+#define mCD_COMMENT_TOWN " Town Data"
+#define mCD_COMMENT_DESIGNS "Letters and Designs Data"
+#define mCD_COMMENT_TRAVEL " is traveling"
+#endif
+
 static char l_comment_0_str[32] ATTRIBUTE_ALIGN(4) = "Animal Crossing";
-static char l_comment_1_str[32] ATTRIBUTE_ALIGN(4) = " Town Data";
-static char l_comment_erase_land[32] ATTRIBUTE_ALIGN(4) = "Letters and Designs Data";
+static char l_comment_1_str[32] ATTRIBUTE_ALIGN(4) = mCD_COMMENT_TOWN;
+static char l_comment_erase_land[32] ATTRIBUTE_ALIGN(4) = mCD_COMMENT_DESIGNS;
 static char l_comment_player_0_str[32] ATTRIBUTE_ALIGN(4) = "Animal Crossing";
-static char l_comment_player_1_str[32] ATTRIBUTE_ALIGN(4) = " is traveling";
+static char l_comment_player_1_str[32] ATTRIBUTE_ALIGN(4) = mCD_COMMENT_TRAVEL;
 static char l_comment_present_0_str[32] ATTRIBUTE_ALIGN(4) = "Animal Crossing";
-static char l_comment_present_1_str[32] ATTRIBUTE_ALIGN(4) = "Bonus Letters:";
-static char l_comment_gift_1_str[32] ATTRIBUTE_ALIGN(4) = "Gift Letters:";
+static char l_comment_present_1_str[32] ATTRIBUTE_ALIGN(4) = mCD_COMMENT_PRESENT;
+static char l_comment_gift_1_str[32] ATTRIBUTE_ALIGN(4) = mCD_COMMENT_GIFT;
 
 static char l_mCD_land_file_name[32] ATTRIBUTE_ALIGN(4) = "DobutsunomoriP_MURA";
 static char l_mCD_land_file_name_dummy[32] ATTRIBUTE_ALIGN(4) = "DobutsunomoriP_MURA_d";
@@ -2405,6 +2454,22 @@ static void mCD_set_number_str(char* str, u8 num) {
     *str = fig_table[0] + '0';
 }
 
+#if VERSION == VER_GAFP01_00
+static int mCD_get_string_len(u8* str, int len) {
+    int n = 0;
+    int i;
+
+    for (i = len - 1, str += i; i >= 0; i--, str--) {
+        if (*str != CHAR_SPACE) {
+            n = i + 1;
+            break;
+        }
+    }
+
+    return n;
+}
+#endif
+
 static void mCD_get_land_comment1(char* comment1, u8* town_name) {
     int n;
     int i;
@@ -2412,8 +2477,25 @@ static void mCD_get_land_comment1(char* comment1, u8* town_name) {
     u8* town_name_p;
     char* comment_p;
 
+#if VERSION != VER_GAFP01_00
     town_name_p = town_name;
+#endif
     mem_clear((u8*)comment1, 32, 0);
+#if VERSION == VER_GAFP01_00
+#if mCD_COMMENT_TOWN_PREFIX
+    comment_p = l_comment_1_str;
+    for (i = 0; i < 32; i++) {
+        if (*comment_p == '\0') {
+            break;
+        }
+
+        *comment1 = *comment_p;
+        comment1++;
+        comment_p++;
+    }
+#endif
+    n = mCD_get_string_len(town_name, LAND_NAME_SIZE);
+#else
     for (i = LAND_NAME_SIZE; i != 0; i--) {
         u8 c = *town_name++;
 
@@ -2426,12 +2508,14 @@ static void mCD_get_land_comment1(char* comment1, u8* town_name) {
 
     town_name = town_name_p;
     n = LAND_NAME_SIZE - spaces;
+#endif
     for (i = 0; i < n; i++) {
         mCD_set_1byte(comment1, *town_name);
         comment1++;
         town_name++;
     }
 
+#if VERSION != VER_GAFP01_00 || !mCD_COMMENT_TOWN_PREFIX
     comment_p = l_comment_1_str;
     for (i = 0; i < 32; i++) {
         *comment1 = *comment_p;
@@ -2442,6 +2526,7 @@ static void mCD_get_land_comment1(char* comment1, u8* town_name) {
         comment1++;
         comment_p++;
     }
+#endif
 }
 
 static void mCD_get_passport_comment1(char* comment1, u8* player_name) {
@@ -2451,8 +2536,13 @@ static void mCD_get_passport_comment1(char* comment1, u8* player_name) {
     u8* player_name_p;
     char* comment_p;
 
+#if VERSION != VER_GAFP01_00
     player_name_p = player_name;
+#endif
     mem_clear((u8*)comment1, 32, 0);
+#if VERSION == VER_GAFP01_00
+    n = mCD_get_string_len(player_name, PLAYER_NAME_LEN);
+#else
     for (i = LAND_NAME_SIZE; i != 0; i--) {
         u8 c = *player_name++;
 
@@ -2465,6 +2555,7 @@ static void mCD_get_passport_comment1(char* comment1, u8* player_name) {
 
     player_name = player_name_p;
     n = PLAYER_NAME_LEN - spaces;
+#endif
     for (i = 0; i < n; i++) {
         mCD_set_1byte(comment1, *player_name);
         comment1++;
@@ -2700,6 +2791,58 @@ static int mCD_SaveHome_bg_erase_dummy(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c*
     return mCD_RESULT_SUCCESS;
 }
 
+#if VERSION == VER_GAFP01_00
+static int mCD_send_present(PresentSaveFile_c* present_file, int length) {
+    int free_idx;
+    Private_c* priv;
+    Mail_c* letter;
+    mHm_hs_c* house;
+    u32 player_no;
+    u16 checksum;
+    int res;
+
+    res = FALSE;
+    player_no = Common_Get(player_no);
+    checksum = mFRm_ReturnCheckSum((u16*)present_file, length);
+
+    if (checksum == 0 && present_file->save.present_count != 0) {
+        letter = &present_file->save.letters[mCD_PRESENT_LETTER_IDX];
+
+        do {
+            if (mPr_NullCheckPersonalID(&letter->header.recipient.personalID) == TRUE) {
+                if (player_no >= PLAYER_NUM) {
+                    break;
+                }
+
+                priv = Now_Private;
+                if (priv == NULL) {
+                    break;
+                }
+
+                house = &Save_Get(homes[mHS_get_arrange_idx(player_no)]);
+                if (mPr_CheckCmpPersonalID(&priv->player_ID, &house->ownerID) != TRUE) {
+                    break;
+                }
+
+                free_idx = mMl_chk_mail_free_space(house->mailbox, HOME_MAILBOX_SIZE);
+                if (free_idx == -1) {
+                    break;
+                }
+
+                letter->content.font = mMl_FONT_RECV;
+                mPr_CopyPersonalID(&letter->header.recipient.personalID, &priv->player_ID);
+                letter->header.recipient.type = mMl_NAME_TYPE_PLAYER;
+                mMl_copy_mail(&house->mailbox[free_idx], letter);
+
+                res = TRUE;
+                present_file->save.present_count = 0;
+            }
+        } while (FALSE);
+    }
+
+    return res;
+}
+#else
 static int mCD_send_present(PresentSaveFile_c* present_file, int length) {
     Mail_c* letter = present_file->save.letters;
     int res = FALSE;
@@ -2750,6 +2893,7 @@ static int mCD_send_present(PresentSaveFile_c* present_file, int length) {
 
     return res;
 }
+#endif
 
 static int mCD_SaveHome_bg_check_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     int res = mCD_RESULT_BUSY;
@@ -2859,7 +3003,7 @@ static int mCD_CheckPresentFile(char* filename, s32* fileNo, s32 chan, s32* resu
 static int mCD_SaveHome_bg_read_send_present(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     static int icon_fileNo[mCD_PRESENT_TYPE_NUM] = { RESOURCE_TEGAMI, RESOURCE_TEGAMI2 };
     static char* comment_p_table[mCD_PRESENT_TYPE_NUM] = { l_comment_present_1_str, l_comment_gift_1_str };
-    static int comment_len_table[mCD_PRESENT_TYPE_NUM] = { 14, 13 };
+    static int comment_len_table[mCD_PRESENT_TYPE_NUM] = { sizeof(mCD_COMMENT_PRESENT) - 1, sizeof(mCD_COMMENT_GIFT) - 1 };
     void* workArea = mgr->workArea;
     mCD_file_entry_c* present_entry;
     mCD_memMgr_card_info_c* card_info;
@@ -2883,7 +3027,7 @@ static int mCD_SaveHome_bg_read_send_present(mCD_memMgr_c* mgr, mCD_memMgr_fileI
                 present_buf = (PresentSaveFile_c*)workArea;
                 
                 /* Determine if this is a bonus gift file or a 'gift' present file */
-                if (mCD_CheckFilename(present_buf->header.comment + 32, l_comment_gift_1_str, 13) == TRUE) {
+                if (mCD_CheckFilename(present_buf->header.comment + 32, l_comment_gift_1_str, sizeof(mCD_COMMENT_GIFT) - 1) == TRUE) {
                     type = mCD_PRESENT_TYPE_GIFT;
                 }
                                 
@@ -5115,6 +5259,9 @@ extern int mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_c
     u8 proc = fileInfo->proc;
     int res;
     int ret = mCD_TRANS_ERR_BUSY;
+#if VERSION == VER_GAFP01_00
+    Private_c* priv = Now_Private;
+#endif
 
     mgr->_0188++;
     if (mgr->_018C == 0) {
@@ -5130,6 +5277,18 @@ extern int mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_c
                     ret = mCD_TRANS_ERR_NONE;
                 }
             } else if (res != mCD_RESULT_BUSY) {
+#if VERSION == VER_GAFP01_00
+                if (priv != NULL) {
+                    priv->reset_code = 0;
+                }
+
+                priv = mCD_GetSaveFilePrivateP();
+                if (priv != NULL) {
+                    priv->reset_code = 0;
+                }
+
+                Common_Set(reset_flag, FALSE);
+#endif
                 if (mgr->_01A0 == 1) {
                     *mounted_chan = mgr->chan;
                     mgr->copy_protect = -1;
@@ -6233,7 +6392,7 @@ static void mCD_ReplaceKeep(Private_c* priv, mCD_PrivateItem_c* privItem) {
 }
 
 // TODO: probably fakematch
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 static int mCD_SaveStation_NextLand_set_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     Save_t* save;
     Private_c* priv;
