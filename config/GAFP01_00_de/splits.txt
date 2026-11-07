@@ -239,7 +239,7 @@ jaudio_gmn.o/system.c:
 	.text       start:0x80024780 end:0x80024780
 	.text       start:0x80024780 end:0x80024CE0
 	.text       start:0x80024CE0 end:0x80024CE0
-	.text       start:0x80024CE0 end:0x80024DF4
+	.text       start:0x80024CE0 end:0x80024E00
 	.rodata     start:0x800B5368 end:0x800B5480
 	.bss        start:0x8019F868 end:0x8019F880
 	.bss        start:0x80222C40 end:0x80222D58 align:4 common

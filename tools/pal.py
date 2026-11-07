@@ -13,24 +13,8 @@ def _stem(name):
     return {"jsyswrapper_main": "jsyswrapper"}.get(stem, stem)
 
 
-# These sources remain selectable in objdiff, but need a PAL port before they
-# can join all_source. The normal matching build continues to use originals.
-PENDING_PORTS = {
-    "data/model/onp_win.c": "PAL replaced the card and R-button assets",
-    "data/model/tim_win.c": "PAL has no testmocomma asset",
-    "data/field/bg/acre/grd_post_office/grd_post_office.c": "PAL replaced US post-office assets",
-    "data/model/clk_win.c": "PAL has no AM/PM assets",
-}
-
-
-# These asset groups were localized further outside the English PAL release.
-LANGUAGE_PENDING_PORTS = {
-    "data/field/bg/acre/police_indoor/police_indoor.c": {"fr", "de", "it", "es"},
-    "data/field/bg/acre/rom_shop4_1/rom_shop4_1.c": {"fr", "de", "it", "es"},
-    "data/field/bg/acre/rom_shop4_fuku/rom_shop4_fuku.c": {"fr", "de", "it", "es"},
-    "data/model/obj_s_kouban.c": {"fr", "de", "it", "es"},
-    "data/model/dia_win.c": {"de", "it", "es"},
-}
+PENDING_PORTS = {}
+LANGUAGE_PENDING_PORTS = {}
 
 
 # foresta objects verified against all five PAL languages.
@@ -762,8 +746,95 @@ MATCHING_JAUDIO = {
     "waveread.c",
 }
 
-# Additional objects verified across all five PAL languages, including linked hashes.
+# Additional PAL objects selected for source linking.
 MATCHING_ADDITIONAL = {
+    "data/model/obj_e_radio_interior.c",
+    "dataobject.obj",
+    "data/field/bg/acre/bg_data.c",
+    "data/item/item_name.c",
+    "data/model/mural/obj_mural.c",
+    "data/scene/post_office.c",
+    "data/model/cal_win.c",
+    "data/model/dia_hyouji.c",
+    "data/model/dia_win.c",
+    "data/model/lat_sp.c",
+    "data/model/onp_hyouji2.c",
+    "data/model/onp_win.c",
+    "data/model/mMP_house_pos_list.c",
+    "data/model/tim_win.c",
+    "data/scene/test_fd_npc_land.c",
+    "data/field/bg/acre/grd_post_office/grd_post_office.c",
+    "data/model/ef_w_cedar.c",
+    "data/model/obj_x_cedar_light_tex_txt.c",
+    "data/model/clk_win.c",
+    "data/model/mny_win.c",
+    "data/field/bg/acre/police_indoor/police_indoor.c",
+    "data/field/bg/acre/rom_shop4_1/rom_shop4_1.c",
+    "data/field/bg/acre/rom_shop4_fuku/rom_shop4_fuku.c",
+    "data/model/rom_shop4_2w.c",
+    "data/model/obj_e_radio.c",
+    "data/model/int_sum_kokuban.c",
+    "data/model/obj_s_kouban.c",
+    "data/model/obj_s_yubinkyoku.c",
+    "data/model/obj_s_shop1.c",
+
+    "bootdata/gam_win2.c",
+    "libforest.a/emu64.c",
+    "libu64.a/gfxprint.c",
+    "libu64.a/gfxprint_data.c",
+    "libc64.a/math64.c",
+    "libc64.a/qrand.c",
+    "libultra.a/lookat.c",
+    "libultra.a/lookathil.c",
+    "libultra.a/mtxutil.c",
+    "libultra.a/normalize.c",
+    "libultra.a/ortho.c",
+    "libultra.a/perspective.c",
+    "libultra.a/rotate.c",
+    "libultra.a/scale.c",
+    "libultra.a/xldtob.c",
+    "libultra.a/xprintf.c",
+    "libultra.a/shutdown.c",
+    "libultra.a/contreaddata.c",
+    "libjsys.a/jsyswrapper.cpp",
+    "JFramework.a/JFWSystem.cpp",
+    "JFramework.a/JFWDisplay.cpp",
+    "JKernel.a/JKRExpHeap.cpp",
+    "JKernel.a/JKRThread.cpp",
+    "JKernel.a/JKRFileFinder.cpp",
+    "JKernel.a/JKRDvdArchive.cpp",
+    "JKernel.a/JKRCompArchive.cpp",
+    "JSupport.a/JSUFileStream.cpp",
+    "JUtility.a/JUTResFont.cpp",
+    "JUtility.a/JUTDbPrint.cpp",
+    "JUtility.a/JUTGamePad.cpp",
+    "JUtility.a/JUTException.cpp",
+    "JUtility.a/JUTDirectPrint.cpp",
+    "JUtility.a/JUTAssert.cpp",
+    "JUtility.a/JUTFader.cpp",
+    "JUtility.a/JUTProcBar.cpp",
+    "JUtility.a/JUTConsole.cpp",
+    "J2DGraph.a/J2DGrafContext.cpp",
+    "J2DGraph.a/J2DOrthoGraph.cpp",
+    "Runtime.PPCEABI.H.a/NMWException.cp",
+    "MSL_C.PPCEABI.bare.H.a/ansi_fp.c",
+    "MSL_C.PPCEABI.bare.H.a/printf.c",
+    "MSL_C.PPCEABI.bare.H.a/float.c",
+    "MSL_C.PPCEABI.bare.H.a/e_acos.c",
+    "MSL_C.PPCEABI.bare.H.a/e_pow.c",
+    "MSL_C.PPCEABI.bare.H.a/s_ldexp.c",
+    "MSL_C.PPCEABI.bare.H.a/e_sqrt.c",
+    "TRK_Minnow_Dolphin.a/dolphin_trk.c",
+
+    "gba2.a/JoyBoot.cpp",
+    "gba.a/GBA.c",
+    "gba.a/GBAGetProcessStatus.c",
+    "gba.a/GBAJoyBoot.c",
+    "gba.a/GBARead.c",
+    "gba.a/GBAWrite.c",
+    "gba.a/GBAXfer.c",
+    "Famicom.a/famicom.cpp",
+    "Famicom.a/famicom_nesinfo.cpp",
     "initial_menu.o",
     "dvderr.o",
     "jsyswrap.o",
@@ -4111,6 +4182,10 @@ def configure_sources(config):
     # OSExec was added to this SDK but is unused in the Australian build.
     os_options = next(o for _, p, o in catalog if p.name == "OS.c")
     catalog.append(("OSExec.c", Path("src/static/dolphin/2.6/src/os/OSExec.c"), os_options))
+    radio_options = next(o for n, _, o in catalog if n == "data/model/obj_e_radio.c")
+    catalog.append(("data/model/obj_e_radio_interior.c", Path("src/data/model/obj_e_radio.c"), radio_options))
+    logo_options = next(o for _, _, o in catalog if o.get("lib") == "dataobject")
+    catalog.append(("dataobject.obj", Path("src/PAL/data/model/logo_replace.c"), logo_options))
     # e+ introduced these TUs before the PAL fork; their copies live in PAL.
     for name, source, library in (
         ("reload_data.o", "src/PAL/reload_data.c", "foresta"),
@@ -4142,7 +4217,7 @@ def configure_sources(config):
                     candidates = [c for c in candidates if str(c[2].get("lib", "")).startswith("jaudio_")]
                 else:
                     candidates = [c for c in candidates if str(c[2].get("lib", "")).lower() == archive]
-            else:
+            elif name != "dataobject.obj":
                 candidates = [c for c in candidates if "/data/" not in c[1].as_posix()]
             candidates = {p: (n, p, o) for n, p, o in candidates}
             if len(candidates) > 1:
@@ -4226,6 +4301,11 @@ def configure_sources(config):
                     options["cflags"] += ["-schedule off"]
                 elif name == "dsp.a/dsp.c":
                     options["cflags"] += ["-DDSP_INIT_IN_JAUDIO"]
+            if name == "data/model/obj_e_radio_interior.c":
+                options["extra_cflags"] = [*options.get("extra_cflags", []), "-DFORESTI_DATA"]
+            # GBA retains its signed-char/inline-all flags and uses GC 1.2.5n.
+            if name.startswith("gba.a/"):
+                options["mw_version"] = "GC/1.2.5n"
             # Boot's PAL implementation and flags have passed all five linked builds.
             language = config.version.rsplit("_", 1)[1]
             pending = language in LANGUAGE_PENDING_PORTS.get(name, set())

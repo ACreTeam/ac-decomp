@@ -33,6 +33,16 @@
 static u8 __unused_implicit[0x40] ATTRIBUTE_ALIGN(32);
 #endif
 
+#if VERSION == VER_GAFP01_00
+#define FAMICOM_SOURCE_LINE(line) ((line) + 15)
+#define FAMICOM_GAME_CODE "GAFP"
+#define FAMICOM_ROM_LOAD_LINE 6185
+#else
+#define FAMICOM_SOURCE_LINE(line) (line)
+#define FAMICOM_GAME_CODE "GAFU"
+#define FAMICOM_ROM_LOAD_LINE 6153
+#endif
+
 static u8 commentImageBuffer[CARD_COMMENT_SIZE + 0x5800] ATTRIBUTE_ALIGN(32);
 u8 save_game_image = false;
 FamicomCommon famicomCommon;
@@ -693,13 +703,30 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
     size_t icon_size = getIconSizeFromFormat(famicomCommon.memcard_game_header.icon_format); // unnecessary
 }
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#define FAMICOM_INTERNAL_COMMENT "Donn\xE9" "es NES"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#define FAMICOM_INTERNAL_COMMENT "NES-Spieldaten          "
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define FAMICOM_INTERNAL_COMMENT "Dati NES                "
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#define FAMICOM_INTERNAL_COMMENT "Datos de NES            "
+#else
+#define FAMICOM_INTERNAL_COMMENT "NES Save Data           "
+#endif
+
 static void SetupInternalCommentImage(u8* data) {
     u8* data_p = data;
 
     // Setup comment
     famicomCommon.memcard_game_header.flags0.comment_type = MEMCARD_COMMENT_TYPE_DEFAULT;
     strncpy((char*)data, "Animal Crossing", 32);
-    strncpy((char*)data + 32, "NES Save Data           ", 32);
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+    char comment[] = FAMICOM_INTERNAL_COMMENT;
+    strncpy((char*)data + 32, comment, 32);
+#else
+    strncpy((char*)data + 32, FAMICOM_INTERNAL_COMMENT, 32);
+#endif
     data += CARD_COMMENT_SIZE;
 
     // Setup banner
@@ -1203,7 +1230,7 @@ static s32 memcard_game_load(
                     result = CARDGetStatus(chan, fileNo, &cardStatus);
                     if (result == CARD_RESULT_READY) {
                         if (
-                            memcmp(cardStatus.gameName, "GAFU", 4) == 0 &&
+                            memcmp(cardStatus.gameName, FAMICOM_GAME_CODE, 4) == 0 &&
                             memcmp(cardStatus.company, "01", 2) == 0 &&
                             memcmp(cardStatus.fileName, "DobutsunomoriP_F_", 17) == 0 &&
                             strcmp(&cardStatus.fileName[17], "SAVE") != 0 /* filename can't be Doubutsunomori_P_F_SAVE* */
@@ -1402,7 +1429,7 @@ static s32 memcard_game_list(
                 result = CARDGetStatus(chan, fileNo, &cardStatus);
                 if (result == CARD_RESULT_READY) {
                     if (
-                        memcmp(cardStatus.gameName, "GAFU", 4) == 0 &&
+                        memcmp(cardStatus.gameName, FAMICOM_GAME_CODE, 4) == 0 &&
                         memcmp(cardStatus.company, "01", 2) == 0 &&
                         memcmp(cardStatus.fileName, "DobutsunomoriP_F_", 17) == 0 &&
                         strcmp(&cardStatus.fileName[17], "SAVE") != 0 /* filename can't be DoubutsunomoriP_F_SAVE* */
@@ -1556,7 +1583,7 @@ static void select_game() {
 
             if (nesrom_idx >= nesrom_count) {
                 if (nesrom_idx_loaded < 0) {
-                    OSPanic(__FILE__, 4238, "no nesfile specified");
+                    OSPanic(__FILE__, FAMICOM_SOURCE_LINE(4238), "no nesfile specified");
                     continue;
                 }
 
@@ -1602,7 +1629,7 @@ static void famicom_mount_archive_wait() {
 // clang-format off
 #define MALLOC_MALLOC(type, size, dst, line) \
     if (dst != nullptr) {   \
-        OSPanic(__FILE__, line, "MALLOC_MALLOC: " #dst " isn't NULL");  \
+        OSPanic(__FILE__, FAMICOM_SOURCE_LINE(line), "MALLOC_MALLOC: " #dst " isn't NULL");  \
     }   \
     dst = (type *)my_malloc(size, 32);  \
     if (dst == nullptr) {   \
@@ -1650,7 +1677,7 @@ extern int famicom_init(int rom_idx, Famicom_MallocInfo* malloc_info, int player
         famicomCommon.rom_no = rom_idx;
 
         if (famicomCommon.save_pl_no >= 0 && save_game_image == 0) {
-            famicomCommon.save_data_name = (u8*)"GAFUFSC\x1A";
+            famicomCommon.save_data_name = (u8*)FAMICOM_GAME_CODE "FSC\x1A";
             famicomCommon.save_data_single_size = 0x660;
             famicomCommon.save_data_total_size = sizeof(FamicomSaveDataHeader) + 0x660 * PLAYER_NUM;
             famicomCommon.save_data_header = (FamicomSaveDataHeader*)famicomCommonSave;
@@ -2083,7 +2110,7 @@ static int famicom_rom_load() {
     }
 
     if (famicomCommon.nesrom_memcard && famicomCommon.save_pl_no >= 0) {
-        famicomCommon.save_data_name = (u8*)"GAFUFSE\x1A";
+        famicomCommon.save_data_name = (u8*)FAMICOM_GAME_CODE "FSE\x1A";
         famicomCommon.save_data_single_size = max_ofs + 0xB;
         famicomCommon.save_data_total_size = famicomCommon.save_data_single_size * PLAYER_NUM + sizeof(FamicomSaveDataHeader);
         famicomCommon.save_data_header = (FamicomSaveDataHeader*)nintendo_hi_0; // overwritten for use with save data
@@ -2397,13 +2424,26 @@ static void nogbaInput() {
             case PAD_ERR_NONE:
             {
                 InputValid[port] = true;
+#if VERSION == VER_GAFP01_00
+                JUTGamePad::CButton& buttons = JUTGamePad::getPadButton((JUTGamePad::EPadPort)port);
+                InputData[port] = buttons.mButton;
+#else
                 InputData[port] = ((JUTGamePad*)gamePad)[port].getButton();
+#endif
                 
+#if VERSION == VER_GAFP01_00
+                if (buttons.mAnalogL != 0) {
+#else
                 if (((JUTGamePad*)gamePad)[port].getAnalogL() != 0) {
+#endif
                     InputData[port] |= JUTGamePad::L;
                 }
 
+#if VERSION == VER_GAFP01_00
+                if (buttons.mAnalogR != 0) {
+#else
                 if (((JUTGamePad*)gamePad)[port].getAnalogR() != 0) {
+#endif
                     InputData[port] |= JUTGamePad::R;
                 }
                 break;
@@ -2652,7 +2692,7 @@ extern int famicom_rom_load_check() {
             nesrom_idx++;
             if (nesrom_idx >= nesrom_count) {
                 if (nesrom_idx_loaded < 0) {
-                    OSPanic(__FILE__, 6153, "no nesfile specified");
+                    OSPanic(__FILE__, FAMICOM_ROM_LOAD_LINE, "no nesfile specified");
                     continue;
                 }
 
@@ -2703,7 +2743,7 @@ extern int famicom_internal_data_load() {
     famicomCommon.nesrom_memcard = FALSE;
     strncpy((char*)famicomCommon.mura_save_name, "DobutsunomoriP_MURA", 32);
     strncpy((char*)famicomCommon.famicom_save_name, "DobutsunomoriP_F_SAVE", 32);
-    famicomCommon.save_data_name = (u8*)"GAFUFSC\x1A";
+    famicomCommon.save_data_name = (u8*)FAMICOM_GAME_CODE "FSC\x1A";
     famicomCommon.save_data_single_size = 0x660;
     famicomCommon.save_data_total_size = sizeof(FamicomSaveDataHeader) + 0x660 * PLAYER_NUM;
     famicomCommon.save_data_header = (FamicomSaveDataHeader*)famicomCommonSave;
@@ -2746,7 +2786,7 @@ extern int famicom_internal_data_save() {
     famicomCommon.nesrom_memcard = FALSE;
     strncpy((char*)famicomCommon.mura_save_name, "DobutsunomoriP_MURA", 32);
     strncpy((char*)famicomCommon.famicom_save_name, "DobutsunomoriP_F_SAVE", 32);
-    famicomCommon.save_data_name = (u8*)"GAFUFSC\x1A";
+    famicomCommon.save_data_name = (u8*)FAMICOM_GAME_CODE "FSC\x1A";
     famicomCommon.save_data_single_size = 0x660;
     famicomCommon.save_data_total_size = sizeof(FamicomSaveDataHeader) + 0x660 * PLAYER_NUM;
     famicomCommon.save_data_header = (FamicomSaveDataHeader*)famicomCommonSave;

@@ -5,6 +5,33 @@
 #include "ac_npc.h"
 #include "ef_effect_control.h"
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#define POST_OFFICE_S_SIGN_TEX obj_s_yubinkyoku_t3_fr_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#define POST_OFFICE_S_SIGN_TEX obj_s_yubinkyoku_t3_ge_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define POST_OFFICE_S_SIGN_TEX obj_s_yubinkyoku_t3_it_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#define POST_OFFICE_S_SIGN_TEX obj_s_yubinkyoku_t3_sp_txt
+#else
+#define POST_OFFICE_S_SIGN_TEX obj_s_yubinkyoku_t3_txt
+#endif
+
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#define POST_OFFICE_W_SIGN_TEX obj_w_yubinkyoku_t3_fr_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#define POST_OFFICE_W_SIGN_TEX obj_w_yubinkyoku_t3_ge_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define POST_OFFICE_W_SIGN_TEX obj_w_yubinkyoku_t3_it_txt
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#define POST_OFFICE_W_SIGN_TEX obj_w_yubinkyoku_t3_sp_txt
+#else
+#define POST_OFFICE_W_SIGN_TEX obj_w_yubinkyoku_t3_txt
+#endif
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+#define obj_s_yubinkyoku_t3_1_model obj_s_yubinkyoku_t3_model
+#endif
+
 u8 obj_s_yubinkyoku_t3_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/obj_s_yubinkyoku_t3_txt.inc"
 };
@@ -21,10 +48,28 @@ u8 obj_s_yubinkyoku_t2_txt[] = {
 #include "assets/obj_s_yubinkyoku_t2_txt.inc"
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+u8 obj_s_yubinkyoku_t3_fr_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_fr_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+u8 obj_s_yubinkyoku_t3_ge_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_ge_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+u8 obj_s_yubinkyoku_t3_it_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_it_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+u8 obj_s_yubinkyoku_t3_sp_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_sp_txt.inc"
+};
+#endif
 Vtx obj_s_yubinkyoku_v[] = {
 #include "assets/obj_s_yubinkyoku_v.inc"
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_s_yubinkyoku_window_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIM_LOD_FRAC, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
@@ -37,7 +82,22 @@ Gfx obj_s_yubinkyoku_window_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_s_yubinkyoku_window_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIM_LOD_FRAC, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_DECAL2),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_I, G_IM_SIZ_4b, 16, 16, obj_s_yubinkyoku_window_tex_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 124, 124),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[13], 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_s_yubinkyoku_light_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
@@ -48,7 +108,35 @@ Gfx obj_s_yubinkyoku_light_model[] = {
     gsSPNTriangles_5b(4, 6, 7, 8, 9, 10, 8, 10, 11, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_s_yubinkyoku_light_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[37], 12, 0),
+    gsSPNTrianglesInit_5b(6, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 8, 9, 10, 8, 10, 11, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_yubinkyoku_t3_1_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, POST_OFFICE_S_SIGN_TEX),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_CLAMP, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 1020, 124),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[25], 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_yubinkyoku_t3_1_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -63,7 +151,9 @@ Gfx obj_s_yubinkyoku_t3_1_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_s_yubinkyoku_t2_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -79,7 +169,25 @@ Gfx obj_s_yubinkyoku_t2_model[] = {
     gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_s_yubinkyoku_t2_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_yubinkyoku_t2_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[17], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_s_yubinkyoku_t1_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -95,7 +203,41 @@ Gfx obj_s_yubinkyoku_t1_model[] = {
     gsSPNTriangles_5b(4, 7, 8, 8, 5, 4, 6, 7, 4, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_s_yubinkyoku_t1_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_yubinkyoku_t1_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[4], 9, 0),
+    gsSPNTrianglesInit_5b(6, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 7, 8, 8, 5, 4, 6, 7, 4, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_yubinkyoku_neon_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, POST_OFFICE_S_SIGN_TEX),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 508),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_yubinkyoku_v[29], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_yubinkyoku_neon_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -111,7 +253,9 @@ Gfx obj_s_yubinkyoku_neon_model[] = {
     gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_s_yubinkyoku_door_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -125,6 +269,21 @@ Gfx obj_s_yubinkyoku_door_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_s_yubinkyoku_door_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_yubinkyoku_t3_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(obj_s_yubinkyoku_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
 cKF_Joint_R_c cKF_je_r_obj_s_yubinkyoku_tbl[] = {
     { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 64436, 0, 4000 } },
@@ -192,10 +351,52 @@ u8 obj_w_yubinkyoku_t2_txt[] = {
 #include "assets/obj_w_yubinkyoku_t2_txt.inc"
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+u8 obj_w_yubinkyoku_t3_fr_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_fr_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+u8 obj_w_yubinkyoku_t3_ge_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_ge_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+u8 obj_w_yubinkyoku_t3_it_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_it_txt.inc"
+};
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+u8 obj_w_yubinkyoku_t3_sp_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_sp_txt.inc"
+};
+#endif
 Vtx obj_w_yubinkyoku_v[] = {
 #include "assets/obj_w_yubinkyoku_v.inc"
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_yubinkyoku_window_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIM_LOD_FRAC, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_DECAL2),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_I, G_IM_SIZ_4b, 16, 16, obj_w_yubinkyoku_window_tex_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 124, 124),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[16], 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx obj_w_yubinkyoku_light_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[40], 12, 0),
+    gsSPNTrianglesInit_5b(6, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 8, 9, 10, 8, 10, 11, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_yubinkyoku_light_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, PRIMITIVE, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
@@ -219,7 +420,24 @@ Gfx obj_w_yubinkyoku_window_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_yubinkyoku_t3_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, POST_OFFICE_W_SIGN_TEX),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_CLAMP, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 1020, 124),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[28], 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_yubinkyoku_t3_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -234,7 +452,9 @@ Gfx obj_w_yubinkyoku_t3_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_w_yubinkyoku_t2_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -250,7 +470,25 @@ Gfx obj_w_yubinkyoku_t2_model[] = {
     gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_w_yubinkyoku_t2_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_yubinkyoku_t2_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[20], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_w_yubinkyoku_t1_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -266,7 +504,41 @@ Gfx obj_w_yubinkyoku_t1_model[] = {
     gsSPNTriangles_5b(7, 8, 9, 10, 5, 4, 11, 8, 7, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_w_yubinkyoku_t1_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_yubinkyoku_t1_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 1020, 252),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[4], 12, 0),
+    gsSPNTrianglesInit_5b(6, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(7, 8, 9, 10, 5, 4, 11, 8, 7, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_yubinkyoku_neon_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(0, 0, 0, TEXEL0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, POST_OFFICE_W_SIGN_TEX),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 508),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_yubinkyoku_v[32], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 2, 3, 4, 5, 6),
+    gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_yubinkyoku_neon_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -282,7 +554,9 @@ Gfx obj_w_yubinkyoku_neon_model[] = {
     gsSPNTriangles_5b(4, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
 Gfx obj_w_yubinkyoku_door_model[] = {
     gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
@@ -296,6 +570,21 @@ Gfx obj_w_yubinkyoku_door_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#else
+Gfx obj_w_yubinkyoku_door_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_yubinkyoku_t3_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(obj_w_yubinkyoku_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 2, 3, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#endif
 
 cKF_Joint_R_c cKF_je_r_obj_w_yubinkyoku_tbl[] = {
     { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 64436, 0, 4000 } },

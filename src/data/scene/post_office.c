@@ -12,7 +12,11 @@ extern Scene_Word_u post_office_info[] = {
     mSc_DATA_PLAYER(POST_OFFICE_player_data),              // Player Data
     mSc_DATA_ARRANGE_FTR(6),                               // Arrange furniture params
     mSc_DATA_CTRL_ACTORS(10, POST_OFFICE_ctrl_actor_data), // Control actors
-    mSc_DATA_ACTORS(3, POST_OFFICE_actor_data),            // Player Data
+#if VERSION == VER_GAFP01_00
+    mSc_DATA_ACTORS(2, POST_OFFICE_actor_data),
+#else
+    mSc_DATA_ACTORS(3, POST_OFFICE_actor_data),
+#endif            // Player Data
     mSc_DATA_OBJ_BANK(1, POST_OFFICE_object_bank),         // Required object banks
     mSc_DATA_FIELDCT(mSc_ITEM_TYPE_BGPOSTITEM, 1, 0xA000, mSc_ROOM_TYPE_MISC_ROOM,
                      FIELD_DRAW_TYPE_INDOORS), // Field construct params
@@ -54,12 +58,14 @@ extern Actor_data POST_OFFICE_actor_data[] = {
         { 0, 0, 0 },                         // rotation
         3                                    // ct arg
     },
+#if VERSION != VER_GAFP01_00
     {
         mAc_PROFILE_PTERMINAL, // profile
         { 60, 0, 240 },        // position
         { 0, 0, 0 },           // rotation
         3                      // ct arg
     },
+#endif
 };
 
 extern s16 POST_OFFICE_object_bank[] = {

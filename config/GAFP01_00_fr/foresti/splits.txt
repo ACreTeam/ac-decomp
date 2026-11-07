@@ -1238,7 +1238,7 @@ data/model/int_nog_zarigani.c:
 data/model/int_nog_zassou.c:
 	.data       start:0x00164580 end:0x00164F60
 
-data/model/obj_e_radio.c:
+data/model/obj_e_radio_interior.c:
 	.data       start:0x00164F60 end:0x001662C0
 
 data/model/int_sugi_alchair.c:

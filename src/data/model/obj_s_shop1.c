@@ -53,6 +53,22 @@ Gfx obj_s_shop1_light_model[] = {
     gsSPEndDisplayList(),
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_shop1_side_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_side_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_REPEAT, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_shop1_v[25], 9, 0),
+    gsSPNTrianglesInit_5b(5, 0, 1, 2, 0, 3, 1, 4, 5, 6),
+    gsSPNTriangles_5b(5, 7, 6, 7, 8, 6, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_shop1_side_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_side_txt),
@@ -64,7 +80,24 @@ Gfx obj_s_shop1_side_model[] = {
     gsSPNTriangles_5b(5, 7, 6, 7, 8, 6, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_shop1_roof_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_roof_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_REPEAT, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_shop1_v[12], 13, 0),
+    gsSPNTrianglesInit_5b(7, 0, 1, 2, 1, 3, 2, 4, 5, 6),
+    gsSPNTriangles_5b(5, 7, 6, 8, 9, 10, 2, 11, 0, 2, 12, 11),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_shop1_roof_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_roof_txt),
@@ -76,7 +109,24 @@ Gfx obj_s_shop1_roof_model[] = {
     gsSPNTriangles_5b(5, 7, 6, 8, 9, 10, 2, 11, 0, 2, 12, 11),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_shop1_front_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_front_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_REPEAT, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_s_shop1_v[34], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 3, 1, 4, 5, 6),
+    gsSPNTriangles_5b(4, 7, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_shop1_front_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_front_txt),
@@ -88,7 +138,22 @@ Gfx obj_s_shop1_front_model[] = {
     gsSPNTriangles_5b(4, 7, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_s_shop1_door_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_front_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(obj_s_shop1_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 3, 1, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_s_shop1_door_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_s_shop1_front_txt),
@@ -98,13 +163,20 @@ Gfx obj_s_shop1_door_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 3, 1, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
 cKF_Joint_R_c cKF_je_r_obj_s_shop1_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 316, 0, 2513 } },
                                              { obj_s_shop1_front_model, 5, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop1_door_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 3750, 0, 0 } },
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+                                             { obj_s_shop1_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+                                             { obj_s_shop1_roof_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+                                             { obj_s_shop1_side_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+#else
                                              { obj_s_shop1_roof_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop1_side_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop1_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+#endif
                                              { obj_s_shop1_window_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
 cKF_Skeleton_R_c cKF_bs_r_obj_s_shop1 = { ARRAY_COUNT(cKF_je_r_obj_s_shop1_tbl), 6, cKF_je_r_obj_s_shop1_tbl };
@@ -169,6 +241,22 @@ Gfx obj_w_shop1_light_model[] = {
     gsSPEndDisplayList(),
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_shop1_side_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_side_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_REPEAT, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_shop1_v[25], 9, 0),
+    gsSPNTrianglesInit_5b(5, 0, 1, 2, 0, 3, 1, 4, 5, 6),
+    gsSPNTriangles_5b(5, 7, 6, 7, 8, 6, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_shop1_side_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_side_txt),
@@ -180,7 +268,24 @@ Gfx obj_w_shop1_side_model[] = {
     gsSPNTriangles_5b(5, 7, 6, 7, 8, 6, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_shop1_roof_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_roof_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_shop1_v[12], 13, 0),
+    gsSPNTrianglesInit_5b(7, 0, 1, 2, 1, 3, 2, 4, 5, 6),
+    gsSPNTriangles_5b(5, 7, 6, 8, 9, 10, 2, 11, 0, 2, 12, 11),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_shop1_roof_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_roof_txt),
@@ -192,7 +297,24 @@ Gfx obj_w_shop1_roof_model[] = {
     gsSPNTriangles_5b(5, 7, 6, 8, 9, 10, 2, 11, 0, 2, 12, 11),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_shop1_front_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_front_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_REPEAT, GX_MIRROR, 0, 0),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 508, 252),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(&obj_w_shop1_v[34], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 0, 3, 1, 4, 5, 6),
+    gsSPNTriangles_5b(4, 7, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_shop1_front_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_front_txt),
@@ -204,7 +326,22 @@ Gfx obj_w_shop1_front_model[] = {
     gsSPNTriangles_5b(4, 7, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+Gfx obj_w_shop1_door_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_front_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(obj_w_shop1_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 3, 1, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+#else
 Gfx obj_w_shop1_door_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 128, 32, obj_w_shop1_front_txt),
@@ -214,13 +351,20 @@ Gfx obj_w_shop1_door_model[] = {
     gsSPNTrianglesInit_5b(2, 0, 1, 2, 0, 3, 1, 0, 0, 0),
     gsSPEndDisplayList(),
 };
+#endif
 
 cKF_Joint_R_c cKF_je_r_obj_w_shop1_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 316, 0, 2513 } },
                                              { obj_w_shop1_front_model, 5, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop1_door_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 3750, 0, 0 } },
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+                                             { obj_w_shop1_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+                                             { obj_w_shop1_roof_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+                                             { obj_w_shop1_side_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+#else
                                              { obj_w_shop1_roof_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop1_side_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop1_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
+#endif
                                              { obj_w_shop1_window_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
 cKF_Skeleton_R_c cKF_bs_r_obj_w_shop1 = { ARRAY_COUNT(cKF_je_r_obj_w_shop1_tbl), 6, cKF_je_r_obj_w_shop1_tbl };
@@ -467,6 +611,9 @@ Gfx obj_w_shop2_door1_model[] = {
     gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
     gsDPSetTextureImage_Dolphin(G_IM_FMT_CI, G_IM_SIZ_4b, 64, 64, obj_w_shop2_t3_tex_txt),
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+#endif
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
     gsSPVertex(&obj_w_shop2_v[4], 3, 0),
     gsSPNTrianglesInit_5b(1, 0, 1, 2, 0, 0, 0, 0, 0, 0),
@@ -511,7 +658,7 @@ cKF_Animation_R_c cKF_ba_r_obj_w_shop2 = {
     cKF_ckcb_r_obj_w_shop2_tbl, cKF_ds_obj_w_shop2_tbl, cKF_kn_obj_w_shop2_tbl, cKF_c_obj_w_shop2_tbl, -1, 16
 };
 
-u8 obj_s_shop3_t1_tex_txt[] = {
+u8 obj_s_shop3_t1_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/obj_s_shop3_t1_tex_txt.inc"
 };
 
@@ -906,15 +1053,21 @@ Gfx obj_s_shop4_door_model[] = {
     gsSPEndDisplayList(),
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+#define SHOP4_PART_DISP_MODE cKF_JOINT_FLAG_DISP_OPA
+#else
+#define SHOP4_PART_DISP_MODE cKF_JOINT_FLAG_DISP_XLU
+#endif
+
 cKF_Joint_R_c cKF_je_r_obj_s_shop4_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 15213, 0, 58808 } },
-                                             { obj_s_shop4_grass_model, 5, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } },
+                                             { obj_s_shop4_grass_model, 5, SHOP4_PART_DISP_MODE, { 0, 0, 0 } },
                                              { NULL, 2, cKF_JOINT_FLAG_DISP_OPA, { 1, 0, 0 } },
                                              { obj_s_shop4_door_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 24000, 0, 0 } },
                                              { NULL, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop4_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop4_t1_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_s_shop4_t2_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
-                                             { obj_s_shop4_window_model, 0, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } } };
+                                             { obj_s_shop4_window_model, 0, SHOP4_PART_DISP_MODE, { 0, 0, 0 } } };
 
 cKF_Skeleton_R_c cKF_bs_r_obj_s_shop4 = { ARRAY_COUNT(cKF_je_r_obj_s_shop4_tbl), 6, cKF_je_r_obj_s_shop4_tbl };
 
@@ -1070,14 +1223,14 @@ Gfx obj_w_shop4_door_model[] = {
 };
 
 cKF_Joint_R_c cKF_je_r_obj_w_shop4_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 15213, 0, 58808 } },
-                                             { obj_w_shop4_grass_model, 5, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } },
+                                             { obj_w_shop4_grass_model, 5, SHOP4_PART_DISP_MODE, { 0, 0, 0 } },
                                              { NULL, 2, cKF_JOINT_FLAG_DISP_OPA, { 1, 0, 0 } },
                                              { obj_w_shop4_door_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 24000, 0, 0 } },
                                              { NULL, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop4_light_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop4_t1_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { obj_w_shop4_t2_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
-                                             { obj_w_shop4_window_model, 0, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } } };
+                                             { obj_w_shop4_window_model, 0, SHOP4_PART_DISP_MODE, { 0, 0, 0 } } };
 
 cKF_Skeleton_R_c cKF_bs_r_obj_w_shop4 = { ARRAY_COUNT(cKF_je_r_obj_w_shop4_tbl), 6, cKF_je_r_obj_w_shop4_tbl };
 

@@ -272,7 +272,7 @@ void JFWDisplay::beginRender() {
     OSTick tick = OSGetTick();
     _30 = tick - _2C;
     _2C = tick;
-#if DEBUG
+#if VERSION == VER_GAFP01_00 || DEBUG
     _34 = _2C - JUTVideo::getVideoLastTick();
 #else
     _34 = _2C;
@@ -614,6 +614,10 @@ void JFWDrawDoneAlarm() {
 void JFWGXAbortAlarmHandler(OSAlarm *param_0, OSContext *param_1) {
     diagnoseGpHang();
     GXAbortFrame();
+#if VERSION == VER_GAFP01_00
+    GXWGFifo.u8 = 0x61;
+    GXWGFifo.u32 = 0x5800000F;
+#endif
     GXSetDrawDone();
 }
 

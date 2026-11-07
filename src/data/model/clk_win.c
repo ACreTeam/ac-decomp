@@ -6,6 +6,90 @@
 #include "ef_effect_control.h"
 
 extern Vtx clk_win_v[];
+#if VERSION == VER_GAFP01_00
+extern u8 maru[];
+extern u8 clk_win_fri_tex_rgb_ia8[];
+extern u8 clk_win_mon_tex_rgb_ia8[];
+extern u8 clk_win_sat_tex_rgb_ia8[];
+extern u8 clk_win_sun_tex_rgb_ia8[];
+extern u8 clk_win_thu_tex_rgb_ia8[];
+extern u8 clk_win_tue_tex_rgb_ia8[];
+extern u8 clk_win_wed_tex_rgb_ia8[];
+extern Vtx clk_win_v[];
+extern Gfx clk_win_youbiT_model[];
+extern Gfx clk_win_maru2T_model[];
+extern Gfx clk_win_maruT_model[];
+extern Gfx clk_win_mode[];
+
+u8 maru[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/maru.inc"
+};
+
+u8 clk_win_fri_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_fri_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_mon_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_mon_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_sat_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_sat_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_sun_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_sun_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_thu_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_thu_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_tue_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_tue_tex_rgb_ia8.inc"
+};
+
+u8 clk_win_wed_tex_rgb_ia8[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/clk_win_wed_tex_rgb_ia8.inc"
+};
+
+Vtx clk_win_v[] = {
+#include "assets/clk_win_v.inc"
+};
+
+Gfx clk_win_youbiT_model[] = {
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_IA, G_IM_SIZ_8b, 32, 32, anime_2_txt),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsSPVertex(clk_win_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 1, 3, 2, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx clk_win_maru2T_model[] = {
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_IA, G_IM_SIZ_8b, 16, 16, maru),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPVertex(&clk_win_v[4], 8, 0),
+    gsSPNTrianglesInit_5b(4, 0, 1, 2, 1, 3, 2, 4, 5, 6),
+    gsSPNTriangles_5b(7, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx clk_win_maruT_model[] = {
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_IA, G_IM_SIZ_8b, 16, 16, maru),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, GX_CLAMP, GX_CLAMP, 0, 0),
+    gsSPVertex(&clk_win_v[16], 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 1, 3, 2, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+Gfx clk_win_mode[] = {
+    gsSPLoadGeometryMode(G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsDPSetOtherMode(G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIM_LOD_FRAC, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsSPEndDisplayList(),
+};
+#else
 u8 maru[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/maru.inc"
 };
@@ -93,3 +177,4 @@ Gfx clk_win_mode[] = {
                        0, 0, COMBINED),
     gsSPEndDisplayList(),
 };
+#endif

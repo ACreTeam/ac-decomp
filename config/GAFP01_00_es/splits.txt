@@ -239,7 +239,7 @@ jaudio_spn.o/system.c:
 	.text       start:0x80024600 end:0x80024600
 	.text       start:0x80024600 end:0x80024B60
 	.text       start:0x80024B60 end:0x80024B60
-	.text       start:0x80024B60 end:0x80024C74
+	.text       start:0x80024B60 end:0x80024C80
 	.rodata     start:0x800B51E8 end:0x800B5300
 	.bss        start:0x8019F6E8 end:0x8019F700
 	.bss        start:0x80222AC0 end:0x80222BD8 align:4 common

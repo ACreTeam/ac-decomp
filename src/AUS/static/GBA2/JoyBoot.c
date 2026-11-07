@@ -4,6 +4,26 @@
 #include "_mem.h"
 #include "dolphin/si.h"
 
+#if VERSION == VER_GAFP01_00
+#define JOY_GAME_ID_RECV "gafp"
+#define JOY_GAME_ID_SEND "GAFP"
+#if GAME_LANGUAGE == GAME_LANG_FR
+#define JOY_LOADER_MAGIC "PSaP"
+#elif GAME_LANGUAGE == GAME_LANG_DE
+#define JOY_LOADER_MAGIC "PSAp"
+#elif GAME_LANGUAGE == GAME_LANG_IT
+#define JOY_LOADER_MAGIC "PsAP"
+#elif GAME_LANGUAGE == GAME_LANG_ES
+#define JOY_LOADER_MAGIC "pSAP"
+#else
+#define JOY_LOADER_MAGIC "PSAP"
+#endif
+#else
+#define JOY_GAME_ID_RECV "gafu"
+#define JOY_GAME_ID_SEND "GAFU"
+#define JOY_LOADER_MAGIC "PSAE"
+#endif
+
 // Joy SIO command words. Device byte 1 is GC; device byte 2 is GBA.
 // The island-loader-mb and island-program-mb JoybootHandler implementations
 // confirm the island type, ready responses, and checksum acknowledgements.
@@ -256,9 +276,9 @@ static void CallBack_Connection(JUTGbaParam* param, void* arg) {
                 if (g_Joy_wrk.manager->resultRead(g_port, &status) != GBA_READY) {
                     goto error;
                 }
-                if (g_Joy_wrk.recv == *(u32*)"gafu") {
+                if (g_Joy_wrk.recv == *(u32*)JOY_GAME_ID_RECV) {
                     g_Joy_wrk.stage++;
-                    g_Joy_wrk.send = mJOYSIO_ConvData((u8*)"GAFU");
+                    g_Joy_wrk.send = mJOYSIO_ConvData((u8*)JOY_GAME_ID_SEND);
                     g_Joy_wrk.manager->doWrite(g_port, (u8*)&g_Joy_wrk.send, CallBack_Connection, arg);
                 } else {
                     g_Joy_wrk.stage--;
@@ -1014,7 +1034,7 @@ static void CallBack_SendEAppri(JUTGbaParam* param, void* arg) {
                 if (g_Joy_wrk.manager->resultRead(g_port, &status) != GBA_READY) {
                     goto error;
                 }
-                if (g_Joy_wrk.recv == *(u32*)"PSAE") {
+                if (g_Joy_wrk.recv == *(u32*)JOY_LOADER_MAGIC) {
                     g_Joy_wrk.stage++;
                     g_Joy_wrk.manager->doGetStatus(g_port, CallBack_SendEAppri, arg);
                 } else {
@@ -1029,7 +1049,7 @@ static void CallBack_SendEAppri(JUTGbaParam* param, void* arg) {
                 }
                 if (status == GBA_JSTAT_PSF1) {
                     g_Joy_wrk.stage++;
-                    g_Joy_wrk.send = *(u32*)"PSAE";
+                    g_Joy_wrk.send = *(u32*)JOY_LOADER_MAGIC;
                     g_Joy_wrk.manager->doWrite(g_port, (u8*)&g_Joy_wrk.send, CallBack_SendEAppri, arg);
                 } else {
                     g_Joy_wrk.manager->doGetStatus(g_port, CallBack_SendEAppri, arg);

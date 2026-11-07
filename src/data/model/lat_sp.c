@@ -5,6 +5,104 @@
 #include "ac_npc.h"
 #include "ef_effect_control.h"
 
+#if VERSION == VER_GAFP01_00
+extern Gfx lat_sousa_mode[];
+extern u8 lat_sousa_sp_tex[];
+extern Vtx lat_sp_v[];
+extern Gfx lat_sousa_spT_model[];
+extern u8 lat_tegami_end_tex[];
+extern Vtx lat_end_v[];
+extern Gfx lat_end_cordT_model[];
+
+Gfx lat_sousa_mode[] = {
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_DECAL_LEQUAL),
+    gsSPSetGeometryMode(G_SHADE | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsDPSetOtherMode(G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2),
+    gsSPTexture(65535, 65535, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
+};
+
+u8 lat_sousa_sp_tex[] = {
+#include "assets/lat_sousa_sp_tex.inc"
+};
+
+Vtx lat_sp_v[] = {
+#include "assets/lat_sp_v.inc"
+};
+
+Gfx lat_sousa_spT_model[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(lat_sousa_mode),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureImage(G_IM_FMT_I, G_IM_SIZ_16b, 1, lat_sousa_sp_tex),
+    gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_MIRROR | G_TX_WRAP, 4, G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 4, G_TX_NOLOD),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 63, 2048),
+    gsDPPipeSync(),
+    gsDPSetTile(G_IM_FMT_I, G_IM_SIZ_4b, 1, 0, G_TX_RENDERTILE, 15, G_TX_MIRROR | G_TX_WRAP, 4, G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 4, G_TX_NOLOD),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 60, 60),
+    gsSPVertex(lat_sp_v, 4, 0),
+    gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
+    gsSPEndDisplayList(),
+};
+
+#if GAME_LANGUAGE == GAME_LANG_EN
+u8 lat_tegami_end_tex[] = {
+#include "assets/lat_tegami_end_tex.inc"
+};
+
+#elif GAME_LANGUAGE == GAME_LANG_FR || GAME_LANGUAGE == GAME_LANG_DE || GAME_LANGUAGE == GAME_LANG_IT || GAME_LANGUAGE == GAME_LANG_ES
+u8 lat_tegami_end_tex[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/lat_tegami_end_tex.inc"
+};
+
+#endif
+
+Vtx lat_end_v[] = {
+#include "assets/lat_end_v.inc"
+};
+
+#if GAME_LANGUAGE == GAME_LANG_EN
+Gfx lat_end_cordT_model[] = {
+    gsDPPipeSync(),
+    gsSPDisplayList(lat_sousa_mode),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 0, 0, 0, TEXEL0, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 0, 0, 0, TEXEL0),
+    gsDPSetPrimColor(0, 255, 0, 135, 0, 255),
+    gsDPSetEnvColor(255, 255, 255, 255),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureImage(G_IM_FMT_IA, G_IM_SIZ_16b, 1, lat_tegami_end_tex),
+    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 511, 512),
+    gsDPPipeSync(),
+    gsDPSetTile(G_IM_FMT_IA, G_IM_SIZ_8b, 4, 0, G_TX_RENDERTILE, 0, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD, G_TX_MIRROR | G_TX_WRAP, 5, G_TX_NOLOD),
+    gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, 124, 124),
+    gsSPVertex(lat_end_v, 4, 0),
+    gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
+    gsSPEndDisplayList(),
+};
+
+#elif GAME_LANGUAGE == GAME_LANG_FR || GAME_LANGUAGE == GAME_LANG_DE || GAME_LANGUAGE == GAME_LANG_IT || GAME_LANGUAGE == GAME_LANG_ES
+Gfx lat_end_cordT_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetPrimColor(0, 255, 0, 135, 0, 255),
+    gsDPSetEnvColor(255, 255, 255, 255),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_IA, G_IM_SIZ_8b, 32, 32, lat_tegami_end_tex),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(lat_end_v, 4, 0),
+    gsSPNTrianglesInit_5b(2, 0, 1, 2, 1, 3, 2, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
+
+#endif
+#else
 Gfx lat_sousa_mode[] = {
     gsDPPipeSync(),
     gsSPClearGeometryMode(G_ZBUFFER | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD |
@@ -75,3 +173,4 @@ Gfx lat_end_cordT_model[] = {
     gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
     gsSPEndDisplayList(),
 };
+#endif

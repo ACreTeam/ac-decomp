@@ -54,11 +54,17 @@ void osShutdownStart(int val) {
     }
 
     if (APPNMI_HOTRESET_GET()) {
+#if VERSION == VER_GAFP01_00
+        __PADDisableRecalibration(TRUE);
+#endif
         OSResetSystem(OS_RESET_RESTART, 0, FALSE);
         return;
     }
     switch (val) {
         case OS_RESET_RESTART:
+#if VERSION == VER_GAFP01_00
+            __PADDisableRecalibration(FALSE);
+#endif
             OSResetSystem(OS_RESET_HOTRESET, osAppNMIBuffer[15], FALSE);
             break;
         case OS_RESET_HOTRESET:
@@ -66,6 +72,9 @@ void osShutdownStart(int val) {
             break;
         case OS_RESET_SHUTDOWN:
             bcopy(osAppNMIBuffer, NMISaveArea, sizeof(osAppNMIBuffer));
+#if VERSION == VER_GAFP01_00
+            __PADDisableRecalibration(FALSE);
+#endif
             OSResetSystem(OS_RESET_RESTART, 0x80000000, FALSE);
             break;
     }

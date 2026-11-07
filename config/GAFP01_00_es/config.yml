@@ -13,6 +13,9 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_es/ldscript.tpl
 
 block_relocations:
+# Excitebike tag tables: packed tag bytes are not pointers.
+- source: 0x800E5CE4
+- source: 0x800E5DD0
 # gam_win_moji3_tex: raw texture pixels are not pointers.
 - source: 0x800C7358
 - source: 0x800C9678
@@ -645,6 +648,113 @@ modules:
   symbols: config/GAFP01_00_es/forestd/symbols.txt
   splits: config/GAFP01_00_es/forestd/splits.txt
   extract:
+  - symbol: log_win_logo!.data:0x00495D00
+    binary: forestd/assets/pal_data/dataobject/log_win_logo.bin
+    header: forestd/assets/pal_data/dataobject/log_win_logo.inc
+    header_type: raw
+  - symbol: log_win_nintendo!.data:0x00496500
+    binary: forestd/assets/pal_data/dataobject/log_win_nintendo.bin
+    header: forestd/assets/pal_data/dataobject/log_win_nintendo.inc
+    header_type: raw
+  - symbol: logo_replace_v!.data:0x00497500
+    binary: forestd/assets/pal_data/dataobject/logo_replace_v.bin
+    header: forestd/assets/pal_data/dataobject/logo_replace_v.inc
+    header_type: none
+    custom_type: vtx
+  - symbol: cal_win_th_tex!.data:0x0033FC00
+    binary: forestd/assets/pal_data/cal_win/cal_win_th_tex.bin
+    header: forestd/assets/pal_data/cal_win/cal_win_th_tex.inc
+    header_type: raw
+  - symbol: cal_win_su_tex!.data:0x00340200
+    binary: forestd/assets/pal_data/cal_win/cal_win_su_tex.bin
+    header: forestd/assets/pal_data/cal_win/cal_win_su_tex.inc
+    header_type: raw
+  - symbol: yubin_bag_pal!.data:0x004BEAA0
+    binary: forestd/assets/pal_data/grd_post_office/yubin_bag_pal.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_bag_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: yubin_table01_tex!.data:0x004C09E0
+    binary: forestd/assets/pal_data/grd_post_office/yubin_table01_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_table01_tex.inc
+    header_type: raw
+  - symbol: yubin_table02_tex!.data:0x004C0E60
+    binary: forestd/assets/pal_data/grd_post_office/yubin_table02_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_table02_tex.inc
+    header_type: raw
+  - symbol: yubin_table03_tex!.data:0x004C0F60
+    binary: forestd/assets/pal_data/grd_post_office/yubin_table03_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_table03_tex.inc
+    header_type: raw
+  - symbol: yubin_table04_tex!.data:0x004C1060
+    binary: forestd/assets/pal_data/grd_post_office/yubin_table04_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_table04_tex.inc
+    header_type: raw
+  - symbol: yubin_table05_tex!.data:0x004C10E0
+    binary: forestd/assets/pal_data/grd_post_office/yubin_table05_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_table05_tex.inc
+    header_type: raw
+  - symbol: yubin_bag_tex!.data:0x004C1B60
+    binary: forestd/assets/pal_data/grd_post_office/yubin_bag_tex.bin
+    header: forestd/assets/pal_data/grd_post_office/yubin_bag_tex.inc
+    header_type: raw
+  - symbol: rom_koban_pos_pal!.data:0x00596B40
+    binary: forestd/assets/pal_data/police_indoor/rom_koban_pos_pal.bin
+    header: forestd/assets/pal_data/police_indoor/rom_koban_pos_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: rom_koban_pos1!.data:0x00597A40
+    binary: forestd/assets/pal_data/police_indoor/rom_koban_pos1.bin
+    header: forestd/assets/pal_data/police_indoor/rom_koban_pos1.inc
+    header_type: raw
+  - symbol: rom_koban_pos2!.data:0x00597D40
+    binary: forestd/assets/pal_data/police_indoor/rom_koban_pos2.bin
+    header: forestd/assets/pal_data/police_indoor/rom_koban_pos2.inc
+    header_type: raw
+  - symbol: rom_shop4_1_sign02_tex_pal!.data:0x005AFBE0
+    binary: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign02_tex_pal.bin
+    header: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign02_tex_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: rom_shop4_1_sign01_tex!.data:0x005B16C0
+    binary: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign01_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign01_tex.inc
+    header_type: raw
+  - symbol: rom_shop4_1_sign02_tex!.data:0x005B1AC0
+    binary: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign02_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign02_tex.inc
+    header_type: raw
+  - symbol: rom_shop4_1_sign03_tex!.data:0x005B1BC0
+    binary: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign03_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_1/rom_shop4_1_sign03_tex.inc
+    header_type: raw
+  - symbol: rom_shop4_2_sign01_tex_pal!.data:0x005B6000
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_2_sign01_tex_pal.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_2_sign01_tex_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: rom_shop4_1_sign02_tex_pal!.data:0x005B6020
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign02_tex_pal.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign02_tex_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: rom_shop4_1_sign0_tex_pal!.data:0x005B6040
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign0_tex_pal.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign0_tex_pal.inc
+    header_type: none
+    custom_type: pal16
+  - symbol: rom_shop4_2_sign01_tex!.data:0x005B7AC0
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_2_sign01_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_2_sign01_tex.inc
+    header_type: raw
+  - symbol: rom_shop4_1_sign02_tex!.data:0x005B7EC0
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign02_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign02_tex.inc
+    header_type: raw
+  - symbol: rom_shop4_1_sign0_tex!.data:0x005B7FC0
+    binary: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign0_tex.bin
+    header: forestd/assets/pal_data/rom_shop4_fuku/rom_shop4_1_sign0_tex.inc
+    header_type: raw
   - symbol: glider_v!.data:0x00000000
     binary: forestd/assets/glider_v.bin
     header: forestd/assets/glider_v.inc
@@ -2821,7 +2931,7 @@ modules:
     binary: forestd/assets/obj_x_cedar_light_tex.bin
     header: forestd/assets/obj_x_cedar_light_tex.inc
     header_type: raw
-  - symbol: obj_cedar_light_pal!.data:0x0008D280
+  - symbol: obj_x_cedar_light_pal!.data:0x0008D280
     binary: forestd/assets/obj_x_cedar5/obj_cedar_light_pal.bin
     header: forestd/assets/obj_x_cedar5/obj_cedar_light_pal.inc
     header_type: none
@@ -65706,6 +65816,22 @@ modules:
   symbols: config/GAFP01_00_es/foresto/symbols.txt
   splits: config/GAFP01_00_es/foresto/splits.txt
   extract:
+  - symbol: obj_s_yubinkyoku_t3_sp_txt!.data:0x00076260
+    binary: foresto/assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_sp_txt.bin
+    header: foresto/assets/pal_data/obj_s_yubinkyoku/obj_s_yubinkyoku_t3_sp_txt.inc
+    header_type: raw
+  - symbol: obj_w_yubinkyoku_t3_sp_txt!.data:0x00078A20
+    binary: foresto/assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_sp_txt.bin
+    header: foresto/assets/pal_data/obj_s_yubinkyoku/obj_w_yubinkyoku_t3_sp_txt.inc
+    header_type: raw
+  - symbol: obj_s_kouban_t2_sp_tex_txt!.data:0x00071C60
+    binary: foresto/assets/pal_data/obj_s_kouban/obj_s_kouban_t2_sp_tex_txt.bin
+    header: foresto/assets/pal_data/obj_s_kouban/obj_s_kouban_t2_sp_tex_txt.inc
+    header_type: raw
+  - symbol: obj_w_kouban_t2_sp_tex_txt!.data:0x00073B60
+    binary: foresto/assets/pal_data/obj_s_kouban/obj_w_kouban_t2_sp_tex_txt.bin
+    header: foresto/assets/pal_data/obj_s_kouban/obj_w_kouban_t2_sp_tex_txt.inc
+    header_type: raw
   - symbol: obj_w_station3_b_pal!.data:0x00000E20
     binary: foresto/assets/obj_w_station3_b_pal.bin
     header: foresto/assets/obj_w_station3_b_pal.inc

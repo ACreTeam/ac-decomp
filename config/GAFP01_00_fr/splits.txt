@@ -239,7 +239,7 @@ jaudio_frn.o/system.c:
 	.text       start:0x80024880 end:0x80024880
 	.text       start:0x80024880 end:0x80024DE0
 	.text       start:0x80024DE0 end:0x80024DE0
-	.text       start:0x80024DE0 end:0x80024EF4
+	.text       start:0x80024DE0 end:0x80024F00
 	.rodata     start:0x800B5488 end:0x800B55A0
 	.bss        start:0x801A0728 end:0x801A0740
 	.bss        start:0x80223B00 end:0x80223C18 align:4 common

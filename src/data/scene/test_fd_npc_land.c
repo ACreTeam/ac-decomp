@@ -8,7 +8,11 @@ extern s16 TEST_FD_NPC_LAND_object_bank[];
 extern Scene_Word_u test_fd_npc_land_info[] = {
     mSc_DATA_SOUND(0, 0),                                       // Sound data
     mSc_DATA_PLAYER(TEST_FD_NPC_LAND_player_data),              // Player Data
-    mSc_DATA_CTRL_ACTORS(17, TEST_FD_NPC_LAND_ctrl_actor_data), // Control actors
+#if VERSION == VER_GAFP01_00
+    mSc_DATA_CTRL_ACTORS(16, TEST_FD_NPC_LAND_ctrl_actor_data),
+#else
+    mSc_DATA_CTRL_ACTORS(17, TEST_FD_NPC_LAND_ctrl_actor_data),
+#endif // Control actors
     mSc_DATA_ACTORS(2, TEST_FD_NPC_LAND_actor_data),            // Player Data
     mSc_DATA_OBJ_BANK(2, TEST_FD_NPC_LAND_object_bank),         // Required object banks
     mSc_DATA_FIELDCT(mSc_ITEM_TYPE_BGITEM, 4, 0x1C00, mSc_ROOM_TYPE_OUTDOORS,
@@ -42,7 +46,9 @@ extern s16 TEST_FD_NPC_LAND_ctrl_actor_data[] = {
     mAc_PROFILE_GYOEI,           // 13
     mAc_PROFILE_SET_NPC_MANAGER, // 14
     mAc_PROFILE_BALL,            // 15
+#if VERSION != VER_GAFP01_00
     mAc_PROFILE_MSCORE_CONTROL,  // 16
+#endif
 };
 
 extern Actor_data TEST_FD_NPC_LAND_actor_data[] = {

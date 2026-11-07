@@ -6,6 +6,7 @@
 #include "libultra/osMesg.h"
 #include "libultra/libultra.h"
 #include <dolphin/os.h>
+#include <dolphin/pad.h>
 #include "jsyswrap.h"
 #include "m_nmibuf.h"
 
@@ -56,6 +57,9 @@ extern void osContGetReadDataEx(OSContPadEx* pad) {
                 __osResetSwitchPressed = TRUE;
             }
         } else {
+#if VERSION == VER_GAFP01_00
+            __PADDisableRecalibration(FALSE);
+#endif
             JC_JUTGamePad_recalibrate(0xF0000000); // all controllers
             osShutdown = TRUE;
             __osShutdownTime = osGetTime();
