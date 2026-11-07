@@ -1,0 +1,40 @@
+#ifdef __INTELLISENSE__
+#include "jaudio_NES/emusound.h"
+#endif
+
+/*
+  UNUSED   000008 ........ Nas_AudioEmuMode jaudio.o emusound.c
+  UNUSED   000008 ........ Nas_MenuSound jaudio.o emusound.c
+  UNUSED   00000c ........ Na_PauseStart__Fv jaudio.o emusound.c
+  UNUSED   00000c ........ Na_PauseEnd__Fv jaudio.o emusound.c
+
+  .sdata
+  UNUSED   000008 ........ NA_EMU_REQ jaudio.o emusound.c
+  UNUSED   000008 ........ NA_EMU_NOW jaudio.o emusound.c
+  UNUSED   000008 ........ NA_EMU_REL jaudio.o emusound.c
+
+  .sbss
+  UNUSED   000004 ........ NA_EMU_MODE jaudio.o emusound.c
+*/
+
+static int NA_EMU_MODE;
+
+extern void Nas_AudioEmuMode(int emu_mode) {
+    NA_EMU_MODE = emu_mode;
+}
+
+extern int Nas_MenuSound(void) {
+    return 0;
+}
+
+// This seems to be a flag stored elsewhere due to its position in sbss,
+// but it's not used in any linked fucnctions, so I'm placing it here.
+static int NA_PAUSE_FLAG = FALSE;
+
+static void Na_PauseStart(void) {
+    NA_PAUSE_FLAG = TRUE;
+}
+
+static void Na_PauseEnd(void) {
+    NA_PAUSE_FLAG = FALSE;
+}

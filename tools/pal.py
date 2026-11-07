@@ -4059,6 +4059,12 @@ def configure_sources(config):
                 relative = Path(*relative.parts[1:])
             source = next((p for p in (Path("src/PAL") / relative, Path("src/AUS") / relative, source)
                            if p.is_file()), source)
+            jaudio_root = None
+            if name.startswith("jaudio_"):
+                jaudio_root = Path("src/PAL/static") / name.split("/", 1)[0].removesuffix(".o")
+                source = jaudio_root / source.relative_to("src/static/jaudio_NES")
+                if not source.is_file():
+                    raise ValueError(f"Missing PAL JAudio source for {name}: {source}")
             sdk_root = Path("src/static/dolphin/2.6/src")
             pal_sdk_root = Path("src/PAL/static/dolphin")
             dolphin_sdk = source.is_relative_to(sdk_root)
@@ -4083,6 +4089,15 @@ def configure_sources(config):
                 *pal_includes, *module_include,
                 *[f for f in options["cflags"] if f not in pal_includes],
             ]
+            if jaudio_root is not None:
+                options["cflags"] = [
+                    f"-i {jaudio_root.as_posix()}/include",
+                    *options["cflags"],
+                ]
+                options["extra_cflags"] = [
+                    flag.replace("src/static/jaudio_NES", jaudio_root.as_posix())
+                    for flag in options.get("extra_cflags", [])
+                ]
             if dolphin_sdk:
                 # Keep the imported SDK's headers ahead of the game's SDK wrappers.
                 sdk_includes = [

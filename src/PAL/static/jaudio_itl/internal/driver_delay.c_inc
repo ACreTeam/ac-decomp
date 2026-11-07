@@ -1,0 +1,34 @@
+#ifdef __INTELLISENSE__
+#include "jaudio_NES/driver.h"
+#endif
+
+static Acmd* Nas_DelayFilter(Acmd* cmd, s32 size, delay* del_p) {
+    if (del_p->filter_left != NULL) {
+        aFirLoadTable(cmd++, size, del_p->filter_left);
+        aFirFilter(cmd++, del_p->resample_flags, 0xC40, del_p->filter_left_state);
+    }
+
+    if (del_p->filter_right != NULL) {
+        aFirLoadTable(cmd++, size, del_p->filter_right);
+        aFirFilter(cmd++, del_p->resample_flags, 0xDE0, del_p->filter_right_state);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_SendLine(Acmd* cmd, delay* del_p, s32 update_idx) {
+    delay* mix_delay;
+
+    if (del_p->mix_reverb_idx >= AG.num_synth_reverbs) {
+        return cmd;
+    }
+
+    mix_delay = &AG.synth_delay[del_p->mix_reverb_idx];
+    if (mix_delay->downsample_rate == 1) {
+        cmd = Nas_LoadAux2nd(cmd, mix_delay, update_idx);
+        aMix(cmd++, 0x34, del_p->mix_reverb_strength, 0xC40, 0x3A0);
+        cmd = Nas_SaveAux2nd(cmd, mix_delay, update_idx);
+    }
+
+    return cmd;
+}

@@ -1,0 +1,25 @@
+#ifdef __INTELLISENSE__
+#include "jaudio_NES/driver.h"
+#endif
+
+static Acmd* Nas_LoadAuxBuffer1(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param_p = &del_p->params[del_p->cur_frame][update_idx];
+    
+    cmd = __LoadAuxBuf(cmd, 0xC40, param_p->start_pos, param_p->size, del_p);
+    if (param_p->wrapped_size != 0) {
+        cmd = __LoadAuxBuf(cmd, 0xC40 + param_p->size, 0, param_p->wrapped_size, del_p);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBuffer1_B(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param_p = &del_p->sub_params[del_p->cur_frame][update_idx];
+    
+    cmd = __LoadAuxBuf(cmd, 0xC40, param_p->start_pos, param_p->size, del_p);
+    if (param_p->wrapped_size != 0) {
+        cmd = __LoadAuxBuf(cmd, 0xC40 + param_p->size, 0, param_p->wrapped_size, del_p);
+    }
+
+    return cmd;
+}

@@ -1,0 +1,73 @@
+#ifdef __INTELLISENSE__
+#include "jaudio_NES/driver.h"
+#endif
+
+static Acmd* Nas_CrossMix(Acmd* cmd, delay* del_p) {
+    aDMEMMove(cmd++, 0xC40, 0x6E0, 0x1A0);
+    aMix(cmd++, 0x1A, del_p->leak_rtl, 0xDE0, 0xC40);
+    aMix(cmd++, 0x1A, del_p->leak_ltl, 0x6E0, 0xDe0);
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBufferC(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 ofs_size = (param->start_pos & 7) * SAMPLE_SIZE;
+    
+    cmd = __LoadAuxBuf(cmd, 0x3A0, param->start_pos - (ofs_size / SAMPLE_SIZE), 0x1A0, del_p);
+    if (param->wrapped_size != 0) {
+        s16 wrapped_ofs_size = ALIGN_NEXT(ofs_size + param->size, 16);
+        
+        cmd = __LoadAuxBuf(cmd, 0x3A0 + wrapped_ofs_size, 0, 0x1A0 - wrapped_ofs_size, del_p);
+    }
+
+    aSetBuffer(cmd++, 0, 0x3A0 + ofs_size, 0xC40, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, del_p->downsample_pitch, del_p->left_load_resample_buf);
+    aSetBuffer(cmd++, 0, 0x3A0 + 0x1A0 + ofs_size, 0xDE0, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, del_p->downsample_pitch, del_p->right_load_resample_buf);
+    return cmd;
+}
+
+static Acmd* Nas_SaveAuxBufferCH(Acmd* cmd, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 samples = param->n_samples;
+    u32 size = samples * SAMPLE_SIZE;
+
+    aDMEMMove(cmd++, 0xC40, 0x3A0, size);
+    aSetBuffer(cmd++, 0, 0x3A0, 0x6E0, param->save_resample_num_samples * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->save_resample_pitch, del_p->left_save_resample_buf);
+    cmd = Nas_SaveBufferAuto(cmd, 0x6E0, param->size, (s32)&del_p->left_reverb_buf[param->start_pos]);
+    if (param->wrapped_size != 0) {
+        cmd = Nas_SaveBufferAuto(cmd, 0x6E0 + param->size, param->wrapped_size, (s32)&del_p->left_reverb_buf[0]);
+    }
+
+    aDMEMMove(cmd++, 0xDE0, 0x3A0, size);
+    aSetBuffer(cmd++, 0, 0x3A0, 0x6E0, param->save_resample_num_samples * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->save_resample_pitch, del_p->right_save_resample_buf);
+    cmd = Nas_SaveBufferAuto(cmd, 0x6E0, param->size, (s32)&del_p->right_reverb_buf[param->start_pos]);
+    if (param->wrapped_size != 0) {
+        cmd = Nas_SaveBufferAuto(cmd, 0x6E0 + param->size, param->wrapped_size, (s32)&del_p->right_reverb_buf[0]);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBufferCH(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 ofs_size = (param->start_pos & 7) * SAMPLE_SIZE;
+    
+    cmd = __LoadAuxBuf(cmd, 0x3A0, param->start_pos - (ofs_size / SAMPLE_SIZE), 0x1A0, del_p);
+    if (param->wrapped_size != 0) {
+        s16 wrapped_ofs_size = ALIGN_NEXT(ofs_size + param->size, 16);
+        s32 load_size = 0x1A0 - wrapped_ofs_size;
+
+        if (load_size > 0) {
+            cmd = __LoadAuxBuf(cmd, 0x3A0 + wrapped_ofs_size, 0, load_size, del_p);
+        }
+    }
+
+    aSetBuffer(cmd++, 0, 0x3A0 + ofs_size, 0xC40, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->load_resample_pitch, del_p->left_load_resample_buf);
+    aSetBuffer(cmd++, 0, 0x3A0 + 0x1A0 + ofs_size, 0xDE0, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->load_resample_pitch, del_p->right_load_resample_buf);
+    return cmd;
+}

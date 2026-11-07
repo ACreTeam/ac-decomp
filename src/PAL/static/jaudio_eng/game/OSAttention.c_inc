@@ -1,0 +1,11 @@
+#include "jaudio_NES/OSAttention.h"
+
+#include "MSL_C/printf.h"
+
+extern "C" int OSAttention(const char* msg, ...) {
+    va_list marker;
+
+    va_start(marker, msg);
+
+    return vprintf(msg, marker);
+}

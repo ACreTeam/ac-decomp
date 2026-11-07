@@ -1,0 +1,60 @@
+#ifdef __INTELLISENSE__
+#include "jaudio_NES/driver.h"
+#endif
+
+static void Nas_ClearBuffer(Acmd* cmd, s32 dmem, s32 size) {
+    aClearBuffer(cmd, dmem, size);
+}
+
+static void Nas_Mix(Acmd* cmd, s32 flags, s32 gain, s32 dmem_in, s32 dmem_out) {
+    aMix(cmd, flags, gain, dmem_in, dmem_out);
+}
+
+static void Nas_SetBuffer(Acmd* cmd, s32 flags, s32 dmem_in, s32 dmem_out, s32 count) {
+    aSetBuffer(cmd, flags, dmem_in, dmem_out, count);
+}
+
+static void Nas_DMEMMove(Acmd* cmd, s32 dmem_in, s32 dmem_out, s32 count) {
+    aDMEMMove(cmd, dmem_in, dmem_out, count);
+}
+
+static void Nas_HalfCut(Acmd* cmd, s32 src, s32 dst, s32 len) {
+    aHalfCut(cmd, src, dst, len);
+}
+
+static void Nas_SetEnvParam(Acmd* cmd, s32 reverbVol, s32 rampReverb, s32 rampL, s32 rampR) {
+    aSetEnvParam(cmd, reverbVol, rampReverb, rampL, rampR);
+}
+
+static void Nas_LoadBuffer2(Acmd* cmd, s32 dst, s32 len, s32 src) {
+    aLoadBuffer2(cmd, src, dst, len);
+}
+
+static void Nas_SaveBuffer2(Acmd* cmd, s32 src, s32 len, s32 dst) {
+    aSaveBuffer2(cmd, dst, src, len);
+}
+
+static void Nas_SetEnvParam2(Acmd* cmd, s32 volL, s32 volR) {
+    aSetEnvParam2(cmd, volL, volR);
+}
+
+static void Nas_PCM8dec(Acmd* cmd, s32 flags, s32 state) {
+    aPCM8dec(cmd, flags, state);
+}
+
+static void Nas_DistFilter(Acmd* cmd, s32 gain, s32 dmem_in, s32 dmem_out, s32 len) {
+    aDistFilter(cmd, gain, dmem_in, dmem_out, len);
+}
+
+// TODO: check params
+static void Nas_NoiseFilter(Acmd* cmd, s32 buf, s32 flags, s32 addr, s32 len) {
+    aNoiseFilter(cmd, buf, flags, addr, len);
+}
+
+static void Nas_FirFilter(Acmd* cmd, s32 flags, s32 buf, s16* filter) {
+    aFirFilter(cmd, flags, buf, filter);
+}
+
+static void Nas_FirLoadTable(Acmd* cmd, s32 size, s16* filter) {
+    aFirLoadTable(cmd, size, filter);
+}
