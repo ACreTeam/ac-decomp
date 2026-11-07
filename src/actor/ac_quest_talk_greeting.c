@@ -392,8 +392,13 @@ static int aQMgr_check_possession_item(mActor_name_t ignore_item) {
 }
 
 static int aQMgr_get_harvestfestival_msg(mNpc_NpcList_c* npclist, int looks) {
+#if VERSION == VER_GAFP01_00
+    static u8 str0[mString_DEFAULT_STR_SIZE];
+    static u8 str1[mString_DEFAULT_STR_SIZE];
+#else
     static u8 str0[mMsg_FREE_STRING_LEN];
     static u8 str1[mMsg_FREE_STRING_LEN];
+#endif
 
     int msg_no;
     int bx = 0;
@@ -435,8 +440,13 @@ static int aQMgr_get_harvestfestival_msg(mNpc_NpcList_c* npclist, int looks) {
 }
 
 static int aQMgr_get_harvestfestival_island_msg(int looks) {
+#if VERSION == VER_GAFP01_00
+    static u8 str0[mString_DEFAULT_STR_SIZE];
+    static u8 str1[mString_DEFAULT_STR_SIZE];
+#else
     static u8 str0[mMsg_FREE_STRING_LEN];
     static u8 str1[mMsg_FREE_STRING_LEN];
+#endif
 
     int msg_no;
     int ev_bx = 0;

@@ -228,6 +228,13 @@ static void aQMgr_init_normal_info(aQMgr_normal_info_c* normal_info) {
 }
 
 static u8 l_aqmgr_str[16];
+#if VERSION == VER_GAFP01_00
+static u8 l_aqmgr_str2[mString_DEFAULT_STR_SIZE];
+#define aQMgr_TEXT_STR_SIZE mString_DEFAULT_STR_SIZE
+#else
+#define l_aqmgr_str2 l_aqmgr_str
+#define aQMgr_TEXT_STR_SIZE 16
+#endif
 
 static void aQMgr_set_number_free_str(u32 number, int str_no) {
     mFont_UnintToString(l_aqmgr_str, sizeof(l_aqmgr_str), number, 10, TRUE, FALSE, TRUE);
@@ -240,37 +247,48 @@ static void aQMgr_set_number_item_str(u8* str_p, u32 number, int str_no) {
 }
 
 static void aQMgr_set_number_free_str_add_nen(u32 year, int str_no) {
+#if VERSION == VER_GAFP01_00
+    u8 year_str[mString_DEFAULT_STR_SIZE];
     int len;
+#else
+    int len;
+#endif
 
+#if VERSION == VER_GAFP01_00
+    mem_clear(year_str, sizeof(year_str), CHAR_SPACE);
+    len = mString_Load_YearStringFromRom(year_str, year);
+    mMsg_SET_FREE_STR(str_no, year_str, len);
+#else
     mem_clear(l_aqmgr_str, sizeof(l_aqmgr_str), CHAR_SPACE);
     len = mString_Load_YearStringFromRom(l_aqmgr_str, year);
     mMsg_SET_FREE_STR(str_no, l_aqmgr_str, len);
+#endif
 }
 
 static void aQMgr_set_number_free_str_add_gatu(u32 month, int str_no) {
     int len;
 
-    mem_clear(l_aqmgr_str, sizeof(l_aqmgr_str), CHAR_SPACE);
+    mem_clear(l_aqmgr_str2, sizeof(l_aqmgr_str2), CHAR_SPACE);
 
     if (month < lbRTC_JANUARY || month > lbRTC_DECEMBER) {
         month = lbRTC_JANUARY;
     }
 
-    mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), mString_MONTH_START + (month - 1));
-    mMsg_SET_FREE_STR(str_no, l_aqmgr_str, sizeof(l_aqmgr_str));
+    mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), mString_MONTH_START + (month - 1));
+    mMsg_SET_FREE_STR(str_no, l_aqmgr_str2, sizeof(l_aqmgr_str2));
 }
 
 static void aQMgr_set_number_free_str_add_nichi(u32 day, int str_no) {
     int len;
 
-    mem_clear(l_aqmgr_str, sizeof(l_aqmgr_str), CHAR_SPACE);
+    mem_clear(l_aqmgr_str2, sizeof(l_aqmgr_str2), CHAR_SPACE);
 
     if (day < 1 || day > 31) {
         day = 1;
     }
 
-    mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), mString_DAY_START + (day - 1));
-    mMsg_SET_FREE_STR(str_no, l_aqmgr_str, sizeof(l_aqmgr_str));
+    mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), mString_DAY_START + (day - 1));
+    mMsg_SET_FREE_STR(str_no, l_aqmgr_str2, sizeof(l_aqmgr_str2));
 }
 
 static int aQMgr_get_possession_ftr_cpt_wl(mActor_name_t cancel_item) {
@@ -808,7 +826,11 @@ static void aQMgr_normal_set_free_str(QUEST_MANAGER_ACTOR* manager) {
         other_id = mNpc_GetOtherAnimalPersonalID(&animal->id, 1);
         if (other_id != NULL) {
             mNpc_GetNpcWorldNameAnm(l_aqmgr_str, other_id);
+#if VERSION == VER_GAFP01_00
+            mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR13, l_aqmgr_str, ANIMAL_NAME_LEN, 0, mNpc_Looks2Gender(other_id->looks));
+#else
             mMsg_SET_FREE_STR(mMsg_FREE_STR13, l_aqmgr_str, ANIMAL_NAME_LEN);
+#endif
         }
     }
 }
@@ -1956,8 +1978,8 @@ static int aQMgr_set_random_string(u8* str, int item_str_no, int base_str, f32 s
         idx++;
     }
 
-    mString_Load_StringFromRom(str, 16, base_str + idx);
-    mMsg_SET_ITEM_STR(item_str_no, str, 16);
+    mString_Load_StringFromRom(str, aQMgr_TEXT_STR_SIZE, base_str + idx);
+    mMsg_SET_ITEM_STR(item_str_no, str, aQMgr_TEXT_STR_SIZE);
     return idx;
 }
 
@@ -1986,12 +2008,12 @@ static void aQMgr_set_random_number_item_str(u8* str, int item_str_no, u32 min, 
 }
 
 static void aQMgr_order_set_string_2(u8* last_str_tbl) {
-    u8 str[16];
+    u8 str[aQMgr_TEXT_STR_SIZE];
     int shop_level;
 
-    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR0, 1, 10);
-    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR1, 10, 99);
-    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR2, 0, 9);
+    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR0, 1, 10);
+    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR1, 10, 99);
+    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR2, 0, 9);
     shop_level = mSP_GetShopLevel();
 
     if (shop_level < 0 || shop_level >= mSP_SHOP_TYPE_NUM) {
@@ -2001,7 +2023,7 @@ static void aQMgr_order_set_string_2(u8* last_str_tbl) {
     mem_clear(str, sizeof(str), CHAR_SPACE);
     mString_Load_StringFromRom(str, sizeof(str), 0x454 + shop_level);
     mMsg_SET_ITEM_STR(mMsg_ITEM_STR3, str, sizeof(str));
-    aQMgr_set_random_string(l_aqmgr_str, mMsg_ITEM_STR4, 0x434, 32.0f, -1);
+    aQMgr_set_random_string(l_aqmgr_str2, mMsg_ITEM_STR4, 0x434, 32.0f, -1);
 }
 
 static void aQMgr_order_set_string_3(u8* last_str_tbl) {
@@ -2047,9 +2069,9 @@ static void aQMgr_order_set_string_4(u8* last_str_tbl) {
 
     for (i = 0; i < 2; i++) {
         if (*last_str_tbl < 12) {
-            str_idx = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], 11.0f, *last_str_tbl);
+            str_idx = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], 11.0f, *last_str_tbl);
         } else {
-            str_idx = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], 12.0f, -1);
+            str_idx = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], 12.0f, -1);
         }
 
         *last_str_tbl++ = str_idx;
@@ -2070,24 +2092,24 @@ static void aQMgr_order_set_string_4(u8* last_str_tbl) {
         constellation += 12;
     }
 
-    mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), 0x494 + constellation);
-    mMsg_SET_ITEM_STR(mMsg_ITEM_STR2, l_aqmgr_str, sizeof(l_aqmgr_str));
+    mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), 0x494 + constellation);
+    mMsg_SET_ITEM_STR(mMsg_ITEM_STR2, l_aqmgr_str2, sizeof(l_aqmgr_str2));
 
-    mem_clear(l_aqmgr_str, sizeof(l_aqmgr_str), CHAR_SPACE);
+    mem_clear(l_aqmgr_str2, sizeof(l_aqmgr_str2), CHAR_SPACE);
     if (birthday_month < lbRTC_JANUARY || birthday_month > lbRTC_DECEMBER) {
         birthday_month = lbRTC_JANUARY;
     }
     birthday_month--;
-    mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), mString_MONTH_START + birthday_month);
-    mMsg_SET_ITEM_STR(mMsg_ITEM_STR3, l_aqmgr_str, sizeof(l_aqmgr_str));
+    mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), mString_MONTH_START + birthday_month);
+    mMsg_SET_ITEM_STR(mMsg_ITEM_STR3, l_aqmgr_str2, sizeof(l_aqmgr_str2));
 
-    mem_clear(l_aqmgr_str, sizeof(l_aqmgr_str), CHAR_SPACE);
+    mem_clear(l_aqmgr_str2, sizeof(l_aqmgr_str2), CHAR_SPACE);
     if (birthday_day < 1 || birthday_day > 31) {
         birthday_day = 1;
     }
     birthday_day--;
-    mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), mString_DAY_START + birthday_day);
-    mMsg_SET_ITEM_STR(mMsg_ITEM_STR4, l_aqmgr_str, sizeof(l_aqmgr_str));
+    mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), mString_DAY_START + birthday_day);
+    mMsg_SET_ITEM_STR(mMsg_ITEM_STR4, l_aqmgr_str2, sizeof(l_aqmgr_str2));
 }
 
 typedef void (*aQMgr_SET_STRING_PROC)(u8*);

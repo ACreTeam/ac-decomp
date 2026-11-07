@@ -191,7 +191,9 @@ static int get_message_number_fish_omedeto(mActor_name_t item) {
 
 static void aEANG_demo_measure(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
     int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+#if VERSION != VER_GAFP01_00
     u8 str[mIN_ITEM_NAME_LEN];
+#endif
 
     if (order == 4) {
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
@@ -207,8 +209,12 @@ static void aEANG_demo_measure(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
             (*angler->setup_talk_proc)(angler, play, aEANG_TALK_DEMO_HOUBI);
             angler->item = aEANG_SelectRandomItem();
             mPr_SetFreePossessionItem(Now_Private, angler->item, mPr_ITEM_COND_NORMAL);
+#if VERSION == VER_GAFP01_00
+            mMsg_Set_item_str_default(msg_p, mMsg_ITEM_STR0, angler->item);
+#else
             mIN_copy_name_str(str, angler->item);
             mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, str, mIN_ITEM_NAME_LEN, mIN_get_item_article(angler->item));
+#endif
         } else {
             mMsg_Set_continue_msg_num(msg_p, get_message_number_fish_zannen(angler->item));
             (*angler->setup_talk_proc)(angler, play, aEANG_TALK_END_WAIT);

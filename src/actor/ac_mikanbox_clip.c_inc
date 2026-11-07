@@ -304,6 +304,13 @@ static void aMKBC_clip_roll_proc(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
     }
 }
 
+#if VERSION == VER_GAFP01_00
+static void aMKBC_clip_set_itemstr(int str_no, u8 md_no) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_Set_item_str_default(msg_p, str_no, ITM_MINIDISK_START + md_no);
+}
+#else
 static void aMKBC_clip_set_itemstr(int str_no, u8 md_no) {
     u8 item_name_str[mIN_ITEM_NAME_LEN];
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
@@ -311,6 +318,7 @@ static void aMKBC_clip_set_itemstr(int str_no, u8 md_no) {
     mIN_copy_name_str(item_name_str, ITM_MINIDISK_START + md_no);
     mMsg_Set_item_str_art(msg_p, str_no, item_name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article(ITM_MINIDISK_START + md_no));
 }
+#endif
 
 static void aMKBC_clip_set_itemstr3() {
     aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);

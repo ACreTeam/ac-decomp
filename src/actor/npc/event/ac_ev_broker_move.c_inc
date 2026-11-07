@@ -251,16 +251,24 @@ static void aEBRK_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc) {
 
 static void aEBRK_set_talk_info_talk_request(ACTOR* actorx) {
     int msg_no;
+#if VERSION != VER_GAFP01_00
     u8 item_name[mIN_ITEM_NAME_LEN];
+#endif
     mActor_name_t item;
     int idx;
 
     idx = aEBRK_check_pl_list(Save_Get(event_save_data).special.event.broker.pid,
                               ARRAY_COUNT(Save_Get(event_save_data).special.event.broker.pid));
     if (idx != -1) {
+#if VERSION != VER_GAFP01_00
         item = Save_Get(event_save_data).special.event.broker.sold_items[idx];
+#endif
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR2, Save_Get(event_save_data).special.event.broker.sold_items[idx]);
+#else
         mIN_copy_name_str(item_name, item);
         mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR2, item_name, mIN_ITEM_NAME_LEN, item);
+#endif
         msg_no = 0x078A;
     } else {
         idx = aEBRK_check_pl_list(&Common_Get(special_event_common).broker.entered_pid, 1);

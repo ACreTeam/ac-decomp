@@ -343,11 +343,17 @@ static void aCR_set_after_explain_insect(NPC_CURATOR_ACTOR* curator, GAME_PLAY* 
 }
 
 static void aCR_set_item_name_str(mActor_name_t item) {
+#if VERSION != VER_GAFP01_00
     u8 item_str[mIN_ITEM_NAME_LEN];
+#endif
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_FREE_STR0, item);
+#else
     mIN_copy_name_str(item_str, item);
     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR0, item_str, sizeof(item_str),
                           mIN_get_item_article(item));
+#endif
 }
 
 static void aCR_set_other_player_name_str(int player_no) {

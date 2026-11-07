@@ -125,7 +125,15 @@ static void aTM0_set_talk_info(ACTOR* actorx) {
         if (eventNpc != NULL) {
             actorRet = Actor_info_fgName_search(&((GAME_PLAY*)gamePT)->actor_info, eventNpc->event_id, ACTOR_PART_NPC);
             mNpc_GetNpcWorldName(worldName, actorRet);
+#if VERSION == VER_GAFP01_00
+            {
+                int gender = mNpc_Name2Gender(eventNpc->npc_id);
+
+                mMsg_Set_free_str_cl_npc(msg_p, i + mMsg_FREE_STR1, worldName, LAND_NAME_SIZE, 0, gender);
+            }
+#else
             mMsg_Set_free_str(msg_p, i + mMsg_FREE_STR1, worldName, LAND_NAME_SIZE);
+#endif
         }
     }
     if (mEv_check_status(mEv_EVENT_METEOR_SHOWER, mEv_STATUS_ACTIVE) == TRUE) {

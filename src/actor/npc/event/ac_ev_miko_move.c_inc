@@ -27,7 +27,11 @@ static int aEMK_mail_free_space(void) {
 }
 
 static void aEMK_get_omikuji(Mail_c* mail, int idx) {
+#if VERSION == VER_GAFP01_00
+    static u8 pf_string[mString_DEFAULT_STR_SIZE];
+#else
     static u8 pf_string[mMsg_FREE_STRING_LEN];
+#endif
     int header_back_start;
     int load_idx;
     static int table[] = { 0x2B1, 0x2A1, 0x2DA, 0x2CA };

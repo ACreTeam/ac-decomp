@@ -362,7 +362,11 @@ static void aETKY_SetKnifeForkSequence(EV_TURKEY_ACTOR* turkey, GAME_PLAY* play)
         present = aETKY_present_table[present_idx];
         mIN_copy_name_str(item_name, present);
         mMsg_SET_CONTINUE_MSG_NUM(0x3C11 + present_idx);
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, present);
+#else
         mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR0, item_name, mIN_ITEM_NAME_LEN, present);
+#endif
         aETKY_SetupTalkStat(turkey, play, aETKY_TALK_GIVE_ME_FORK);
     }
 }

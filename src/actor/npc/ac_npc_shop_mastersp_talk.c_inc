@@ -133,15 +133,21 @@ static void aSHM_remove_gift(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, mActor_name
 }
 
 static int to_atari(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp) {
+#if VERSION != VER_GAFP01_00
     u8 name_str[mIN_ITEM_NAME_LEN];
+#endif
     mActor_name_t* item_p = Save_Get(shop).lottery_items;
 
     if (item_p[shop_mastersp->result] == RSV_SHOP_SOLD_FTR || item_p[shop_mastersp->result] == EMPTY_NO) {
         return FALSE;
     }
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_FREE_STR0, item_p[shop_mastersp->result]);
+#else
     mIN_copy_name_str(name_str, item_p[shop_mastersp->result]);
     mMsg_SET_ITEM_STR_ART(mMsg_FREE_STR0, name_str, mIN_ITEM_NAME_LEN, item_p[shop_mastersp->result]);
+#endif
     mPr_SetFreePossessionItem(Now_Private, item_p[shop_mastersp->result], mPr_ITEM_COND_PRESENT);
     aSHM_set_start_avoid_pos(shop_mastersp, shop_mastersp->result * 3);
     shop_mastersp->move_think_idx = aSHM_THINK_HIROU;

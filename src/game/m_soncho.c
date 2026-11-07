@@ -285,6 +285,13 @@ extern mActor_name_t mSC_trophy_item(u8 soncho_event) {
     return item;
 }
 
+#if VERSION == VER_GAFP01_00
+extern void mSC_item_string_set(mActor_name_t item, int str_no) {
+    mMsg_Window_c* window = mMsg_Get_base_window_p();
+
+    mMsg_Set_item_str_default(window, str_no, item);
+}
+#else
 extern void mSC_item_string_set(mActor_name_t item, int str_no) {
     u8 item_name[mIN_ITEM_NAME_LEN];
     mMsg_Window_c* window = mMsg_Get_base_window_p();
@@ -292,6 +299,7 @@ extern void mSC_item_string_set(mActor_name_t item, int str_no) {
     mIN_copy_name_str(item_name, item);
     mMsg_Set_item_str_art(window, str_no, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article(item));
 }
+#endif
 
 extern void mSC_get_event_name_str(u8* buf, int buf_len, int soncho_event) {
     static int chg_string_idx[mSC_EVENT_NUM + 1] = {
@@ -330,7 +338,11 @@ extern void mSC_get_event_name_str(u8* buf, int buf_len, int soncho_event) {
 }
 
 extern void mSC_event_name_set(u8 soncho_event) {
+#if VERSION == VER_GAFP01_00
+    u8 event_name_buf[mString_DEFAULT_STR_SIZE];
+#else
     u8 event_name_buf[mIN_ITEM_NAME_LEN];
+#endif
     int ofs = 0; // for town day name
 
     if (soncho_event < mSC_EVENT_NUM) {
@@ -339,8 +351,8 @@ extern void mSC_event_name_set(u8 soncho_event) {
             ofs = mMl_strlen(event_name_buf, LAND_NAME_SIZE, CHAR_SPACE);
         }
 
-        mSC_get_event_name_str(event_name_buf + ofs, mIN_ITEM_NAME_LEN - ofs, soncho_event);
-        mMsg_Set_item_str(mMsg_Get_base_window_p(), mMsg_ITEM_STR1, event_name_buf, mIN_ITEM_NAME_LEN);
+        mSC_get_event_name_str(event_name_buf + ofs, sizeof(event_name_buf) - ofs, soncho_event);
+        mMsg_Set_item_str(mMsg_Get_base_window_p(), mMsg_ITEM_STR1, event_name_buf, sizeof(event_name_buf));
     }
 }
 

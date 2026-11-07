@@ -10,7 +10,11 @@ static int aES2_kinenhin_msg(ACTOR* actorx, int msg_no) {
 static void aES2_LightHouse_set_free_str() {
     lbRTC_time_c time_1;
     lbRTC_time_c time_2;
+#if VERSION == VER_GAFP01_00
+    u8 day_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 day_str[4];
+#endif
     lbRTC_TimeCopy(&time_1, &Common_Get(time).rtc_time);
     lbRTC_Add_DD(&time_1, 7);
     lbRTC_TimeCopy(&time_2, &Common_Get(time).rtc_time);

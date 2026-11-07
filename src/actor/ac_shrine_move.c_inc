@@ -285,8 +285,13 @@ static void aSHR_talk_gomen(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
                 msg_no = 0x112A;
             } else {
                 mIN_copy_name_str(item_name, sm_item->item);
+#if VERSION == VER_GAFP01_00
+                mMsg_Set_free_str_art2(msg_p, mMsg_FREE_STR0, item_name, mIN_ITEM_NAME_LEN,
+                                       mIN_get_item_article_indef(sm_item->item), mIN_get_item_article_def(sm_item->item), mIN_get_item_gender(sm_item->item));
+#else
                 mMsg_Set_free_str_art(msg_p, mMsg_FREE_STR0, item_name, mIN_ITEM_NAME_LEN,
                                       mIN_get_item_article(sm_item->item));
+#endif
                 msg_no = 0x112B;
                 mQst_ClearQuestbyPossessionIdx(sm_item->slot_no);
                 mPr_SetPossessionItem(Common_Get(now_private), sm_item->slot_no, EMPTY_NO, mPr_ITEM_COND_NORMAL);

@@ -223,7 +223,11 @@ static void aSMAN_GetSnowmanPresentMail(Mail_c* mail) {
     item = snow_item_table[rnd];
     mail_idx += rnd;
     mIN_copy_name_str(item_name, item);
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_art2(mHandbill_FREE_STR0, item_name, sizeof(item_name), mIN_get_item_article_indef(item), mIN_get_item_article_def(item), mIN_get_item_gender(item));
+#else
     mHandbill_Set_free_str(mHandbill_FREE_STR0, item_name, sizeof(item_name));
+#endif
     mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
                                    mail_idx);
     mail->content.header_back_start = header_back_start;

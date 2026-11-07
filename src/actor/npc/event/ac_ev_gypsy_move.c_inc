@@ -1,6 +1,10 @@
 static void aEGPS_set_string(int type) {
   static int string_num[aEGPS_STR_TYPE_NUM] = { 0x1A4, 0x1C4, 0x184, 0x164 };
+#if VERSION == VER_GAFP01_00
+  u8 str[mString_DEFAULT_STR_SIZE];
+#else
   u8 str[mIN_ITEM_NAME_LEN];
+#endif
   int str_no = RANDOM(32) + string_num[type];
 
   mString_Load_StringFromRom(str, sizeof(str), str_no);

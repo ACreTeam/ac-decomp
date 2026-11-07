@@ -1,5 +1,9 @@
 static void aNRTC_set_slot_name(int slot_id, int str_no) {
+#if VERSION == VER_GAFP01_00
+    u8 name[mString_DEFAULT_STR_SIZE];
+#else
     u8 name[mIN_ITEM_NAME_LEN];
+#endif
 
     mString_Load_StringFromRom(name, sizeof(name), 0x06CD + slot_id);
     mMsg_SET_FREE_STR(str_no, name, sizeof(name));

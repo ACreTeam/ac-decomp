@@ -412,12 +412,18 @@ static void aEGH_select_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
 
       case mChoice_CHOICE2:
       {
+#if VERSION != VER_GAFP01_00
         u8 name[mIN_ITEM_NAME_LEN];
+#endif
 
         aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_YOU_WAIT);
         ghost->give_item = aEGH_not_collect_get();
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_item_str_default(msg_p, mMsg_ITEM_STR0, ghost->give_item);
+#else
         mIN_copy_name_str(name, ghost->give_item);
         mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, name, mIN_ITEM_NAME_LEN, mIN_get_item_article(ghost->give_item));
+#endif
         break;
       }
     }

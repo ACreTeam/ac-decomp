@@ -247,10 +247,16 @@ static void aPOL2_set_player_angl(NPC_POLICE2_ACTOR* actor) {
 static void aPOL2_set_force_talk_info_message_ctrl(ACTOR* actorx) {
     NPC_POLICE2_ACTOR* actor = (NPC_POLICE2_ACTOR*)actorx;
     mActor_name_t item = Save_Get(police_box).keep_items[actor->item_idx];
+#if VERSION != VER_GAFP01_00
     u8 str[mIN_ITEM_NAME_LEN];
+#endif
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item);
+#else
     mIN_copy_name_str(str, item);
     mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR0, str, sizeof(str), item);
+#endif
     mDemo_Set_msg_num(0x077E);
 }
 

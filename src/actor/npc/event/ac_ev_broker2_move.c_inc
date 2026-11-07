@@ -42,10 +42,16 @@ static void aEBR2_set_msg_data_price(mActor_name_t item) {
 }
 
 static void aEBR2_set_msg_data_item_name(mActor_name_t item, int str_no) {
+#if VERSION != VER_GAFP01_00
     u8 str[mIN_ITEM_NAME_LEN];
+#endif
 
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), str_no, item);
+#else
     mIN_copy_name_str(str, item);
     mMsg_SET_ITEM_STR_ART(str_no, str, sizeof(str), item);
+#endif
 }
 
 static void aEBR2_set_msg_data_sub(mEv_broker_c* save_p, PersonalID_c* pID, int idx) {

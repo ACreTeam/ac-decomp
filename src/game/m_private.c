@@ -1206,8 +1206,13 @@ static void mPr_GetForeingerAnimalMail(Mail_c* mail, Private_c* priv, mPr_animal
     AnmPersonalID_c anm_pid;
     int mail_no;
     u8 npc_name[ANIMAL_NAME_LEN];
+#if VERSION == VER_GAFP01_00
+    u8 header[48];
+    u8 footer[56];
+#else
     u8 header[40];
     u8 footer[48];
+#endif
     int ofs;
     u8 looks;
     int header_back_start;
@@ -1218,10 +1223,14 @@ static void mPr_GetForeingerAnimalMail(Mail_c* mail, Private_c* priv, mPr_animal
     mail_no += ofs + looks * 3;
     mHandbill_Set_free_str(0, priv->player_ID.player_name, PLAYER_NAME_LEN); // player's name
     mNpc_LoadNpcNameString(npc_name, anm_mem->npc_id);
-    mHandbill_Set_free_str(1, npc_name, ANIMAL_NAME_LEN);                 // animal's name
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_npc(1, npc_name, ANIMAL_NAME_LEN, mNpc_Looks2Gender(looks));
+#else
+    mHandbill_Set_free_str(1, npc_name, ANIMAL_NAME_LEN);
+#endif
     mHandbill_Set_free_str(2, anm_mem->land_name, LAND_NAME_SIZE);        // animal's current town name
     mHandbill_Set_free_str(3, priv->player_ID.land_name, LAND_NAME_SIZE); // player's town name
-    mHandbill_Load_HandbillFromRom2(header, 40, &header_back_start, footer, 48, mail->content.body, mail_no);
+    mHandbill_Load_HandbillFromRom2(header, sizeof(header), &header_back_start, footer, sizeof(footer), mail->content.body, mail_no);
     mem_copy(mail->content.header, header, mHandbill_HEADER_LEN);
     mem_copy(mail->content.footer, footer, mHandbill_FOOTER_LEN);
 

@@ -10,7 +10,11 @@
 #include "m_rcp.h"
 
 #define aMIK_STRING_NUM 10
+#if VERSION == VER_GAFP01_00
+#define aMIK_STRING_LEN 29
+#else
 #define aMIK_STRING_LEN 25
+#endif
 
 enum {
     aMIK_ACTION_WAIT,

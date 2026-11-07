@@ -81,9 +81,15 @@ static void aEvMgr_actor_set_shop_handbill_str(mEv_special_c* sp_ev, int sale_it
     mActor_name_t* item_p = bargin_p->items;
     lbRTC_time_c* start_p = &bargin_p->start_time;
     u8 item_cnt_str[1] = { 0 };
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mString_DEFAULT_STR_SIZE];
+    u8 day_str[mString_DEFAULT_STR_SIZE];
+    u8 hour_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 month_str[9];
     u8 day_str[4];
     u8 hour_str[15];
+#endif
     u8 item_name_str[mIN_ITEM_NAME_LEN];
     int len;
     int i;
@@ -93,7 +99,11 @@ static void aEvMgr_actor_set_shop_handbill_str(mEv_special_c* sp_ev, int sale_it
     
     for (i = 0; i < sale_item_count; i++) {
         mIN_copy_name_str(item_name_str, item_p[i]);
+#if VERSION == VER_GAFP01_00
+        mHandbill_Set_free_str_art2(mHandbill_FREE_STR7 + i, item_name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(item_p[i]), mIN_get_item_article_def(item_p[i]), mIN_get_item_gender(item_p[i]));
+#else
         mHandbill_Set_free_str(mHandbill_FREE_STR7 + i, item_name_str, mIN_ITEM_NAME_LEN);
+#endif
     }
 
     mem_clear(month_str, sizeof(month_str), CHAR_SPACE);
@@ -110,9 +120,15 @@ static void aEvMgr_actor_set_shop_handbill_str(mEv_special_c* sp_ev, int sale_it
 
 static void aEvMgr_actor_set_broker_handbill_str(mEv_special_c* sp_ev) {
     lbRTC_time_c* start_p = &sp_ev->scheduled;
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mString_DEFAULT_STR_SIZE];
+    u8 day_str[mString_DEFAULT_STR_SIZE];
+    u8 hour_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 month_str[9];
     u8 day_str[4];
     u8 hour_str[15];
+#endif
     int len;
 
     mem_clear(month_str, sizeof(month_str), CHAR_SPACE);

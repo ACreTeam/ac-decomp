@@ -1096,7 +1096,11 @@ extern void mSP_ShopItsumoChirashi(int house_no, int shop_level, mActor_name_t i
             int header_back_start;
 
             mIN_copy_name_str(item_name_str, item);
+#if VERSION == VER_GAFP01_00
+            mHandbill_Set_free_str_art2(mHandbill_FREE_STR7, item_name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(item), mIN_get_item_article_def(item), mIN_get_item_gender(item));
+#else
             mHandbill_Set_free_str(mHandbill_FREE_STR7, item_name_str, mIN_ITEM_NAME_LEN);
+#endif
             mMl_clear_mail(&leaflet);
             mHandbill_Load_HandbillFromRom(leaflet.content.header, &header_back_start, leaflet.content.footer,
                                            leaflet.content.body, rare_chirashi_bunmen[shop_level][type & 1]);

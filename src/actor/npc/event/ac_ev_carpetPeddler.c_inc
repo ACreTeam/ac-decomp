@@ -181,7 +181,9 @@ void aECPD_msg_win_open_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* pl
 
 void aECPD_1st_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
     mActor_name_t item;
+#if VERSION != VER_GAFP01_00
     u8 item_str[mIN_ITEM_NAME_LEN];
+#endif
     u8 price_str[6];
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     int n = Save_Get(event_save_data).special.event.arabian.used;
@@ -195,8 +197,12 @@ void aECPD_1st_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
     mFont_UnintToString(price_str, sizeof(price_str), price, 0x5, TRUE, FALSE, TRUE);
     mMsg_Set_free_str(msg_p, 0x0, price_str, sizeof(price_str));
     mSP_SelectRandomItem_New(NULL, &item, 0x1, NULL, 0x0, mSP_KIND_CARPET, mSP_LISTTYPE_EVENT, FALSE);
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(msg_p, mMsg_ITEM_STR0, item);
+#else
     mIN_copy_name_str(item_str, item);
     mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, item_str, mIN_ITEM_NAME_LEN, mIN_get_item_article(item));
+#endif
     peddler->carpet = item;
 }
 

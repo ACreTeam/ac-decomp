@@ -179,7 +179,11 @@ static int mPO_delivery_mail_with_order_ftr_sub(int house_no, PersonalID_c* pid,
 
     mMl_clear_mail(&mail);
     mIN_copy_name_str(item_name, order->item);
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_art2(0, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(order->item), mIN_get_item_article_def(order->item), mIN_get_item_gender(order->item));
+#else
     mHandbill_Set_free_str(0, item_name, mIN_ITEM_NAME_LEN);
+#endif
     mPO_delivery_mail_with_item(&mail, 0x049 + order->shop_level, order->item, pid);
     return mPO_copy_contents(house_no, &mail);
 }
@@ -206,14 +210,22 @@ static void mPO_delivery_mail_with_order_ftr(int house_no, int player_no) {
 }
 
 static void mPO_delivery_mail_with_ticket_set_free_str(lbRTC_month_t month) {
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 month_str[9];
+#endif
+#if VERSION == VER_GAFP01_00
+    u8 day_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 day_str[4];
+#endif
 
     int days = lbRTC_GetDaysByMonth(Common_Get(time.rtc_time.year), month);
     mString_Load_MonthStringFromRom(month_str, month);
     mString_Load_DayStringFromRom(day_str, days);
-    mHandbill_Set_free_str(4, month_str, 9);
-    mHandbill_Set_free_str(5, day_str, 4);
+    mHandbill_Set_free_str(4, month_str, sizeof(month_str));
+    mHandbill_Set_free_str(5, day_str, sizeof(day_str));
 }
 
 static int mPO_delivery_mail_with_ticket_sub(int house_no, PersonalID_c* pid, mActor_name_t present) {

@@ -213,7 +213,11 @@ static void aNNW_first_talk_end(u8 flag) {
 }
 
 static void aNNW_set_trend_set_string(int trend_idx, int str_no) {
+#if VERSION == VER_GAFP01_00
+    u8 str[16];
+#else
     u8 str[mString_DEFAULT_STR_SIZE];
+#endif
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     
     mString_Load_StringFromRom(str, sizeof(str), aNNW_string_table[trend_idx & 3]);

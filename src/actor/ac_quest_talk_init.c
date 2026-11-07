@@ -917,13 +917,28 @@ static void aQMgr_actor_set_free_str(QUEST_MANAGER_ACTOR* manager, int regist_id
     u8 str2[mIN_ITEM_NAME_LEN];
 
     aQMgr_target_c* target = &manager->target;
+#if VERSION == VER_GAFP01_00
+    int gender = -1;
+#endif
 
     mNpc_GetNpcWorldNameAnm(str0, target->from_id);
+#if VERSION == VER_GAFP01_00
+    if (target->from_id != NULL) {
+        gender = mNpc_Looks2Gender(target->from_id->looks);
+    }
+    mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR0, str0, sizeof(str0), 0, gender);
+#else
     mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, str0, sizeof(str0));
+#endif
 
     if (target->to_id != NULL) {
         mNpc_GetNpcWorldNameAnm(str1, target->to_id);
+#if VERSION == VER_GAFP01_00
+        gender = mNpc_Looks2Gender(target->to_id->looks);
+        mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str1, sizeof(str1), 1, gender);
+#else
         mMsg_Set_free_str_cl(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str1, sizeof(str1), 1);
+#endif
         mLd_SetFreeStrLandMuraName(target->to_id->land_name, mMsg_FREE_STR3);
     }
 
@@ -950,7 +965,15 @@ static void aQMgr_actor_set_free_str(QUEST_MANAGER_ACTOR* manager, int regist_id
 
                 if (mNpc_CheckFreeAnimalPersonalID(anm_id) == FALSE) {
                     mNpc_GetNpcWorldNameAnm(str1, anm_id);
+#if VERSION == VER_GAFP01_00
+                    gender = -1;
+                    if (anm_id != NULL) {
+                        gender = mNpc_Looks2Gender(anm_id->looks);
+                    }
+                    mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR5, str1, sizeof(str1), 1, gender);
+#else
                     mMsg_Set_free_str_cl(mMsg_Get_base_window_p(), mMsg_FREE_STR5, str1, sizeof(str1), 1);
+#endif
                 }
             }
         }

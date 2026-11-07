@@ -267,9 +267,24 @@ static void mNtc_set_treasure_string(AnmPersonalID_c* sender_id, mActor_name_t i
     u8 item_name[mIN_ITEM_NAME_LEN];
 
     mNpc_GetNpcWorldNameAnm(anm_name, sender_id);
+#if VERSION == VER_GAFP01_00
+    {
+        int gender = -1;
+
+        if (sender_id != NULL) {
+            gender = mNpc_Looks2Gender(sender_id->looks);
+        }
+        mHandbill_Set_free_str_npc(1, anm_name, ANIMAL_NAME_LEN, gender);
+    }
+#else
     mHandbill_Set_free_str(1, anm_name, ANIMAL_NAME_LEN);
+#endif
     mIN_copy_name_str(item_name, item_no);
+#if VERSION == VER_GAFP01_00
+    mHandbill_Set_free_str_art2(2, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(item_no), mIN_get_item_article_def(item_no), mIN_get_item_gender(item_no));
+#else
     mHandbill_Set_free_str_art(2, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article(item_no));
+#endif
 
     b_str = choume_str[block_z];
     mHandbill_Set_free_str(3, &b_str, 1); /* z-acre friendly name (A-F) */
@@ -520,18 +535,30 @@ static int mNtc_make_auto_nwrite_day_string(u8* str, int month, int day) {
 static void mNtc_set_auto_nwrite_common_string() {
     int land_name_len;
     u8 land_name[LAND_NAME_SIZE];
+#if VERSION == VER_GAFP01_00
+    u8 shop_name[mString_DEFAULT_STR_SIZE];
+#else
     u8 shop_name[16];
+#endif
 
     land_name_len = mNtc_set_landname_string(land_name);
     mHandbill_Set_free_str(0, land_name, land_name_len);
 
-    mString_Load_StringFromRom(shop_name, 16, 0x558 + mSP_GetShopLevel());
-    mHandbill_Set_free_str(1, shop_name, 16);
+    mString_Load_StringFromRom(shop_name, sizeof(shop_name), 0x558 + mSP_GetShopLevel());
+    mHandbill_Set_free_str(1, shop_name, sizeof(shop_name));
 }
 
 static void mNtc_set_auto_nwrite_fishing_string(const lbRTC_ymd_c* date) {
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mString_DEFAULT_STR_SIZE] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+#else
     u8 month_str[] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+#endif
+#if VERSION == VER_GAFP01_00
+    u8 day_str[mString_DEFAULT_STR_SIZE] = { ' ', ' ', ' ', ' ' };
+#else
     u8 day_str[] = { ' ', ' ', ' ', ' ' };
+#endif
     u8 size_str[] = { ' ', ' ' };
     PersonalID_c winner_pid;
     u32 size;
@@ -540,9 +567,9 @@ static void mNtc_set_auto_nwrite_fishing_string(const lbRTC_ymd_c* date) {
     mEv_fishRecord_holder(&winner_pid, &size, &win_date);
     mFont_UnintToString(size_str, 2, size, 2, 0, 0, TRUE);
     mString_Load_MonthStringFromRom(month_str, date->month);
-    mHandbill_Set_free_str(0, month_str, 9);
+    mHandbill_Set_free_str(0, month_str, sizeof(month_str));
     mString_Load_DayStringFromRom(day_str, date->day);
-    mHandbill_Set_free_str(1, day_str, 4);
+    mHandbill_Set_free_str(1, day_str, sizeof(day_str));
     mHandbill_Set_free_str(2, winner_pid.player_name, PLAYER_NAME_LEN);
     mHandbill_Set_free_str(3, size_str, 2);
 }
@@ -551,7 +578,11 @@ static void mNtc_set_auto_nwrite_string(lbRTC_year_t year) {
     lbRTC_ymd_c harvest_moon_date;
     int autumnal_equi_day;
     int len;
+#if VERSION == VER_GAFP01_00
+    u8 buf[56];
+#else
     u8 buf[28];
+#endif
 
     lbRk_HarvestMoonDay(&harvest_moon_date, year);
     len = mNtc_make_auto_nwrite_day_string(buf, harvest_moon_date.month, harvest_moon_date.day);

@@ -32,9 +32,21 @@ static void aSL_SetShopRenewalChirashi_Notice(int shop_level, lbRTC_time_c* time
     int header_back_start;
     Mail_c mail;
     Mail_ct_c* content = &mail.content;
+#if VERSION == VER_GAFP01_00
+    u8 year_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 year_str[6];
+#endif
+#if VERSION == VER_GAFP01_00
+    u8 month_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 month_str[9];
+#endif
+#if VERSION == VER_GAFP01_00
+    u8 day_str[mString_DEFAULT_STR_SIZE];
+#else
     u8 day_str[4];
+#endif
     lbRTC_time_c renew_start_date = *time_p;
     int i;
 

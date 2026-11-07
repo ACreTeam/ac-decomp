@@ -16,7 +16,18 @@ static void aNRG2_set_str_j3(void) {
     }
 
     mNpc_GetNpcWorldNameAnm(str, to_id_p);
+#if VERSION == VER_GAFP01_00
+    {
+        int gender = -1;
+
+        if (to_id_p != NULL) {
+            gender = mNpc_Looks2Gender(to_id_p->looks);
+        }
+        mMsg_Set_free_str_cl_npc(msg_p, mMsg_FREE_STR5, str, sizeof(str), 1, gender);
+    }
+#else
     mMsg_Set_free_str_cl(msg_p, mMsg_FREE_STR5, str, sizeof(str), 1);
+#endif
 }
 
 static void aNRG2_set_str_j4(void) {

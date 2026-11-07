@@ -174,7 +174,19 @@ static void aTR0_set_talk_info(ACTOR* actorx) {
     for (i = 0; i < aTR0_NPC_MAX; i++) {
         if (turiActorx[i] != NULL) {
             mNpc_GetNpcWorldName(str, turiActorx[i]);
+#if VERSION == VER_GAFP01_00
+            {
+                int gender = -1;
+                mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(turiActorx[i]->npc_id);
+
+                if (event_npc != NULL) {
+                    gender = mNpc_Name2Gender(event_npc->npc_id);
+                }
+                mMsg_Set_free_str_cl_npc(msg_p, mMsg_FREE_STR1 + i, str, sizeof(str), 0, gender);
+            }
+#else
             mMsg_Set_free_str(msg_p, mMsg_FREE_STR1 + i, str, sizeof(str));
+#endif
         }
     }
 

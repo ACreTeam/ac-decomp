@@ -268,16 +268,24 @@ static void aPOL_set_event_day_str(void) {
 
     if (day != 0) {
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+#if VERSION == VER_GAFP01_00
+        u8 str[mString_DEFAULT_STR_SIZE];
+#else
         u8 str[9];
+#endif
         int v;
 
         v = day & 0xFF;
         mString_Load_DayStringFromRom(str, v);
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_free_str(msg_p, mMsg_FREE_STR4, str, sizeof(str));
+#else
         mMsg_Set_free_str(msg_p, mMsg_FREE_STR4, str, 4);
+#endif
 
         v = (day >> 8) & 0xFF;
         mString_Load_MonthStringFromRom(str, v);
-        mMsg_Set_free_str(msg_p, mMsg_FREE_STR5, str, 9);
+        mMsg_Set_free_str(msg_p, mMsg_FREE_STR5, str, sizeof(str));
     }
 }
 

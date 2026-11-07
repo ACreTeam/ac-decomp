@@ -492,11 +492,19 @@ extern void mQst_SetItemNameStr(mActor_name_t item, int string_no) {
     u8 name[mIN_ITEM_NAME_LEN];
 
     if (item != EMPTY_NO) {
+#if VERSION != VER_GAFP01_00
         int article_no;
+#endif
 
         mIN_copy_name_str(name, item);
+#if VERSION != VER_GAFP01_00
         article_no = mIN_get_item_article(item);
+#endif
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_item_str_art2(mMsg_Get_base_window_p(), string_no, name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(item), mIN_get_item_article_def(item), mIN_get_item_gender(item));
+#else
         mMsg_Set_item_str_art(mMsg_Get_base_window_p(), string_no, name, mIN_ITEM_NAME_LEN, article_no);
+#endif
     }
 }
 
@@ -504,11 +512,19 @@ extern void mQst_SetItemNameFreeStr(mActor_name_t item, int string_no) {
     u8 name[mIN_ITEM_NAME_LEN];
 
     if (item != EMPTY_NO) {
+#if VERSION != VER_GAFP01_00
         int article_no;
+#endif
 
         mIN_copy_name_str(name, item);
+#if VERSION != VER_GAFP01_00
         article_no = mIN_get_item_article(item);
+#endif
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_free_str_art2(mMsg_Get_base_window_p(), string_no, name, mIN_ITEM_NAME_LEN, mIN_get_item_article_indef(item), mIN_get_item_article_def(item), mIN_get_item_gender(item));
+#else
         mMsg_Set_free_str_art(mMsg_Get_base_window_p(), string_no, name, mIN_ITEM_NAME_LEN, article_no);
+#endif
     }
 }
 

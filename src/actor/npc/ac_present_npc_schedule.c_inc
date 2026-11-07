@@ -69,11 +69,17 @@ static void aPST_present_send_start_wait_talk_proc(PRESENT_NPC_ACTOR* actor) {
 
                 item = demo_actor->present;
                 if (demo_actor->type == aPRD_TYPE_SONCHO_VACATION0_CONTRIBUTED || demo_actor->type == aPRD_TYPE_SONCHO_VACATION1_CONTRIBUTED) {
+#if VERSION != VER_GAFP01_00
                     u8 item_name[mIN_ITEM_NAME_LEN];
+#endif
                     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
+#if VERSION == VER_GAFP01_00
+                    mMsg_Set_item_str_default(msg_p, mMsg_ITEM_STR0, item);
+#else
                     mIN_copy_name_str(item_name, item);
                     mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, item_name, sizeof(item_name), mIN_get_item_article(item));
+#endif
                 }
 
                 switch (demo_actor->type) {

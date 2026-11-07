@@ -8,10 +8,14 @@ static int aNPS2_GetCardPrivateNameCopy(u8* name, int idx) {
 }
 
 static void aNPS2_set_slot_name(int slot, int str_no) {
+#if VERSION == VER_GAFP01_00
+    u8 str[mString_DEFAULT_STR_SIZE];
+#else
     u8 str[mMsg_FREE_STRING_LEN];
+#endif
 
     mString_Load_StringFromRom(str, sizeof(str), 0x6CD + slot);
-    mMsg_SET_FREE_STR(str_no, str, mMsg_FREE_STRING_LEN);
+    mMsg_SET_FREE_STR(str_no, str, sizeof(str));
 }
 
 static void aNPS2_set_str_cpak_name(u8* cpak_name) {
@@ -111,8 +115,21 @@ static int aNPS2_get_pl_no(int select_idx) {
 
 static void aNPS2_set_str_byebye_name(int player_no) {
     Private_c* priv = Save_GetPointer(private_data[player_no]);
+#if VERSION == VER_GAFP01_00
+    int gender;
 
+    if (priv->gender == mPr_SEX_MALE) {
+        gender = mPr_SEX_MALE;
+    } else {
+        gender = mPr_SEX_FEMALE;
+    }
+#endif
+
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_free_str_cl_art2(mMsg_Get_base_window_p(), mMsg_FREE_STR1, priv->player_ID.player_name, PLAYER_NAME_LEN, 4, 0, 0, gender);
+#else
     mMsg_SET_FREE_STR_CL(mMsg_FREE_STR1, priv->player_ID.player_name, PLAYER_NAME_LEN, 4);
+#endif
 }
 
 static int aNPS2_player_no_set(NPC_P_SEL2_ACTOR* p_sel2, int select_idx) {
