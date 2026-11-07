@@ -1,4 +1,6 @@
 #include "ac_museum_insect_priv.h"
+#include "m_msg.h"
+
 // clang-format off
 extern Gfx
     act_m_mu_monshiro1T_model,
@@ -697,9 +699,14 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
     int insect_caught_by = actor->sign_entries[actor->sign_entry_index].insectInfo;
     s16 insect_no = ITM_INSECT_START + actor->sign_entries[actor->sign_entry_index].insectName;
     int msgNo;
+
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, insect_no);
+#else
     mIN_copy_name_str(item_name, insect_no);
     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item_name, ARRAY_COUNT(item_name),
                           mIN_get_item_article(insect_no));
+#endif
 
     if (insect_caught_by >= 1 && insect_caught_by <= 4) {
         mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0,

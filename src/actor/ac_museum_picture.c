@@ -183,9 +183,13 @@ static void Museum_Picture_Actor_move(ACTOR* actorx, GAME* game) {
                                              : FTR_START(FTR_SUM_ART01);
 
                     /* Copy the art item's name */
+#if VERSION == VER_GAFP01_00
+                    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item);
+#else
                     mIN_copy_name_str(item_name, item);
                     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, item_name, mIN_ITEM_NAME_LEN,
                                           mIN_get_item_article(item));
+#endif
 
                     /* If the donator still lives in town we need to copy their name */
                     if (mMmd_DONATOR_EXISTS(donator)) {

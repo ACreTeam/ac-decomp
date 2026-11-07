@@ -986,7 +986,7 @@ void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 // TODO: fakematch
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
     static int kusa_group_tbl[14] = {
         mfish_TANK_0,

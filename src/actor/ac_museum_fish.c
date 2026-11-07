@@ -621,12 +621,17 @@ int Museum_Fish_GetMsgNo(MUSEUM_FISH_ACTOR* actor) {
 
     int fishInfo = actor->fishDisplayMsgInfo[actor->fishDisplayMsgIter].fishInfo;
     mActor_name_t fishName = mNT_FishIdx2FishItemNo(actor->fishDisplayMsgInfo[actor->fishDisplayMsgIter].fishName);
+
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_item_str_default(mMsg_Get_base_window_p(), mMsg_ITEM_STR0, fishName);
+#else
     mIN_copy_name_str(item_name, fishName);
-    mMsg_Set_item_str_art(mMsg_Get_base_window_p(), 0, item_name, 0x10, mIN_get_item_article(fishName));
+    mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR0, item_name, sizeof(item_name), mIN_get_item_article(fishName));
+#endif
 
     if (fishInfo >= 1 && fishInfo <= 4) {
         mMsg_Set_free_str(mMsg_Get_base_window_p(), 0,
-                          common_data.save.save.private_data[fishInfo - 1].player_ID.player_name, 8);
+                          common_data.save.save.private_data[fishInfo - 1].player_ID.player_name, PLAYER_NAME_LEN);
     }
 
     if (actor->fishDisplayMsgIter < actor->numFishDisplayed - 1) {
