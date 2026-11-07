@@ -59,8 +59,26 @@ static int aEYMS_set_choise_data(int start_idx, int max) {
     u8* str_p[mChoice_CHOICE_NUM];
     int i;
     int j;
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+    static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = {
+        'J', '\'', 'a', 'c', 'h', CHAR_GRAVE_e, 't', 'e', CHAR_SPACE, 'p', 'a', 's', '!', CHAR_SPACE, CHAR_SPACE, CHAR_SPACE
+    };
+    static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = "J'en veux pas!  ";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+    static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = "Will ich nicht! ";
+    static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = "Kaufe ich nicht!";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+    static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = "Non mi interessa";
+    static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = "Non compro!     ";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = "No me interesa  ";
+    static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = {
+        CHAR_INVERT_EXCLAMATION, 'N', 'o', CHAR_SPACE, 'q', 'u', 'i', 'e', 'r', 'o', CHAR_SPACE, 'n', 'a', 'd', 'a', '!'
+    };
+#else
     static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = "I'm not buying! ";
     static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = "I don't want it!";
+#endif
 
     mem_clear(buf, sizeof(buf), CHAR_SPACE);
     for (i = 0; i < mChoice_CHOICE_NUM; i++) {

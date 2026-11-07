@@ -702,7 +702,7 @@ static void Weather_Actor_move(ACTOR* actor, GAME* game) {
 
     if (Common_Get(weather) == mEnv_WEATHER_RAIN) {
         umbrella = mPlib_check_player_open_umbrella(game);
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
         field_id = mFI_GetFieldId();
         if (mFI_GET_TYPE(field_id) == mFI_FIELDTYPE2_FG && umbrella != weather->umbrella_flag) {
 #else

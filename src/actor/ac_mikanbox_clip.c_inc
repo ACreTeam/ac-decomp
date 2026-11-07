@@ -27,7 +27,11 @@ static u8 index_line_table[] = {
     3, 6, 9, 12, 16, 18, 21, 25,
     27, 30, 37, 40, 43, 45, 48, 51,
     53, 57, 60, 66, 74, 82, 86, 89,
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+    91, 94, 96, 103, 109, 112, 116, 119, 122,
+#else
     91, 96, 100, 103, 112, 116, 119, 122,
+#endif
 };
 // clang-format on
 

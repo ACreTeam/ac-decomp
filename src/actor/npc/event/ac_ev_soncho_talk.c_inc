@@ -40,9 +40,13 @@ static void aESC_owari_message() {
 }
 
 static void aESC_set_day() {
+#if VERSION == VER_GAFP01_00
+  u8 day_str[mMsg_STRING_TAG_BUFFER_SIZE];
+#else
   u8 day_str[16];
+#endif
   
-  int len = mFont_UnintToString(day_str, 16, Save_Get(bridge).build_date.day, 16, TRUE, FALSE, TRUE);
+  int len = mFont_UnintToString(day_str, sizeof(day_str), Save_Get(bridge).build_date.day, sizeof(day_str), TRUE, FALSE, TRUE);
   mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, day_str, len);
 }
 

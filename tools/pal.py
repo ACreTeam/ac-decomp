@@ -36,6 +36,17 @@ LANGUAGE_PENDING_PORTS = {
 
 # foresta objects verified against all five PAL languages.
 MATCHING_FORESTA = {
+    "ac_weather.o",
+    "ac_ev_soncho.o",
+    "ac_ev_yomise.o",
+    "ac_hanabi_npc0.o",
+    "ac_hanabi_npc1.o",
+    "ac_hanami_npc0.o",
+    "ac_hanami_npc1.o",
+    "ac_boat.o",
+
+    "ac_mikanbox.o",
+    "ac_shrine.o",
     "ac_npc_needlework.o",
     "ac_npc_p_sel2.o",
     "ac_npc_police.o",
