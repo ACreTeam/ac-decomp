@@ -12,6 +12,15 @@ symbols_known: true
 fill_gaps: true
 ldscript_template: config/GAFP01_00_de/ldscript.tpl
 
+block_relocations:
+# dvd_keikoku4_1: texture pixels mistaken for Link + 0x10.
+- source: 0x800C0B34
+
+# Retain SDK entry points present in the original DOL.
+force_active:
+- CARDGetSectorSize
+- CARDFormat
+
 # emu64 checks the static data range, not boot's local table at its start.
 add_relocations:
 - source: .text:0x8004DAB0
@@ -26,6 +35,34 @@ add_relocations:
 - source: .text:0x8004DAC4
   type: l
   target: _e_data
+
+# OSInit: linker-defined arena and stack bounds.
+- source: .text:0x8007EC68
+  type: ha
+  target: __ArenaLo
+- source: .text:0x8007EC6C
+  type: l
+  target: __ArenaLo
+- source: .text:0x8007ECA0
+  type: ha
+  target: _stack_addr
+- source: .text:0x8007ECA4
+  type: l
+  target: _stack_addr
+
+# __OSThreadInit: linker-defined default-thread stack bounds.
+- source: .text:0x800851BC
+  type: ha
+  target: _stack_addr
+- source: .text:0x800851C0
+  type: l
+  target: _stack_addr
+- source: .text:0x800851C4
+  type: ha
+  target: _stack_end
+- source: .text:0x800851CC
+  type: l
+  target: _stack_end
 
 extract:
 - symbol: __DateTime__!.data:0x800BBA78

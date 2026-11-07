@@ -16,7 +16,6 @@ def _stem(name):
 # These sources remain selectable in objdiff, but need a PAL port before they
 # can join all_source. The normal matching build continues to use originals.
 PENDING_PORTS = {
-    "os.a/OSExec.c": "GC 2.6 rejects char ** to const char ** conversion",
     "OdemuExi2.a/DebuggerDriver.c": "GC 2.6 rejects const void * to u32 * conversion",
     "data/model/onp_win.c": "PAL replaced the card and R-button assets",
     "data/model/tim_win.c": "PAL has no testmocomma asset",
@@ -502,6 +501,92 @@ MATCHING_FORESTA = {
     "m_game_dlftbls.o",
     "m_font.o",
     "m_land.o",
+}
+
+
+# SDK objects verified by linked English PAL DOL hashes and enabled for all PAL languages.
+MATCHING_DOLPHIN = {
+    "ai.a/ai.c",
+    "amcstubs.a/AmcExi2Stubs.c",
+    "ar.a/ar.c",
+    "ar.a/arq.c",
+    "base.a/PPCArch.c",
+    "card.a/CARDBios.c",
+    "card.a/CARDBlock.c",
+    "card.a/CARDCheck.c",
+    "card.a/CARDCreate.c",
+    "card.a/CARDDelete.c",
+    "card.a/CARDDir.c",
+    "card.a/CARDFormat.c",
+    "card.a/CARDMount.c",
+    "card.a/CARDNet.c",
+    "card.a/CARDOpen.c",
+    "card.a/CARDRdwr.c",
+    "card.a/CARDRead.c",
+    "card.a/CARDRename.c",
+    "card.a/CARDStat.c",
+    "card.a/CARDStatEx.c",
+    "card.a/CARDWrite.c",
+    "db.a/db.c",
+    "dvd.a/dvd.c",
+    "dvd.a/dvdFatal.c",
+    "dvd.a/dvderror.c",
+    "dvd.a/dvdfs.c",
+    "dvd.a/dvdidutils.c",
+    "dvd.a/dvdlow.c",
+    "dvd.a/dvdqueue.c",
+    "dvd.a/fstload.c",
+    "dsp.a/dsp.c",
+    "exi.a/EXIBios.c",
+    "exi.a/EXIUart.c",
+    "gx.a/GXAttr.c",
+    "gx.a/GXBump.c",
+    "gx.a/GXDisplayList.c",
+    "gx.a/GXFifo.c",
+    "gx.a/GXFrameBuf.c",
+    "gx.a/GXGeometry.c",
+    "gx.a/GXInit.c",
+    "gx.a/GXLight.c",
+    "gx.a/GXMisc.c",
+    "gx.a/GXPerf.c",
+    "gx.a/GXPixel.c",
+    "gx.a/GXTev.c",
+    "gx.a/GXTexture.c",
+    "gx.a/GXTransform.c",
+    "mtx.a/mtx.c",
+    "mtx.a/mtx44.c",
+    "mtx.a/mtxvec.c",
+    "mtx.a/vec.c",
+    "odenotstub.a/odenotstub.c",
+    "os.a/OS.c",
+    "os.a/OSAlarm.c",
+    "os.a/OSAlloc.c",
+    "os.a/OSArena.c",
+    "os.a/OSAudioSystem.c",
+    "os.a/OSCache.c",
+    "os.a/OSContext.c",
+    "os.a/OSError.c",
+    "os.a/OSExec.c",
+    "os.a/OSFont.c",
+    "os.a/OSInterrupt.c",
+    "os.a/OSLink.c",
+    "os.a/OSMemory.c",
+    "os.a/OSMessage.c",
+    "os.a/OSMutex.c",
+    "os.a/OSReboot.c",
+    "os.a/OSReset.c",
+    "os.a/OSResetSW.c",
+    "os.a/OSRtc.c",
+    "os.a/OSSync.c",
+    "os.a/OSThread.c",
+    "os.a/OSTime.c",
+    "os.a/__ppc_eabi_init.cpp",
+    "os.a/__start.c",
+    "pad.a/Pad.c",
+    "pad.a/Padclamp.c",
+    "si.a/SIBios.c",
+    "si.a/SISamplingRate.c",
+    "vi.a/vi.c",
 }
 
 
@@ -3973,8 +4058,18 @@ def configure_sources(config):
                 relative = Path(*relative.parts[1:])
             source = next((p for p in (Path("src/PAL") / relative, Path("src/AUS") / relative, source)
                            if p.is_file()), source)
+            sdk_root = Path("src/static/dolphin/2.6/src")
+            pal_sdk_root = Path("src/PAL/static/dolphin")
+            dolphin_sdk = source.is_relative_to(sdk_root)
+            if dolphin_sdk:
+                source = pal_sdk_root / "src" / source.relative_to(sdk_root)
+                if not source.is_file():
+                    raise ValueError(f"Missing PAL Dolphin SDK source for {name}: {source}")
             options = dict(options)
-            options.update(src_dir=".", source=source.as_posix(), mw_version="GC/2.6")
+            options.update(
+                src_dir=".", source=source.as_posix(),
+                mw_version="GC/1.2.5n" if dolphin_sdk else "GC/2.6",
+            )
             module_include = [] if splits == paths[0] else [
                 f"-i {config.out_path().as_posix()}/include/{splits.parent.name}"
             ]
@@ -3984,6 +4079,28 @@ def configure_sources(config):
                 *pal_includes, *module_include,
                 *[f for f in options["cflags"] if f not in pal_includes],
             ]
+            if dolphin_sdk:
+                # Keep the imported SDK's headers ahead of the game's SDK wrappers.
+                sdk_includes = [
+                    f"-i {pal_sdk_root.as_posix()}/include",
+                    f"-i {pal_sdk_root.as_posix()}/include/dolphin",
+                    f"-ir {pal_sdk_root.as_posix()}/src",
+                ]
+                options["cflags"] = [
+                    *sdk_includes,
+                    *[flag for flag in options["cflags"]
+                      if "src/static/dolphin/2.6/" not in flag
+                      and flag not in ("-char signed", "-char unsigned")
+                      and flag != "-D__GEKKO__"
+                      and not flag.startswith("-DSDK_REVISION=")],
+                    "-char unsigned" if name.startswith("os.a/") else "-char signed",
+                    "-D__GEKKO__",
+                    "-DSDK_REVISION=1",
+                ]
+                if name == "exi.a/EXIBios.c":
+                    options["cflags"] += ["-schedule off"]
+                elif name == "dsp.a/dsp.c":
+                    options["cflags"] += ["-DDSP_INIT_IN_JAUDIO"]
             # Boot's PAL implementation and flags have passed all five linked builds.
             language = config.version.rsplit("_", 1)[1]
             pending = language in LANGUAGE_PENDING_PORTS.get(name, set())
@@ -3992,6 +4109,7 @@ def configure_sources(config):
             boot_matching = name == "boot.o" and source == Path("src/PAL/static/boot.c")
             matching = (
                 boot_matching
+                or (dolphin_sdk and name in MATCHING_DOLPHIN)
                 or name in MATCHING_ADDITIONAL
                 or (splits.parent.name == "foresta" and name in MATCHING_FORESTA)
             )

@@ -12,6 +12,11 @@ symbols_known: true
 fill_gaps: true
 ldscript_template: config/GAFP01_00_fr/ldscript.tpl
 
+# Retain SDK entry points present in the original DOL.
+force_active:
+- CARDGetSectorSize
+- CARDFormat
+
 # emu64 checks the static data range, not boot's local table at its start.
 add_relocations:
 - source: .text:0x8004DBD0
@@ -26,6 +31,34 @@ add_relocations:
 - source: .text:0x8004DBE4
   type: l
   target: _e_data
+
+# OSInit: linker-defined arena and stack bounds.
+- source: .text:0x8007ED88
+  type: ha
+  target: __ArenaLo
+- source: .text:0x8007ED8C
+  type: l
+  target: __ArenaLo
+- source: .text:0x8007EDC0
+  type: ha
+  target: _stack_addr
+- source: .text:0x8007EDC4
+  type: l
+  target: _stack_addr
+
+# __OSThreadInit: linker-defined default-thread stack bounds.
+- source: .text:0x800852DC
+  type: ha
+  target: _stack_addr
+- source: .text:0x800852E0
+  type: l
+  target: _stack_addr
+- source: .text:0x800852E4
+  type: ha
+  target: _stack_end
+- source: .text:0x800852EC
+  type: l
+  target: _stack_end
 
 extract:
 - symbol: __DateTime__!.data:0x800BBB98
