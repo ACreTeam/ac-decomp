@@ -13,6 +13,20 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_en/ldscript.tpl
 
 block_relocations:
+# dvderr: raw texture pixel words are not pointers.
+- source: 0x800BCAF4
+- source: 0x800BFD6C
+- source: 0x800C206C
+- source: 0x800C328C
+- source: 0x800C33CC
+- source: 0x800C39CC
+# dvderr texture pixels mistaken for pointers into JAudio seq.
+- source: 0x800C2070
+- source: 0x800C2074
+- source: 0x800C2078
+- source: 0x800C33D0
+- source: 0x800C33D4
+- source: 0x800C33D8
 # tags_table_external_disksystem_default: packed tag bytes mistaken for a pointer.
 - source: 0x800E5818
 

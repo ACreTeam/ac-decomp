@@ -2143,547 +2143,493 @@ extern void Na_PlayerStatusLevel(u8 playerDash, f32 playerSpeed) {
     sou_player_speed = playerSpeed;
 }
 
-u8 Sou_TanboinHenkan(u8 a, u8 b) {
-    switch (a) {
-        case 0x5d:
-            return 0x01;
-        case 0x65:
-            return 0x14;
-        case 0x71:
-            return 0x29;
-        case 0x61:
-            return 0x0a;
-        case 0x6b:
-            return 0x1d;
-        case 0x6a:
-            return 0x1b;
-        case 0x53:
-            return 0x32;
-        case 0x54:
-            return 0x33;
-        case 0x55:
-            return 0x26;
-        case 0x56:
-            return 0x27;
-        case 0x57:
-            return 0x34;
-        case 0x58:
-            return 0x35;
-        case 0x59:
-            return 0x36;
-        case 0x5a:
-            return 0x37;
-        case 0x5b:
-            return 0x10;
-        case 0x5c:
-            return 0x38;
-        case 0x5e:
-            return 7;
-        case 0x5f: {
-            switch (b) {
-                case 0x65:
-                case 0x61:
-                    return 0x23;
-                default:
-                    return 0x18;
-            }
-        }
-        case 0x60:
-            return 0x09;
-        case 0x62:
-            return 0x11;
-        case 0x63:
-            return 0x12;
-        case 0x64:
-            return 0x00;
-        case 0x66:
-            return 0x17;
-        case 0x67:
-            return 0x18;
-        case 0x68:
-            return 0x19;
-        case 0x69:
-            return 0x1a;
-        case 0x6c:
-            return 0x21;
-        case 0x6d:
-            return 0x18;
-        case 0x6e:
-            return 0x22;
-        case 0x6f:
-            return 0x23;
-        case 0x70:
-            return 0x26;
-        case 0x72:
-            return 0x2d;
-        case 0x73:
-            return 0x2e;
-        case 0x74:
-            return 0x31;
-        case 0x75:
-            return 0x15;
-        case 0x76:
-            return 0x30;
-    }
-    return a;
-}
-
-u8 Sou_ChouboinHenkan(u8 a, u8 b) {
-    switch (a) {
-        case 0x5d:
-            return 0x02;
-        case 0x65:
-            return 0x15;
-        case 0x71:
-            return 0x2a;
-        case 0x61:
-            return 0x0e;
-        case 0x6b:
-            return 0x1e;
-        case 0x6a:
-            return 0x1b;
-        case 0x53:
-            return 0x32;
-        case 0x54:
-            return 0x33;
-        case 0x55:
-            return 0x26;
-        case 0x56:
-            return 0x27;
-        case 0x57:
-            return 0x34;
-        case 0x58:
-            return 0x35;
-        case 0x59:
-            return 0x36;
-        case 0x5a:
-            return 0x37;
-        case 0x5b:
-            return 0x10;
-        case 0x5c:
-            return 0x38;
-        case 0x5e:
-            return 7;
-        case 0x5f: {
-            switch (b) {
-                case 0x65:
-                case 0x61:
-                    return 0x23;
-                default:
-                    return 0x18;
-            }
-        }
-        case 0x60:
-            return 0x09;
-        case 0x62:
-            return 0x11;
-        case 0x63:
-            return 0x12;
-        case 0x64:
-            return 0x00;
-        case 0x66:
-            return 0x17;
-        case 0x67:
-            return 0x18;
-        case 0x68:
-            return 0x19;
-        case 0x69:
-            return 0x1a;
-        case 0x6c:
-            return 0x21;
-        case 0x6d:
-            return 0x18;
-        case 0x6e:
-            return 0x22;
-        case 0x6f:
-            return 0x23;
-        case 0x70:
-            return 0x26;
-        case 0x72:
-            return 0x2d;
-        case 0x73:
-            return 0x2e;
-        case 0x74:
-            return 0x31;
-        case 0x75:
-            return 0x15;
-        case 0x76:
-            return 0x30;
-    }
-    return a;
-}
-
 u8 Sou_ConnectCheck(u8 a, u8 b, u8 c) {
     switch (a) {
-        case 0x5d: {
-            switch (b) {
-                case 0x65:
-                    a = 0xf;
-                    break;
-                case 0x68:
-                    a = 0x2;
-                    break;
-                case 0x6e:
-                    a = 0x16;
-                    break;
-                case 0x6a:
-                    a = 0x39;
-                    break;
-                case 0x6f:
-                    a = 0x3a;
-                    break;
-            }
-        } break;
-        case 0x61: {
-            switch (b) {
-                case 0x5d:
-                    a = 0x15;
-                    break;
-                case 0x6e:
-                    a = 0xd;
-                    break;
-            }
-        } break;
-        case 0x5e: {
-            switch (b) {
-                case 0x61:
-                    a = 0x3b;
-                    break;
-                case 0x75:
-                    a = 0x3c;
-                    break;
-            }
-        } break;
-        case 0x5f: {
-            switch (b) {
-                case 100:
-                    a = 8;
-                    break;
-            }
-        } break;
-        case 0x60: {
-            switch (b) {
-                case 0x6b:
-                    a = 0x3d;
-                    break;
-            }
-        } break;
-        case 0x62: {
-            switch (b) {
-                case 0x5d:
-                    a = 0x35;
-                    break;
-                case 0x6b:
-                    a = 0x34;
-                    break;
-            }
-        } break;
-        case 0x63: {
-            switch (b) {
-                case 0x61:
-                    a = 0x17;
-                    break;
-                case 0x6b:
-                    a = 0x3e;
-                    break;
-            }
-        } break;
-        case 0x64: {
-            switch (b) {
-                case 0x5d:
-                    a = 0x3f;
-                    break;
-                case 0x61:
-                    a = 0x40;
-                    break;
-                case 0x65:
-                    a = 0x41;
-                    break;
-                case 0x6b:
-                    a = 0x42;
-                    break;
-            }
-        } break;
         case 0x65: {
             switch (b) {
-                case 0x6e:
-                    a = 0xc;
-                    break;
-                case 0x81:
-                    a = 5;
-                    break;
-                case 0x62:
-                    a = 0x43;
-                    break;
-                case 0x6a:
-                    a = 0x44;
-                    break;
-                case 0x6f:
-                    a = 0x45;
-                    break;
-                case 0x70:
-                    a = 0x46;
-                    break;
+                case 0x7d: {
+                    switch (c) {
+                        case 0x79: {
+                            a = 0x1b;
+                        } break;
+                        case 0x69: {
+                            a = 0x1c;
+                        } break;
+                        case 0x73: {
+                            a = 0x1d;
+                        } break;
+                    }
+                } break;
+                case 0x6d: {
+                    switch (c) {
+                        case 0x72: {
+                            a = 0x27;
+                        } break;
+                    }
+                    a = 0x59;
+                } break;
+                case 0x79: {
+                    a = 0x1;
+                } break;
+                case 0x72: {
+                    a = 0x24;
+                } break;
             }
         } break;
-        case 0x67: {
+        case 0x6d: {
             switch (b) {
-                case 0x6f:
-                    a = 0x31;
-                    break;
+                case 0x65: {
+                    a = 0x5;
+                } break;
+                case 0x69: {
+                    switch (c) {
+                        case 0x72: {
+                            a = 0x29;
+                        } break;
+                    }
+                    a = 0x7;
+                } break;
+                case 0x79: {
+                    a = 0x6;
+                } break;
+                case 0x73: {
+                    a = 0x8;
+                } break;
+                case 0x72: {
+                    switch (c) {
+                        case 0x69: {
+                            a = 0x25;
+                        } break;
+                    }
+                    a = 0x25;
+                } break;
+            }
+        } break;
+        case 0x79: {
+            switch (b) {
+                case 0x7d: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x1e;
+                        } break;
+                        case 0x69: {
+                            a = 0x1f;
+                        } break;
+                        case 0x73: {
+                            a = 0x20;
+                        } break;
+                    }
+                } break;
+                case 0x65: {
+                    a = 0x9;
+                } break;
+                case 0x6d: {
+                    a = 0xa;
+                } break;
+                case 0x69: {
+                    a = 0xb;
+                } break;
+                case 0x73: {
+                    a = 0xc;
+                } break;
+                case 0x72: {
+                    a = 0x26;
+                } break;
             }
         } break;
         case 0x69: {
             switch (b) {
-                case 0x61:
-                    a = 0x47;
-                    break;
-                case 0x75:
-                    a = 0x48;
-                    break;
-            }
-        } break;
-        case 0x6a: {
-            switch (b) {
-                case 0x5d:
-                    a = 0x38;
-                    break;
-                case 99:
-                    a = 0x1c;
-                    break;
-                case 0x6b:
-                    a = 0x49;
-                    break;
-            }
-        } break;
-        case 0x6b: {
-            switch (b) {
-                case 0x6b:
-                    a = 0x2a;
-                    break;
-                case 0x73:
-                    a = 6;
-                    break;
-                case 0x75:
-                    a = 0x1f;
-                    break;
-                case 0x71:
-                    a = 0x20;
-                    break;
-                case 0x6e:
-                    a = 0x2c;
-                    break;
-                case 0x62:
-                    a = 0x4a;
-                    break;
-                case 100:
-                    a = 0x4b;
-                    break;
-                case 0x67:
-                    a = 0x4c;
-                    break;
-                case 0x6a:
-                    a = 0x4d;
-                    break;
-            }
-        } break;
-        case 0x6e: {
-            switch (b) {
-                case 0x61:
-                    a = 0xe;
-                    break;
-            }
-        } break;
-        case 0x6f: {
-            switch (b) {
-                case 0x61:
-                    a = 0x37;
-                    break;
-                case 100:
-                    a = 0x24;
-                    break;
-                case 0x65:
-                    a = 0x36;
-                    break;
-                case 0x71:
-                    a = 0x25;
-                    break;
-                case 0x6b:
-                    a = 0x4f;
-                    break;
-            }
-        } break;
-        case 0x70: {
-            switch (b) {
-                case 100:
-                    a = 0x28;
-                    break;
-                case 0x6b:
+                case 0x65: {
+                    switch (c) {
+                        case 0x79: {
+                            a = 0x22;
+                        } break;
+                    }
+                } break;
+                case 0x7d: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x21;
+                        } break;
+                    }
+                } break;
+                case 0x6d: {
+                    a = 0x1;
+                } break;
+                case 0x79: {
+                    a = 0x3;
+                } break;
+                case 0x70: {
+                    a = 0x5a;
+                } break;
+                case 0x7c: {
                     a = 0x50;
-                    break;
-            }
-        } break;
-        case 0x71: {
-            switch (b) {
-                case 0x6c:
+                } break;
+                case 0x77: {
                     a = 0x51;
-                    break;
+                } break;
             }
         } break;
         case 0x73: {
             switch (b) {
-                case 0x61:
-                    a = 0x52;
-                    break;
-                case 0x6b:
-                    a = 0x33;
-                    break;
+                case 0x7d: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x23;
+                        } break;
+                        case 0x79: {
+                            a = 0x1b;
+                        } break;
+                        case 0x73: {
+                            a = 0x20;
+                        } break;
+                    }
+                } break;
+                case 0x6d: {
+                    switch (c) {
+                        case 0x72: {
+                            a = 0x2a;
+                        } break;
+                    }
+                    a = 0x4;
+                } break;
+                case 0x79: {
+                    a = 0x3;
+                } break;
+                case 0x71: {
+                    a = 0x28;
+                } break;
             }
         } break;
-        case 0x75: {
+        case 0x77: {
             switch (b) {
-                case 0x6b:
+                case 0x65: {
+                    a = 0x11;
+                } break;
+                case 0x6d: {
+                    a = 0x2e;
+                } break;
+                case 0x79: {
+                    a = 0x30;
+                } break;
+                case 0x69: {
+                    a = 0x32;
+                } break;
+                case 0x73: {
                     switch (c) {
-                        case 0x71:
-                            a = 0x77;
-                            break;
+                        case 0x6d: {
+                            a = 0x2d;
+                        } break;
                     }
+                } break;
+                case 0x78: {
+                    switch (c) {
+                        case 0x7d: {
+                            a = 0x4f;
+                        } break;
+                    }
+                } break;
+                case 0x67: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x2f;
+                        } break;
+                        case 0x73: {
+                            a = 0x33;
+                        } break;
+                        case 0x79: {
+                            a = 0x31;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
+        case 0x78: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x35;
+                } break;
+                case 0x6d: {
+                    a = 0x36;
+                } break;
+                case 0x79: {
+                    a = 0x37;
+                } break;
+                case 0x69: {
+                    a = 0x38;
+                } break;
+                case 0x73: {
+                    a = 0x39;
+                } break;
+                case 0x6c: {
+                    switch (c) {
+                        case 0x69: {
+                            a = 0x53;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
+        case 0x72: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x3a;
+                } break;
+                case 0x6d: {
+                    a = 0x3b;
+                } break;
+                case 0x79: {
+                    a = 0x3c;
+                } break;
+                case 0x69: {
+                    a = 0x3d;
+                } break;
+                case 0x73: {
+                    a = 0x3e;
+                } break;
+            }
+        } break;
+        case 0x67: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x2b;
+                } break;
+                case 0x6d: {
+                    a = 0x2c;
+                } break;
+                case 0x79: {
+                    a = 0x2b;
+                } break;
+                case 0x69: {
+                    a = 0x2d;
+                } break;
+                case 0x73: {
+                    a = 0x2;
+                } break;
+                case 0x6c: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x4c;
+                        } break;
+                        case 0x59: {
+                            a = 0x4d;
+                        } break;
+                        case 0x6d: {
+                            a = 0x26;
+                        } break;
+                        case 0x69: {
+                            a = 0x4d;
+                        } break;
+                        case 0x73: {
+                            a = 0x4e;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
+        case 0x71: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x3f;
+                } break;
+                case 0x6d: {
+                    a = 0x40;
+                } break;
+                case 0x79: {
+                    a = 0x41;
+                } break;
+                case 0x69: {
+                    a = 0x42;
+                } break;
+                case 0x73: {
+                    a = 0x43;
+                } break;
             }
         } break;
         case 0x76: {
             switch (b) {
-                case 0x61:
-                    a = 0x32;
+                case 0x65: {
+                    a = 0x44;
+                } break;
+                case 0x6d: {
+                    a = 0x45;
+                } break;
+                case 0x79: {
+                    a = 0x46;
+                } break;
+                case 0x69: {
+                    a = 0x47;
+                } break;
+                case 0x73: {
+                    a = 0x48;
+                } break;
+                case 0x6c: {
+                    a = 0x52;
+                } break;
             }
-            break;
-        }
+        } break;
+        case 0x7a: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x17;
+                } break;
+                case 0x6d: {
+                    a = 0x18;
+                } break;
+                case 0x69: {
+                    a = 0x19;
+                } break;
+                case 0x73: {
+                    a = 0x1a;
+                } break;
+            }
+        } break;
+        case 0x6b: {
+            switch (b) {
+                case 0x65: {
+                    a = 0xd;
+                } break;
+                case 0x6d: {
+                    a = 0xe;
+                } break;
+                case 0x79: {
+                    a = 0xf;
+                } break;
+            }
+        } break;
+        case 0x68: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x12;
+                } break;
+                case 0x6d: {
+                    a = 0x13;
+                } break;
+                case 0x79: {
+                    a = 0x14;
+                } break;
+                case 0x69: {
+                    a = 0x15;
+                } break;
+                case 0x73: {
+                    a = 0x16;
+                } break;
+                case 0x6e: {
+                    switch (c) {
+                        case 0x6d: {
+                            a = 0xe;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
+        case 0x66: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x17;
+                } break;
+                case 0x6d: {
+                    a = 0x18;
+                } break;
+                case 0x79: {
+                    a = 0x10;
+                } break;
+                case 0x69: {
+                    a = 0x19;
+                } break;
+                case 0x73: {
+                    a = 0x1a;
+                } break;
+            }
+        } break;
+        case 0x74: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x54;
+                } break;
+                case 0x6d: {
+                    a = 0x55;
+                } break;
+                case 0x79: {
+                    a = 0x56;
+                } break;
+                case 0x69: {
+                    a = 0x57;
+                } break;
+                case 0x73: {
+                    a = 0x58;
+                } break;
+            }
+        } break;
+        case 0x75: {
+            switch (b) {
+                case 0x79: {
+                    switch (c) {
+                        case 0x65: {
+                            a = 0x2b;
+                        } break;
+                        case 0x6d: {
+                            a = 0x2c;
+                        } break;
+                        case 0x69: {
+                            a = 0x2d;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
+        case 0x6e: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x12;
+                } break;
+                case 0x79: {
+                    a = 0xf;
+                } break;
+                case 0x69: {
+                    a = 0x15;
+                } break;
+                case 0x73: {
+                    a = 0x11;
+                } break;
+            }
+        } break;
+        case 0x6a: {
+            switch (b) {
+                case 0x65: {
+                    a = 0x49;
+                } break;
+                case 0x6d: {
+                    a = 0x4a;
+                } break;
+                case 0x79: {
+                    a = 0x4b;
+                } break;
+                case 0x73: {
+                    switch (c) {
+                        case 0x79: {
+                            a = 0x4b;
+                        } break;
+                    }
+                } break;
+            }
+        } break;
     }
     return a;
-}
-
-u8 Sou_BoinShiinCheck(u8 a) {
-    switch (a) {
-        case 0x5d:
-        case 0x61:
-        case 0x65:
-        case 0x6a:
-        case 0x6b:
-        case 0x71:
-            return 0;
-        case 0x5e:
-        case 0x5f:
-        case 0x60:
-        case 0x62:
-        case 0x63:
-        case 0x64:
-        case 0x66:
-        case 0x67:
-        case 0x68:
-        case 0x69:
-        case 0x6c:
-        case 0x6d:
-        case 0x6e:
-        case 0x6f:
-        case 0x70:
-        case 0x72:
-        case 0x73:
-        case 0x74:
-        case 0x75:
-        case 0x76:
-            return 1;
-    }
-    return 2;
 }
 
 void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
     sou_Na_VoiceSeFlag = 1;
     u8 i = 0;
-    u8 r28;
-
     switch (f) {
         case 0: {
             sou_num_org = a;
             sou_num2_org = b;
             sou_num3_org = c;
-            r28 = 0;
             if (a == 0x85 && b == 0xff && c == 0xff) {
                 return;
             }
-            if (a == 0x61 && b > 0x77 && Sou_BoinShiinCheck(sou_last_num) == 0 &&
-                Sou_BoinShiinCheck(sou_last_num2) == 1) {
-                a = b;
-                r28 = 4;
-            }
-            if (b == 0x61 && c > 0x77 && Sou_BoinShiinCheck(sou_last_num2) == 0 && Sou_BoinShiinCheck(a) == 1) {
-                b = 0;
-                r28 = 4;
-            }
-
-            if (r28 != 4) {
-                a = Sou_ConnectCheck(a, b, c);
-                if (a == sou_num_org) {
-                    r28 = 1;
-                } else {
-                    r28 = 2;
-                }
-
-                switch (b) {
-                    case 0xff:
-                    case 0x80:
-                    case 0x81:
-                    case 0x82:
-                    case 0x83:
-                    case 0x84:
-                    case 0x85:
-                    case 0x86: {
-                        r28 = 3;
-                        switch (sou_last_num2) {
-                            case 0xff:
-                            case 0x80:
-                            case 0x81:
-                            case 0x82:
-                            case 0x83:
-                            case 0x84:
-                            case 0x85:
-                            case 0x86: {
-                                r28 = 1;
-                            } break;
-                        }
-                    }
-                }
-            }
-
-            switch (r28) {
-                case 1:
-                case 4: {
-                    if (Sou_BoinShiinCheck(a) == 0 && Sou_BoinShiinCheck(b) == 1 && c == 0x61) {
-                        a = Sou_ChouboinHenkan(a, b);
-                    } else {
-                        a = Sou_TanboinHenkan(a, b);
-                    }
-                    sou_num2_request = b;
-                    sou_num2_animal_id = voice;
-                    sou_num2_scale = scale;
-                } break;
-                case 3: {
-                    if (a > 0x77) {
-                        break;
-                    }
-                    a = sou_last_num2;
-                    b = sou_num_org;
-                    c = sou_num2_org;
-                    a = Sou_ConnectCheck(a, b, c);
-                    if (a < 0x53 || a > 0x76) {
-                        break;
-                    }
-                    a = Sou_TanboinHenkan(a, b);
-                } break;
-                case 2:
-                case 0:
-                default:
-                    break;
-            }
-            break;
+            a = Sou_ConnectCheck(a, b, c);
         } break;
         case 2: {
             if (sou_voice_mode == 1) {
@@ -2692,12 +2638,6 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
             switch (a) {
                 case 0xff:
                     return;
-            }
-            if (a == 0x61 && sou_num3_org > 0x77 && Sou_BoinShiinCheck(sou_last_num2) == 0 &&
-                Sou_BoinShiinCheck(sou_num_org) == 1) {
-                a = 0;
-            } else {
-                a = Sou_TanboinHenkan(a, sou_num3_org);
             }
         } break;
     }
@@ -2797,8 +2737,8 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
         case 8: {
             sou_voice_se[0]._08 = 0.9f;
             sou_voice_se[1]._08 = 0.9f;
-            sou_voice_se[0]._14 = 0.75f;
-            sou_voice_se[1]._14 = 0.75f;
+            sou_voice_se[0]._14 = 0.68f;
+            sou_voice_se[1]._14 = 0.68f;
         } break;
         case 9: {
             sou_voice_se[0]._08 = 0.7f;
@@ -2817,6 +2757,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                         case 0x84:
                         case 0x85:
                         case 0x86:
+                        case 0x87:
                             Na_SysTrgStart(NA_SE_BEBE);
                             a = 0;
                             break;
@@ -2831,7 +2772,8 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                         } break;
                         case 0x81:
                         case 0x84:
-                        case 0x85: {
+                        case 0x85:
+                        case 0x87: {
                             a = 0;
                             sou_nobasu_count = 0;
                         } break;
@@ -2867,7 +2809,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
 
                 break;
             }
-            if (sou_now_spec == 5 || sou_now_spec == 6 || r29 > 0x77) {
+            if (sou_now_spec == 5 || sou_now_spec == 6 || r29 > 0x7f) {
                 i = 0;
             }
             if (i == 1) {
@@ -2875,7 +2817,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                 a = r27 >> 2;
             }
             sou_last_voice = r29;
-            if (r29 <= 0x77 && sou_now_spec != 5) {
+            if (r29 <= 0x7f && sou_now_spec != 5) {
                 if (sou_now_spec != 6) {
                     switch (sou_message_status) {
                         case 1: {
@@ -3010,7 +2952,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                         sou_voice_se[1]._08 = f30;
                     }
                 }
-                if (a != 0 && a <= 0x77) {
+                if (a != 0 && a <= 0x7f) {
                     Sou_VoiceStart((u8)r22, a);
                 }
             }

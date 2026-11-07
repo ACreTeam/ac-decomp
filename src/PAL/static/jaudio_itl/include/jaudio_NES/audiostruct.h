@@ -531,7 +531,7 @@ struct group_ {
     /* 0x001 */ u8 state;
     /* 0x002 */ u8 note_alloc_policy;
     /* 0x003 */ u8 mute_flags;
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     /* 0x004 */ u16 seq_id;
     /* 0x006 */ u8 bank_id;
     /* 0x007 */ u8 unk007;
@@ -924,7 +924,7 @@ typedef struct AudioGlobals {
     /* 0x34FC */ DataHeapstrc cache_heap;
     /* 0x3504 */ StayHeapstrc persistent_common_heap_info;
     /* 0x3510 */ StayHeapstrc temporary_common_heap_info;
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
     /* 0x351C */ u8 wave_load_status[178];
     /* 0x35CE */ u8 bank_load_status[178];
     /* 0x3680 */ u8 sequence_load_status[360];

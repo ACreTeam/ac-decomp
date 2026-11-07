@@ -202,7 +202,6 @@ jaudio_gmn.o/rate.c:
 	.sbss       start:0x8022CBA8 end:0x8022CBB0
 
 jaudio_gmn.o/driver.c:
-	.text       start:0x8001B0B8 end:0x8001B0C0
 	.text       start:0x8001B0C0 end:0x8001B360
 	.text       start:0x8001B360 end:0x8001D480
 	.text       start:0x8001D480 end:0x8001D640
@@ -215,7 +214,6 @@ jaudio_gmn.o/driver.c:
 	.sdata2     start:0x8022D578 end:0x8022D598
 
 jaudio_gmn.o/memory.c:
-	.text       start:0x8001DD54 end:0x8001DD60
 	.text       start:0x8001DD60 end:0x8001DF00
 	.text       start:0x8001DF00 end:0x8001E140
 	.text       start:0x8001E140 end:0x8001F280
@@ -231,7 +229,6 @@ jaudio_gmn.o/memory.c:
 	.sdata2     start:0x8022D598 end:0x8022D5E0
 
 jaudio_gmn.o/system.c:
-	.text       start:0x80020F6C end:0x80020F80
 	.text       start:0x80020F80 end:0x80021640
 	.text       start:0x80021640 end:0x80021E40
 	.text       start:0x80021E40 end:0x80022F80
@@ -251,7 +248,6 @@ jaudio_gmn.o/system.c:
 	.sdata2     start:0x8022D5E0 end:0x8022D5F0
 
 jaudio_gmn.o/sub_sys.c:
-	.text       start:0x80024DF4 end:0x80024E00
 	.text       start:0x80024E00 end:0x80024E00
 	.text       start:0x80024E00 end:0x80025420
 	.text       start:0x80025420 end:0x80026200
@@ -272,7 +268,6 @@ jaudio_gmn.o/audiotable.c:
 	.data       start:0x800DC410 end:0x800DF6E8
 
 jaudio_gmn.o/os.c:
-	.text       start:0x80026438 end:0x80026440
 	.text       start:0x80026440 end:0x800264A0
 	.text       start:0x800264A0 end:0x800264A0
 	.text       start:0x800264A0 end:0x800264A0
@@ -286,7 +281,6 @@ jaudio_gmn.o/audioconst.c:
 	.data       start:0x800DF6E8 end:0x800DF748
 
 jaudio_gmn.o/channel.c:
-	.text       start:0x80026708 end:0x80026720
 	.text       start:0x80026720 end:0x80026B60
 	.text       start:0x80026B60 end:0x80027120
 	.text       start:0x80027120 end:0x80027580
@@ -296,7 +290,6 @@ jaudio_gmn.o/channel.c:
 	.sdata2     start:0x8022D608 end:0x8022D640
 
 jaudio_gmn.o/effect.c:
-	.text       start:0x800284E8 end:0x80028500
 	.text       start:0x80028500 end:0x80028820
 	.text       start:0x80028820 end:0x80028D80
 	.text       start:0x80028D80 end:0x8002916C
@@ -305,7 +298,6 @@ jaudio_gmn.o/effect.c:
 	.sdata2     start:0x8022D640 end:0x8022D670
 
 jaudio_gmn.o/track.c:
-	.text       start:0x8002916C end:0x80029180
 	.text       start:0x80029180 end:0x800293C0
 	.text       start:0x800293C0 end:0x80029D80
 	.text       start:0x80029D80 end:0x80029E20
@@ -369,7 +361,6 @@ jaudio_gmn.o/fxinterface.c:
 	.data       start:0x800E1AA0 end:0x800E1AB8
 
 jaudio_gmn.o/tables.c:
-	.text       start:0x800308F4 end:0x80030900
 	.data       start:0x800E1AB8 end:0x800E1CB8
 
 jaudio_gmn.o/bankread.c:

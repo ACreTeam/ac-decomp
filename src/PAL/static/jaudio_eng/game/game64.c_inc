@@ -2817,6 +2817,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                         case 0x84:
                         case 0x85:
                         case 0x86:
+                        case 0x87:
                             Na_SysTrgStart(NA_SE_BEBE);
                             a = 0;
                             break;
@@ -2831,7 +2832,8 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
                         } break;
                         case 0x81:
                         case 0x84:
-                        case 0x85: {
+                        case 0x85:
+                        case 0x87: {
                             a = 0;
                             sou_nobasu_count = 0;
                         } break;

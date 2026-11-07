@@ -202,7 +202,6 @@ jaudio_spn.o/rate.c:
 	.sbss       start:0x8022CA28 end:0x8022CA30
 
 jaudio_spn.o/driver.c:
-	.text       start:0x8001AF38 end:0x8001AF40
 	.text       start:0x8001AF40 end:0x8001B1E0
 	.text       start:0x8001B1E0 end:0x8001D300
 	.text       start:0x8001D300 end:0x8001D4C0
@@ -215,7 +214,6 @@ jaudio_spn.o/driver.c:
 	.sdata2     start:0x8022D3F8 end:0x8022D418
 
 jaudio_spn.o/memory.c:
-	.text       start:0x8001DBD4 end:0x8001DBE0
 	.text       start:0x8001DBE0 end:0x8001DD80
 	.text       start:0x8001DD80 end:0x8001DFC0
 	.text       start:0x8001DFC0 end:0x8001F100
@@ -231,7 +229,6 @@ jaudio_spn.o/memory.c:
 	.sdata2     start:0x8022D418 end:0x8022D460
 
 jaudio_spn.o/system.c:
-	.text       start:0x80020DEC end:0x80020E00
 	.text       start:0x80020E00 end:0x800214C0
 	.text       start:0x800214C0 end:0x80021CC0
 	.text       start:0x80021CC0 end:0x80022E00
@@ -251,7 +248,6 @@ jaudio_spn.o/system.c:
 	.sdata2     start:0x8022D460 end:0x8022D470
 
 jaudio_spn.o/sub_sys.c:
-	.text       start:0x80024C74 end:0x80024C80
 	.text       start:0x80024C80 end:0x80024C80
 	.text       start:0x80024C80 end:0x800252A0
 	.text       start:0x800252A0 end:0x80026080
@@ -272,7 +268,6 @@ jaudio_spn.o/audiotable.c:
 	.data       start:0x800DC290 end:0x800DF568
 
 jaudio_spn.o/os.c:
-	.text       start:0x800262B8 end:0x800262C0
 	.text       start:0x800262C0 end:0x80026320
 	.text       start:0x80026320 end:0x80026320
 	.text       start:0x80026320 end:0x80026320
@@ -286,7 +281,6 @@ jaudio_spn.o/audioconst.c:
 	.data       start:0x800DF568 end:0x800DF5C8
 
 jaudio_spn.o/channel.c:
-	.text       start:0x80026588 end:0x800265A0
 	.text       start:0x800265A0 end:0x800269E0
 	.text       start:0x800269E0 end:0x80026FA0
 	.text       start:0x80026FA0 end:0x80027400
@@ -296,7 +290,6 @@ jaudio_spn.o/channel.c:
 	.sdata2     start:0x8022D488 end:0x8022D4C0
 
 jaudio_spn.o/effect.c:
-	.text       start:0x80028368 end:0x80028380
 	.text       start:0x80028380 end:0x800286A0
 	.text       start:0x800286A0 end:0x80028C00
 	.text       start:0x80028C00 end:0x80028FEC
@@ -305,7 +298,6 @@ jaudio_spn.o/effect.c:
 	.sdata2     start:0x8022D4C0 end:0x8022D4F0
 
 jaudio_spn.o/track.c:
-	.text       start:0x80028FEC end:0x80029000
 	.text       start:0x80029000 end:0x80029240
 	.text       start:0x80029240 end:0x80029C00
 	.text       start:0x80029C00 end:0x80029CA0
@@ -369,7 +361,6 @@ jaudio_spn.o/fxinterface.c:
 	.data       start:0x800E1920 end:0x800E1938
 
 jaudio_spn.o/tables.c:
-	.text       start:0x80030774 end:0x80030780
 	.data       start:0x800E1938 end:0x800E1B38
 
 jaudio_spn.o/bankread.c:

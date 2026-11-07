@@ -2051,7 +2051,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         {
             /* entry 204 */
             0x00076BC0,           /* rom addr */
-            0x00000260,           /* size */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2060,8 +2060,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 205 */
-            0x00076E20,           /* rom addr */
-            0x00000260,           /* size */
+            0x00076E40,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2070,8 +2070,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 206 */
-            0x00077080,           /* rom addr */
-            0x00000260,           /* size */
+            0x000770C0,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2080,8 +2080,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 207 */
-            0x000772E0,           /* rom addr */
-            0x00000260,           /* size */
+            0x00077340,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2090,8 +2090,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 208 */
-            0x00077540,           /* rom addr */
-            0x00000260,           /* size */
+            0x000775C0,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2100,8 +2100,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 209 */
-            0x000777A0,           /* rom addr */
-            0x00000260,           /* size */
+            0x00077840,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2110,8 +2110,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 210 */
-            0x00077A00,           /* rom addr */
-            0x00000260,           /* size */
+            0x00077AC0,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2120,8 +2120,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 211 */
-            0x00077C60,           /* rom addr */
-            0x00000260,           /* size */
+            0x00077D40,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2130,8 +2130,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 212 */
-            0x00077EC0,           /* rom addr */
-            0x00000260,           /* size */
+            0x00077FC0,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2140,8 +2140,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 213 */
-            0x00078120,           /* rom addr */
-            0x00000260,           /* size */
+            0x00078240,           /* rom addr */
+            0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x0000,               /* param0 */
@@ -2150,7 +2150,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 214 */
-            0x00078380,           /* rom addr */
+            0x000784C0,           /* rom addr */
             0x00001220,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2160,7 +2160,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 215 */
-            0x000795A0,           /* rom addr */
+            0x000796E0,           /* rom addr */
             0x00002940,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2170,7 +2170,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 216 */
-            0x0007BEE0,           /* rom addr */
+            0x0007C020,           /* rom addr */
             0x000022E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2180,7 +2180,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 217 */
-            0x0007E1C0,           /* rom addr */
+            0x0007E300,           /* rom addr */
             0x000008E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2190,7 +2190,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 218 */
-            0x0007EAA0,           /* rom addr */
+            0x0007EBE0,           /* rom addr */
             0x00001280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2200,7 +2200,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 219 */
-            0x0007FD20,           /* rom addr */
+            0x0007FE60,           /* rom addr */
             0x00001B40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2210,7 +2210,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 220 */
-            0x00081860,           /* rom addr */
+            0x000819A0,           /* rom addr */
             0x000028A0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2220,7 +2220,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 221 */
-            0x00084100,           /* rom addr */
+            0x00084240,           /* rom addr */
             0x00001D20,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2230,7 +2230,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 222 */
-            0x00085E20,           /* rom addr */
+            0x00085F60,           /* rom addr */
             0x00000660,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2240,7 +2240,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 223 */
-            0x00086480,           /* rom addr */
+            0x000865C0,           /* rom addr */
             0x00001480,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2250,7 +2250,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 224 */
-            0x00087900,           /* rom addr */
+            0x00087A40,           /* rom addr */
             0x00001120,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2260,7 +2260,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 225 */
-            0x00088A20,           /* rom addr */
+            0x00088B60,           /* rom addr */
             0x000024E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2270,7 +2270,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 226 */
-            0x0008AF00,           /* rom addr */
+            0x0008B040,           /* rom addr */
             0x00005180,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2280,7 +2280,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 227 */
-            0x00090080,           /* rom addr */
+            0x000901C0,           /* rom addr */
             0x00004220,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2290,7 +2290,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 228 */
-            0x000942A0,           /* rom addr */
+            0x000943E0,           /* rom addr */
             0x00003780,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2300,7 +2300,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 229 */
-            0x00097A20,           /* rom addr */
+            0x00097B60,           /* rom addr */
             0x00002C40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2310,7 +2310,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 230 */
-            0x0009A660,           /* rom addr */
+            0x0009A7A0,           /* rom addr */
             0x00002040,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2320,7 +2320,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 231 */
-            0x0009C6A0,           /* rom addr */
+            0x0009C7E0,           /* rom addr */
             0x00000A40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2330,7 +2330,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 232 */
-            0x0009D0E0,           /* rom addr */
+            0x0009D220,           /* rom addr */
             0x00000860,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2340,7 +2340,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 233 */
-            0x0009D940,           /* rom addr */
+            0x0009DA80,           /* rom addr */
             0x00000A40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2350,7 +2350,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 234 */
-            0x0009E380,           /* rom addr */
+            0x0009E4C0,           /* rom addr */
             0x00000860,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2360,7 +2360,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 235 */
-            0x0009EBE0,           /* rom addr */
+            0x0009ED20,           /* rom addr */
             0x00000B60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2370,7 +2370,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 236 */
-            0x0009F740,           /* rom addr */
+            0x0009F880,           /* rom addr */
             0x000013C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2380,7 +2380,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 237 */
-            0x000A0B00,           /* rom addr */
+            0x000A0C40,           /* rom addr */
             0x00001D20,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2390,7 +2390,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 238 */
-            0x000A2820,           /* rom addr */
+            0x000A2960,           /* rom addr */
             0x00001640,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2400,7 +2400,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 239 */
-            0x000A3E60,           /* rom addr */
+            0x000A3FA0,           /* rom addr */
             0x00000EA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2410,7 +2410,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 240 */
-            0x000A4D00,           /* rom addr */
+            0x000A4E40,           /* rom addr */
             0x00000CE0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2420,7 +2420,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 241 */
-            0x000A59E0,           /* rom addr */
+            0x000A5B20,           /* rom addr */
             0x00000720,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2430,7 +2430,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 242 */
-            0x000A6100,           /* rom addr */
+            0x000A6240,           /* rom addr */
             0x00005960,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
@@ -2440,8 +2440,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 243 */
-            0x000ABA60,            /* rom addr */
-            0x00000660,            /* size */
+            0x000ABBA0,            /* rom addr */
+            0x000006A0,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x0000,                /* param0 */
@@ -2450,8 +2450,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 244 */
-            0x000AC0C0,            /* rom addr */
-            0x00000480,            /* size */
+            0x000AC240,            /* rom addr */
+            0x00000600,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x0000,                /* param0 */
@@ -2460,8 +2460,8 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 245 */
-            0x000AC540,            /* rom addr */
-            0x00000660,            /* size */
+            0x000AC840,            /* rom addr */
+            0x000006A0,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x0000,                /* param0 */
@@ -2470,7 +2470,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 246 */
-            0x000ACBA0,           /* rom addr */
+            0x000ACEE0,           /* rom addr */
             0x000055C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
@@ -2480,7 +2480,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 247 */
-            0x000B2160,           /* rom addr */
+            0x000B24A0,           /* rom addr */
             0x00000020,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2490,7 +2490,7 @@ ArcHeader AudioseqHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 248 */
-            0x000B2180,            /* rom addr */
+            0x000B24C0,            /* rom addr */
             0x0001D580,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
@@ -2672,7 +2672,7 @@ ArcHeader AudiobankHeaderStart = {
         {
             /* entry 16 */
             0x000107E0,           /* rom addr */
-            0x000009E0,           /* size */
+            0x00000980,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x03FF,               /* param0 */
@@ -2681,7 +2681,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 17 */
-            0x000111C0,           /* rom addr */
+            0x00011160,           /* rom addr */
             0x00000C00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2691,7 +2691,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 18 */
-            0x00011DC0,           /* rom addr */
+            0x00011D60,           /* rom addr */
             0x00000740,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2701,7 +2701,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 19 */
-            0x00012500,           /* rom addr */
+            0x000124A0,           /* rom addr */
             0x00000B40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2711,7 +2711,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 20 */
-            0x00013040,           /* rom addr */
+            0x00012FE0,           /* rom addr */
             0x00000800,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2721,7 +2721,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 21 */
-            0x00013840,           /* rom addr */
+            0x000137E0,           /* rom addr */
             0x00000980,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2731,7 +2731,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 22 */
-            0x000141C0,           /* rom addr */
+            0x00014160,           /* rom addr */
             0x00000A00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2741,7 +2741,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 23 */
-            0x00014BC0,           /* rom addr */
+            0x00014B60,           /* rom addr */
             0x00000A20,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2751,7 +2751,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 24 */
-            0x000155E0,           /* rom addr */
+            0x00015580,           /* rom addr */
             0x00000A80,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2761,7 +2761,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 25 */
-            0x00016060,           /* rom addr */
+            0x00016000,           /* rom addr */
             0x00000980,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2771,7 +2771,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 26 */
-            0x000169E0,           /* rom addr */
+            0x00016980,           /* rom addr */
             0x000010C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2781,7 +2781,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 27 */
-            0x00017AA0,           /* rom addr */
+            0x00017A40,           /* rom addr */
             0x000005E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2791,7 +2791,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 28 */
-            0x00018080,           /* rom addr */
+            0x00018020,           /* rom addr */
             0x00000D40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2801,7 +2801,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 29 */
-            0x00018DC0,           /* rom addr */
+            0x00018D60,           /* rom addr */
             0x00000B20,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2811,7 +2811,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 30 */
-            0x000198E0,           /* rom addr */
+            0x00019880,           /* rom addr */
             0x00000680,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2821,7 +2821,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 31 */
-            0x00019F60,           /* rom addr */
+            0x00019F00,           /* rom addr */
             0x00000480,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2831,7 +2831,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 32 */
-            0x0001A3E0,           /* rom addr */
+            0x0001A380,           /* rom addr */
             0x000006E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2841,7 +2841,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 33 */
-            0x0001AAC0,           /* rom addr */
+            0x0001AA60,           /* rom addr */
             0x000003C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2851,7 +2851,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 34 */
-            0x0001AE80,           /* rom addr */
+            0x0001AE20,           /* rom addr */
             0x00000500,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2861,7 +2861,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 35 */
-            0x0001B380,           /* rom addr */
+            0x0001B320,           /* rom addr */
             0x00000520,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2871,7 +2871,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 36 */
-            0x0001B8A0,           /* rom addr */
+            0x0001B840,           /* rom addr */
             0x000005C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2881,7 +2881,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 37 */
-            0x0001BE60,           /* rom addr */
+            0x0001BE00,           /* rom addr */
             0x00000700,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2891,7 +2891,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 38 */
-            0x0001C560,           /* rom addr */
+            0x0001C500,           /* rom addr */
             0x000005E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2901,7 +2901,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 39 */
-            0x0001CB40,           /* rom addr */
+            0x0001CAE0,           /* rom addr */
             0x00000340,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2911,7 +2911,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 40 */
-            0x0001CE80,           /* rom addr */
+            0x0001CE20,           /* rom addr */
             0x000000C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2921,7 +2921,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 41 */
-            0x0001CF40,           /* rom addr */
+            0x0001CEE0,           /* rom addr */
             0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2931,7 +2931,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 42 */
-            0x0001D1C0,           /* rom addr */
+            0x0001D160,           /* rom addr */
             0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2941,7 +2941,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 43 */
-            0x0001D440,           /* rom addr */
+            0x0001D3E0,           /* rom addr */
             0x000009C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2951,7 +2951,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 44 */
-            0x0001DE00,           /* rom addr */
+            0x0001DDA0,           /* rom addr */
             0x000009E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2961,7 +2961,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 45 */
-            0x0001E7E0,           /* rom addr */
+            0x0001E780,           /* rom addr */
             0x00000BA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2971,7 +2971,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 46 */
-            0x0001F380,           /* rom addr */
+            0x0001F320,           /* rom addr */
             0x00000960,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2981,7 +2981,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 47 */
-            0x0001FCE0,           /* rom addr */
+            0x0001FC80,           /* rom addr */
             0x00000940,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -2991,7 +2991,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 48 */
-            0x00020620,           /* rom addr */
+            0x000205C0,           /* rom addr */
             0x00000360,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3001,7 +3001,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 49 */
-            0x00020980,           /* rom addr */
+            0x00020920,           /* rom addr */
             0x00000360,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3011,7 +3011,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 50 */
-            0x00020CE0,           /* rom addr */
+            0x00020C80,           /* rom addr */
             0x00000360,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3021,7 +3021,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 51 */
-            0x00021040,           /* rom addr */
+            0x00020FE0,           /* rom addr */
             0x00000180,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3031,7 +3031,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 52 */
-            0x000211C0,           /* rom addr */
+            0x00021160,           /* rom addr */
             0x000004C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3041,7 +3041,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 53 */
-            0x00021680,           /* rom addr */
+            0x00021620,           /* rom addr */
             0x000004C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3051,7 +3051,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 54 */
-            0x00021B40,           /* rom addr */
+            0x00021AE0,           /* rom addr */
             0x00000A60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3061,7 +3061,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 55 */
-            0x000225A0,           /* rom addr */
+            0x00022540,           /* rom addr */
             0x00000600,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3071,7 +3071,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 56 */
-            0x00022BA0,           /* rom addr */
+            0x00022B40,           /* rom addr */
             0x00000CA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3081,7 +3081,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 57 */
-            0x00023840,           /* rom addr */
+            0x000237E0,           /* rom addr */
             0x00000100,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3091,7 +3091,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 58 */
-            0x00023940,           /* rom addr */
+            0x000238E0,           /* rom addr */
             0x00000220,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3101,7 +3101,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 59 */
-            0x00023B60,           /* rom addr */
+            0x00023B00,           /* rom addr */
             0x00000260,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3111,7 +3111,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 60 */
-            0x00023DC0,           /* rom addr */
+            0x00023D60,           /* rom addr */
             0x000005C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3121,7 +3121,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 61 */
-            0x00024380,           /* rom addr */
+            0x00024320,           /* rom addr */
             0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3131,7 +3131,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 62 */
-            0x00024600,           /* rom addr */
+            0x000245A0,           /* rom addr */
             0x00000840,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3141,7 +3141,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 63 */
-            0x00024E40,           /* rom addr */
+            0x00024DE0,           /* rom addr */
             0x00000B40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3151,7 +3151,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 64 */
-            0x00025980,           /* rom addr */
+            0x00025920,           /* rom addr */
             0x00000D00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3161,7 +3161,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 65 */
-            0x00026680,           /* rom addr */
+            0x00026620,           /* rom addr */
             0x00000980,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3171,7 +3171,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 66 */
-            0x00027000,           /* rom addr */
+            0x00026FA0,           /* rom addr */
             0x00000560,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3181,7 +3181,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 67 */
-            0x00027560,           /* rom addr */
+            0x00027500,           /* rom addr */
             0x000004E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3191,7 +3191,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 68 */
-            0x00027A40,           /* rom addr */
+            0x000279E0,           /* rom addr */
             0x000003E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3201,7 +3201,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 69 */
-            0x00027E20,           /* rom addr */
+            0x00027DC0,           /* rom addr */
             0x00000A60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3211,7 +3211,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 70 */
-            0x00028880,           /* rom addr */
+            0x00028820,           /* rom addr */
             0x000003E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3221,7 +3221,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 71 */
-            0x00028C60,           /* rom addr */
+            0x00028C00,           /* rom addr */
             0x00000300,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3231,7 +3231,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 72 */
-            0x00028F60,           /* rom addr */
+            0x00028F00,           /* rom addr */
             0x00000460,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3241,7 +3241,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 73 */
-            0x000293C0,           /* rom addr */
+            0x00029360,           /* rom addr */
             0x00000D80,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3251,7 +3251,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 74 */
-            0x0002A140,           /* rom addr */
+            0x0002A0E0,           /* rom addr */
             0x00000540,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3261,7 +3261,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 75 */
-            0x0002A680,           /* rom addr */
+            0x0002A620,           /* rom addr */
             0x00000760,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3271,7 +3271,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 76 */
-            0x0002ADE0,           /* rom addr */
+            0x0002AD80,           /* rom addr */
             0x000005C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3281,7 +3281,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 77 */
-            0x0002B3A0,           /* rom addr */
+            0x0002B340,           /* rom addr */
             0x00000940,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3291,7 +3291,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 78 */
-            0x0002BCE0,           /* rom addr */
+            0x0002BC80,           /* rom addr */
             0x00000C00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3301,7 +3301,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 79 */
-            0x0002C8E0,           /* rom addr */
+            0x0002C880,           /* rom addr */
             0x000000E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3311,7 +3311,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 80 */
-            0x0002C9C0,           /* rom addr */
+            0x0002C960,           /* rom addr */
             0x00000440,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3321,7 +3321,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 81 */
-            0x0002CE00,           /* rom addr */
+            0x0002CDA0,           /* rom addr */
             0x000009C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3331,7 +3331,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 82 */
-            0x0002D7C0,           /* rom addr */
+            0x0002D760,           /* rom addr */
             0x000007C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3341,7 +3341,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 83 */
-            0x0002DF80,           /* rom addr */
+            0x0002DF20,           /* rom addr */
             0x00000440,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3351,7 +3351,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 84 */
-            0x0002E3C0,           /* rom addr */
+            0x0002E360,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3361,7 +3361,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 85 */
-            0x0002EEC0,           /* rom addr */
+            0x0002EE60,           /* rom addr */
             0x00000540,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3371,7 +3371,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 86 */
-            0x0002F400,           /* rom addr */
+            0x0002F3A0,           /* rom addr */
             0x00000B60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3381,7 +3381,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 87 */
-            0x0002FF60,           /* rom addr */
+            0x0002FF00,           /* rom addr */
             0x00000760,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3391,7 +3391,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 88 */
-            0x000306C0,           /* rom addr */
+            0x00030660,           /* rom addr */
             0x00000AC0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3401,7 +3401,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 89 */
-            0x00031180,           /* rom addr */
+            0x00031120,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3411,7 +3411,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 90 */
-            0x00031C80,           /* rom addr */
+            0x00031C20,           /* rom addr */
             0x00000300,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3421,7 +3421,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 91 */
-            0x00031F80,           /* rom addr */
+            0x00031F20,           /* rom addr */
             0x000003C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3431,7 +3431,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 92 */
-            0x00032340,           /* rom addr */
+            0x000322E0,           /* rom addr */
             0x00000440,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3441,7 +3441,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 93 */
-            0x00032780,           /* rom addr */
+            0x00032720,           /* rom addr */
             0x00000260,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3451,7 +3451,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 94 */
-            0x000329E0,           /* rom addr */
+            0x00032980,           /* rom addr */
             0x000003E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3461,7 +3461,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 95 */
-            0x00032DC0,           /* rom addr */
+            0x00032D60,           /* rom addr */
             0x000006A0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3471,7 +3471,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 96 */
-            0x00033460,           /* rom addr */
+            0x00033400,           /* rom addr */
             0x00000CA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3481,7 +3481,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 97 */
-            0x00034100,           /* rom addr */
+            0x000340A0,           /* rom addr */
             0x000007C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3491,7 +3491,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 98 */
-            0x000348C0,           /* rom addr */
+            0x00034860,           /* rom addr */
             0x000005C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3501,7 +3501,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 99 */
-            0x00034E80,           /* rom addr */
+            0x00034E20,           /* rom addr */
             0x00000240,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3511,7 +3511,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 100 */
-            0x000350C0,           /* rom addr */
+            0x00035060,           /* rom addr */
             0x000006C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3521,8 +3521,8 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 101 */
-            0x00035780,           /* rom addr */
-            0x00000400,           /* size */
+            0x00035720,           /* rom addr */
+            0x000003C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x04FF,               /* param0 */
@@ -3531,7 +3531,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 102 */
-            0x00035B80,           /* rom addr */
+            0x00035AE0,           /* rom addr */
             0x00000A60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3541,7 +3541,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 103 */
-            0x000365E0,           /* rom addr */
+            0x00036540,           /* rom addr */
             0x00000280,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3551,7 +3551,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 104 */
-            0x00036860,           /* rom addr */
+            0x000367C0,           /* rom addr */
             0x00000180,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3561,7 +3561,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 105 */
-            0x000369E0,           /* rom addr */
+            0x00036940,           /* rom addr */
             0x00000AE0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3571,7 +3571,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 106 */
-            0x000374C0,           /* rom addr */
+            0x00037420,           /* rom addr */
             0x00000A20,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3581,7 +3581,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 107 */
-            0x00037EE0,           /* rom addr */
+            0x00037E40,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3591,7 +3591,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 108 */
-            0x000389E0,           /* rom addr */
+            0x00038940,           /* rom addr */
             0x000009A0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3601,7 +3601,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 109 */
-            0x00039380,           /* rom addr */
+            0x000392E0,           /* rom addr */
             0x00000BA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3611,7 +3611,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 110 */
-            0x00039F20,           /* rom addr */
+            0x00039E80,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3621,7 +3621,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 111 */
-            0x0003AA20,           /* rom addr */
+            0x0003A980,           /* rom addr */
             0x00000F80,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3631,7 +3631,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 112 */
-            0x0003B9A0,           /* rom addr */
+            0x0003B900,           /* rom addr */
             0x00000620,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3671,7 +3671,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 116 */
-            0x0003BFC0,           /* rom addr */
+            0x0003BF20,           /* rom addr */
             0x00000840,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3681,7 +3681,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 117 */
-            0x0003C800,           /* rom addr */
+            0x0003C760,           /* rom addr */
             0x00000820,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3691,7 +3691,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 118 */
-            0x0003D020,           /* rom addr */
+            0x0003CF80,           /* rom addr */
             0x000003A0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3701,7 +3701,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 119 */
-            0x0003D3C0,           /* rom addr */
+            0x0003D320,           /* rom addr */
             0x000001C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3711,7 +3711,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 120 */
-            0x0003D580,           /* rom addr */
+            0x0003D4E0,           /* rom addr */
             0x00000E00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3721,7 +3721,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 121 */
-            0x0003E380,           /* rom addr */
+            0x0003E2E0,           /* rom addr */
             0x00000460,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3741,7 +3741,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 123 */
-            0x0003E7E0,           /* rom addr */
+            0x0003E740,           /* rom addr */
             0x00000DC0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3751,8 +3751,8 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 124 */
-            0x0003F5A0,           /* rom addr */
-            0x00000BA0,           /* size */
+            0x0003F500,           /* rom addr */
+            0x00000AA0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
             0x04FF,               /* param0 */
@@ -3761,7 +3761,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 125 */
-            0x00040140,           /* rom addr */
+            0x0003FFA0,           /* rom addr */
             0x000005E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3771,7 +3771,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 126 */
-            0x00040720,           /* rom addr */
+            0x00040580,           /* rom addr */
             0x00000860,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3781,7 +3781,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 127 */
-            0x00040F80,           /* rom addr */
+            0x00040DE0,           /* rom addr */
             0x000005C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3791,7 +3791,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 128 */
-            0x00041540,           /* rom addr */
+            0x000413A0,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3801,7 +3801,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 129 */
-            0x00042040,           /* rom addr */
+            0x00041EA0,           /* rom addr */
             0x00000320,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3811,7 +3811,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 130 */
-            0x00042360,           /* rom addr */
+            0x000421C0,           /* rom addr */
             0x00000A40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3821,7 +3821,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 131 */
-            0x00042DA0,           /* rom addr */
+            0x00042C00,           /* rom addr */
             0x00000B40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3831,7 +3831,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 132 */
-            0x000438E0,           /* rom addr */
+            0x00043740,           /* rom addr */
             0x00000C60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3841,7 +3841,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 133 */
-            0x00044540,           /* rom addr */
+            0x000443A0,           /* rom addr */
             0x00000540,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3851,7 +3851,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 134 */
-            0x00044A80,           /* rom addr */
+            0x000448E0,           /* rom addr */
             0x00000A60,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3861,7 +3861,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 135 */
-            0x000454E0,           /* rom addr */
+            0x00045340,           /* rom addr */
             0x000006C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3871,7 +3871,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 136 */
-            0x00045BA0,           /* rom addr */
+            0x00045A00,           /* rom addr */
             0x00000900,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3881,7 +3881,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 137 */
-            0x000464A0,           /* rom addr */
+            0x00046300,           /* rom addr */
             0x000010C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3891,7 +3891,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 138 */
-            0x00047560,           /* rom addr */
+            0x000473C0,           /* rom addr */
             0x00001180,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3911,7 +3911,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 140 */
-            0x000486E0,           /* rom addr */
+            0x00048540,           /* rom addr */
             0x00001040,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3921,7 +3921,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 141 */
-            0x00049720,           /* rom addr */
+            0x00049580,           /* rom addr */
             0x00000B40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3931,7 +3931,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 142 */
-            0x0004A260,           /* rom addr */
+            0x0004A0C0,           /* rom addr */
             0x000004C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3941,7 +3941,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 143 */
-            0x0004A720,           /* rom addr */
+            0x0004A580,           /* rom addr */
             0x00000EC0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3951,7 +3951,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 144 */
-            0x0004B5E0,           /* rom addr */
+            0x0004B440,           /* rom addr */
             0x000008E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3961,7 +3961,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 145 */
-            0x0004BEC0,           /* rom addr */
+            0x0004BD20,           /* rom addr */
             0x00000A00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3971,7 +3971,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 146 */
-            0x0004C8C0,           /* rom addr */
+            0x0004C720,           /* rom addr */
             0x00000920,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3981,7 +3981,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 147 */
-            0x0004D1E0,           /* rom addr */
+            0x0004D040,           /* rom addr */
             0x000010C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -3991,7 +3991,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 148 */
-            0x0004E2A0,           /* rom addr */
+            0x0004E100,           /* rom addr */
             0x00000BC0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -4001,7 +4001,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 149 */
-            0x0004EE60,           /* rom addr */
+            0x0004ECC0,           /* rom addr */
             0x000010C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -4011,7 +4011,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 150 */
-            0x0004FF20,           /* rom addr */
+            0x0004FD80,           /* rom addr */
             0x00000B00,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -4021,7 +4021,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 151 */
-            0x00050A20,           /* rom addr */
+            0x00050880,           /* rom addr */
             0x000003E0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -4031,7 +4031,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 152 */
-            0x00050E00,           /* rom addr */
+            0x00050C60,           /* rom addr */
             0x00000620,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_TEMPORARY, /* cache type */
@@ -4041,7 +4041,7 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 153 */
-            0x00051420,           /* rom addr */
+            0x00051280,           /* rom addr */
             0x00005100,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
@@ -4051,17 +4051,17 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 154 */
-            0x00056520,           /* rom addr */
-            0x00003F00,           /* size */
+            0x00056380,           /* rom addr */
+            0x000040C0,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
             0x05FF,               /* param0 */
-            0x7600,               /* param1 */
+            0x7900,               /* param1 */
             0x0000,               /* param2 */
         },
         {
             /* entry 155 */
-            0x0005A420,           /* rom addr */
+            0x0005A440,           /* rom addr */
             0x00001E40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
@@ -4071,32 +4071,32 @@ ArcHeader AudiobankHeaderStart = {
         },
         {
             /* entry 156 */
-            0x0005C260,            /* rom addr */
-            0x00004500,            /* size */
+            0x0005C280,            /* rom addr */
+            0x00004800,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x05FF,                /* param0 */
-            0x7700,                /* param1 */
+            0x7E00,                /* param1 */
             0x0000,                /* param2 */
         },
         {
             /* entry 157 */
-            0x00060760,            /* rom addr */
-            0x00003020,            /* size */
+            0x00060A80,            /* rom addr */
+            0x00004800,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x05FF,                /* param0 */
-            0x5300,                /* param1 */
+            0x7E00,                /* param1 */
             0x0000,                /* param2 */
         },
         {
             /* entry 158 */
-            0x00063780,            /* rom addr */
-            0x00004500,            /* size */
+            0x00065280,            /* rom addr */
+            0x00004800,            /* size */
             MEDIUM_CART,           /* src medium */
             CACHE_LOAD_PERSISTENT, /* cache type */
             0x05FF,                /* param0 */
-            0x7700,                /* param1 */
+            0x7E00,                /* param1 */
             0x0000,                /* param2 */
         },
     },
@@ -4153,7 +4153,7 @@ ArcHeader AudiowaveHeaderStart ATTRIBUTE_ALIGN(1) = {
         {
             /* entry 4 */
             0x001D4FA0,               /* rom addr */
-            0x000F0E20,               /* size */
+            0x000EAF00,               /* size */
             MEDIUM_CART,              /* src medium */
             CACHE_LOAD_EITHER_NOSYNC, /* cache type */
             0x0000,                   /* param0 */
@@ -4162,8 +4162,8 @@ ArcHeader AudiowaveHeaderStart ATTRIBUTE_ALIGN(1) = {
         },
         {
             /* entry 5 */
-            0x002C5DC0,               /* rom addr */
-            0x003ED620,               /* size */
+            0x002BFEA0,               /* rom addr */
+            0x003DDAE0,               /* size */
             MEDIUM_CART,              /* src medium */
             CACHE_LOAD_EITHER_NOSYNC, /* cache type */
             0x0000,                   /* param0 */
@@ -4185,7 +4185,7 @@ ArcHeader AudiodataHeaderStart ATTRIBUTE_ALIGN(1) = {
         {
             /* entry 0 */
             0x00000000,           /* rom addr */
-            0x000CF700,           /* size */
+            0x000CFA40,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
             0x0000,               /* param0 */
@@ -4195,8 +4195,8 @@ ArcHeader AudiodataHeaderStart ATTRIBUTE_ALIGN(1) = {
         /* Audiobank */
         {
             /* entry 1 */
-            0x000CF700,           /* rom addr */
-            0x00067C80,           /* size */
+            0x000CFA40,           /* rom addr */
+            0x00069A80,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
             0x0000,               /* param0 */
@@ -4206,8 +4206,8 @@ ArcHeader AudiodataHeaderStart ATTRIBUTE_ALIGN(1) = {
         /* Audiowave */
         {
             /* entry 2 */
-            0x00137380,           /* rom addr */
-            0x006B33E0,           /* size */
+            0x001394C0,           /* rom addr */
+            0x0069D980,           /* size */
             MEDIUM_CART,          /* src medium */
             CACHE_LOAD_PERMANENT, /* cache type */
             0x0000,               /* param0 */

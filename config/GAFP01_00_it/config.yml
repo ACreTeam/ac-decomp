@@ -13,6 +13,29 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_it/ldscript.tpl
 
 block_relocations:
+# dvderr: raw texture pixel words are not pointers.
+- source: 0x800BC1DC
+- source: 0x800BC5C0
+- source: 0x800BC5C4
+- source: 0x800BCD00
+- source: 0x800BCD04
+- source: 0x800BCD08
+- source: 0x800BCD0C
+- source: 0x800BCD10
+- source: 0x800C21B8
+- source: 0x800C2334
+- source: 0x800C2338
+- source: 0x800C233C
+- source: 0x800C25B8
+- source: 0x800C2720
+- source: 0x800C2724
+- source: 0x800C2728
+- source: 0x800C272C
+- source: 0x800C2730
+- source: 0x800C2734
+- source: 0x800C2AA8
+# dvderr texture pixels mistaken for pointers into JAudio seq.
+- source: 0x800C3C70
 # dvd_keikoku4_3 and dvd_keikoku5_3: texture pixels mistaken for code pointers.
 - source: 0x800C27E8
 - source: 0x800C4DF4
