@@ -16,7 +16,7 @@ typedef struct insect_birth_sum_s {
   u8 additional_range; // min_birth_count + [0, n)
 } aSOI_insect_birth_sum_c;
 
-static aSOI_insect_birth_sum_c l_insect_birth_sum[aINS_INSECT_TYPE_EXTENDED_NUM] = {
+static aSOI_insect_birth_sum_c l_insect_birth_sum[aINS_INSECT_TYPE_EXTENDED_NUM - 1] = {
   { 1, 0 }, // aINS_INSECT_TYPE_COMMON_BUTTERFLY
   { 1, 0 }, // aINS_INSECT_TYPE_YELLOW_BUTTERFLY
   { 1, 0 }, // aINS_INSECT_TYPE_TIGER_BUTTERFLY

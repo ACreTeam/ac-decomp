@@ -64,7 +64,7 @@ static void aTPT_setupAction(ACTOR* actor, int idx){
 
     static PISTOL_PROC process[] = {(PISTOL_PROC)none_proc1, aTPT_takeout,aTPT_putaway,aTPT_destruct,
     (PISTOL_PROC)none_proc1,NULL};
-    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f,0.0f};
+    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f};
     f32 scale;
 
     pistol->proc = process[idx];

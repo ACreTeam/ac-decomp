@@ -10,6 +10,10 @@
 #include "m_house.h"
 #include "m_msg.h"
 
+#if VERSION == VER_GAFP01_00
+#define mMkRm_SERIES_NAME_LEN 24
+#endif
+
 typedef struct series_info_s {
     u8 type;
     u8 num_ftr;
@@ -79,6 +83,7 @@ static mMkRm_series_info_c mMkRm_series_info[mMkRm_SERIES_NUM] = {
     { mMkRm_SERIES_TYPE_THEME, 0, 64 }  // mMkRm_SERIES_MARIO
 };
 
+#if VERSION != VER_GAFP01_00
 /* NOTE for Japanese compatability, these were likely written with CHAR_* definitions in arrays */
 static u8 mMkRm_series_name[mMkRm_SERIES_NUM][mIN_ITEM_NAME_LEN] = {
     "exotic          ", "lovely          ", "classic         ", "ranch           ", "cabana          ",
@@ -99,6 +104,7 @@ static u8 mMkRm_series_name[mMkRm_SERIES_NUM][mIN_ITEM_NAME_LEN] = {
     "tulip           ", "daffodil        ", "other           ", "snowman         ", "western         ",
     "backyard        ", "harvest         ", "boxing          ", "mario           "
 };
+#endif
 
 static int mMkRm_birth_point_table[mRmTp_BIRTH_TYPE_NUM] = {
     51,   /* mRmTp_BIRTH_TYPE_GRP_A */
@@ -2754,6 +2760,9 @@ static void mMkRm_GetSeriesName(u8* buf, int series) {
         return;
     }
 
+#if VERSION == VER_GAFP01_00
+    mString_Load_StringFromRom(buf, mMkRm_SERIES_NAME_LEN, 0x7FF + series);
+#else
     {
         const u8* src = mMkRm_series_name[series];
         int i;
@@ -2762,6 +2771,7 @@ static void mMkRm_GetSeriesName(u8* buf, int series) {
             *buf++ = *src++;
         }
     }
+#endif
 }
 
 static mActor_name_t mMkRm_GetRemainOneFtr(int idx, int series) {
@@ -3664,7 +3674,11 @@ static int mMkRm_MarkRoomOneFloor(mActor_name_t** layer_ut_info, int room_size, 
 }
 
 extern int mMkRm_MarkRoomOvl(int player_no) {
+#if VERSION == VER_GAFP01_00
+    static u8 series_name[mMkRm_SERIES_NAME_LEN];
+#else
     static u8 series_name[mIN_ITEM_NAME_LEN] = "                ";
+#endif
 
     if (player_no < PLAYER_NUM) {
         mActor_name_t* layer_ut_info[2];

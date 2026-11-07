@@ -64,7 +64,7 @@ static void aTHB_setupAction(ACTOR* actor, int idx) {
 
     static HANABI_PROC process[] = { (HANABI_PROC)none_proc1, aTHB_takeout, aTHB_putaway, aTHB_destruct,
                                      (HANABI_PROC)none_proc1, NULL };
-    static f32 start_scale[] = { 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f };
+    static f32 start_scale[] = { 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f };
     f32 scale;
 
     hanabi->proc = process[idx];

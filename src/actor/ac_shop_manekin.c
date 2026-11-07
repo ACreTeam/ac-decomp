@@ -65,7 +65,7 @@ static u8* aSM_SucureBank(size_t size, GAME* game) {
 }
 
 // TODO: fakematch
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
 static int aSM_SecureManakinBank(ACTOR* actorx, GAME* game) {
     SHOP_MANEKIN_ACTOR* shop_manekin = (SHOP_MANEKIN_ACTOR*)actorx;
     int count = shop_manekin->current_block_manekin_num;

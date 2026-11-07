@@ -202,7 +202,17 @@ static void aQMgr_normal_set_free_str(QUEST_MANAGER_ACTOR* manager) {
 typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, lbRTC_ymd_c*);
 
 static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int month_str_no, int day_str_no, u8 month, u8 day) {
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+    static u8 uru_tuki[15] = "mois bissextile";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+    static u8 uru_tuki[11] = "Schaltmonat";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+    static u8 uru_tuki[14] = "mese bisestile";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    static u8 uru_tuki[12] = "mes bisiesto";
+#else
     static u8 uru_tuki[10] = "leap month";
+#endif
     lbRTC_ymd_c src_date;
     lbRTC_ymd_c dst_date;
     int ret;
@@ -1827,7 +1837,13 @@ static void aQMgr_talk_normal_open_letter(QUEST_MANAGER_ACTOR* manager) {
     mMsg_SET_LOCKCONTINUE();
 }
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+static u8 l_aqmgr_sakubunn[9] = "NACHRICHT";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT || GAME_LANGUAGE == GAME_LANG_ES)
+static u8 l_aqmgr_sakubunn[4] = "NOTA";
+#else
 static u8 l_aqmgr_sakubunn[4] = "NOTE";
+#endif
 
 static void aQMgr_talk_normal_open_letter_to_write(QUEST_MANAGER_ACTOR* manager) {
     Submenu* submenu = manager->submenu;

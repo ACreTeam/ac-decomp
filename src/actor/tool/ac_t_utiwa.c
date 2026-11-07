@@ -58,7 +58,7 @@ static void aTUT_setupAction(ACTOR* actor, int idx) {
     static UTIWA_PROC process[] = {(UTIWA_PROC)none_proc1, aTUT_takeout, aTUT_putaway, aTUT_destruct,
     (UTIWA_PROC)none_proc1, NULL};
 
-    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f,0.0f};
+    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f};
 
     UTIWA_ACTOR* utiwa = (UTIWA_ACTOR*)actor;
     f32 scale;

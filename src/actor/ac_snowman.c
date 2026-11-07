@@ -9,6 +9,12 @@
 #include "m_handbill.h"
 #include "m_malloc.h"
 
+#if VERSION == VER_GAFP01_00
+#define aSMAN_WATER_HEIGHT_LINE(line) ((line) + 4)
+#else
+#define aSMAN_WATER_HEIGHT_LINE(line) (line)
+#endif
+
 enum {
     aSMAN_PART0,
     aSMAN_PART1,
@@ -759,7 +765,7 @@ static void aSMAN_set_speed_relations_swim(ACTOR* actorx) {
     s16 flow_angle;
     f32 water_height;
 
-    water_height = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 1362);
+    water_height = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, aSMAN_WATER_HEIGHT_LINE(1362));
     mCoBG_GetWaterFlow(&flow, actorx->bg_collision_check.result.unit_attribute);
     flow_angle = atans_table(flow.z, flow.x);
     chase_angle(&actorx->world.angle.y, flow_angle,
@@ -1083,7 +1089,7 @@ static int aSMAN_process_swim(ACTOR* actorx, GAME* game) {
     if (actor->timer < 32) {
         if (((game->frame_counter & 3) == 0 && actor->timer < 16) || (game->frame_counter & 7) == 0) {
             xyz_t pos = actorx->world.position;
-            pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, 1855);
+            pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, aSMAN_WATER_HEIGHT_LINE(1855));
             eEC_CLIP->effect_make_proc(eEC_EFFECT_TURI_HAMON, pos, 1, actorx->world.angle.y, game, actorx->npc_id, 5,
                                        (s16)(actor->normalized_scale * 100.0f));
         }
@@ -1127,7 +1133,7 @@ static int aSMAN_process_air(ACTOR* actorx, GAME* game) {
     if (actorx->bg_collision_check.result.is_in_water) {
         xyz_t pos = actorx->world.position;
 
-        pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, 1934);
+        pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, aSMAN_WATER_HEIGHT_LINE(1934));
         eEC_CLIP->effect_make_proc(eEC_EFFECT_AMI_MIZU, pos, 1, 0, game, actorx->npc_id, 2,
                                    (s16)(actor->normalized_scale * 100.0f));
         if (CLIP(gyo_clip) != NULL) {

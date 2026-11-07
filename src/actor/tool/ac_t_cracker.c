@@ -64,7 +64,7 @@ static void aTCR_setupAction(ACTOR* actor, int idx){
 
     static CRACKER_PROC process[] = {(CRACKER_PROC)none_proc1, aTCR_takeout,aTCR_putaway,aTCR_destruct,
     (CRACKER_PROC)none_proc1,NULL};
-    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f,0.0f};
+    static f32 start_scale[] = {0.0f, 0.0f, 1.0f,1.0f,1.0f,0.0f};
     f32 scale;
 
     cracker->proc = process[idx];
