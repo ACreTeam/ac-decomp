@@ -299,7 +299,11 @@ extern void mEv_GetEventWeather(s16* weather, s16* intensity) {
 static mEv_event_today_c event_today[mEv_TODAY_EVENT_NUM];
 static int n_today_events = 0;
 
+#if VERSION == VER_GAFP01_00
+#include "../src/game/m_event_schedule_pal.c_inc"
+#else
 #include "../src/game/m_event_schedule.c_inc"
+#endif
 
 static int status_edge = 0;
 

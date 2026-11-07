@@ -36,6 +36,7 @@ LANGUAGE_PENDING_PORTS = {
 
 # foresta objects verified against all five PAL languages.
 MATCHING_FORESTA = {
+    "m_event.o",
     "m_card.o",
     "m_actor.o",
     "m_all_grow.o",
