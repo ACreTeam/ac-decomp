@@ -12,6 +12,13 @@ symbols_known: true
 fill_gaps: true
 ldscript_template: config/GAFP01_00_it/ldscript.tpl
 
+block_relocations:
+# dvd_keikoku4_3 and dvd_keikoku5_3: texture pixels mistaken for code pointers.
+- source: 0x800C27E8
+- source: 0x800C4DF4
+# tags_table_external_disksystem_default: packed tag bytes mistaken for a pointer.
+- source: 0x800E6FB8
+
 # Retain SDK entry points present in the original DOL.
 force_active:
 - CARDGetSectorSize

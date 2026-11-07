@@ -16,7 +16,6 @@ def _stem(name):
 # These sources remain selectable in objdiff, but need a PAL port before they
 # can join all_source. The normal matching build continues to use originals.
 PENDING_PORTS = {
-    "OdemuExi2.a/DebuggerDriver.c": "GC 2.6 rejects const void * to u32 * conversion",
     "data/model/onp_win.c": "PAL replaced the card and R-button assets",
     "data/model/tim_win.c": "PAL has no testmocomma asset",
     "data/field/bg/acre/grd_post_office/grd_post_office.c": "PAL replaced US post-office assets",
@@ -506,6 +505,7 @@ MATCHING_FORESTA = {
 
 # SDK objects verified by linked English PAL DOL hashes and enabled for all PAL languages.
 MATCHING_DOLPHIN = {
+    "OdemuExi2.a/DebuggerDriver.c",
     "ai.a/ai.c",
     "amcstubs.a/AmcExi2Stubs.c",
     "ar.a/ar.c",
@@ -667,6 +667,7 @@ MATCHING_ADDITIONAL = {
     "Runtime.PPCEABI.H.a/ptmf.c",
     "Runtime.PPCEABI.H.a/runtime.c",
     "TRK_Minnow_Dolphin.a/CircleBuffer.c",
+    "TRK_Minnow_Dolphin.a/__exception.s",
     "TRK_Minnow_Dolphin.a/MWCriticalSection_gc.cpp",
     "TRK_Minnow_Dolphin.a/MWTrace.c",
     "TRK_Minnow_Dolphin.a/UDP_Stubs.c",
@@ -4061,7 +4062,10 @@ def configure_sources(config):
             sdk_root = Path("src/static/dolphin/2.6/src")
             pal_sdk_root = Path("src/PAL/static/dolphin")
             dolphin_sdk = source.is_relative_to(sdk_root)
-            if dolphin_sdk:
+            if name == "OdemuExi2.a/DebuggerDriver.c":
+                source = pal_sdk_root / "src/OdemuExi2/DebuggerDriver.c"
+                dolphin_sdk = True
+            elif dolphin_sdk:
                 source = pal_sdk_root / "src" / source.relative_to(sdk_root)
                 if not source.is_file():
                     raise ValueError(f"Missing PAL Dolphin SDK source for {name}: {source}")
@@ -4086,6 +4090,12 @@ def configure_sources(config):
                     f"-i {pal_sdk_root.as_posix()}/include/dolphin",
                     f"-ir {pal_sdk_root.as_posix()}/src",
                 ]
+                if name == "OdemuExi2.a/DebuggerDriver.c":
+                    sdk_includes += [
+                        "-i src/static/mwcc/2.6/include",
+                        "-i src/static/mwcc/2.6/include/MSL_C",
+                        "-i src/static/mwcc/2.6/include/Runtime",
+                    ]
                 options["cflags"] = [
                     *sdk_includes,
                     *[flag for flag in options["cflags"]

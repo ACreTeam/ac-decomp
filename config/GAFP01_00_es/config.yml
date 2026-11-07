@@ -12,6 +12,10 @@ symbols_known: true
 fill_gaps: true
 ldscript_template: config/GAFP01_00_es/ldscript.tpl
 
+block_relocations:
+# tags_table_external_disksystem_default: packed tag bytes mistaken for a pointer.
+- source: 0x800E60B8
+
 # Retain SDK entry points present in the original DOL.
 force_active:
 - CARDGetSectorSize

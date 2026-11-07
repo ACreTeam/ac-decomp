@@ -13,6 +13,8 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_de/ldscript.tpl
 
 block_relocations:
+# tags_table_external_disksystem_default: packed tag bytes mistaken for a pointer.
+- source: 0x800E6238
 # dvd_keikoku4_1: texture pixels mistaken for Link + 0x10.
 - source: 0x800C0B34
 
