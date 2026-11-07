@@ -31,6 +31,9 @@
 #include "libc64/qrand.h"
 #include "m_common_data.h"
 #include "m_play.h"
+#if VERSION == VER_GAFP01_00
+#include "reload_data.h"
+#endif
 
 static int mTR_first_flag = TRUE;
 
@@ -147,7 +150,11 @@ static void trademark_goto_demo_scene(GAME_TRADEMARK* trademark) {
     Save_Set(scene_no, SCENE_TITLE_DEMO);
     mTM_set_season();
     Common_Set(submenu_disabled, TRUE);
+#if VERSION == VER_GAFP01_00
+    GAME_GOTO_NEXT((GAME*)trademark, reload_data, RELOAD_DATA);
+#else
     GAME_GOTO_NEXT((GAME*)trademark, play, PLAY);
+#endif
 }
 
 static void nintendo_logo_move(GAME_TRADEMARK* trademark) {

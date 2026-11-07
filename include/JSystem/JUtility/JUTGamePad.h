@@ -309,6 +309,10 @@ class JUTGamePad : public JKRDisposer {
         return &mPadStatus[(int)port];
     }
 
+    static CButton& getPadButton(EPadPort port) {
+        return mPadButton[port];
+    }
+
     static JSUList<JUTGamePad> mPadList;
     static CButton mPadButton[PAD_MAX_CONTROLLERS];
     static CStick mPadMStick[PAD_MAX_CONTROLLERS];

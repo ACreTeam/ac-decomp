@@ -19,10 +19,21 @@ u8 _jsyswrap_autogen_match[0x40];
 #pragma force_active reset
 #endif
 
+#if VERSION == VER_GAFP01_00
+class JUTGamePadX : public JUTGamePad {
+public:
+    static CStick& getPadSubStick(EPadPort port);
+};
+#endif
+
 JUTGamePad gamePad[4];
 static void* jc_fader = nullptr;
 static void* forest_arc_aram_p = nullptr;
 static void* forest_arc_aram2_p = nullptr;
+#if VERSION == VER_GAFP01_00
+static void* forest_arc_aram_msg_p = nullptr;
+static void* forest_arc_aram_script_p = nullptr;
+#endif
 static void* gameheap_base;
 static void* jc_gport = nullptr;
 static void* jc_sysConsole = nullptr;
@@ -408,6 +419,47 @@ extern void JW_getPadStatus(PADStatus* padStatus) {
     memcpy(&padStatus[3], JUTGamePad::getPadStatus(JUTGamePad::Port4), sizeof(PADStatus));
 }
 
+#if VERSION == VER_GAFP01_00
+extern int JW_JUTGamepad_getErrorStatus() {
+    return JUTGamePad::getPortStatus(JUTGamePad::Port1);
+}
+
+extern u32 JW_JUTGamepad_getButton() {
+    return JUTGamePad::getPadButton(JUTGamePad::Port1).mButton;
+}
+
+extern u32 JW_JUTGamepad_getTrigger() {
+    return JUTGamePad::getPadButton(JUTGamePad::Port1).mTrigger;
+}
+
+extern u32 JW_JUTGamepad_getRelease() {
+    return JUTGamePad::getPadButton(JUTGamePad::Port1).mRelease;
+}
+
+extern u32 JW_JUTGamepad_getRepeat() {
+    return JUTGamePad::getPadButton(JUTGamePad::Port1).mRepeat;
+}
+
+JUTGamePad::CStick& JUTGamePadX::getPadSubStick(EPadPort port) {
+    return mPadSStick[(int)port];
+}
+
+extern f32 JW_JUTGamepad_getSubStickX() {
+    return JUTGamePadX::getPadSubStick(JUTGamePad::Port1).mX;
+}
+
+extern f32 JW_JUTGamepad_getSubStickY() {
+    return JUTGamePadX::getPadSubStick(JUTGamePad::Port1).mY;
+}
+
+extern f32 JW_JUTGamepad_getSubStickValue() {
+    return JUTGamePadX::getPadSubStick(JUTGamePad::Port1).mValue;
+}
+
+extern s16 JW_JUTGamepad_getSubStickAngle() {
+    return JUTGamePadX::getPadSubStick(JUTGamePad::Port1).mAngle;
+}
+#else
 extern int JW_JUTGamepad_getErrorStatus() {
     return (s8)gamePad[0].getErrorStatus();
 }
@@ -444,6 +496,7 @@ extern f32 JW_JUTGamepad_getSubStickValue() {
 extern s16 JW_JUTGamepad_getSubStickAngle() {
     return gamePad[0].getSubStickAngle();
 }
+#endif
 
 // @fabricated - DnM+ symbol map shows this size=0xC8
 extern void JW_J2DNamePicture_draw() {
@@ -492,6 +545,7 @@ extern int JW_setClearColor(u8 r, u8 g, u8 b) {
 
 static const char* aram_resName[] = {
     "fgdata.bin",
+#if VERSION != VER_GAFP01_00
     "mail_data.bin",
     "mail_data_table.bin",
     "maila_data.bin",
@@ -500,7 +554,9 @@ static const char* aram_resName[] = {
     "mailb_data_table.bin",
     "mailc_data.bin",
     "mailc_data_table.bin",
+#endif
     "pallet_boy.bin",
+#if VERSION != VER_GAFP01_00
     "ps_data.bin",
     "ps_data_table.bin",
     "psz_data.bin",
@@ -513,11 +569,14 @@ static const char* aram_resName[] = {
     "superz_data_table.bin",
     "super_data.bin",
     "super_data_table.bin",
+#endif
     "tex_boy.bin",
     "face_boy.bin",
     "fgnpcdata.bin",
+#if VERSION != VER_GAFP01_00
     "message_data.bin",
     "message_data_table.bin",
+#endif
     "my_original.bin",
     "needlework.bin",
     "player_room_floor.bin",
@@ -567,6 +626,20 @@ static const char* aram_resName[] = {
     "girl7.bti",
     "girl8.bti",
     "d_bg_island_sch.bin",
+#if VERSION == VER_GAFP01_00
+    "msg.bin",
+    "msg_color.bmc",
+    "mail.bin",
+    "maila.bin",
+    "mailb.bin",
+    "mailc.bin",
+    "ps.bin",
+    "psz.bin",
+    "select.bin",
+    "string.bin",
+    "superz.bin",
+    "super.bin",
+#endif
 };
 
 extern u32 JW_GetAramAddress(int res_no) {
@@ -574,8 +647,18 @@ extern u32 JW_GetAramAddress(int res_no) {
 
     if (res_no >= RESOURCE_FGDATA && res_no < RESOURCE_FGNPCDATA) {
         address = JC_JKRAramArchive_getAramAddress_byName(forest_arc_aram_p, (u32)'DATA', aram_resName[res_no]);
+#if VERSION == VER_GAFP01_00
+    } else if (res_no < RESOURCE_MESSAGE) {
+#else
     } else if (res_no >= RESOURCE_FGNPCDATA && res_no < RESOURCE_NUM) {
+#endif
         address = JC_JKRAramArchive_getAramAddress_byName(forest_arc_aram2_p, (u32)'DATA', aram_resName[res_no]);
+#if VERSION == VER_GAFP01_00
+    } else if (res_no < RESOURCE_MAIL) {
+        address = JC_JKRAramArchive_getAramAddress_byName(forest_arc_aram_msg_p, (u32)'DATA', aram_resName[res_no]);
+    } else if (res_no < RESOURCE_NUM) {
+        address = JC_JKRAramArchive_getAramAddress_byName(forest_arc_aram_script_p, (u32)'DATA', aram_resName[res_no]);
+#endif
     }
 
     return address;
@@ -609,12 +692,30 @@ extern u32 JW_GetResSizeFileNo(int res_no) {
         if (entry != nullptr) {
             res_size = entry->mSize;
         }
+#if VERSION == VER_GAFP01_00
+    } else if (res_no < RESOURCE_MESSAGE) {
+#else
     } else if (res_no >= RESOURCE_FGNPCDATA && res_no < RESOURCE_NUM) {
+#endif
         CSDIFileEntry* entry = JC__JKRGetResourceEntry_byName((u32)'DATA', aram_resName[res_no], forest_arc_aram2_p);
 
         if (entry != nullptr) {
             res_size = entry->mSize;
         }
+#if VERSION == VER_GAFP01_00
+    } else if (res_no < RESOURCE_MAIL) {
+        CSDIFileEntry* entry = JC__JKRGetResourceEntry_byName((u32)'DATA', aram_resName[res_no], forest_arc_aram_msg_p);
+
+        if (entry != nullptr) {
+            res_size = entry->mSize;
+        }
+    } else if (res_no < RESOURCE_NUM) {
+        CSDIFileEntry* entry = JC__JKRGetResourceEntry_byName((u32)'DATA', aram_resName[res_no], forest_arc_aram_script_p);
+
+        if (entry != nullptr) {
+            res_size = entry->mSize;
+        }
+#endif
     }
 
     return res_size;
@@ -626,7 +727,11 @@ extern void forest_suppressPadReset() {
 
 extern void JW_Init() {
     const u32 soundAramSize = 0x810000;
+#if VERSION == VER_GAFP01_00
+    const u32 graphAramSize = 0x6EC000;
+#else
     const u32 graphAramSize = 0x6A3780;
+#endif
 
     void* arena_hi = OSGetArenaHi();
     void* arena_lo = OSGetArenaLo();
@@ -687,7 +792,20 @@ extern void JW_Init2() {
         }
     }
 
+#if VERSION == VER_GAFP01_00
+    if (forest_arc_aram_script_p == nullptr) {
+        forest_arc_aram_script_p = JC_JKRAramArchive_new();
+
+        if (forest_arc_aram_script_p == nullptr ||
+            JC__JKRMountFixedAramArchive(forest_arc_aram_script_p, "forest_1st_script.arc") == FALSE) {
+            OSDVDFatalError();
+        }
+    }
+
+    gameheap_len = JC_JKRHeap_getFreeSize(JC_JFWSystem_getSystemHeap()) - 0x153F80;
+#else
     gameheap_len = JC_JKRHeap_getFreeSize(JC_JFWSystem_getSystemHeap()) - 0x10000;
+#endif
     gameheap_base = JC_JKRHeap_alloc(JC_JFWSystem_getSystemHeap(), gameheap_len, 32);
     MallocInit(gameheap_base, gameheap_len);
     JC_JKRExpHeap_changeGroupID(JC_JFWSystem_getSystemHeap(), 4);
@@ -703,6 +821,19 @@ extern void JW_Init3() {
         }
     }
 }
+
+#if VERSION == VER_GAFP01_00
+extern void JW_Init4() {
+    if (forest_arc_aram_msg_p == nullptr) {
+        forest_arc_aram_msg_p = JC_JKRAramArchive_new();
+
+        if (forest_arc_aram_msg_p == nullptr ||
+            JC__JKRMountFixedAramArchive(forest_arc_aram_msg_p, "forest_msg.arc") == FALSE) {
+            OSDVDFatalError();
+        }
+    }
+}
+#endif
 
 extern void JW_Cleanup() {
     MallocCleanup();
@@ -720,6 +851,20 @@ extern void JW_Cleanup() {
         JC_JKRAramArchive_delete(forest_arc_aram2_p);
         forest_arc_aram2_p = nullptr;
     }
+
+#if VERSION == VER_GAFP01_00
+    if (forest_arc_aram_msg_p != nullptr) {
+        JC__JKRUnmountFixedAramArchive(forest_arc_aram_msg_p);
+        JC_JKRAramArchive_delete(forest_arc_aram_msg_p);
+        forest_arc_aram_msg_p = nullptr;
+    }
+
+    if (forest_arc_aram_script_p != nullptr) {
+        JC__JKRUnmountFixedAramArchive(forest_arc_aram_script_p);
+        JC_JKRAramArchive_delete(forest_arc_aram_script_p);
+        forest_arc_aram_script_p = nullptr;
+    }
+#endif
 
     JC_JFWDisplay_destroyManager();
 

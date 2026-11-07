@@ -8,6 +8,15 @@
 #include "dolphin/vi.h"
 #include "dolphin/gx.h"
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#include "../src/PAL/static/dvderr_data_fr.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#include "../src/PAL/static/dvderr_data_de.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#include "../src/PAL/static/dvderr_data_it.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#include "../src/PAL/static/dvderr_data_es.c_inc"
+#else
 /* imports */
 static u8 dvd_keikoku_moji1_1_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/dvd_keikoku_moji1_1_tex.inc"
@@ -774,6 +783,8 @@ static Gfx keikoku5_dvd_att_winT_model[] = {
   ),
   gsSPEndDisplayList(),
 };
+
+#endif
 
 static dvderr_work Dvderr_work;
 static dvderr_work* const this = &Dvderr_work;

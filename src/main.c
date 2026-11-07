@@ -29,7 +29,6 @@ int ScreenWidth = SCREEN_WIDTH;
 int ScreenHeight = SCREEN_HEIGHT;
 
 extern void mainproc(void* val) {
-
     irqmgr_client_t irqClient;
     OSMessageQueue irqMgrMsgQueue;
     OSMessage irqMsgBuf[10];
@@ -59,6 +58,9 @@ extern void mainproc(void* val) {
     osSetThreadPri(NULL, 5);
 
     JW_Init3();
+#if VERSION == VER_GAFP01_00
+    JW_Init4();
+#endif
     mMsg_aram_init2();
     mLd_StartFlagOn();
     famicom_mount_archive();

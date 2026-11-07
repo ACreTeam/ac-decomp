@@ -13,6 +13,9 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_en/ldscript.tpl
 
 block_relocations:
+# gam_win_moji3_tex: raw texture pixels are not pointers.
+- source: 0x800C6C58
+- source: 0x800C8F78
 # dvderr: raw texture pixel words are not pointers.
 - source: 0x800BCAF4
 - source: 0x800BFD6C

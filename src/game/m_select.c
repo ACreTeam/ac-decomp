@@ -1,6 +1,9 @@
 #include "m_select.h"
 
 #include "m_play.h"
+#if VERSION == VER_GAFP01_00
+#include "reload_data.h"
+#endif
 #include "m_private.h"
 #include "m_home.h"
 #include "m_kabu_manager.h"
@@ -22,7 +25,11 @@
 static void game_next_play(GAME* game, int scene_no) {
     Save_Set(scene_no, scene_no);
 
+#if VERSION == VER_GAFP01_00
+    GAME_GOTO_NEXT(game, reload_data, RELOAD_DATA);
+#else
     GAME_GOTO_NEXT(game, play, PLAY);
+#endif
     mHm_SetNowHome();
     Common_Set(door_data.next_scene_id, 0);
     Kabu_decide_price_schedule();
@@ -665,13 +672,31 @@ static void select_print_wait(gfxprint_t* gfxprint) {
     gfxprint_printf(gfxprint, "%s", msgs[msg_no]);
 }
 
+#if VERSION == VER_GAFP01_00
+#define SELECT_TITLE_X 10
+#if GAME_LANGUAGE == GAME_LANG_FR
+#define SELECT_TITLE "FOREST MAP SELECT <FRN>"
+#elif GAME_LANGUAGE == GAME_LANG_DE
+#define SELECT_TITLE "FOREST MAP SELECT <GMN>"
+#elif GAME_LANGUAGE == GAME_LANG_IT
+#define SELECT_TITLE "FOREST MAP SELECT <ITL>"
+#elif GAME_LANGUAGE == GAME_LANG_ES
+#define SELECT_TITLE "FOREST MAP SELECT <SPN>"
+#else
+#define SELECT_TITLE "FOREST MAP SELECT <ENG>"
+#endif
+#else
+#define SELECT_TITLE_X 12
+#define SELECT_TITLE "FOREST MAP SELECT"
+#endif
+
 static void select_print_course_name(GAME_SELECT* select, gfxprint_t* gfxprint) {
     const char* name;
     int i;
 
     gfxprint_color(gfxprint, 255, 155, 150, 255);
-    gfxprint_locate8x8(gfxprint, 12, 2);
-    gfxprint_printf(gfxprint, "FOREST MAP SELECT");
+    gfxprint_locate8x8(gfxprint, SELECT_TITLE_X, 2);
+    gfxprint_printf(gfxprint, SELECT_TITLE);
 
     gfxprint_color(gfxprint, 255, 255, 255, 255);
     for (i = 0; i < 15; i++) {

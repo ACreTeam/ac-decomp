@@ -438,6 +438,10 @@ public:
         bool mReset;
     };
 
+    static CButton& getPadButton(EPadPort port) {
+        return mPadButton[port];
+    }
+
     static bool isPadOk() { // fabricated
         bool ret = false;
         switch(mPadStatus[0].err) {

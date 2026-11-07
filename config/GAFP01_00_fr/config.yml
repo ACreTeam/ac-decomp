@@ -13,6 +13,9 @@ fill_gaps: true
 ldscript_template: config/GAFP01_00_fr/ldscript.tpl
 
 block_relocations:
+# gam_win_moji3_tex: raw texture pixels are not pointers.
+- source: 0x800C8278
+- source: 0x800CA598
 # dvderr: raw texture pixel words are not pointers.
 - source: 0x800BCAFC
 - source: 0x800C13B0
@@ -253,6 +256,68 @@ extract:
   header_type: symbol
 - symbol: JUTResFONT_Ascfont_fix12
   binary: assets/JSystem/JUtility/FontData/Ascfont_fix12.bfn
+
+# Localized DVD error message textures.
+- symbol: dvd_keikoku1_1!.data:0x800BC000
+  binary: assets/dvd_keikoku1_1.bin
+  header: assets/dvd_keikoku1_1.inc
+  header_type: raw
+- symbol: dvd_keikoku1_2!.data:0x800BC800
+  binary: assets/dvd_keikoku1_2.bin
+  header: assets/dvd_keikoku1_2.inc
+  header_type: raw
+- symbol: dvd_keikoku1_3!.data:0x800BD000
+  binary: assets/dvd_keikoku1_3.bin
+  header: assets/dvd_keikoku1_3.inc
+  header_type: raw
+- symbol: dvd_keikoku2_1!.data:0x800BF180
+  binary: assets/dvd_keikoku2_1.bin
+  header: assets/dvd_keikoku2_1.inc
+  header_type: raw
+- symbol: dvd_keikoku2_2!.data:0x800BF980
+  binary: assets/dvd_keikoku2_2.bin
+  header: assets/dvd_keikoku2_2.inc
+  header_type: raw
+- symbol: dvd_keikoku3_1!.data:0x800C0220
+  binary: assets/dvd_keikoku3_1.bin
+  header: assets/dvd_keikoku3_1.inc
+  header_type: raw
+- symbol: dvd_keikoku3_2!.data:0x800C0A20
+  binary: assets/dvd_keikoku3_2.bin
+  header: assets/dvd_keikoku3_2.inc
+  header_type: raw
+- symbol: dvd_keikoku4_1!.data:0x800C12C0
+  binary: assets/dvd_keikoku4_1.bin
+  header: assets/dvd_keikoku4_1.inc
+  header_type: raw
+- symbol: dvd_keikoku4_2!.data:0x800C1AC0
+  binary: assets/dvd_keikoku4_2.bin
+  header: assets/dvd_keikoku4_2.inc
+  header_type: raw
+- symbol: dvd_keikoku4_3!.data:0x800C22C0
+  binary: assets/dvd_keikoku4_3.bin
+  header: assets/dvd_keikoku4_3.inc
+  header_type: raw
+- symbol: dvd_keikoku4_4!.data:0x800C2AC0
+  binary: assets/dvd_keikoku4_4.bin
+  header: assets/dvd_keikoku4_4.inc
+  header_type: raw
+- symbol: dvd_keikoku5_1!.data:0x800C3820
+  binary: assets/dvd_keikoku5_1.bin
+  header: assets/dvd_keikoku5_1.inc
+  header_type: raw
+- symbol: dvd_keikoku5_2!.data:0x800C4020
+  binary: assets/dvd_keikoku5_2.bin
+  header: assets/dvd_keikoku5_2.inc
+  header_type: raw
+- symbol: dvd_keikoku5_3!.data:0x800C4820
+  binary: assets/dvd_keikoku5_3.bin
+  header: assets/dvd_keikoku5_3.inc
+  header_type: raw
+- symbol: dvd_keikoku5_4!.data:0x800C5020
+  binary: assets/dvd_keikoku5_4.bin
+  header: assets/dvd_keikoku5_4.inc
+  header_type: raw
 
 modules:
 - object: files/foresta.rel.szs

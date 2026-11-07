@@ -25,7 +25,6 @@ PENDING_PORTS = {
 
 # These asset groups were localized further outside the English PAL release.
 LANGUAGE_PENDING_PORTS = {
-    "dvderr.o": {"fr", "de", "it", "es"},
     "data/field/bg/acre/police_indoor/police_indoor.c": {"fr", "de", "it", "es"},
     "data/field/bg/acre/rom_shop4_1/rom_shop4_1.c": {"fr", "de", "it", "es"},
     "data/field/bg/acre/rom_shop4_fuku/rom_shop4_fuku.c": {"fr", "de", "it", "es"},
@@ -36,6 +35,15 @@ LANGUAGE_PENDING_PORTS = {
 
 # foresta objects verified against all five PAL languages.
 MATCHING_FORESTA = {
+    "ac_animal_logo.o",
+    "main.o",
+    "m_select.o",
+    "m_play.o",
+    "m_trademark.o",
+    "save_menu.o",
+    "famicom_emu.o",
+    "reload_data.o",
+
     "m_calendar_ovl.o",
     "m_notice_ovl.o",
     "m_address_ovl.o",
@@ -756,6 +764,9 @@ MATCHING_JAUDIO = {
 
 # Additional objects verified across all five PAL languages, including linked hashes.
 MATCHING_ADDITIONAL = {
+    "initial_menu.o",
+    "dvderr.o",
+    "jsyswrap.o",
     "Famicom.a/ks_nes_core.cpp",
     "Famicom.a/ks_nes_draw.cpp",
     "JGadget.a/linklist.cpp",
