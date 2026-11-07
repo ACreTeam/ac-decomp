@@ -15,8 +15,13 @@ extern "C" {
 enum {
     mTI_IDX_HOUR,
     mTI_IDX_MIN,
+#if VERSION == VER_GAFP01_00
+    mTI_IDX_DAY,
+    mTI_IDX_MONTH,
+#else
     mTI_IDX_MONTH,
     mTI_IDX_DAY,
+#endif
     mTI_IDX_YEAR,
     mTI_IDX_OK,
 

@@ -1,0 +1,287 @@
+static u8 wr_You_cant_hold[26] = "Tu ne peux pas porter plus";
+
+static u8 wr_any_more_letters_Want_to[25] = { 'd', 'e',        CHAR_SPACE, 'l', 'e', 't', 't', 'r',         'e',
+                                              's', '.',        CHAR_SPACE, 'V', 'e', 'u', 'x', CHAR_HYPHEN, 't',
+                                              'u', CHAR_SPACE, 'j',        'e', 't', 'e', 'r' };
+
+static u8 wr_throw_away_some_old_ones[20] = "d'anciennes lettres?";
+
+static u8 wr_Yes[3] = "Oui";
+
+static u8 wr_No[3] = "Non";
+
+static u8 wr_You_cant_pull_out_a_present[32] = {
+    'T',        'u', CHAR_SPACE, 'n',        'e', CHAR_SPACE,   'p', 'e', 'u', 'x', CHAR_SPACE,
+    'p',        'a', 's',        CHAR_SPACE, 'd', CHAR_ACUTE_e, 'p', 'o', 's', 'e', 'r',
+    CHAR_SPACE, 'd', 'e',        CHAR_SPACE, 'c', 'a',          'd', 'e', 'a', 'u'
+};
+
+static u8 wr_when_your_item_screen_is_full[31] = "quand ton inventaire est plein!";
+
+static u8 wr_You_cant_carry[25] = "Tu ne peux pas garder sur";
+
+static u8 wr_more_than_99999_Bells[30] = "toi plus de 99.999 clochettes!";
+
+static u8 wr_You_cant_mail[25] = "Tu ne peux pas envoyer de";
+
+static u8 wr_turnips_or_living_things[26] = {
+    'n', 'a', 'v', 'e', 't',        's', CHAR_SPACE, 'n', 'i', CHAR_SPACE, 'd', '\'', CHAR_CIRCUMFLEX_e,
+    't', 'r', 'e', 's', CHAR_SPACE, 'v', 'i',        'v', 'a', 'n',        't', 's',  '!'
+};
+
+static u8 wr_You_cant_mail2[23] = "Tu ne peux pas envoyer ";
+
+static u8 wr_someone_elses_belongings[30] = "d'objets ne t'appartenant pas!";
+
+static u8 wr_You_cant_mail3[23] = "Tu ne peux pas envoyer ";
+
+static u8 wr_a_wrapped_present[20] = { 'd',        'e', CHAR_SPACE, 'c', 'a', 'd', 'e', 'a',          'u', 'x',
+                                       CHAR_SPACE, 'e', 'm',        'b', 'a', 'l', 'l', CHAR_ACUTE_e, 's', '!' };
+
+static u8 wr_You_cant_carry2[27] = "Comme tu ne peux pas porter";
+
+static u8 wr_any_more_letters[17] = "d'autres lettres,";
+
+static u8 wr_so_you_cant_write_a_new_one[26] = { 't', 'u',        CHAR_SPACE, 'n',        'e',        CHAR_SPACE,   'p',
+                                                 'e', 'u',        'x',        CHAR_SPACE, 'p',        'l',          'u',
+                                                 's', CHAR_SPACE, 'e',        'n',        CHAR_SPACE, CHAR_ACUTE_e, 'c',
+                                                 'r', 'i',        'r',        'e',        '!' };
+
+static u8 wr_Your_item_screen_is_full[32] = "Tu ne peux pas imprimer de motif";
+
+static u8 wr_so_you_cant_use_a_pattern[31] = "quand ton inventaire est plein!";
+
+static u8 wr_You_cant_carry3[22] = "Tu ne peux pas envoyer";
+
+static u8 wr_an_exercise_card[24] = {
+    'd', 'e', CHAR_SPACE,        'c', 'a', 'r', 't', 'e', CHAR_SPACE, 'd', '\'', 'e', 'n', 't',
+    'r', 'a', CHAR_CIRCUMFLEX_i, 'n', 'e', 'm', 'e', 'n', 't',        '!'
+};
+
+static u8 wr_You_cant_put[20] = "Tu ne peux pas poser";
+
+static u8 wr_any_more_items_out[18] = "plus d'objets ici!";
+
+static u8 wr_You_cant_put2[20] = "Tu ne peux pas poser";
+
+static u8 wr_any_more_items_there[20] = "d'autres objets ici!";
+
+static u8 wr_This_diary_is_locked[24] = { 'L',        '\'', 'a', 'g', 'e',        'n', 'd',          'a',
+                                          CHAR_SPACE, 'e',  's', 't', CHAR_SPACE, 'v', 'e',          'r',
+                                          'r',        'o',  'u', 'i', 'l',        'l', CHAR_ACUTE_e, '!' };
+
+static u8 wr_You_cant_pull_anything_out[29] = { 'T',          'u', CHAR_SPACE, 'n', 'e', CHAR_SPACE, 'p',        'e',
+                                                'u',          'x', CHAR_SPACE, 'p', 'a', 's',        CHAR_SPACE, 'd',
+                                                CHAR_ACUTE_e, 'p', 'o',        's', 'e', 'r',        CHAR_SPACE, 'c',
+                                                'a',          'd', 'e',        'a', 'u' };
+
+static u8 wr_when_your_item_screen_is_full2[31] = "quand ton inventaire est plein!";
+
+static u8 wr_Theres_already_music_in_there[30] = { 'l',        'l',        CHAR_SPACE,   'y', CHAR_SPACE,   'a',
+                                                   CHAR_SPACE, 'd',        CHAR_ACUTE_e, 'j', CHAR_GRAVE_a, CHAR_SPACE,
+                                                   'd',        'e',        CHAR_SPACE,   'l', 'a',          CHAR_SPACE,
+                                                   'm',        'u',        's',          'i', 'q',          'u',
+                                                   'e',        CHAR_SPACE, 'i',          'c', 'i',          '!' };
+
+static u8 wr_You_cant_drop[23] = { 'T',          'u', CHAR_SPACE, 'n', 'e', CHAR_SPACE, 'p',        'e',
+                                   'u',          'x', CHAR_SPACE, 'p', 'a', 's',        CHAR_SPACE, 'd',
+                                   CHAR_ACUTE_e, 'p', 'o',        's', 'e', 'r',        CHAR_SPACE };
+
+static u8 wr_any_more_items_here[20] = "d'autres objets ici!";
+
+static u8 wr_You_cant_open_a_bag[25] = { 'P', 'o', 'u',        'r', CHAR_SPACE, 'o', 'u',        'v', 'r',
+                                         'i', 'r', CHAR_SPACE, 'u', 'n',        'e', CHAR_SPACE, 'p', 'o',
+                                         'c', 'h', 'e',        't', 't',        'e', CHAR_HYPHEN };
+
+static u8 wr_unless_you_have_room[32] = "surprise, il te faut de la place";
+
+static u8 wr_for_three_more_items[27] = "pour trois objets au moins!";
+
+static u8 wr_You_cant_plant_anything_here[28] = "Tu ne peux rien planter ici!";
+
+static u8 wr_You_cant_put_a_sign_up_here[22] = "Tu ne peux pas placer ";
+
+static u8 wr_You_cant_put_a_sign_up_here2[15] = "de panneau ici!";
+
+static u8 wr_You_can_put_signs_up_only[30] = "Tu ne peux placer des panneaux";
+
+static u8 wr_in_your_own_village[21] = "que dans ton village!";
+
+static u8 wr_You_cant_put_signs_on_the_island[22] = "Tu ne peux pas placer ";
+
+static u8 wr_You_cant_put_signs_on_the_island2[21] = { 'd', 'e', CHAR_SPACE, 'p', 'a',        'n',
+                                                       'n', 'e', 'a',        'u', CHAR_SPACE, 's',
+                                                       'u', 'r', CHAR_SPACE, 'l', '\'',       CHAR_CIRCUMFLEX_i,
+                                                       'l', 'e', '!' };
+
+static u8 wr_You_cant_leave[22] = "Tu ne peux pas laisser";
+
+static u8 wr_this_NES_on_the_island[20] = {
+    'c', 'e', 't',        't', 'e',  CHAR_SPACE,        'N', 'E', 'S', CHAR_SPACE, 's',
+    'u', 'r', CHAR_SPACE, 'l', '\'', CHAR_CIRCUMFLEX_i, 'l', 'e', '!'
+};
+
+static u8 wr_You_dont_have_room[21] = "Tu n'as plus de place";
+
+static u8 wr_to_write_any_more[12] = { 'p', 'o', 'u', 'r', CHAR_SPACE, CHAR_ACUTE_e, 'c', 'r', 'i', 'r', 'e', '.' };
+
+static u8 wr_You_entered_letters[23] = { 'L', 'e',        CHAR_SPACE, 'c',        'o', 'd', 'e',         CHAR_SPACE,
+                                         'q', 'u',        'e',        CHAR_SPACE, 't', 'u', CHAR_SPACE,  'a',
+                                         's', CHAR_SPACE, 'e',        'n',        't', 'r', CHAR_ACUTE_e };
+
+static u8 wr_that_have_nothing_to_do[17] = "n'est pas valide!";
+
+static u8 wr_this_item[10] = "cet objet.";
+
+static mWR_line_c wr_mailbox_line[] = {
+    { 41.0f, 28.0f, wr_You_cant_hold, 26 },
+    { 45.0f, 24.0f, wr_any_more_letters_Want_to, 25 },
+    { 62.0f, 24.0f, wr_throw_away_some_old_ones, 20 },
+    { 94.0f, 24.0f, wr_Yes, 3 },
+    { 1.4e+02f, 0.0f, wr_No, 3 },
+};
+
+static mWR_line_c wr_pr_leave_line[] = {
+    { 36.0f, 4e+01f, wr_You_cant_pull_out_a_present, 32 },
+    { 45.0f, 24.0f, wr_when_your_item_screen_is_full, 31 },
+};
+
+static mWR_line_c wr_money_line[] = {
+    { 46.0f, 4e+01f, wr_You_cant_carry, 25 },
+    { 36.0f, 24.0f, wr_more_than_99999_Bells, 30 },
+};
+
+static mWR_line_c wr_pr_food_line[] = {
+    { 43.0f, 4e+01f, wr_You_cant_mail, 25 },
+    { 44.0f, 24.0f, wr_turnips_or_living_things, 26 },
+};
+
+static mWR_line_c wr_pr_quest_line[] = {
+    { 55.0f, 4e+01f, wr_You_cant_mail2, 23 },
+    { 3e+01f, 24.0f, wr_someone_elses_belongings, 30 },
+};
+
+static mWR_line_c wr_present_mail_line[] = {
+    { 53.0f, 4e+01f, wr_You_cant_mail3, 23 },
+    { 57.0f, 24.0f, wr_a_wrapped_present, 20 },
+};
+
+static mWR_line_c wr_write_line[] = {
+    { 53.0f, 4e+01f, wr_You_cant_carry2, 27 },
+    { 9e+01f, 24.0f, wr_any_more_letters, 17 },
+    { 6e+01f, 24.0f, wr_so_you_cant_write_a_new_one, 26 },
+};
+
+static mWR_line_c wr_original_line[] = {
+    { 36.0f, 4e+01f, wr_Your_item_screen_is_full, 32 },
+    { 43.0f, 24.0f, wr_so_you_cant_use_a_pattern, 31 },
+};
+
+static mWR_line_c wr_pr_card_line[] = {
+    { 4e+01f, 4e+01f, wr_You_cant_mail3, 23 },
+    { 35.0f, 24.0f, wr_an_exercise_card, 24 },
+};
+
+static mWR_line_c wr_put_max_furniture_line[] = {
+    { 38.0f, 4e+01f, wr_You_cant_put, 20 },
+    { 7e+01f, 24.0f, wr_any_more_items_out, 18 },
+};
+
+static mWR_line_c wr_put_furniture_line[] = {
+    { 48.0f, 4e+01f, wr_You_cant_put2, 20 },
+    { 54.0f, 24.0f, wr_any_more_items_there, 20 },
+};
+
+static mWR_line_c wr_lock_diary_line[] = {
+    { 38.0f, 46.0f, wr_This_diary_is_locked, 24 },
+};
+
+static mWR_line_c wr_music_line[] = {
+    { 47.0f, 4e+01f, wr_You_cant_pull_anything_out, 29 },
+    { 41.0f, 24.0f, wr_when_your_item_screen_is_full2, 31 },
+};
+
+static mWR_line_c wr_music2_line[] = {
+    { 38.0f, 46.0f, wr_Theres_already_music_in_there, 30 },
+};
+
+static mWR_line_c wr_put_item_line[] = {
+    { 52.0f, 4e+01f, wr_You_cant_drop, 23 },
+    { 58.0f, 24.0f, wr_any_more_items_here, 20 },
+};
+
+static mWR_line_c wr_hukubukuro_open_line[] = {
+    { 44.0f, 37.0f, wr_You_cant_open_a_bag, 25 },
+    { 29.0f, 24.0f, wr_unless_you_have_room, 32 },
+    { 4e+01f, 24.0f, wr_for_three_more_items, 27 },
+};
+
+static mWR_line_c wr_put_plant_line[] = {
+    { 39.0f, 46.0f, wr_You_cant_plant_anything_here, 28 },
+};
+
+static mWR_line_c wr_put_sign_line[] = {
+    { 56.0f, 4e+01f, wr_You_cant_put_a_sign_up_here, 22 },
+    { 74.0f, 24.0f, wr_You_cant_put_a_sign_up_here2, 15 },
+};
+
+static mWR_line_c wr_put_sign_other_line[] = {
+    { 44.0f, 4e+01f, wr_You_can_put_signs_up_only, 30 },
+    { 64.0f, 24.0f, wr_in_your_own_village, 21 },
+};
+
+static mWR_line_c wr_put_sign_island_line[] = {
+    { 56.0f, 4e+01f, wr_You_cant_put_signs_on_the_island, 22 },
+    { 6e+01f, 24.0f, wr_You_cant_put_signs_on_the_island2, 21 },
+};
+
+static mWR_line_c wr_put_fami_line[] = {
+    { 54.0f, 4e+01f, wr_You_cant_leave, 22 },
+    { 62.0f, 24.0f, wr_this_NES_on_the_island, 20 },
+};
+
+static mWR_line_c wr_word_over_line[] = {
+    { 54.0f, 4e+01f, wr_You_dont_have_room, 21 },
+    { 63.0f, 24.0f, wr_to_write_any_more, 12 },
+};
+
+static mWR_line_c wr_pw_chk_line[] = {
+    { 5e+01f, 4e+01f, wr_You_entered_letters, 23 },
+    { 7e+01f, 24.0f, wr_that_have_nothing_to_do, 17 },
+};
+
+static mWR_line_c wr_pr_fork_line[] = {
+    { 4e+01f, 4e+01f, wr_You_cant_mail2, 23 },
+    { 8e+01f, 24.0f, wr_this_item, 10 },
+};
+
+static mWR_data_c wr_win_data[] = {
+    { wr_mailbox_line, 5, 1.0f, 1.2f },
+    { wr_pr_leave_line, 2, 1.15f, 1.0f },
+    { wr_money_line, 2, 1.0f, 1.0f },
+    { wr_pr_food_line, 2, 1.0f, 1.0f },
+    { wr_pr_quest_line, 2, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { wr_put_max_furniture_line, 2, 0.95f, 1.0f },
+    { wr_put_furniture_line, 2, 0.95f, 1.0f },
+    { wr_put_item_line, 2, 1.0f, 1.0f },
+    { wr_put_plant_line, 1, 1.15f, 0.9f },
+    { wr_hukubukuro_open_line, 3, 1.0f, 1.15f },
+    { wr_present_mail_line, 2, 1.0f, 1.0f },
+    { wr_write_line, 3, 1.15f, 1.2f },
+    { wr_music_line, 2, 1.15f, 1.0f },
+    { wr_music2_line, 1, 1.15f, 0.9f },
+    { wr_original_line, 2, 1.13f, 1.0f },
+    { wr_put_sign_line, 2, 1.0f, 1.0f },
+    { wr_put_sign_other_line, 2, 1.1f, 1.0f },
+    { wr_put_sign_island_line, 2, 1.0f, 1.0f },
+    { wr_pr_card_line, 2, 0.9f, 1.0f },
+    { wr_lock_diary_line, 1, 0.9f, 0.9f },
+    { wr_put_fami_line, 2, 1.0f, 1.0f },
+    { wr_word_over_line, 2, 1.0f, 1.0f },
+    { wr_pw_chk_line, 2, 1.0f, 1.0f },
+    { wr_pr_fork_line, 2, 0.9f, 1.0f },
+};

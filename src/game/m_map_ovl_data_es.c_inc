@@ -1,0 +1,73 @@
+static mMP_LabelWord_c mMP_label_word_npc = { -92.0f, -19.0f, NULL, 0 };
+
+static mMP_Label_c mMP_label_npc = { -98.0f, -24.0f, kan_win_npcT_1_model, { &mMP_label_word_npc, NULL } };
+
+static mMP_LabelWord_c mMP_label_word_player = { -92.0f, -21.5f, NULL, 0 };
+
+static mMP_Label_c mMP_label_player = { -98.0f, -26.5f, kan_win_playerT_model, { &mMP_label_word_player, NULL } };
+
+static u8 mMP_label_str_shop[6] = "Tienda";
+
+static mMP_LabelWord_c mMP_label_word_shop = { -83.0f, -25.0f, mMP_label_str_shop, 6 };
+
+static mMP_Label_c mMP_label_shop = { -93.0f, -30.0f, kan_win_omiseT_model, { &mMP_label_word_shop, NULL } };
+
+static u8 mMP_label_str_police[9] = { 'C', 'o', 'm', 'i', 's', 'a', 'r', CHAR_ACUTE_i, 'a' };
+
+static mMP_LabelWord_c mMP_label_word_police = { -83.0f, -25.0f, mMP_label_str_police, 9 };
+
+static mMP_Label_c mMP_label_police = { -93.0f, -30.0f, kan_win_koubanT_model, { &mMP_label_word_police, NULL } };
+
+static u8 mMP_label_str_post[7] = "Oficina";
+
+static mMP_LabelWord_c mMP_label_word_post = { -83.0f, -19.0f, mMP_label_str_post, 7 };
+
+static u8 mMP_label_str_post2[10] = "de correos";
+
+static mMP_LabelWord_c mMP_label_word_post2 = { -83.0f, -31.0f, mMP_label_str_post2, 10 };
+
+static mMP_Label_c mMP_label_post = {
+    -93.0f, -30.0f, kan_win_yuuT_model, { &mMP_label_word_post, &mMP_label_word_post2 }
+};
+
+static u8 mMP_label_str_shrine[9] = "Fuente de";
+
+static mMP_LabelWord_c mMP_label_word_shrine = { -83.0f, -19.0f, mMP_label_str_shrine, 9 };
+
+static u8 mMP_label_str_shrine2[10] = "los deseos";
+
+static mMP_LabelWord_c mMP_label_word_shrine2 = { -83.0f, -31.0f, mMP_label_str_shrine2, 10 };
+
+static mMP_Label_c mMP_label_shrine = {
+    -93.0f, -30.0f, kan_win_yashiroT_model, { &mMP_label_word_shrine, &mMP_label_word_shrine2 }
+};
+
+static u8 mMP_label_str_station[8] = { 'E', 's', 't', 'a', 'c', 'i', CHAR_ACUTE_o, 'n' };
+
+static mMP_LabelWord_c mMP_label_word_station = { -83.0f, -25.0f, mMP_label_str_station, 8 };
+
+static mMP_Label_c mMP_label_station = { -93.0f, -30.0f, kan_win_ekiT_model, { &mMP_label_word_station, NULL } };
+
+static u8 mMP_label_str_junk[9] = "Vertedero";
+
+static mMP_LabelWord_c mMP_label_word_junk = { -83.0f, -25.0f, mMP_label_str_junk, 9 };
+
+static mMP_Label_c mMP_label_junk = { -93.0f, -30.0f, kan_win_gomiT_model, { &mMP_label_word_junk, NULL } };
+
+static u8 mMP_label_str_museum[5] = "Museo";
+
+static mMP_LabelWord_c mMP_label_word_museum = { -83.0f, -25.0f, mMP_label_str_museum, 5 };
+
+static mMP_Label_c mMP_label_museum = { -93.0f, -30.0f, kan_win_mu_model, { &mMP_label_word_museum, NULL } };
+
+static u8 mMP_label_str_needle[7] = "Modista";
+
+static mMP_LabelWord_c mMP_label_word_needle = { -83.0f, -25.0f, mMP_label_str_needle, 7 };
+
+static mMP_Label_c mMP_label_needle = { -93.0f, -30.0f, kan_win_ta_model, { &mMP_label_word_needle, NULL } };
+
+static u8 mMP_label_str_port[6] = "Muelle";
+
+static mMP_LabelWord_c mMP_label_word_port = { -83.0f, -25.0f, mMP_label_str_port, 6 };
+
+static mMP_Label_c mMP_label_port = { -93.0f, -30.0f, kan_win_funeT_model, { &mMP_label_word_port, NULL } };

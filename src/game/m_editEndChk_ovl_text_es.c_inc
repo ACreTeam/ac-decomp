@@ -1,0 +1,49 @@
+static u8 mEE_str_table[15] = { CHAR_INVERT_QUESTIONMARK,
+                                'E',
+                                's',
+                                't',
+                                '#',
+                                CHAR_SPACE,
+                                'b',
+                                'i',
+                                'e',
+                                'n',
+                                CHAR_SPACE,
+                                'a',
+                                's',
+                                CHAR_ACUTE_i,
+                                '?' };
+
+static u8 mEE_BOARD_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_BOARD_str_data1[2] = "No";
+
+static u8 mEE_NOTICE_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_NOTICE_str_data1[2] = "No";
+
+static u8 mEE_NOTICE_str_data2[5] = "Salir";
+
+static u8 mEE_MSCORE_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_MSCORE_str_data1[2] = "No";
+
+static u8 mEE_MSCORE_str_data2[5] = "Salir";
+
+static u8 mEE_CPMAIL_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_CPMAIL_str_data1[2] = "No";
+
+static u8 mEE_CPMAIL_str_data2[5] = "Salir";
+
+static u8 mEE_DESIGN_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_DESIGN_str_data1[2] = "No";
+
+static u8 mEE_DESIGN_str_data2[5] = "Salir";
+
+static u8 mEE_CPORIGINAL_str_data0[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 mEE_CPORIGINAL_str_data1[2] = "No";
+
+static u8 mEE_CPORIGINAL_str_data2[5] = "Salir";

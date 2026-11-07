@@ -164,7 +164,17 @@ static mCL_win_data_c mCL_win_data[] = {
 };
 // clang-format on
 
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 not_sell[12] = { 'P', 'a', 's', CHAR_SPACE, CHAR_GRAVE_a, CHAR_SPACE, 'v', 'e', 'n', 'd', 'r', 'e' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 not_sell[11] = "Unverk]ufl.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 not_sell[12] = "Non si vende";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 not_sell[11] = "No se vende";
+#else
 static u8 not_sell[12] = "Not for Sale";
+#endif
 
 static void mCL_dma_furniture_program(mCL_Item_c* item) {
     item->profile = furniture_quality[item->ftr_actor.name];

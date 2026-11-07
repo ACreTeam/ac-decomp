@@ -6,6 +6,8 @@
 #include "m_editEndChk_ovl.h"
 #include "m_event.h"
 #include "m_font.h"
+#include "m_string.h"
+#include "m_msg.h"
 #include "m_quest.h"
 #include "sys_matrix.h"
 
@@ -484,13 +486,63 @@ static void mNT_set_key_dl(mNT_Ovl_c* notice_ovl, GRAPH* graph, f32 y) {
 }
 
 static void mNT_set_num_strings_dl(GAME* game, int page_no, f32 x, f32 y) {
-    static u8 num_str[8] = "entry   ";
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_EN)
+    static u8 num_str[8] = "Entry   ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 num_str[10] = "Message   ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 num_str[10] = "Eintrag   ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 num_str[12] = "Messaggio   ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 num_str[8] = "Aviso   ";
+#else
+static u8 num_str[8] = "entry   ";
+#endif
 
-    mFont_UnintToString(&num_str[6], 2, page_no, 2, TRUE, FALSE, TRUE);
+    mFont_UnintToString(&num_str[sizeof(num_str) - 2], 2, page_no, 2, TRUE, FALSE, TRUE);
     mFont_SetLineStrings(game, num_str, sizeof(num_str), x + 63.0f, -y + 46.0f, 0, 0, 255, 255, FALSE, TRUE, 0.75f,
                          0.75f, mFont_MODE_POLY);
 }
 
+#if VERSION == VER_GAFP01_00
+static void mNT_set_day_strings_dl(GAME* game, lbRTC_time_c* time_p, f32 x, f32 y) {
+#if GAME_LANGUAGE == GAME_LANG_DE
+    static u8 space_str[2] = ". ";
+    static int space_len = 2;
+#else
+    static u8 space_str[1] = " ";
+    static int space_len = 1;
+#endif
+    u8 month_str[mMsg_STRING_TAG_BUFFER_SIZE];
+    u8 year_str[4];
+    u8 day_str[2];
+    f32 month_width;
+    f32 space_width;
+    int month_len;
+
+    if (time_p->month < lbRTC_JANUARY || time_p->month > lbRTC_DECEMBER) {
+        time_p->month = 13;
+    }
+
+    month_len = mString_Load_MonthStringFromRom(month_str, time_p->month);
+    month_width = (f32)mFont_GetStringWidth(month_str, month_len, TRUE) * 0.75f;
+    mFont_SetLineStrings(game, month_str, sizeof(month_str), (x + 227.0f) - month_width, -y + 46.0f,
+                        0, 0, 255, 255, FALSE, TRUE, 0.75f, 0.75f, mFont_MODE_POLY);
+
+    space_width = (f32)mFont_GetStringWidth(space_str, space_len, TRUE) * 0.75f;
+    mFont_UnintToString(day_str, 2, time_p->day, 2, FALSE, TRUE, TRUE);
+    mFont_SetLineStrings(game, day_str, sizeof(day_str), ((x + 212.0f) - month_width) - space_width, -y + 46.0f,
+                        0, 0, 255, 255, FALSE, TRUE, 0.75f, 0.75f, mFont_MODE_POLY);
+    mFont_SetLineStrings(game, space_str, space_len, ((x + 224.0f) - month_width) - space_width, -y + 46.0f,
+                        0, 0, 255, 255, FALSE, TRUE, 0.75f, 0.75f, mFont_MODE_POLY);
+
+    mFont_UnintToString(&year_str[0], 2, time_p->year / 100, 2, FALSE, TRUE, FALSE);
+    mFont_UnintToString(&year_str[2], 2, time_p->year % 100, 2, FALSE, TRUE, FALSE);
+    mFont_SetLineStrings(game, year_str, sizeof(year_str), x + 233.0f, -y + 46.0f, 0, 0, 255, 255, FALSE, TRUE,
+                        0.75f, 0.75f, mFont_MODE_POLY);
+}
+#else
 u8 january_str[7] = "January";
 u8 february_str[8] = "February";
 u8 march_str[5] = "March";
@@ -550,6 +602,8 @@ static void mNT_set_day_strings_dl(GAME* game, lbRTC_time_c* time_p, f32 x, f32 
     mFont_SetLineStrings(game, year_str, sizeof(year_str), x + 233.0f, -y + 46, 0, 0, 255, 255, FALSE, TRUE, 0.75f,
                          0.75f, mFont_MODE_POLY);
 }
+
+#endif
 
 static void mNT_set_strings_dl(mSM_MenuInfo_c* menu_info, GAME* game, u8* str_p, int body_len, f32 x, f32 y, f32* end_x,
                                f32* end_y) {

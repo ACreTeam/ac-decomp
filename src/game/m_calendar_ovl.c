@@ -7,6 +7,12 @@
 #include "sys_matrix.h"
 #include "m_malloc.h"
 
+#if VERSION == VER_GAFP01_00
+#define mCD_SUNDAY_COLUMN 6
+#else
+#define mCD_SUNDAY_COLUMN lbRTC_SUNDAY
+#endif
+
 static u32 mCD_visiter_chk(int player_no, int month, int day) {
     u32 ret = FALSE;
 
@@ -32,7 +38,7 @@ static u32 mCD_sp_soncho_chk(lbRTC_year_t year, lbRTC_month_t month, lbRTC_day_t
 
     switch (month) {
         case lbRTC_JUNE:
-#if VERSION == VER_GAFU01_00
+#if VERSION >= VER_GAFU01_00
             wday = lbRTC_Week(year, month, day);
 #else
             wday = lbRTC_Week(year, month, day + 1);
@@ -113,6 +119,17 @@ static int mCD_make_icon(lbRTC_year_t year, lbRTC_month_t month, lbRTC_day_t day
 static void mDC_set_string(mCD_Ovl_c* calendar) {
     if (calendar->_1043) {
         int event_idx = calendar->_103C[calendar->_1042] & 0x7F;
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN && GAME_LANGUAGE != GAME_LANG_DE
+        u8 string[mCD_EVENT_NAME_STR_LEN];
+        mem_clear(string, sizeof(string), CHAR_SPACE);
+        mSC_get_event_name_str(string, sizeof(string), event_idx);
+        if (event_idx == 4) {
+            int len = mMl_strlen(string, LAND_NAME_SIZE, CHAR_SPACE);
+            u8* str_p = string;
+            str_p++;
+            mLd_CopyLandName(str_p + len, Save_Get(land_info).name);
+        }
+#else
         int len = 0;
         u8 string[mCD_EVENT_NAME_STR_LEN];
 
@@ -123,6 +140,7 @@ static void mDC_set_string(mCD_Ovl_c* calendar) {
         }
 
         mSC_get_event_name_str(string + len, sizeof(string) - len, event_idx);
+#endif
         mem_copy(calendar->event_name_str, string, mCD_EVENT_NAME_STR_LEN);
         calendar->_1034 = 98.0f;
         calendar->_1038 = 0.0f;
@@ -157,12 +175,26 @@ static void mDC_set_disp_table(mCD_Ovl_c* calendar) {
     calendar->day_type = (entry_p->day_data[calendar->_1057] >> 5) & 7; // probably a struct bitfield
 }
 
+#if VERSION == VER_GAFP01_00
+static int mDC_weekly_to_day_data(mCD_month_entry_c* entry, int week, int days_after) {
+#else
 static int mDC_weekly_to_day_data(mCD_month_entry_c* entry, int week, u32 days_after) {
-    u8* data_p = &entry->day_data[days_after];
+#endif
+    u8* data_p;
     int ret = 0;
     int i;
 
-    for (i = days_after; i < 37; i += lbRTC_WEEK) {
+#if VERSION == VER_GAFP01_00
+    if (days_after == lbRTC_SUNDAY) {
+        days_after = 6;
+    } else {
+        days_after--;
+    }
+#endif
+    i = days_after;
+    data_p = &entry->day_data[i];
+
+    for (; i < 37; i += lbRTC_WEEK) {
         if ((*data_p & 0x1F) > 0) {
             week--;
         }
@@ -258,17 +290,28 @@ static void mCD_make_calendar_data_init(mCD_month_entry_c* entry) {
 
 static void mCD_make_calendar_data_holiday_and_icon(mCD_month_entry_c* entry, lbRTC_year_t year, lbRTC_month_t month, int player_no) {
     int first_weekday = lbRTC_Week(year, month, 1);
-    int days = lbRTC_GetDaysByMonth(year, month);
-    int end_day = first_weekday + days;
+    int days;
+    int end_day;
     int i;
-    int day = 1;
+    int day;
+
+#if VERSION == VER_GAFP01_00
+    if (first_weekday == lbRTC_SUNDAY) {
+        first_weekday = 6;
+    } else {
+        first_weekday--;
+    }
+#endif
+    days = lbRTC_GetDaysByMonth(year, month);
+    day = 1;
+    end_day = first_weekday + days;
 
     for (i = first_weekday; i < end_day; i++) {
         u8* data_p = &entry->day_data[i];
 
         *data_p = day;
         entry->_25[i] = mCD_make_icon(year, month, day, player_no);
-        if ((i % lbRTC_WEEK) == lbRTC_SUNDAY) {
+        if ((i % lbRTC_WEEK) == mCD_SUNDAY_COLUMN) {
             *data_p = (*data_p & 0x1F) | (mCD_DAY_FIRST_OF_WEEK << 5);
         } else {
             *data_p = (*data_p & 0x1F) | (1 << 5);
@@ -299,12 +342,19 @@ static void mCD_make_calendar_data_fixed_day_event(mCD_month_entry_c* entry) {
         // clang-format off
         { lbRTC_JANUARY,  1,           mSC_EVENT_NEW_YEARS_DAY},
         {lbRTC_FEBRUARY,  2,           mSC_EVENT_GROUNDHOG_DAY},
+#if VERSION == VER_GAFP01_00
+        {   lbRTC_MARCH, 15,         mSC_EVENT_SPRING_CLEANING},
+#endif
         {   lbRTC_APRIL,  1,          mSC_EVENT_APRILFOOLS_DAY},
         {   lbRTC_APRIL,  5, mSC_EVENT_CHERRY_BLOSSOM_FESTIVAL},
         {   lbRTC_APRIL,  6, mSC_EVENT_CHERRY_BLOSSOM_FESTIVAL},
         {   lbRTC_APRIL,  7, mSC_EVENT_CHERRY_BLOSSOM_FESTIVAL},
         {   lbRTC_APRIL, 22,              mSC_EVENT_NATURE_DAY},
+#if VERSION == VER_GAFP01_00
+        {     lbRTC_MAY,  1,                mSC_EVENT_LABOR_DAY},
+#else
         {     lbRTC_MAY,  1,         mSC_EVENT_SPRING_CLEANING},
+#endif
         {    lbRTC_JULY,  4,          mSC_EVENT_FIREWORKS_SHOW},
         {  lbRTC_AUGUST, 12,           mSC_EVENT_METEOR_SHOWER},
         {  lbRTC_AUGUST, 21,            mSC_EVENT_FOUNDERS_DAY},
@@ -336,7 +386,9 @@ static void mCD_make_calendar_data_unfixed_day_event(mCD_month_entry_c* entry, l
         {      lbRTC_MAY, 2,   lbRTC_SUNDAY, 0,      mSC_EVENT_MOTHERS_DAY},
         {     lbRTC_JUNE, 2,   lbRTC_FRIDAY, 0,   mSC_EVENT_GRADUATION_DAY},
         {     lbRTC_JUNE, 3,   lbRTC_SUNDAY, 0,      mSC_EVENT_FATHERS_DAY},
+#if VERSION != VER_GAFP01_00
         {lbRTC_SEPTEMBER, 1,   lbRTC_MONDAY, 0,        mSC_EVENT_LABOR_DAY},
+#endif
         {  lbRTC_OCTOBER, 2,   lbRTC_MONDAY, 0,    mSC_EVENT_EXPLORERS_DAY},
         { lbRTC_NOVEMBER, 1,   lbRTC_MONDAY, 1,       mSC_EVENT_MAYORS_DAY},
         { lbRTC_NOVEMBER, 4, lbRTC_THURSDAY, 0, mSC_EVENT_HARVEST_FESTIVAL},
@@ -358,7 +410,7 @@ static void mCD_make_calendar_data_unfixed_day_event(mCD_month_entry_c* entry, l
     }
 
     month_entry = &entry[lbRTC_JUNE - 1];
-    for (j = 0; j < 37; j += lbRTC_WEEK) {
+    for (j = mCD_SUNDAY_COLUMN; j < 37; j += lbRTC_WEEK) {
         int day = month_entry->day_data[j] & 0x1F;
 
         if (day > 0) {
@@ -367,7 +419,7 @@ static void mCD_make_calendar_data_unfixed_day_event(mCD_month_entry_c* entry, l
     }
 
     month_entry = &entry[lbRTC_NOVEMBER - 1];
-    for (k = 0; k < 37; k += lbRTC_WEEK) {
+    for (k = mCD_SUNDAY_COLUMN; k < 37; k += lbRTC_WEEK) {
         int day = month_entry->day_data[k] & 0x1F;
 
         if (day > 0) {

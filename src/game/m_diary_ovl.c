@@ -643,7 +643,29 @@ static void mDI_diary_ovl_move(Submenu* submenu) {
     (*ovl_move_proc[menu_info->proc_status])(submenu, menu_info);
 }
 
-#if VERSION == VER_GAFE01_00
+#if VERSION == VER_GAFP01_00
+extern Gfx dia_init_mode[];
+extern Gfx kei_win_b2_model[];
+extern Gfx kei_win_amojiT_model[];
+extern Gfx dia_win_bb_model[];
+extern Gfx dia_win_mojiT_model[];
+
+static void mDI_set_button_dl(GRAPH* graph, f32 pos_x, f32 pos_y) {
+    OPEN_POLY_OPA_DISP(graph);
+
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, dia_init_mode);
+    gSPDisplayList(POLY_OPA_DISP++, kei_win_b2_model);
+    gSPDisplayList(POLY_OPA_DISP++, kei_win_amojiT_model);
+    gSPDisplayList(POLY_OPA_DISP++, dia_win_bb_model);
+    gSPDisplayList(POLY_OPA_DISP++, dia_win_mojiT_model);
+
+    CLOSE_POLY_OPA_DISP(graph);
+}
+#elif VERSION == VER_GAFE01_00
 extern Gfx dia_init_mode[];
 // extern Gfx kei_win_b2_model[];
 extern Gfx kei_win_b2_model_1_data_4075A0[];
@@ -735,7 +757,11 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
     // clang-format on
 
     // clang-format off
-    static f32 month_tex_adjust[lbRTC_MONTHS_MAX] = {
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static f32 month_tex_adjust[12] = { -16.0f, -28.0f, -4e+01f, -44.0f, -53.0f, -52.0f,
+                                        -33.0f, -48.0f, 8.0f,    -13.0f, 4.0f,   4.0f };
+#else
+static f32 month_tex_adjust[lbRTC_MONTHS_MAX] = {
         -26.0f,
         -16.0f,
         -40.0f,
@@ -749,6 +775,7 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
         -6.0f,
         -6.0f,
     };
+#endif
     // clang-format on
 
     Matrix_push();
@@ -765,6 +792,7 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
     gDPLoadTextureBlock_8b_Dolphin(POLY_OPA_DISP++, month_tex_table[month], G_IM_FMT_IA, 16, 64, 0, GX_MIRROR, GX_MIRROR, 0, 0);
     gSPDisplayList(POLY_OPA_DISP++, dia_win_tukiT_model);
 
+#if VERSION != VER_GAFP01_00 || GAME_LANGUAGE == GAME_LANG_EN || GAME_LANGUAGE == GAME_LANG_FR
     Matrix_push();
     Matrix_translate(month_tex_adjust[month], 0.0f, 0.0f, MTX_MULT);
 
@@ -772,6 +800,7 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
     gSPDisplayList(POLY_OPA_DISP++, dia_win_moji_model);
 
     Matrix_pull();
+#endif
 
     Matrix_translate(0.0f, -194.0f, 0.0f, MTX_MULT);
 

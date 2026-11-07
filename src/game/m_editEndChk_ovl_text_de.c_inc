@@ -1,0 +1,35 @@
+static u8 mEE_str_table[5] = "O.K.?";
+
+static u8 mEE_BOARD_str_data0[2] = "Ja";
+
+static u8 mEE_BOARD_str_data1[6] = { CHAR_DIAERESIS_A, 'n', 'd', 'e', 'r', 'n' };
+
+static u8 mEE_NOTICE_str_data0[2] = "Ja";
+
+static u8 mEE_NOTICE_str_data1[6] = { CHAR_DIAERESIS_A, 'n', 'd', 'e', 'r', 'n' };
+
+static u8 mEE_NOTICE_str_data2[10] = "Weg damit!";
+
+static u8 mEE_MSCORE_str_data0[2] = "Ja";
+
+static u8 mEE_MSCORE_str_data1[6] = { CHAR_DIAERESIS_A, 'n', 'd', 'e', 'r', 'n' };
+
+static u8 mEE_MSCORE_str_data2[10] = "Weg damit!";
+
+static u8 mEE_CPMAIL_str_data0[2] = "Ja";
+
+static u8 mEE_CPMAIL_str_data1[4] = "Nein";
+
+static u8 mEE_CPMAIL_str_data2[6] = { 'Z', 'u', 'r', CHAR_DIARESIS_u, 'c', 'k' };
+
+static u8 mEE_DESIGN_str_data0[2] = "Ja";
+
+static u8 mEE_DESIGN_str_data1[6] = { CHAR_DIAERESIS_A, 'n', 'd', 'e', 'r', 'n' };
+
+static u8 mEE_DESIGN_str_data2[10] = "Weg damit!";
+
+static u8 mEE_CPORIGINAL_str_data0[2] = "Ja";
+
+static u8 mEE_CPORIGINAL_str_data1[6] = { CHAR_DIAERESIS_A, 'n', 'd', 'e', 'r', 'n' };
+
+static u8 mEE_CPORIGINAL_str_data2[10] = "Weg damit!";

@@ -1800,7 +1800,12 @@ static void mIV_SetLineStrings_centering(GAME* game, u8* string, int type, f32 x
 
         {
             8,
-            111.0f, 64.0f,
+            111.0f,
+#if VERSION == VER_GAFP01_00
+            68.0f,
+#else
+            64.0f,
+#endif
             0.9375f,
             { 70, 70, 100, 255 },
             90.0f

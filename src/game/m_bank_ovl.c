@@ -272,9 +272,25 @@ static void mBN_set_num_str(f32 x, f32 y, GAME* game, u32 num, f32 scale, rgba_t
 }
 
 static void mBN_set_character_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
-    static u8 kingaku_str[] = { CHAR_Y, CHAR_o, CHAR_u, CHAR_r, CHAR_SPACE, CHAR_A,
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 kingaku_str[10] = { 84, 111, 110, 32, 99, 111, 109, 112, 116, 101 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 kingaku_str[10] = { 68, 101, 105, 110, 32, 75, 111, 110, 116, 111 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 kingaku_str[12] = { 108, 108, 32, 116, 117, 111, 32, 99, 111, 110, 116, 111 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 kingaku_str[9] = { 84, 117, 32, 99, 117, 101, 110, 116, 97 };
+#else
+static u8 kingaku_str[] = { CHAR_Y, CHAR_o, CHAR_u, CHAR_r, CHAR_SPACE, CHAR_A,
                                 CHAR_c, CHAR_c, CHAR_o, CHAR_u, CHAR_n,     CHAR_t };
-    static u8 end_str[] = { CHAR_O, CHAR_K };
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 end_str[4] = { 79, 46, 75, 46 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 end_str[5] = { 76, 105, 115, 116, 111 };
+#else
+static u8 end_str[] = { CHAR_O, CHAR_K };
+#endif
     static rgba_t normal_col = { 0, 50, 255, 255 };
     static rgba_t select_col = { 195, 20, 20, 255 };
     static rgba_t bank_bell_col = { 170, 60, 145, 255 };

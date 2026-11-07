@@ -4,6 +4,12 @@
 #include "m_font.h"
 #include "sys_matrix.h"
 
+#if VERSION == VER_GAFP01_00
+#define mBR_DAY_POS_X 85.0f
+#else
+#define mBR_DAY_POS_X 171.0f
+#endif
+
 static mBR_Ovl_c birthday_ovl_data;
 
 static void mBR_window_close(Submenu* submenu, mSM_MenuInfo_c* menu_info, mBR_Ovl_c* birthday_ovl) {
@@ -127,8 +133,47 @@ extern u8 tim_win_november_tex_rgb_i4[];
 extern u8 tim_win_december_tex_rgb_i4[];
 
 static void mBR_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) {
-  static u8 chr_table[21] = "When's your birthday?";
-  static u8 close_table[2] = "OK";
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+  static u8 chr_table[23] = "Ta date d'anniversaire?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 chr_table[16] = "Dein Geburtstag?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+  static u8 chr_table[22] = "Quando compi gli anni?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 chr_table[21] = { CHAR_INVERT_QUESTIONMARK,
+                              'C',
+                              'u',
+                              '#',
+                              'n',
+                              'd',
+                              'o',
+                              CHAR_SPACE,
+                              'e',
+                              's',
+                              CHAR_SPACE,
+                              't',
+                              'u',
+                              CHAR_SPACE,
+                              'c',
+                              'u',
+                              'm',
+                              'p',
+                              'l',
+                              'e',
+                              '?' };
+#else
+static u8 chr_table[21] = "When's your birthday?";
+#endif
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 close_table[4] = "O.K.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 close_table[5] = "Listo";
+#else
+static u8 close_table[2] = "OK";
+#endif
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+  static u8 period_str[1] = ".";
+#endif
   static u8* month_tex[lbRTC_MONTHS_MAX] = {
     tim_win_january_tex_rgb_i4,
     tim_win_february_tex_rgb_i4,
@@ -205,13 +250,19 @@ static void mBR_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
   mFont_SetLineStrings(
     game,
     str, sizeof(str),
-    x + 171.0f, -y + 124.0f,
+    x + mBR_DAY_POS_X, -y + 124.0f,
     color_p[0], color_p[1], color_p[2], 255,
     FALSE,
     TRUE,
     1.0f, 1.0f,
     mFont_MODE_POLY
   );
+
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+  mFont_SetLineStrings(game, period_str, sizeof(period_str), x + 101.0f, -y + 124.0f,
+                      color_type[1][0], color_type[1][1], color_type[1][2], 255, FALSE, TRUE,
+                      1.0f, 1.0f, mFont_MODE_POLY);
+#endif
 
   color_p = color_type[birthday_ovl->idx != mBR_Ovl_IDX_OK];
   mFont_SetLineStrings(

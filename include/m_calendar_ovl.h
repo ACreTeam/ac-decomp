@@ -13,7 +13,11 @@ extern "C" {
 #endif
 
 #define mCD_YEARS_SHOWN 3
+#if VERSION == VER_GAFP01_00
+#define mCD_EVENT_NAME_STR_LEN 24
+#else
 #define mCD_EVENT_NAME_STR_LEN 16
+#endif
 
 enum {
     mCD_STICK_AREA_LEFT,

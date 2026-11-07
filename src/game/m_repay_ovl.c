@@ -204,9 +204,31 @@ static void mRP_set_num_str(GAME* game, u32 num, rgba_t* str_col_p, f32 x, f32 y
   );
 }
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define mRP_ACCOUNT_POS_X 141.0f
+#else
+#define mRP_ACCOUNT_POS_X 153.0f
+#endif
+
 static void mRP_set_character_dl(Submenu* submenu, GAME* game, f32 x, f32 y) {
-  static u8 kingaku_str[9] = "Your Loan";
-  static u8 kettei_str[2] = "OK";
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+  static u8 kingaku_str[8] = { 'T', 'o', 'n', CHAR_SPACE, 'p', 'r', CHAR_CIRCUMFLEX_e, 't' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 kingaku_str[11] = "Dein Kredit";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+  static u8 kingaku_str[13] = "Il tuo debito";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 kingaku_str[11] = { 'T', 'u', CHAR_SPACE, 'p', 'r', CHAR_ACUTE_e, 's', 't', 'a', 'm', 'o' };
+#else
+static u8 kingaku_str[9] = "Your Loan";
+#endif
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 kettei_str[4] = "O.K.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 kettei_str[5] = "Listo";
+#else
+static u8 kettei_str[2] = "OK";
+#endif
   static rgba_t money_col  = { 100,  40, 255, 255 };
   static rgba_t repay_col  = {  70, 120, 245, 255 };
   static rgba_t select_col = { 215,   0,   0, 255 };
@@ -225,7 +247,7 @@ static void mRP_set_character_dl(Submenu* submenu, GAME* game, f32 x, f32 y) {
   mFont_SetLineStrings(
     game,
     kingaku_str, sizeof(kingaku_str),
-    x + 153.0f, -y + 64.0f,
+    x + mRP_ACCOUNT_POS_X, -y + 64.0f,
     255, 255, 255, 255,
     FALSE,
     TRUE,

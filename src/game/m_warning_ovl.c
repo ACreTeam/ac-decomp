@@ -25,6 +25,15 @@ typedef struct warning_ovl_data_s {
  * u8 arrays with defined lengths to remove the null terminator.
  */
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#include "../src/game/m_warning_ovl_data_fr.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#include "../src/game/m_warning_ovl_data_de.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#include "../src/game/m_warning_ovl_data_it.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#include "../src/game/m_warning_ovl_data_es.c_inc"
+#else
 static u8 wr_You_cant_hold[14] = "You can't hold";
 static u8 wr_any_more_letters_Want_to[25] = "any more letters! Want to";
 static u8 wr_throw_away_some_old_ones[25] = "throw away some old ones?";
@@ -197,6 +206,7 @@ static mWR_data_c wr_win_data[] = {
     mWR_DATA(wr_pw_chk_line, 1.0f, 1.2f),
     mWR_DATA(wr_pr_fork_line, 0.9f, 1.0f),
 };
+#endif
 
 static void mWR_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     static f32 add[mWR_STATE_NUM] = { -0.2f, 0.2f };

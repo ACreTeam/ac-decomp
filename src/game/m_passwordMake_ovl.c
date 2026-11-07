@@ -108,13 +108,29 @@ static void mPM_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
   CLOSE_DISP(graph);
 }
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#define mPM_TITLE_POS_X 135.0f
+#else
+#define mPM_TITLE_POS_X 141.0f
+#endif
+
 static void mPM_set_character(Submenu* submenu, GAME* game, int sel_idx, f32 x, f32 y) {
   static u8 moji_color[mPM_ENTRY_NUM][3] = {
     {  20,   0,  0 },
     { 120, 100, 80 }
   };
 
-  static u8 title_str[17] = "Enter a receiver.";
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+  static u8 title_str[18] = "Quel destinataire?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 title_str[10] = "Empf]nger:";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+  static u8 title_str[10] = "Ricevente:";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 title_str[12] = "Destinatario";
+#else
+static u8 title_str[17] = "Enter a receiver.";
+#endif
   static f32 cursol_baseX[mPM_ENTRY_NUM] = { 136.0f, 136.0f };
   static f32 cursol_baseY[mPM_ENTRY_NUM] = { 68.0f, 96.0f };
 
@@ -129,7 +145,7 @@ static void mPM_set_character(Submenu* submenu, GAME* game, int sel_idx, f32 x, 
   mFont_SetLineStrings(
     game,
     title_str, sizeof(title_str),
-    141.0f + x, 34.0f - y,
+    mPM_TITLE_POS_X + x, 34.0f - y,
     255, 255, 255, 255,
     FALSE,
     TRUE,

@@ -1269,8 +1269,28 @@ extern void mBD_board_ovl_set_proc(Submenu* submenu) {
 }
 
 static void mBD_board_ovl_init(Submenu* submenu) {
-    static u8 header_str[3] = "To ";
-    static u8 footer_str[5] = "from ";
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 header_str[5] = "Pour ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 header_str[3] = "An ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 header_str[2] = "A ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 header_str[5] = "Para ";
+#else
+static u8 header_str[3] = "To ";
+#endif
+    #if VERSION != VER_GAFP01_00 || GAME_LANGUAGE != GAME_LANG_ES
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 footer_str[3] = "De ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 footer_str[4] = "Von ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 footer_str[3] = "Da ";
+#else
+static u8 footer_str[5] = "from ";
+#endif
+#endif
     mSM_MenuInfo_c* menu_info = &submenu->overlay->menu_info[mSM_OVL_BOARD];
     mBD_Ovl_c* board_ovl = submenu->overlay->board_ovl;
 
@@ -1296,9 +1316,15 @@ static void mBD_board_ovl_init(Submenu* submenu) {
             int name_len = mMl_strlen(Common_Get(now_private)->player_ID.player_name, PLAYER_NAME_LEN, CHAR_SPACE);
 
             mem_copy(board_ovl->mail.content.header, header_str, sizeof(header_str));
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+            mem_copy(board_ovl->mail.content.footer,
+#else
             mem_copy(board_ovl->mail.content.footer + sizeof(footer_str),
+#endif
                      Common_Get(now_private)->player_ID.player_name, name_len);
+#if VERSION != VER_GAFP01_00 || GAME_LANGUAGE != GAME_LANG_ES
             mem_copy(board_ovl->mail.content.footer, footer_str, sizeof(footer_str));
+#endif
             board_ovl->mail.content.header_back_start = sizeof(header_str);
         } else {
             mem_copy(board_ovl->mail.content.header, mail_header->header, MAIL_HEADER_LEN);

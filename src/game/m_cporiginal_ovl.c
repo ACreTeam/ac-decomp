@@ -11,7 +11,11 @@
 #include "m_hand_ovl.h"
 #include "m_malloc.h"
 
+#if VERSION == VER_GAFP01_00
+static mCO_Ovl_c co_ovl_data ATTRIBUTE_ALIGN(32);
+#else
 static mCO_Ovl_c co_ovl_data;
+#endif
 
 // clang-format off
 static rgb8_t env_table[mCO_PAGE_NUM] = {

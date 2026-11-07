@@ -10,8 +10,13 @@ extern "C" {
 #endif
 
 enum {
+#if VERSION == VER_GAFP01_00
+  mBR_Ovl_IDX_DAY,
+  mBR_Ovl_IDX_MONTH,
+#else
   mBR_Ovl_IDX_MONTH,
   mBR_Ovl_IDX_DAY,
+#endif
   mBR_Ovl_IDX_DATE_NUM,
 
   mBR_Ovl_IDX_OK = mBR_Ovl_IDX_DATE_NUM,

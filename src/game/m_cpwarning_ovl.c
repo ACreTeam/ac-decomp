@@ -5,12 +5,92 @@
 #include "m_common_data.h"
 #include "m_font.h"
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#define mCW_MESSAGE_X 44.0f
+#define mCW_YES_X 96.0f
+#define mCW_SECOND_MESSAGE_X 30.0f
+#define mCW_NO_CURSOR_X -19.0f
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define mCW_MESSAGE_X 41.0f
+#define mCW_YES_X 90.0f
+#define mCW_SECOND_MESSAGE_X 48.0f
+#define mCW_NO_CURSOR_X -23.0f
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#define mCW_MESSAGE_X 54.0f
+#define mCW_YES_X 94.0f
+#define mCW_SECOND_MESSAGE_X 62.0f
+#define mCW_NO_CURSOR_X -19.0f
+#else
+#define mCW_MESSAGE_X 54.0f
+#define mCW_YES_X 94.0f
+#define mCW_SECOND_MESSAGE_X 30.0f
+#define mCW_NO_CURSOR_X -19.0f
+#endif
+
 static mCW_Ovl_c cpwarning_ovl_data;
 
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mCW_mes0[21] = { 'A', 'u',        't', 'o',  'r', 'i', 's', 'e', 's', CHAR_HYPHEN, 't',
+                           'u', CHAR_SPACE, 'd', '\'', 'a', 'u', 't', 'r', 'e', 's' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mCW_mes0[23] = { 'M', CHAR_DIARESIS_o, 'c', 'h', 't', 'e', 's',        't', CHAR_SPACE, 'd', 'u',
+                           ',', CHAR_SPACE,      'd', 'a', 's', 's', CHAR_SPACE, 'j', 'e',        'd', 'e',
+                           'r' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mCW_mes0[22] = "Vuoi che qualcun altro";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mCW_mes0[18] = { CHAR_INVERT_QUESTIONMARK,
+                           'Q',
+                           'u',
+                           'i',
+                           'e',
+                           'r',
+                           'e',
+                           's',
+                           CHAR_SPACE,
+                           'q',
+                           'u',
+                           'e',
+                           CHAR_SPACE,
+                           't',
+                           'o',
+                           'd',
+                           'o',
+                           's' };
+#else
 static u8 mCW_mes0[18] = "Do you want to let";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mCW_mes1[28] = { 'p',          'e',        'r', 's', 'o', 'n', 'n',        'e', 's', CHAR_SPACE,
+                           CHAR_GRAVE_a, CHAR_SPACE, 'l', 'i', 'r', 'e', CHAR_SPACE, 't', 'o', 'n',
+                           CHAR_SPACE,   'a',        'g', 'e', 'n', 'd', 'a',        '?' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mCW_mes1[27] = "dieses Tagebuch lesen kann?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mCW_mes1[21] = "legga questi appunti?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mCW_mes1[17] = "puedan leer esto?";
+#else
 static u8 mCW_mes1[27] = "anyone else see this diary?";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mCW_yes_mes[3] = "Oui";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mCW_yes_mes[2] = "Ja";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mCW_yes_mes[2] = { 'S', CHAR_GRAVE_i };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mCW_yes_mes[2] = { 'S', CHAR_ACUTE_i };
+#else
 static u8 mCW_yes_mes[3] = "Yes";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mCW_no_mes[3] = "Non";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mCW_no_mes[4] = "Nein";
+#else
 static u8 mCW_no_mes[2] = "No";
+#endif
 
 enum {
     mCW_MOVE_OUT,
@@ -110,7 +190,7 @@ static void mCW_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     if (cpwarning_ovl->diary_edit_mode) {
         Matrix_translate(19.0f, -29.0f, 0.0f, MTX_MULT);
     } else {
-        Matrix_translate(-19.0f, -29.0f, 0.0f, MTX_MULT);
+        Matrix_translate(mCW_NO_CURSOR_X, -29.0f, 0.0f, MTX_MULT);
     }
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_att_cursor_model);
@@ -131,16 +211,16 @@ static void mCW_set_character_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* m
     submenu->overlay->set_char_matrix_proc(game->graph);
 
     y += 28.0f * scale;
-    mFont_SetLineStrings(game, mCW_mes0, sizeof(mCW_mes0), x + 54.0f * scale, y, 95, 20, 20, 255, FALSE, TRUE, scale,
+    mFont_SetLineStrings(game, mCW_mes0, sizeof(mCW_mes0), x + mCW_MESSAGE_X * scale, y, 95, 20, 20, 255, FALSE, TRUE, scale,
                          scale, mFont_MODE_POLY);
 
     y += 24.0f * scale;
-    mFont_SetLineStrings(game, mCW_mes1, sizeof(mCW_mes1), x + 30.0f * scale, y, 95, 20, 20, 255, FALSE, TRUE, scale,
+    mFont_SetLineStrings(game, mCW_mes1, sizeof(mCW_mes1), x + mCW_SECOND_MESSAGE_X * scale, y, 95, 20, 20, 255, FALSE, TRUE, scale,
                          scale, mFont_MODE_POLY);
 
     y += 24.0f * scale;
     color = color_table[cpwarning_ovl->diary_edit_mode];
-    mFont_SetLineStrings(game, mCW_yes_mes, sizeof(mCW_yes_mes), x + 94.0f * scale, y, color[0], color[1], color[2],
+    mFont_SetLineStrings(game, mCW_yes_mes, sizeof(mCW_yes_mes), x + mCW_YES_X * scale, y, color[0], color[1], color[2],
                          255, FALSE, TRUE, scale, scale, mFont_MODE_POLY);
     color = color_table[!cpwarning_ovl->diary_edit_mode];
     mFont_SetLineStrings(game, mCW_no_mes, sizeof(mCW_no_mes), x + 133.0f * scale, y, color[0], color[1], color[2], 255,

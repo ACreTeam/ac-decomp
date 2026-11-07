@@ -394,8 +394,33 @@ static void mTI_set_clock(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
 }
 
 static void mTI_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
-  static u8 str_line_adjust[17] = "Adjust the clock.";
-  static u8 str_line_ok[2] = "OK";
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+  static u8 str_line_adjust[16] = { 'R',  CHAR_ACUTE_e, 'g', 'l', 'e', 'r', CHAR_SPACE, 'l',
+                                    '\'', 'h',          'o', 'r', 'l', 'o', 'g',        'e' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 str_line_adjust[15] = "Zeit einstellen";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+  static u8 str_line_adjust[18] = "Imposta l'orologio";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 str_line_adjust[16] = "Ajustar el reloj";
+#else
+static u8 str_line_adjust[17] = "Adjust the clock.";
+#endif
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 str_line_ok[4] = "O.K.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 str_line_ok[5] = "Listo";
+#else
+static u8 str_line_ok[2] = "OK";
+#endif
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+  static u8 period_str[1] = ".";
+#endif
+#if VERSION == VER_GAFP01_00
+  static f32 set_pos[mTI_IDX_NUM][2] = {
+    { 79.0f, 115.0f }, { 103.0f, 115.0f }, { 85.0f, 141.0f }, { 0.0f, 0.0f }, { 196.0f, 141.0f }
+  };
+#else
   static f32 set_pos[mTI_IDX_NUM][2] = {
     {  79.0f, 115.0f }, // mTI_IDX_HOUR
     { 103.0f, 115.0f }, // mTI_IDX_MIN
@@ -403,8 +428,14 @@ static void mTI_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
     { 151.0f, 141.0f }, // mTI_IDX_DAY
     { 196.0f, 141.0f }  // mTI_IDX_YEAR
   };
+#endif
 
+#if VERSION == VER_GAFP01_00
+  u8 str[16];
+  u16 values[mTI_IDX_NUM];
+#else
   u8 str[2];
+#endif
   int* col;
   mTI_Ovl_c* timeIn_ovl = submenu->overlay->timeIn_ovl;
   f32* set_pos_p = &set_pos[0][0];
@@ -422,9 +453,23 @@ static void mTI_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
     mFont_MODE_POLY
   );
 
+#if VERSION == VER_GAFP01_00
+  values[mTI_IDX_YEAR] = timeIn_ovl->values[mTI_IDX_YEAR];
+  values[mTI_IDX_MONTH] = timeIn_ovl->values[mTI_IDX_MONTH];
+  values[mTI_IDX_DAY] = timeIn_ovl->values[mTI_IDX_DAY];
+  values[mTI_IDX_HOUR] = timeIn_ovl->values[mTI_IDX_HOUR];
+  values[mTI_IDX_MIN] = timeIn_ovl->values[mTI_IDX_MIN];
+#endif
   /* Draw all numeric values */
   for (i = 0; i < mTI_IDX_NUM; set_pos_p += 2, i++) {
     if (i != mTI_IDX_MONTH) {
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+      if (i == mTI_IDX_DAY) {
+        mFont_SetLineStrings(game, period_str, sizeof(period_str), 16.0f + (x + set_pos_p[0]), -y + set_pos_p[1],
+                            mTI_col_type1[0], mTI_col_type1[1], mTI_col_type1[2], 255, FALSE, TRUE,
+                            1.0f, 1.0f, mFont_MODE_POLY);
+      }
+#endif
       if (i == timeIn_ovl->sel_idx) {
         col = mTI_col_type0;
       }
@@ -432,7 +477,11 @@ static void mTI_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
         col = mTI_col_type1;
       }
 
+#if VERSION == VER_GAFP01_00
+      mFont_UnintToString(str, 2, values[i], 2, FALSE, TRUE, TRUE);
+#else
       mFont_UnintToString(str, 2, timeIn_ovl->values[i], 2, FALSE, TRUE, TRUE);
+#endif
       mFont_SetLineStrings(
         game,
         str, 2,
@@ -445,6 +494,7 @@ static void mTI_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
       );
     }
   }
+
 
   if (timeIn_ovl->sel_idx == mTI_IDX_OK) {
     col = mTI_col_type0;

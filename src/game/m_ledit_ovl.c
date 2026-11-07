@@ -8,13 +8,108 @@
 #include "m_common_data.h"
 #include "m_debug.h"
 
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_player_title[17] = "Quel est ton nom?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_player_title[10] = "Dein Name?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_player_title[15] = "Come ti chiami?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_player_title[16] = {
+    CHAR_INVERT_QUESTIONMARK,
+    'C',
+    CHAR_ACUTE_o,
+    'm',
+    'o',
+    CHAR_SPACE,
+    't',
+    'e',
+    CHAR_SPACE,
+    'l',
+    'l',
+    'a',
+    'm',
+    'a',
+    's',
+    '?',
+};
+#else
 static u8 mLE_player_title[16] = "Enter your name.";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_country_title[15] = "Ta destination?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_country_title[20] = "Gib den Zielort ein:";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_country_title[9] = "Dove vai?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_country_title[12] = {
+    CHAR_INVERT_QUESTIONMARK, 'A', 'd', CHAR_ACUTE_o, 'n', 'd', 'e', CHAR_SPACE, 'v', 'a', 's', '?'
+};
+#else
 static u8 mLE_country_title[18] = "Enter Destination.";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_ephrase_title[14] = "Ecris un truc!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_ephrase_title[8] = "Schreib!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_ephrase_title[16] = "Scrivi qualcosa!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_ephrase_title[10] = {
+    CHAR_INVERT_QUESTIONMARK, 'Q', 'u', CHAR_ACUTE_e, CHAR_SPACE, 'd', 'i', 'g', 'o', '?'
+};
+#else
 static u8 mLE_ephrase_title[16] = "Enter something!";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_reset_title[7] = { 'D', 'i', 's', CHAR_HYPHEN, 'l', 'e', '!' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_reset_title[7] = "Sag es!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_reset_title[6] = "Dillo!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_reset_title[6] = { CHAR_INVERT_EXCLAMATION, 'D', 'i', 'l', 'o', '!' };
+#else
 static u8 mLE_reset_title[7] = "Say it!";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_request_title[12] = "Une chanson!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_request_title[13] = "Welches Lied?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_request_title[17] = "Richiedi canzone!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_request_title[13] = {
+    CHAR_INVERT_QUESTIONMARK, 'Q', 'u', CHAR_ACUTE_e, CHAR_SPACE, 'c', 'a', 'n', 'c', 'i', CHAR_ACUTE_o, 'n', '?'
+};
+#else
 static u8 mLE_request_title[15] = "Request a song!";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_myoriginal_title[15] = "Choisis un nom.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_myoriginal_title[15] = "Namen eingeben!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_myoriginal_title[14] = "Scrivi un nome";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_myoriginal_title[13] = "Ponle nombre:";
+#else
 static u8 mLE_myoriginal_title[13] = "Enter a name.";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mLE_island_title[15] = "Ta destination?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mLE_island_title[17] = "Zielort eingeben!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mLE_island_title[17] = "Dove vuoi andare?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mLE_island_title[12] = {
+    CHAR_INVERT_QUESTIONMARK, 'A', 'd', CHAR_ACUTE_o, 'n', 'd', 'e', CHAR_SPACE, 'v', 'a', 's', '?'
+};
+#else
 static u8 mLE_island_title[20] = "Enter a destination.";
+#endif
 
 typedef struct ledit_win_data_s {
     f32 edit_ofs[2];
@@ -51,6 +146,12 @@ extern Gfx dna_win_model[];
 extern Gfx shi_win_mode[];
 extern Gfx shi_win_model[];
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#define mLE_REQUEST_TITLE_X 135.0f
+#else
+#define mLE_REQUEST_TITLE_X 138.0f
+#endif
+
 // clang-format off
 static mLE_win_data_c mLE_win_data[] = {
     {
@@ -83,7 +184,7 @@ static mLE_win_data_c mLE_win_data[] = {
     },
     {
         { 82.0f, 76.0f }, 1.0f,
-        { 138.0f, 41.0f }, 0.875f,
+        { mLE_REQUEST_TITLE_X, 41.0f }, 0.875f,
         mLE_request_title, sizeof(mLE_request_title),
         mIN_ITEM_NAME_LEN, 160, { 50, 50, 235, 255 },
         req_win_mode, req_win_model,
@@ -154,13 +255,9 @@ typedef void (*mLE_OVL_PROC)(Submenu*, mSM_MenuInfo_c*);
 
 static void mLE_ledit_ovl_move(Submenu* submenu) {
     static mLE_OVL_PROC ovl_move_proc[] = {
-        &mLE_move_Move,
-        (mLE_OVL_PROC)&none_proc1,
-        &mLE_move_Wait,
-        (mLE_OVL_PROC)&none_proc1,
-        &mLE_move_End,
+        &mLE_move_Move, (mLE_OVL_PROC)&none_proc1, &mLE_move_Wait, (mLE_OVL_PROC)&none_proc1, &mLE_move_End,
     };
-    
+
     mSM_MenuInfo_c* menu_info = &submenu->overlay->menu_info[mSM_OVL_LEDIT];
 
     menu_info->pre_move_func(submenu);
@@ -202,14 +299,15 @@ static void mLE_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info) 
         int i;
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, data_p->edit_color.r, data_p->edit_color.g, data_p->edit_color.b, 255);
-        for (i = 0; i < editor_ovl->now_str_len; i++) { 
+        for (i = 0; i < editor_ovl->now_str_len; i++) {
             if (editor_ovl->input_str[i] == CHAR_SPACE_3) {
                 int width = mFont_GetStringWidth(editor_ovl->input_str, i, TRUE);
 
                 Matrix_push();
-                Matrix_translate(6.0f + (edit_pos_x - 160.0f) + (f32)width, -(8.0f + (edit_pos_y - 120.0f)), 0.0f, MTX_MULT);
+                Matrix_translate(6.0f + (edit_pos_x - 160.0f) + (f32)width, -(8.0f + (edit_pos_y - 120.0f)), 0.0f,
+                                 MTX_MULT);
                 Matrix_scale(0.625f, 1.0f, 1.0f, MTX_MULT);
-                
+
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_OPA_DISP++, lat_sousa_spT_model);
 
@@ -301,8 +399,9 @@ static void mLE_ledit_ovl_init(Submenu* submenu) {
     menu_info->proc_status = mSM_OVL_PROC_MOVE;
     menu_info->next_proc_status = mSM_OVL_PROC_WAIT;
     menu_info->move_drt = mSM_MOVE_IN_TOP;
-    
-    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_LEDIT, max, str, mLE_win_data[menu_info->data0].edit_col_max);
+
+    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_LEDIT, max, str,
+                          mLE_win_data[menu_info->data0].edit_col_max);
 }
 
 extern void mLE_ledit_ovl_construct(Submenu* submenu) {

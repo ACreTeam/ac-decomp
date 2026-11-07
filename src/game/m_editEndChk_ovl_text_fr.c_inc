@@ -1,0 +1,35 @@
+static u8 mEE_str_table[5] = "O.K.?";
+
+static u8 mEE_BOARD_str_data0[3] = "Oui";
+
+static u8 mEE_BOARD_str_data1[8] = { 'R', CHAR_ACUTE_e, CHAR_ACUTE_e, 'c', 'r', 'i', 'r', 'e' };
+
+static u8 mEE_NOTICE_str_data0[3] = "Oui";
+
+static u8 mEE_NOTICE_str_data1[8] = { 'R', CHAR_ACUTE_e, CHAR_ACUTE_e, 'c', 'r', 'i', 'r', 'e' };
+
+static u8 mEE_NOTICE_str_data2[6] = "Jeter!";
+
+static u8 mEE_MSCORE_str_data0[3] = "Oui";
+
+static u8 mEE_MSCORE_str_data1[8] = { 'R', CHAR_ACUTE_e, CHAR_ACUTE_e, 'c', 'r', 'i', 'r', 'e' };
+
+static u8 mEE_MSCORE_str_data2[6] = "Jeter!";
+
+static u8 mEE_CPMAIL_str_data0[3] = "Oui";
+
+static u8 mEE_CPMAIL_str_data1[3] = "Non";
+
+static u8 mEE_CPMAIL_str_data2[7] = "Quitter";
+
+static u8 mEE_DESIGN_str_data0[3] = "Oui";
+
+static u8 mEE_DESIGN_str_data1[8] = "Modifier";
+
+static u8 mEE_DESIGN_str_data2[6] = "Jeter!";
+
+static u8 mEE_CPORIGINAL_str_data0[3] = "Oui";
+
+static u8 mEE_CPORIGINAL_str_data1[3] = "Non";
+
+static u8 mEE_CPORIGINAL_str_data2[6] = "Jeter!";

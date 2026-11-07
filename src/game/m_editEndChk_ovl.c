@@ -28,12 +28,26 @@ static mEE_win_data_c win_data[] = {
     { 3, lat_sentaku_winT_model, lat_sentaku_c_model, -81.0f, 58.0f, 42.0f, -55.0f, 1.0f, 15.0f },
     { 3, lat_sentaku_winT_model, lat_sentaku_c_model, -81.0f, 58.0f, 60.0f, -71.0f, 0.0f, 0.0f },
     { 3, lat_sentaku_winT_model, lat_sentaku_c_model, -81.0f, 58.0f, 60.0f, -71.0f, 1.0f, -4.0f },
+#if VERSION == VER_GAFP01_00
+    { 3, lat_sentaku_winT_model, lat_sentaku_c_model, -81.0f, 58.0f, 60.0f, -71.0f, 1.0f, -4.0f },
+#endif
 };
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#include "../src/game/m_editEndChk_ovl_text_fr.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#include "../src/game/m_editEndChk_ovl_text_de.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#include "../src/game/m_editEndChk_ovl_text_it.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#include "../src/game/m_editEndChk_ovl_text_es.c_inc"
+#else
 static u8 mEE_str_table[11] = "Is this OK?";
 static u8 mEE_str_data0[3] = "Yes";
 static u8 mEE_str_data1[7] = "Rewrite";
 static u8 mEE_str_data2[12] = "Throw it out";
+
+#endif
 
 static void mEE_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     (*submenu->overlay->move_Move_proc)(submenu, menu_info);
@@ -180,16 +194,30 @@ typedef struct editEndChk_str_s {
 } mEE_str_c;
 
 static void mEE_set_answer_character(Submenu* submenu, GRAPH* graph, GAME* game, mEE_win_data_c* data, f32 x, f32 y) {
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#include "../src/game/m_editEndChk_ovl_answers_fr.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#include "../src/game/m_editEndChk_ovl_answers_de.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#include "../src/game/m_editEndChk_ovl_answers_it.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#include "../src/game/m_editEndChk_ovl_answers_es.c_inc"
+#else
     static mEE_str_c str_table[] = {
         { mEE_str_data0, sizeof(mEE_str_data0) },
         { mEE_str_data1, sizeof(mEE_str_data1) },
         { mEE_str_data2, sizeof(mEE_str_data2) },
     };
+#endif
 
     static int col_table[2][3] = { { 165, 185, 185 }, { 100, 130, 245 } };
 
     mEE_Ovl_c* editEndChk_ovl = submenu->overlay->editEndChk_ovl;
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE != GAME_LANG_EN
+    mEE_str_c* str_p = str_table[submenu->overlay->menu_info[mSM_OVL_EDITENDCHK].data0];
+#else
     mEE_str_c* str_p = str_table;
+#endif
     f32 scale = editEndChk_ovl->scale;
     int max = data->answer_num;
     int i;

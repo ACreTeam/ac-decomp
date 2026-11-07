@@ -1,0 +1,79 @@
+static mMP_LabelWord_c mMP_label_word_npc = { -92.0f, -19.0f, NULL, 0 };
+
+static mMP_Label_c mMP_label_npc = { -98.0f, -24.0f, kan_win_npcT_1_model, { &mMP_label_word_npc, NULL } };
+
+static mMP_LabelWord_c mMP_label_word_player = { -92.0f, -21.5f, NULL, 0 };
+
+static mMP_Label_c mMP_label_player = { -98.0f, -26.5f, kan_win_playerT_model, { &mMP_label_word_player, NULL } };
+
+static u8 mMP_label_str_shop[7] = "Magasin";
+
+static mMP_LabelWord_c mMP_label_word_shop = { -83.0f, -25.0f, mMP_label_str_shop, 7 };
+
+static mMP_Label_c mMP_label_shop = { -93.0f, -30.0f, kan_win_omiseT_model, { &mMP_label_word_shop, NULL } };
+
+static u8 mMP_label_str_police[8] = "Poste de";
+
+static mMP_LabelWord_c mMP_label_word_police = { -83.0f, -19.0f, mMP_label_str_police, 8 };
+
+static u8 mMP_label_str_police2[6] = "police";
+
+static mMP_LabelWord_c mMP_label_word_police2 = { -83.0f, -31.0f, mMP_label_str_police2, 6 };
+
+static mMP_Label_c mMP_label_police = {
+    -93.0f, -30.0f, kan_win_koubanT_model, { &mMP_label_word_police, &mMP_label_word_police2 }
+};
+
+static u8 mMP_label_str_post[6] = "Bureau";
+
+static mMP_LabelWord_c mMP_label_word_post = { -83.0f, -19.0f, mMP_label_str_post, 6 };
+
+static u8 mMP_label_str_post2[8] = "de poste";
+
+static mMP_LabelWord_c mMP_label_word_post2 = { -83.0f, -31.0f, mMP_label_str_post2, 8 };
+
+static mMP_Label_c mMP_label_post = {
+    -93.0f, -30.0f, kan_win_yuuT_model, { &mMP_label_word_post, &mMP_label_word_post2 }
+};
+
+static u8 mMP_label_str_shrine[8] = "Fontaine";
+
+static mMP_LabelWord_c mMP_label_word_shrine = { -83.0f, -25.0f, mMP_label_str_shrine, 8 };
+
+static mMP_Label_c mMP_label_shrine = { -93.0f, -30.0f, kan_win_yashiroT_model, { &mMP_label_word_shrine, NULL } };
+
+static u8 mMP_label_str_station[4] = "Gare";
+
+static mMP_LabelWord_c mMP_label_word_station = { -83.0f, -25.0f, mMP_label_str_station, 4 };
+
+static mMP_Label_c mMP_label_station = { -93.0f, -30.0f, kan_win_ekiT_model, { &mMP_label_word_station, NULL } };
+
+static u8 mMP_label_str_junk[8] = { 'D', CHAR_ACUTE_e, 'c', 'h', 'a', 'r', 'g', 'e' };
+
+static mMP_LabelWord_c mMP_label_word_junk = { -83.0f, -25.0f, mMP_label_str_junk, 8 };
+
+static mMP_Label_c mMP_label_junk = { -93.0f, -30.0f, kan_win_gomiT_model, { &mMP_label_word_junk, NULL } };
+
+static u8 mMP_label_str_museum[5] = { 'M', 'u', 's', CHAR_ACUTE_e, 'e' };
+
+static mMP_LabelWord_c mMP_label_word_museum = { -83.0f, -25.0f, mMP_label_str_museum, 5 };
+
+static mMP_Label_c mMP_label_museum = { -93.0f, -30.0f, kan_win_mu_model, { &mMP_label_word_museum, NULL } };
+
+static u8 mMP_label_str_needle[7] = "Atelier";
+
+static mMP_LabelWord_c mMP_label_word_needle = { -83.0f, -19.0f, mMP_label_str_needle, 7 };
+
+static u8 mMP_label_str_needle2[10] = "de couture";
+
+static mMP_LabelWord_c mMP_label_word_needle2 = { -83.0f, -31.0f, mMP_label_str_needle2, 10 };
+
+static mMP_Label_c mMP_label_needle = {
+    -93.0f, -30.0f, kan_win_ta_model, { &mMP_label_word_needle, &mMP_label_word_needle2 }
+};
+
+static u8 mMP_label_str_port[6] = "Ponton";
+
+static mMP_LabelWord_c mMP_label_word_port = { -83.0f, -25.0f, mMP_label_str_port, 6 };
+
+static mMP_Label_c mMP_label_port = { -93.0f, -30.0f, kan_win_funeT_model, { &mMP_label_word_port, NULL } };

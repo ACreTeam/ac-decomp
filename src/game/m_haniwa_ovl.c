@@ -46,20 +46,190 @@ typedef struct {
 } mHW_msg_c;
 
 static void mHW_make_cond_message(Submenu* submenu, int msg_idx) {
-    static u8 mes_ikaga[15] = "How can I help?";
-    static u8 mes_dono[11] = "Choose one.";
-    static u8 mes_dono2[15] = "May I help you?";
-    static u8 mes_oikura[9] = "How much?";
-    static u8 mes_kasiko[7] = "Got it!";
-    static u8 mes_dorewo[11] = "Choose one.";
-    static u8 mes_mou[20] = "You don't have room.";
-    static u8 mes_okane[22] = "You can't afford that.";
-    static u8 mes_maido[20] = "Thank you very much!";
-    static u8 mes_tada[11] = "That's free";
-    static u8 mes_tada2[9] = "Give Away";
-    static u8 mes_mise[20] = "That's display only.";
-    static u8 mes_beru[5] = "It's\xD3";
-    static u8 mes_beru2[5] = "Bells";
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_ikaga[16] = { 'P', 'u',  'i', 's', CHAR_HYPHEN, 'j', 'e', CHAR_SPACE,
+                                't', '\'', 'a', 'i', 'd',         'e', 'r', '?' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_ikaga[20] = "Wie kann ich helfen?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_ikaga[16] = "Cosa posso fare?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_ikaga[19] = { CHAR_INVERT_QUESTIONMARK,
+                                'Q',
+                                'u',
+                                CHAR_ACUTE_e,
+                                CHAR_SPACE,
+                                'q',
+                                'u',
+                                'i',
+                                'e',
+                                'r',
+                                'e',
+                                's',
+                                CHAR_SPACE,
+                                'h',
+                                'a',
+                                'c',
+                                'e',
+                                'r',
+                                '?' };
+#else
+static u8 mes_ikaga[15] = "How can I help?";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_dono[15] = "Fais ton choix.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_dono[12] = "Bitte w]hlen";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_dono[18] = "Scegli un'opzione:";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_dono[17] = { 'E',        'l', 'i', 'g', 'e', CHAR_SPACE,   'u', 'n', 'a',
+                               CHAR_SPACE, 'o', 'p', 'c', 'i', CHAR_ACUTE_o, 'n', '.' };
+#else
+static u8 mes_dono[11] = "Choose one.";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_dono2[16] = { 'P', 'u',  'i', 's', CHAR_HYPHEN, 'j', 'e', CHAR_SPACE,
+                                't', '\'', 'a', 'i', 'd',         'e', 'r', '?' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_dono2[19] = { 'B',        'e', 'n', CHAR_DIARESIS_o, 't', 'i', 'g', 's', 't',
+                                CHAR_SPACE, 'd', 'u', CHAR_SPACE,      'H', 'i', 'l', 'f', 'e',
+                                '?' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_dono2[15] = "Posso aiutarti?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_dono2[16] = {
+        CHAR_INVERT_QUESTIONMARK, 'P', 'u', 'e', 'd', 'o', CHAR_SPACE, 'a', 'y', 'u', 'd', 'a', 'r', 't', 'e', '?'
+    };
+#else
+static u8 mes_dono2[15] = "May I help you?";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_oikura[14] = "C'est combien?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_oikura[9] = "Wie viel?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_oikura[7] = "Quanto?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_oikura[12] = { CHAR_INVERT_QUESTIONMARK, 'P', 'o', 'r', CHAR_SPACE, 'c', 'u', '#', 'n', 't', 'o', '?' };
+#else
+static u8 mes_oikura[9] = "How much?";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_kasiko[8] = "Je vois!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_kasiko[9] = "Verstehe!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_kasiko[3] = "OK!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_kasiko[11] = { CHAR_INVERT_EXCLAMATION, 'E', 'n', 't', 'e', 'n', 'd', 'i', 'd', 'o', '!' };
+#else
+static u8 mes_kasiko[7] = "Got it!";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_dorewo[15] = "Fais ton choix.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_dorewo[13] = "Bitte w]hlen.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_dorewo[6] = "Scegli";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_dorewo[17] = { 'E',        'l', 'i', 'g', 'e', CHAR_SPACE,   'u', 'n', 'a',
+                                 CHAR_SPACE, 'o', 'p', 'c', 'i', CHAR_ACUTE_o, 'n', '.' };
+#else
+static u8 mes_dorewo[11] = "Choose one.";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_mou[21] = "Tu n'as pas de place.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_mou[16] = "Kein Platz mehr!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_mou[14] = "Non hai spazio";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_mou[16] = "No tienes sitio.";
+#else
+static u8 mes_mou[20] = "You don't have room.";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_okane[18] = "Tu n'as pas assez.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_okane[17] = "Das ist zu teuer!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_okane[19] = "Hai poche stelline!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_okane[18] = "No puedes pagarlo.";
+#else
+static u8 mes_okane[22] = "You can't afford that.";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_maido[15] = "Merci beaucoup!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_maido[16] = "Herzlichen Dank!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_maido[13] = "Grazie molte!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_maido[16] = {
+        CHAR_INVERT_EXCLAMATION, 'M', 'u', 'c', 'h', 'a', 's', CHAR_SPACE, 'g', 'r', 'a', 'c', 'i', 'a', 's', '!'
+    };
+#else
+static u8 mes_maido[20] = "Thank you very much!";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_tada[14] = "C'est gratuit.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_tada[18] = "Das ist kostenlos!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_tada[9] = { CHAR_GRAVE_E, CHAR_SPACE, 'g', 'r', 'a', 't', 'i', 's', '!' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_tada[10] = "Se regala.";
+#else
+static u8 mes_tada[11] = "That's free";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_tada2[6] = "Donner";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_tada2[11] = "Verschenken";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_tada2[4] = "Dona";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_tada2[10] = "Se regala.";
+#else
+static u8 mes_tada2[9] = "Give Away";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_mise[22] = { 'C', 'e',        CHAR_SPACE,   'n',        '\'', 'e', 's', 't', CHAR_SPACE, 'p', 'a',
+                               's', CHAR_SPACE, CHAR_GRAVE_a, CHAR_SPACE, 'v',  'e', 'n', 'd', 'r',        'e', '.' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_mise[17] = { 'A', 'u', 's', 's', 't', 'e', 'l', 'l', 'u', 'n', 'g', 's', 's', 't', CHAR_DIARESIS_u,
+                               'c', 'k' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_mise[22] = "Guardar ma non toccar!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_mise[11] = "Se muestra.";
+#else
+static u8 mes_mise[20] = "That's display only.";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_beru[6] = { 'C', '\'', 'e', 's', 't', CHAR_SPACE_3 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_beru[7] = { 'P', 'r', 'e', 'i', 's', ':', CHAR_SPACE_3 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_beru[6] = { 'C', 'o', 's', 't', 'a', CHAR_SPACE_3 };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_beru[10] = { 'S', 'e', CHAR_SPACE, 'v', 'e', 'n', 'd', 'e', ':', CHAR_SPACE_3 };
+#else
+static u8 mes_beru[5] = "It's\xD3";
+#endif
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static u8 mes_beru2[4] = "Clo.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 mes_beru2[8] = "Sternis!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 mes_beru2[9] = "stelline.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 mes_beru2[6] = "bayas.";
+#else
+static u8 mes_beru2[5] = "Bells";
+#endif
 
     static mHW_msg_c mes_data_tbl[] = {
         // clang-format off

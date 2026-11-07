@@ -77,8 +77,24 @@ static void mPC_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
   CLOSE_DISP(graph);
 }
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#define mPC_TITLE_POS_X 124.0f
+#else
+#define mPC_TITLE_POS_X 131.0f
+#endif
+
 static void mPC_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
-  static u8 title_str[20] = "Enter a secret code.";
+  #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+  static u8 title_str[21] = "Entre un code secret.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+  static u8 title_str[20] = "Geheimcode eingeben!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+  static u8 title_str[19] = "Inserisci password:";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+  static u8 title_str[10] = { 'C', 'o', 'n', 't', 'r', 'a', 's', 'e', CHAR_TILDE_n, 'a' };
+#else
+static u8 title_str[20] = "Enter a secret code.";
+#endif
   static f32 cursol_baseX[mPC_LINE_COUNT] = { 77.0f, 77.0f };
   static f32 cursol_baseY[mPC_LINE_COUNT] = { 81.0f, 99.0f };
 
@@ -95,7 +111,7 @@ static void mPC_set_character(Submenu* submenu, GAME* game, f32 x, f32 y) {
   mFont_SetLineStrings(
     game,
     title_str, sizeof(title_str),
-    131.0f + x, 34.0f - y,
+    mPC_TITLE_POS_X + x, 34.0f - y,
     255, 255, 255, 255,
     FALSE,
     TRUE,

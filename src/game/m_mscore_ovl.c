@@ -120,9 +120,39 @@ static mMS_note_moji_c note_moji[] = {
 };
 // clang-format on
 
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mMS_str_title[9] = "Vraiment?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mMS_str_title[15] = "Bist du sicher?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mMS_str_title[8] = "Davvero?";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mMS_str_title[8] = { CHAR_INVERT_QUESTIONMARK, 'S', 'e', 'g', 'u', 'r', 'o', '?' };
+#else
 static u8 mMS_str_title[13] = "Are you sure?";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mMS_str_ok[3] = "Oui";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mMS_str_ok[2] = "Ja";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mMS_str_ok[2] = { 'S', CHAR_GRAVE_i };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mMS_str_ok[2] = { 'S', CHAR_ACUTE_i };
+#else
 static u8 mMS_str_ok[3] = "Yes";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mMS_str_cancel[7] = "Quitter";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mMS_str_cancel[6] = { 'Z', 'u', 'r', CHAR_DIARESIS_u, 'c', 'k' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mMS_str_cancel[4] = "Esci";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mMS_str_cancel[5] = "Salir";
+#else
 static u8 mMS_str_cancel[2] = "No";
+#endif
 
 static void mMS_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     submenu->overlay->move_Move_proc(submenu, menu_info);
@@ -190,10 +220,14 @@ static void mMS_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
         mscore_ovl->scale = 0.0f;
         mscore_ovl->scale_dir = mMS_SCALE_IN;
         sAdo_SysTrgStart(NA_SE_33);
+
+#if VERSION != VER_GAFP01_00
     } else if ((trigger & BUTTON_R) != 0) {
         submenu->overlay->move_chg_base_proc(menu_info, mSM_MOVE_OUT_TOP);
         submenu->after_mode = aHOI_REQUEST_NUM;
         sAdo_SysTrgStart(NA_SE_MENU_EXIT);
+
+#endif
     } else if ((trigger & BUTTON_START) != 0 || (note_idx == 16 && (trigger & BUTTON_A) != 0)) {
         mSM_open_submenu(submenu, mSM_OVL_EDITENDCHK, mEE_TYPE_MSCORE, 0);
         menu_info->proc_status = mSM_OVL_PROC_WAIT;
@@ -261,7 +295,9 @@ static void mMS_move_Wait(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
             mscore_ovl->cursor_idx = 0;
             menu_info->proc_status = mSM_OVL_PROC_PLAY;
         } else {
+#if VERSION != VER_GAFP01_00
             mMld_SetSaveMelody((u8*)menu_info->data3);
+#endif
             submenu->overlay->move_chg_base_proc(menu_info, mSM_MOVE_OUT_TOP);
         }
     }
@@ -352,7 +388,7 @@ extern Gfx onp_win_mojiT_model[];
 extern Gfx onp_win_zT_model[];
 extern Gfx onp_win_rT_model[];
 extern Gfx onp_win_sT_model[];
-#if VERSION == VER_GAFE01_00
+#if VERSION == VER_GAFE01_00 || VERSION == VER_GAFP01_00
 extern Gfx onp_win_rmoji_model[];
 #else
 extern Gfx onp_win_rmoji_model_1_data_4A4020[];
@@ -417,7 +453,7 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     gSPDisplayList(POLY_OPA_DISP++, onp_win_zT_model);
     gSPDisplayList(POLY_OPA_DISP++, onp_win_rT_model);
     gSPDisplayList(POLY_OPA_DISP++, onp_win_sT_model);
-#if VERSION == VER_GAFE01_00
+#if VERSION == VER_GAFE01_00 || VERSION == VER_GAFP01_00
     gSPDisplayList(POLY_OPA_DISP++, onp_win_rmoji_model);
 #else
     gSPDisplayList(POLY_OPA_DISP++, onp_win_rmoji_model_1_data_4A4020);

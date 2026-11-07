@@ -1,0 +1,38 @@
+static mEE_str_c board_str_data[] = {
+    { mEE_BOARD_str_data0, 2 },
+    { mEE_BOARD_str_data1, 2 },
+    { NULL, 0 },
+};
+
+static mEE_str_c notice_str_data[] = {
+    { mEE_NOTICE_str_data0, 2 },
+    { mEE_NOTICE_str_data1, 2 },
+    { mEE_NOTICE_str_data2, 5 },
+};
+
+static mEE_str_c mscore_str_data[] = {
+    { mEE_MSCORE_str_data0, 2 },
+    { mEE_MSCORE_str_data1, 2 },
+    { mEE_MSCORE_str_data2, 5 },
+};
+
+static mEE_str_c cpmail_str_data[] = {
+    { mEE_CPMAIL_str_data0, 2 },
+    { mEE_CPMAIL_str_data1, 2 },
+    { mEE_CPMAIL_str_data2, 5 },
+};
+
+static mEE_str_c design_str_data[] = {
+    { mEE_DESIGN_str_data0, 2 },
+    { mEE_DESIGN_str_data1, 2 },
+    { mEE_DESIGN_str_data2, 5 },
+};
+
+static mEE_str_c cporiginal_str_data[] = {
+    { mEE_CPORIGINAL_str_data0, 2 },
+    { mEE_CPORIGINAL_str_data1, 2 },
+    { mEE_CPORIGINAL_str_data2, 5 },
+};
+
+static mEE_str_c* str_table[] = { board_str_data,  notice_str_data, mscore_str_data,
+                                  cpmail_str_data, design_str_data, cporiginal_str_data };

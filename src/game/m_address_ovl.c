@@ -63,8 +63,50 @@ static Vtx lat_atena_v[48] = {
 };
 
 static u8 l_shop_name_str[ANIMAL_NAME_LEN] = "\x0F\x16\x06\x10  \0\0"; // たぬきち  \0\0 (Tanukichi, Tom Nook)
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mAD_title_str[24] = "Choisis un destinataire.";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mAD_title_str[22] = "W]hle einen Empf]nger!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mAD_title_str[22] = "Scegli un destinatario";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mAD_title_str[22] = "Elige un destinatario.";
+#else
 static u8 mAD_title_str[20] = "Choose an addressee.";
+#endif
+#if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+static u8 mAD_title_str2[31] = "Ton carnet d'adresses est vide!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+static u8 mAD_title_str2[25] = "Dein Adressbuch ist leer!";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+static u8 mAD_title_str2[23] = { 'L', '\'', 'i',        'n',          'd',        'i', 'r', 'i', 'z', 'z', 'a', 'r',
+                                 'i', 'o',  CHAR_SPACE, CHAR_GRAVE_e, CHAR_SPACE, 'v', 'u', 'o', 't', 'o', '!' };
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_ES)
+static u8 mAD_title_str2[22] = { CHAR_INVERT_EXCLAMATION,
+                                 'T',
+                                 'u',
+                                 CHAR_SPACE,
+                                 'a',
+                                 'g',
+                                 'e',
+                                 'n',
+                                 'd',
+                                 'a',
+                                 CHAR_SPACE,
+                                 'e',
+                                 's',
+                                 't',
+                                 '#',
+                                 CHAR_SPACE,
+                                 'v',
+                                 'a',
+                                 'c',
+                                 CHAR_ACUTE_i,
+                                 'a',
+                                 '!' };
+#else
 static u8 mAD_title_str2[27] = "Your address book is empty!";
+#endif
 
 static void mAD_cancel_edit(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     mSM_MenuInfo_c* prev_menu = &submenu->overlay->menu_info[menu_info->pre_menu_type];
@@ -454,7 +496,11 @@ extern Gfx lat_mes_winT_model[];
 static void mAD_set_first_tag(Submenu* submenu, GAME* game, GRAPH* graph, f32 pos_x, f32 pos_y) {
     static u8* title_table[] = { mAD_title_str, mAD_title_str2 };
     static int title_length[] = { sizeof(mAD_title_str), sizeof(mAD_title_str2) };
-    static f32 offset[][2] = { { -66.0f, 8.0f }, { -90.0f, 8.0f } };
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR)
+    static f32 offset[2][2] = { { -66.0f, 8.0f }, { -94.0f, 8.0f } };
+#else
+static f32 offset[][2] = { { -66.0f, 8.0f }, { -90.0f, 8.0f } };
+#endif
     u8* title_p;
     int len;
     f32* ofs_p;

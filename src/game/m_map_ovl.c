@@ -509,6 +509,15 @@ extern Gfx kan_win_mu_model[];
 extern Gfx kan_win_ta_model[];
 extern Gfx kan_win_funeT_model[];
 
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+#include "../src/game/m_map_ovl_data_fr.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+#include "../src/game/m_map_ovl_data_de.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+#include "../src/game/m_map_ovl_data_it.c_inc"
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#include "../src/game/m_map_ovl_data_es.c_inc"
+#else
 static mMP_LabelWord_c mMP_label_word_npc = { -92.0f, -19.0f, NULL, 0 };
 
 static mMP_Label_c mMP_label_npc = { -98.0f, -24.0f, kan_win_npcT_1_model, { &mMP_label_word_npc, NULL } };
@@ -594,6 +603,8 @@ static u8 mMP_label_str_port[4] = { CHAR_D, CHAR_o, CHAR_c, CHAR_k };
 static mMP_LabelWord_c mMP_label_word_port = { -83.0f, -25.0f, mMP_label_str_port, 4 };
 
 static mMP_Label_c mMP_label_port = { -93.0f, -30.0f, kan_win_funeT_model, { &mMP_label_word_port, NULL } };
+
+#endif
 
 static mMP_Label_c* mMP_label_data[mMP_LABEL_NUM] = {
     &mMP_label_npc,     &mMP_label_player, &mMP_label_shop,   &mMP_label_police, &mMP_label_post, &mMP_label_shrine,
@@ -694,7 +705,15 @@ static mActor_name_t mMP_GetFgBlockName(mMP_Ovl_c* map_ovl, int block_x, int blo
 }
 
 static void mMP_set_house_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu) {
-    static u8 akiya_str[PLAYER_NAME_LEN] = "free    ";
+    #if VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_FR || GAME_LANGUAGE == GAME_LANG_ES)
+    static u8 akiya_str[8] = "Libre   ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_DE)
+    static u8 akiya_str[8] = "Frei    ";
+#elif VERSION == VER_GAFP01_00 && (GAME_LANGUAGE == GAME_LANG_IT)
+    static u8 akiya_str[8] = "Vendesi ";
+#else
+static u8 akiya_str[PLAYER_NAME_LEN] = "free    ";
+#endif
 
     mMP_ResidentInfo_c* resident_p;
     mMP_LabelInfo_c* block_label;

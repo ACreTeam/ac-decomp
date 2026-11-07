@@ -1,0 +1,717 @@
+static u8 wr_You_cant_hold[24] = { CHAR_INVERT_EXCLAMATION,
+                                   'Y',
+                                   'a',
+                                   CHAR_SPACE,
+                                   'n',
+                                   'o',
+                                   CHAR_SPACE,
+                                   'c',
+                                   'a',
+                                   'b',
+                                   'e',
+                                   'n',
+                                   CHAR_SPACE,
+                                   'm',
+                                   '#',
+                                   's',
+                                   CHAR_SPACE,
+                                   'c',
+                                   'a',
+                                   'r',
+                                   't',
+                                   'a',
+                                   's',
+                                   '!' };
+
+static u8 wr_any_more_letters_Want_to[21] = { CHAR_INVERT_QUESTIONMARK,
+                                              'Q',
+                                              'u',
+                                              'i',
+                                              'e',
+                                              'r',
+                                              'e',
+                                              's',
+                                              CHAR_SPACE,
+                                              't',
+                                              'i',
+                                              'r',
+                                              'a',
+                                              'r',
+                                              CHAR_SPACE,
+                                              'a',
+                                              'l',
+                                              'g',
+                                              'u',
+                                              'n',
+                                              'a' };
+
+static u8 wr_throw_away_some_old_ones[16] = { 'q', 'u',        'e', CHAR_SPACE, 'h',          'a', 'y', 'a',
+                                              's', CHAR_SPACE, 'l', 'e',        CHAR_ACUTE_i, 'd', 'o', '?' };
+
+static u8 wr_Yes[2] = { 'S', CHAR_ACUTE_i };
+
+static u8 wr_No[2] = "No";
+
+static u8 wr_You_cant_pull_out_a_present[30] = { CHAR_INVERT_EXCLAMATION,
+                                                 'N',
+                                                 'o',
+                                                 CHAR_SPACE,
+                                                 'p',
+                                                 'u',
+                                                 'e',
+                                                 'd',
+                                                 'e',
+                                                 's',
+                                                 CHAR_SPACE,
+                                                 'c',
+                                                 'o',
+                                                 'g',
+                                                 'e',
+                                                 'r',
+                                                 CHAR_SPACE,
+                                                 'e',
+                                                 'l',
+                                                 CHAR_SPACE,
+                                                 'r',
+                                                 'e',
+                                                 'g',
+                                                 'a',
+                                                 'l',
+                                                 'o',
+                                                 CHAR_SPACE,
+                                                 'c',
+                                                 'o',
+                                                 'n' };
+
+static u8 wr_when_your_item_screen_is_full[29] = "la pantalla de objetos llena!";
+
+static u8 wr_You_cant_carry[17] = { CHAR_INVERT_EXCLAMATION,
+                                    'N',
+                                    'o',
+                                    CHAR_SPACE,
+                                    'p',
+                                    'u',
+                                    'e',
+                                    'd',
+                                    'e',
+                                    's',
+                                    CHAR_SPACE,
+                                    'l',
+                                    'l',
+                                    'e',
+                                    'v',
+                                    'a',
+                                    'r' };
+
+static u8 wr_more_than_99999_Bells[20] = "m#s de 99.999 bayas!";
+
+static u8 wr_You_cant_mail[16] = { CHAR_INVERT_EXCLAMATION,
+                                   'E',
+                                   's',
+                                   'o',
+                                   CHAR_SPACE,
+                                   'n',
+                                   'o',
+                                   CHAR_SPACE,
+                                   's',
+                                   'e',
+                                   CHAR_SPACE,
+                                   'p',
+                                   'u',
+                                   'e',
+                                   'd',
+                                   'e' };
+
+static u8 wr_turnips_or_living_things[18] = "enviar por correo!";
+
+static u8 wr_You_cant_mail2[21] = { CHAR_INVERT_EXCLAMATION,
+                                    'N',
+                                    'o',
+                                    CHAR_SPACE,
+                                    'p',
+                                    'u',
+                                    'e',
+                                    'd',
+                                    'e',
+                                    's',
+                                    CHAR_SPACE,
+                                    'e',
+                                    'n',
+                                    'v',
+                                    'i',
+                                    'a',
+                                    'r',
+                                    CHAR_SPACE,
+                                    'p',
+                                    'o',
+                                    'r' };
+
+static u8 wr_someone_elses_belongings[25] = "correo lo que no es tuyo!";
+
+static u8 wr_You_cant_mail3[17] = { CHAR_INVERT_EXCLAMATION,
+                                    'N',
+                                    'o',
+                                    CHAR_SPACE,
+                                    'p',
+                                    'u',
+                                    'e',
+                                    'd',
+                                    'e',
+                                    's',
+                                    CHAR_SPACE,
+                                    'e',
+                                    'n',
+                                    'v',
+                                    'i',
+                                    'a',
+                                    'r' };
+
+static u8 wr_a_wrapped_present[18] = "regalos sin abrir!";
+
+static u8 wr_You_cant_carry2[19] = { CHAR_INVERT_EXCLAMATION,
+                                     'N',
+                                     'o',
+                                     CHAR_SPACE,
+                                     'p',
+                                     'u',
+                                     'e',
+                                     'd',
+                                     'e',
+                                     's',
+                                     CHAR_SPACE,
+                                     'e',
+                                     's',
+                                     'c',
+                                     'r',
+                                     'i',
+                                     'b',
+                                     'i',
+                                     'r' };
+
+static u8 wr_any_more_letters[23] = "m#s cartas si no tienes";
+
+static u8 wr_so_you_cant_write_a_new_one[23] = "espacio para llevarlas!";
+
+static u8 wr_Your_item_screen_is_full[32] = { CHAR_INVERT_EXCLAMATION,
+                                              'N',
+                                              'o',
+                                              CHAR_SPACE,
+                                              'p',
+                                              'u',
+                                              'e',
+                                              'd',
+                                              'e',
+                                              's',
+                                              CHAR_SPACE,
+                                              'u',
+                                              's',
+                                              'a',
+                                              'r',
+                                              'l',
+                                              'o',
+                                              CHAR_SPACE,
+                                              's',
+                                              'i',
+                                              CHAR_SPACE,
+                                              'l',
+                                              'a',
+                                              CHAR_SPACE,
+                                              'p',
+                                              'a',
+                                              'n',
+                                              't',
+                                              'a',
+                                              'l',
+                                              'l',
+                                              'a' };
+
+static u8 wr_so_you_cant_use_a_pattern[22] = "de objetos est# llena!";
+
+static u8 wr_You_cant_carry3[20] = { CHAR_INVERT_EXCLAMATION,
+                                     'N',
+                                     'o',
+                                     CHAR_SPACE,
+                                     'p',
+                                     'u',
+                                     'e',
+                                     'd',
+                                     'e',
+                                     's',
+                                     CHAR_SPACE,
+                                     'e',
+                                     'n',
+                                     'v',
+                                     'i',
+                                     'a',
+                                     'r',
+                                     CHAR_SPACE,
+                                     't',
+                                     'u' };
+
+static u8 wr_an_exercise_card[17] = "ficha de aerobic!";
+
+static u8 wr_You_cant_put[15] = {
+    CHAR_INVERT_EXCLAMATION, 'N', 'o', CHAR_SPACE, 'h', 'a', 'y', CHAR_SPACE, 'e', 's', 'p', 'a', 'c', 'i', 'o'
+};
+
+static u8 wr_any_more_items_out[17] = "para m#s objetos!";
+
+static u8 wr_You_cant_put2[15] = {
+    CHAR_INVERT_EXCLAMATION, 'A', 'q', 'u', CHAR_ACUTE_i, CHAR_SPACE, 'n', 'o', CHAR_SPACE, 'p', 'u', 'e', 'd', 'e', 's'
+};
+
+static u8 wr_any_more_items_there[18] = "dejar m#s objetos!";
+
+static u8 wr_This_diary_is_locked[18] = { CHAR_INVERT_EXCLAMATION,
+                                          'N',
+                                          'o',
+                                          CHAR_SPACE,
+                                          't',
+                                          'i',
+                                          'e',
+                                          'n',
+                                          'e',
+                                          's',
+                                          CHAR_SPACE,
+                                          'p',
+                                          'e',
+                                          'r',
+                                          'm',
+                                          'i',
+                                          's',
+                                          'o' };
+
+static u8 wr_This_diary_is_locked2[15] = "para leer esto!";
+
+static u8 wr_You_cant_pull_anything_out[27] = { CHAR_INVERT_EXCLAMATION,
+                                                'N',
+                                                'o',
+                                                CHAR_SPACE,
+                                                'p',
+                                                'u',
+                                                'e',
+                                                'd',
+                                                'e',
+                                                's',
+                                                CHAR_SPACE,
+                                                'g',
+                                                'u',
+                                                'a',
+                                                'r',
+                                                'd',
+                                                'a',
+                                                'r',
+                                                CHAR_SPACE,
+                                                'n',
+                                                'a',
+                                                'd',
+                                                'a',
+                                                CHAR_SPACE,
+                                                'm',
+                                                '#',
+                                                's' };
+
+static u8 wr_when_your_item_screen_is_full2[26] = "en la pantalla de objetos!";
+
+static u8 wr_Theres_already_music_in_there[22] = { CHAR_INVERT_EXCLAMATION,
+                                                   'Y',
+                                                   'a',
+                                                   CHAR_SPACE,
+                                                   'h',
+                                                   'a',
+                                                   'y',
+                                                   CHAR_SPACE,
+                                                   'm',
+                                                   CHAR_ACUTE_u,
+                                                   's',
+                                                   'i',
+                                                   'c',
+                                                   'a',
+                                                   CHAR_SPACE,
+                                                   'p',
+                                                   'u',
+                                                   'e',
+                                                   's',
+                                                   't',
+                                                   'a',
+                                                   '!' };
+
+static u8 wr_You_cant_drop[15] = {
+    CHAR_INVERT_EXCLAMATION, 'A', 'q', 'u', CHAR_ACUTE_i, CHAR_SPACE, 'n', 'o', CHAR_SPACE, 'p', 'u', 'e', 'd', 'e', 's'
+};
+
+static u8 wr_any_more_items_here[15] = "dejar nada m#s!";
+
+static u8 wr_You_cant_open_a_bag[21] = { CHAR_INVERT_EXCLAMATION,
+                                         'N',
+                                         'o',
+                                         CHAR_SPACE,
+                                         'p',
+                                         'u',
+                                         'e',
+                                         'd',
+                                         'e',
+                                         's',
+                                         CHAR_SPACE,
+                                         'a',
+                                         'b',
+                                         'r',
+                                         'i',
+                                         'r',
+                                         'l',
+                                         'a',
+                                         CHAR_SPACE,
+                                         's',
+                                         'i' };
+
+static u8 wr_unless_you_have_room[17] = "no tienes espacio";
+
+static u8 wr_for_three_more_items[18] = "para tres objetos!";
+
+static u8 wr_You_cant_plant[15] = {
+    CHAR_INVERT_EXCLAMATION, 'A', 'q', 'u', CHAR_ACUTE_i, CHAR_SPACE, 'n', 'o', CHAR_SPACE, 'p', 'u', 'e', 'd', 'e', 's'
+};
+
+static u8 wr_anything_else_here[17] = "plantar nada m#s!";
+
+static u8 wr_You_cant_plant_anything_here[31] = { CHAR_INVERT_EXCLAMATION,
+                                                  'A',
+                                                  'q',
+                                                  'u',
+                                                  CHAR_ACUTE_i,
+                                                  CHAR_SPACE,
+                                                  'n',
+                                                  'o',
+                                                  CHAR_SPACE,
+                                                  's',
+                                                  'e',
+                                                  CHAR_SPACE,
+                                                  'p',
+                                                  'u',
+                                                  'e',
+                                                  'd',
+                                                  'e',
+                                                  CHAR_SPACE,
+                                                  'p',
+                                                  'l',
+                                                  'a',
+                                                  'n',
+                                                  't',
+                                                  'a',
+                                                  'r',
+                                                  CHAR_SPACE,
+                                                  'n',
+                                                  'a',
+                                                  'd',
+                                                  'a',
+                                                  '!' };
+
+static u8 wr_You_cant_put_a_sign_up_here[30] = { CHAR_INVERT_EXCLAMATION,
+                                                 'A',
+                                                 'q',
+                                                 'u',
+                                                 CHAR_ACUTE_i,
+                                                 CHAR_SPACE,
+                                                 'n',
+                                                 'o',
+                                                 CHAR_SPACE,
+                                                 'p',
+                                                 'u',
+                                                 'e',
+                                                 'd',
+                                                 'e',
+                                                 's',
+                                                 CHAR_SPACE,
+                                                 'p',
+                                                 'o',
+                                                 'n',
+                                                 'e',
+                                                 'r',
+                                                 CHAR_SPACE,
+                                                 's',
+                                                 'e',
+                                                 CHAR_TILDE_n,
+                                                 'a',
+                                                 'l',
+                                                 'e',
+                                                 's',
+                                                 '!' };
+
+static u8 wr_You_can_put_signs_up_only[26] = { CHAR_INVERT_EXCLAMATION,
+                                               'S',
+                                               CHAR_ACUTE_o,
+                                               'l',
+                                               'o',
+                                               CHAR_SPACE,
+                                               'p',
+                                               'u',
+                                               'e',
+                                               'd',
+                                               'e',
+                                               's',
+                                               CHAR_SPACE,
+                                               'p',
+                                               'o',
+                                               'n',
+                                               'e',
+                                               'r',
+                                               CHAR_SPACE,
+                                               's',
+                                               'e',
+                                               CHAR_TILDE_n,
+                                               'a',
+                                               'l',
+                                               'e',
+                                               's' };
+
+static u8 wr_in_your_own_village[13] = "en tu pueblo!";
+
+static u8 wr_You_cant_put_signs_on_the_island[36] = { CHAR_INVERT_EXCLAMATION,
+                                                      'N',
+                                                      'o',
+                                                      CHAR_SPACE,
+                                                      'p',
+                                                      'u',
+                                                      'e',
+                                                      'd',
+                                                      'e',
+                                                      's',
+                                                      CHAR_SPACE,
+                                                      'p',
+                                                      'o',
+                                                      'n',
+                                                      'e',
+                                                      'r',
+                                                      CHAR_SPACE,
+                                                      's',
+                                                      'e',
+                                                      CHAR_TILDE_n,
+                                                      'a',
+                                                      'l',
+                                                      'e',
+                                                      's',
+                                                      CHAR_SPACE,
+                                                      'e',
+                                                      'n',
+                                                      CHAR_SPACE,
+                                                      'l',
+                                                      'a',
+                                                      CHAR_SPACE,
+                                                      'i',
+                                                      's',
+                                                      'l',
+                                                      'a',
+                                                      '!' };
+
+static u8 wr_You_cant_leave[16] = {
+    CHAR_INVERT_EXCLAMATION, 'N', 'o', CHAR_SPACE, 'p', 'u', 'e', 'd', 'e', 's', CHAR_SPACE, 'd', 'e', 'j', 'a', 'r'
+};
+
+static u8 wr_this_NES_on_the_island[20] = "esta NES en la isla!";
+
+static u8 wr_You_dont_have_room[21] = "No queda m#s espacio.";
+
+static u8 wr_You_entered_letters[23] = { CHAR_INVERT_EXCLAMATION,
+                                         'H',
+                                         'a',
+                                         's',
+                                         CHAR_SPACE,
+                                         'e',
+                                         's',
+                                         'c',
+                                         'r',
+                                         'i',
+                                         't',
+                                         'o',
+                                         CHAR_SPACE,
+                                         'l',
+                                         'e',
+                                         't',
+                                         'r',
+                                         'a',
+                                         's',
+                                         CHAR_SPACE,
+                                         'q',
+                                         'u',
+                                         'e' };
+
+static u8 wr_that_have_nothing_to_do[22] = "no tienen nada que ver";
+
+static u8 wr_with_secret_codes[25] = { 'c',          'o', 'n', CHAR_SPACE, 'l', 'o', 's',        CHAR_SPACE, 'c',
+                                       CHAR_ACUTE_o, 'd', 'i', 'g',        'o', 's', CHAR_SPACE, 's',        'e',
+                                       'c',          'r', 'e', 't',        'o', 's', '!' };
+
+static u8 wr_You_cant_mail_this_item[23] = { CHAR_INVERT_EXCLAMATION,
+                                             'N',
+                                             'o',
+                                             CHAR_SPACE,
+                                             'p',
+                                             'u',
+                                             'e',
+                                             'd',
+                                             'e',
+                                             's',
+                                             CHAR_SPACE,
+                                             'e',
+                                             'n',
+                                             'v',
+                                             'i',
+                                             'a',
+                                             'r',
+                                             CHAR_SPACE,
+                                             'e',
+                                             's',
+                                             't',
+                                             'o',
+                                             '!' };
+
+static mWR_line_c wr_mailbox_line[] = {
+    { 46.0f, 28.0f, wr_You_cant_hold, 24 },
+    { 6e+01f, 24.0f, wr_any_more_letters_Want_to, 21 },
+    { 75.0f, 24.0f, wr_throw_away_some_old_ones, 16 },
+    { 94.0f, 24.0f, wr_Yes, 2 },
+    { 1.4e+02f, 0.0f, wr_No, 2 },
+};
+
+static mWR_line_c wr_pr_leave_line[] = {
+    { 47.0f, 4e+01f, wr_You_cant_pull_out_a_present, 30 },
+    { 57.0f, 24.0f, wr_when_your_item_screen_is_full, 29 },
+};
+
+static mWR_line_c wr_money_line[] = {
+    { 72.0f, 4e+01f, wr_You_cant_carry, 17 },
+    { 59.0f, 24.0f, wr_more_than_99999_Bells, 20 },
+};
+
+static mWR_line_c wr_pr_food_line[] = {
+    { 7e+01f, 4e+01f, wr_You_cant_mail, 16 },
+    { 7e+01f, 24.0f, wr_turnips_or_living_things, 18 },
+};
+
+static mWR_line_c wr_pr_quest_line[] = {
+    { 48.0f, 4e+01f, wr_You_cant_mail2, 21 },
+    { 48.0f, 24.0f, wr_someone_elses_belongings, 25 },
+};
+
+static mWR_line_c wr_present_mail_line[] = {
+    { 7e+01f, 4e+01f, wr_You_cant_mail3, 17 },
+    { 7e+01f, 24.0f, wr_a_wrapped_present, 18 },
+};
+
+static mWR_line_c wr_write_line[] = {
+    { 82.0f, 4e+01f, wr_You_cant_carry2, 19 },
+    { 75.0f, 24.0f, wr_any_more_letters, 23 },
+    { 74.0f, 24.0f, wr_so_you_cant_write_a_new_one, 23 },
+};
+
+static mWR_line_c wr_original_line[] = {
+    { 41.0f, 4e+01f, wr_Your_item_screen_is_full, 32 },
+    { 77.0f, 24.0f, wr_so_you_cant_use_a_pattern, 22 },
+};
+
+static mWR_line_c wr_pr_card_line[] = {
+    { 47.0f, 4e+01f, wr_You_cant_carry3, 20 },
+    { 47.0f, 24.0f, wr_an_exercise_card, 17 },
+};
+
+static mWR_line_c wr_put_max_furniture_line[] = {
+    { 68.0f, 4e+01f, wr_You_cant_put, 15 },
+    { 65.0f, 24.0f, wr_any_more_items_out, 17 },
+};
+
+static mWR_line_c wr_put_furniture_line[] = {
+    { 68.0f, 4e+01f, wr_You_cant_put2, 15 },
+    { 64.0f, 24.0f, wr_any_more_items_there, 18 },
+};
+
+static mWR_line_c wr_lock_diary_line[] = {
+    { 44.0f, 4e+01f, wr_This_diary_is_locked, 18 },
+    { 58.0f, 24.0f, wr_This_diary_is_locked2, 15 },
+};
+
+static mWR_line_c wr_music_line[] = {
+    { 53.0f, 4e+01f, wr_You_cant_pull_anything_out, 27 },
+    { 66.0f, 24.0f, wr_when_your_item_screen_is_full2, 26 },
+};
+
+static mWR_line_c wr_music2_line[] = {
+    { 74.0f, 46.0f, wr_Theres_already_music_in_there, 22 },
+};
+
+static mWR_line_c wr_put_item_line[] = {
+    { 72.0f, 4e+01f, wr_You_cant_drop, 15 },
+    { 72.0f, 24.0f, wr_any_more_items_here, 15 },
+};
+
+static mWR_line_c wr_hukubukuro_open_line[] = {
+    { 6e+01f, 37.0f, wr_You_cant_open_a_bag, 21 },
+    { 76.0f, 24.0f, wr_unless_you_have_room, 17 },
+    { 71.0f, 24.0f, wr_for_three_more_items, 18 },
+};
+
+static mWR_line_c wr_put_plant_line[] = {
+    { 39.0f, 46.0f, wr_You_cant_plant_anything_here, 31 },
+};
+
+static mWR_line_c wr_put_sign_line[] = {
+    { 4e+01f, 46.0f, wr_You_cant_put_a_sign_up_here, 30 },
+};
+
+static mWR_line_c wr_put_sign_other_line[] = {
+    { 55.0f, 4e+01f, wr_You_can_put_signs_up_only, 26 },
+    { 99.0f, 24.0f, wr_in_your_own_village, 13 },
+};
+
+static mWR_line_c wr_put_sign_island_line[] = {
+    { 31.0f, 46.0f, wr_You_cant_put_signs_on_the_island, 36 },
+};
+
+static mWR_line_c wr_put_fami_line[] = {
+    { 72.0f, 4e+01f, wr_You_cant_leave, 16 },
+    { 66.0f, 24.0f, wr_this_NES_on_the_island, 20 },
+};
+
+static mWR_line_c wr_word_over_line[] = {
+    { 54.0f, 4e+01f, wr_You_dont_have_room, 21 },
+};
+
+static mWR_line_c wr_pw_chk_line[] = {
+    { 49.0f, 4e+01f, wr_You_entered_letters, 23 },
+    { 52.0f, 24.0f, wr_that_have_nothing_to_do, 22 },
+    { 42.0f, 24.0f, wr_with_secret_codes, 25 },
+};
+
+static mWR_line_c wr_pr_fork_line[] = {
+    { 46.0f, 4e+01f, wr_You_cant_mail_this_item, 23 },
+};
+
+static mWR_data_c wr_win_data[] = {
+    { wr_mailbox_line, 5, 1.0f, 1.2f },
+    { wr_pr_leave_line, 2, 1.15f, 1.0f },
+    { wr_money_line, 2, 1.0f, 1.0f },
+    { wr_pr_food_line, 2, 1.0f, 1.0f },
+    { wr_pr_quest_line, 2, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { NULL, 0, 1.0f, 1.0f },
+    { wr_put_max_furniture_line, 2, 0.95f, 1.0f },
+    { wr_put_furniture_line, 2, 0.95f, 1.0f },
+    { wr_put_item_line, 2, 1.0f, 1.0f },
+    { wr_put_plant_line, 1, 1.15f, 0.9f },
+    { wr_hukubukuro_open_line, 3, 1.0f, 1.15f },
+    { wr_present_mail_line, 2, 1.0f, 1.0f },
+    { wr_write_line, 3, 1.15f, 1.2f },
+    { wr_music_line, 2, 1.15f, 1.0f },
+    { wr_music2_line, 1, 1.15f, 0.9f },
+    { wr_original_line, 2, 1.13f, 1.0f },
+    { wr_put_sign_line, 1, 1.13f, 0.9f },
+    { wr_put_sign_other_line, 2, 1.1f, 1.0f },
+    { wr_put_sign_island_line, 1, 1.15f, 0.9f },
+    { wr_pr_card_line, 2, 0.9f, 1.0f },
+    { wr_lock_diary_line, 2, 0.9f, 1.0f },
+    { wr_put_fami_line, 2, 1.0f, 1.0f },
+    { wr_word_over_line, 1, 1.0f, 1.0f },
+    { wr_pw_chk_line, 3, 1.0f, 1.2f },
+    { wr_pr_fork_line, 1, 1.0f, 1.0f },
+};
