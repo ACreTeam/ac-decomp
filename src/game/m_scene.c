@@ -567,6 +567,10 @@ extern void return_emu_game(GAME* game) {
              sizeof(Door_data_c)); // copy exit door data
     Common_Get(door_data).next_scene_id = Common_Get(famicom_emu_exit_door_data).next_scene_id + 1;
     game->pad_initialized = FALSE;
+#if VERSION == VER_GAFP01_00
+    game_goto_next_game_reload_data(game);
+#else
     game_goto_next_game_play(game);
+#endif
     Save_Set(scene_no, Common_Get(famicom_emu_exit_door_data).next_scene_id);
 }

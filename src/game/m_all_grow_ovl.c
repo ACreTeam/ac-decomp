@@ -664,7 +664,12 @@ static int mAGrw_GrowTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info, int 
     return res;
 }
 
-static int mAGrw_GrowPlant_First(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_GrowPlant_First(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_GrowPlant_First(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (ITEM_NAME_GET_TYPE(*item) == NAME_TYPE_ITEM0 && ITEM_NAME_GET_CAT(*item) == ENV_CATEGORY &&
@@ -675,7 +680,12 @@ static int mAGrw_GrowPlant_First(mActor_name_t* item, mAGrw_GrowInfo_c* grow_inf
     return res;
 }
 
-static int mAGrw_GrowPlant(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_GrowPlant(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_GrowPlant(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (ITEM_NAME_GET_TYPE(*item) == NAME_TYPE_ITEM0) {
@@ -736,7 +746,12 @@ static int mAGrw_GrowPlant(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
     return res;
 }
 
-static int mAGrw_MeltSnowman(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_MeltSnowman(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_MeltSnowman(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     return mSN_MeltSnowman(item, grow_info->past_days);
 }
 
@@ -762,7 +777,12 @@ static void mAGrw_MakeGrassTable(mActor_name_t* grass_table) {
     }
 }
 
-static int mAGrw_SpoilKabu(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_SpoilKabu(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_SpoilKabu(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (ITEM_NAME_GET_TYPE(*item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(*item) == ITEM1_CAT_KABU) {
@@ -780,18 +800,34 @@ static int mAGrw_SpoilKabu(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
     return res;
 }
 
-static int mAGrw_ClearSpoiledKabu(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_ClearSpoiledKabu(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_ClearSpoiledKabu(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (*item == ITM_KABU_SPOILED) {
         *item = EMPTY_NO;
+#if VERSION == VER_GAFP01_00
+        if (deposit != NULL && grow_info->deposited_item == TRUE) {
+            mFI_BlockDepositOFF(deposit, grow_info->ut_x, grow_info->ut_z);
+            grow_info->deposited_item = FALSE;
+        }
+#endif
         res = TRUE;
     }
 
     return res;
 }
 
-static int mAGrw_ClearShineGround(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_ClearShineGround(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_ClearShineGround(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (*item == SHINE_SPOT) {
@@ -821,15 +857,30 @@ static int mAGrw_RecordCheckItem(u8* record, mActor_name_t check_item, mActor_na
     return res;
 }
 
-static int mAGrw_RecordHoneycombTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_RecordHoneycombTree(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_RecordHoneycombTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     return mAGrw_RecordCheckItem(&grow_info->honeycomb_tree_record, *item, l_magrw_bee_table, 3, grow_info->block_x);
 }
 
-static int mAGrw_RecordFtrTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_RecordFtrTree(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_RecordFtrTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     return mAGrw_RecordCheckItem(&grow_info->ftr_tree_record, *item, l_magrw_ftr_table, 3, grow_info->block_x);
 }
 
-static int mAGrw_RecordDepositFossil(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_RecordDepositFossil(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_RecordDepositFossil(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (grow_info->deposited_item == TRUE) {
@@ -873,7 +924,12 @@ static int mAGrw_CheckMoneyTree(mActor_name_t item) {
     return res;
 }
 
-static int mAGrw_CountMoneyTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_CountMoneyTree(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_CountMoneyTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if (mAGrw_CheckMoneyTree(*item) == TRUE) {
@@ -884,7 +940,12 @@ static int mAGrw_CountMoneyTree(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info
     return res;
 }
 
-static int mAGrw_CheckMoneyStone(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info) {
+#if VERSION == VER_GAFP01_00
+static int mAGrw_CheckMoneyStone(mActor_name_t* item, u16* deposit, mAGrw_GrowInfo_c* grow_info)
+#else
+static int mAGrw_CheckMoneyStone(mActor_name_t* item, mAGrw_GrowInfo_c* grow_info)
+#endif
+{
     int res = FALSE;
 
     if ((*item >= MONEY_ROCK_A && *item <= MONEY_ROCK_E) || *item == MONEY_FLOWER_SEED) {
@@ -1611,7 +1672,11 @@ static void mAGrw_SetCarp(lbRTC_time_c* time) {
     }
 }
 
+#if VERSION == VER_GAFP01_00
+typedef int (*mAGrw_GROW_PROC)(mActor_name_t*, u16*, mAGrw_GrowInfo_c*);
+#else
 typedef int (*mAGrw_GROW_PROC)(mActor_name_t*, mAGrw_GrowInfo_c*);
+#endif
 
 static void mAGrw_GrowBlockFgItem(mActor_name_t* items, mCoBG_Collision_u* col, u16* deposit,
                                   mAGrw_GrowInfo_c* grow_info, int proc_type) {
@@ -1644,6 +1709,9 @@ static void mAGrw_GrowBlockFgItem(mActor_name_t* items, mCoBG_Collision_u* col, 
     int ut_z;
     int ut_x;
     int i;
+#if VERSION == VER_GAFP01_00
+    u16* block_deposit = deposit;
+#endif
 
     mFI_BkNum2WposXZ(&wpos.x, &wpos.z, grow_info->block_x, grow_info->block_z);
     wpos.x += mFI_UT_WORLDSIZE_X_F / 2.0f;
@@ -1664,7 +1732,11 @@ static void mAGrw_GrowBlockFgItem(mActor_name_t* items, mCoBG_Collision_u* col, 
             grow_info->block_height = mCoBG_GetLayer(&t_wpos);
 
             for (i = 0; i < proc_table_num; i++) {
+#if VERSION == VER_GAFP01_00
+                if ((*proc_table[i])(items, block_deposit, grow_info) == TRUE) {
+#else
                 if ((*proc_table[i])(items, grow_info) == TRUE) {
+#endif
                     break;
                 }
             }
@@ -2504,7 +2576,11 @@ static void mAGrw_SetDigItem(mAGrw_SSPosInfo_c* pos_info, int* deposit_haniwa, u
 
 static void mAGrw_SpoilPossession(mActor_name_t* items, int count) {
     for (count; count != 0; count--) {
+#if VERSION == VER_GAFP01_00
+        mAGrw_SpoilKabu(items, NULL, NULL);
+#else
         mAGrw_SpoilKabu(items, NULL);
+#endif
         items++;
     }
 }
@@ -2538,7 +2614,11 @@ static void mAGrw_SpoilAllPossession(int spoil_kabu) {
 
             haniwa_item = Save_Get(homes[i]).haniwa.items;
             for (j = 0; j < HANIWA_ITEM_HOLD_NUM; j++) {
+#if VERSION == VER_GAFP01_00
+                mAGrw_SpoilKabu(&haniwa_item->item, NULL, NULL);
+#else
                 mAGrw_SpoilKabu(&haniwa_item->item, NULL);
+#endif
                 haniwa_item++;
             }
         }
@@ -2975,7 +3055,11 @@ static void mAgrw_ZuruSpoilKabuBlockFgItem(mActor_name_t* items, mCoBG_Collision
             grow_info->ut_x = ut_x;
             grow_info->ut_z = ut_z;
 
+#if VERSION == VER_GAFP01_00
+            mAGrw_SpoilKabu(items, NULL, grow_info);
+#else
             mAGrw_SpoilKabu(items, grow_info);
+#endif
             items++;
             wpos_temp.x += mFI_UT_WORLDSIZE_X_F;
         }

@@ -16,6 +16,10 @@
 #include "libc64/malloc.h"
 #include "GBA/gba.h"
 #include "m_vibctl.h"
+#if VERSION == VER_GAFP01_00
+#include "m_game_dlftbls.h"
+#include "reload_data.h"
+#endif
 
 GAME* gamePT = NULL;
 
@@ -144,7 +148,13 @@ extern void game_main(GAME* this) {
     this->exec(this);
     GRAPH_SET_DOING_POINT(graph, GAME_EXEC_FINISHED);
     GRAPH_SET_DOING_POINT(graph, GAME_BGM);
+#if VERSION == VER_GAFP01_00
+    if (this->game_dlf_no != GAME_DLFTBL_RELOAD_DATA) {
+        mBGM_main(this);
+    }
+#else
     mBGM_main(this);
+#endif
     GRAPH_SET_DOING_POINT(graph, GAME_BGM_FINISHED);
     game_move_first(this);
     this->frame_counter++;
@@ -156,7 +166,9 @@ static void game_init_hyral(GAME* this, size_t size) {
         THA_ct(&this->tha, (char*)hyral, size);
     } else {
         THA_ct(&this->tha, NULL, 0);
-#if VERSION == VER_GAFU01_00
+#if VERSION == VER_GAFP01_00
+        _dbg_hungup(__FILE__, 566);
+#elif VERSION == VER_GAFU01_00
         _dbg_hungup(__FILE__, 565);
 #elif VERSION == VER_GAFE01_00
         _dbg_hungup(__FILE__, 559);
@@ -191,7 +203,9 @@ extern void game_resize_hyral(GAME* this, int size) {
         THA_ct(&this->tha, (char*)hyral, (u32)size);
     } else {
         THA_ct(&this->tha, NULL, 0);
-#if VERSION == VER_GAFU01_00
+#if VERSION == VER_GAFP01_00
+        _dbg_hungup(__FILE__, 640);
+#elif VERSION == VER_GAFU01_00
         _dbg_hungup(__FILE__, 639);
 #elif VERSION == VER_GAFE01_00
         _dbg_hungup(__FILE__, 633);
@@ -199,10 +213,21 @@ extern void game_resize_hyral(GAME* this, int size) {
     }
 }
 
+#if VERSION == VER_GAFP01_00
+extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph, int dlf_no) {
+#else
 extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph) {
+#endif
     gamePT = this;
+#if VERSION == VER_GAFP01_00
+    this->game_dlf_no = dlf_no;
+#endif
     graph->need_viupdate = TRUE;
+#if VERSION == VER_GAFP01_00
+    mCon_ct(this);
+#else
     mCon_ct();
+#endif
     this->graph = graph;
     this->frame_counter = 0;
     this->exec = NULL;
@@ -215,7 +240,13 @@ extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph) {
     SetGameFrame(GAME_FRAME);
     __gfxprint_default_flags |= GFXPRINT_FLAG_HIGHRES;
     init(this);
+#if VERSION == VER_GAFP01_00
+    if (this->game_dlf_no != GAME_DLFTBL_RELOAD_DATA) {
+        mBGM_init();
+    }
+#else
     mBGM_init();
+#endif
 #if VERSION < VER_GAFU01_00
     GBAInit();
 #endif
@@ -224,7 +255,13 @@ extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph) {
 
 extern void game_dt(GAME* this) {
     mCon_dt();
+#if VERSION == VER_GAFP01_00
+    if (this->game_dlf_no != GAME_DLFTBL_RELOAD_DATA) {
+        mBGM_cleanup();
+    }
+#else
     mBGM_cleanup();
+#endif
     if (this->cleanup != NULL) {
         this->cleanup(this);
     }
@@ -252,11 +289,19 @@ extern int game_getFreeBytes(GAME* this) {
     return THA_getFreeBytes16(&this->tha);
 }
 
+#if VERSION != VER_GAFP01_00
 extern void game_goto_next_game_play(GAME* this) {
     GAME_GOTO_NEXT(this, play, PLAY);
 }
+#endif
 
 /* @fabricated */
 MATCH_FORCESTRIP extern void game_goto_next_game_famicom_emu(GAME* this) {
     GAME_GOTO_NEXT(this, famicom_emu, FAMICOM_EMU);
 }
+
+#if VERSION == VER_GAFP01_00
+extern void game_goto_next_game_reload_data(GAME* this) {
+    GAME_GOTO_NEXT(this, reload_data, RELOAD_DATA);
+}
+#endif

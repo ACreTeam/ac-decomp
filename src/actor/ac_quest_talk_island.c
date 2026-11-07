@@ -1221,9 +1221,9 @@ static void aQMgr_order_set_string_1(u8* last_str_tbl) {
     last_str_tbl += 2;
     for (i = 0; i < (aQMgr_LAST_STR_NUM - 2); i++) {
         if (*last_str_tbl < (u8)rand_max_table[i]) {
-            last_str_no = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], rand_max_table[i] - 1.0f, *last_str_tbl);
+            last_str_no = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], rand_max_table[i] - 1.0f, *last_str_tbl);
         } else {
-            last_str_no = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], rand_max_table[i], -1);
+            last_str_no = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], rand_max_table[i], -1);
         }
 
         *last_str_tbl++ = last_str_no;
@@ -1240,9 +1240,9 @@ static void aQMgr_order_set_string_2(u8* last_str_tbl) {
     u8 str[aQMgr_TEXT_STR_SIZE];
     int shop_level;
 
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR0, 1, 10);
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR1, 10, 99);
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR2, 0, 9);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR0, 1, 10);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR1, 10, 99);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR2, 0, 9);
     shop_level = mSP_GetShopLevel();
     mString_Load_StringFromRom(str, sizeof(str), 0x454 + shop_level);
     mMsg_SET_ITEM_STR(mMsg_ITEM_STR3, str, sizeof(str));
@@ -1254,7 +1254,7 @@ static void aQMgr_order_set_string_3(u8* last_str_tbl) {
     int i;
 
     for (i = 0; i < 3; i++) {
-        aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], 32.0f, -1);
+        aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], 32.0f, -1);
     }
 }
 

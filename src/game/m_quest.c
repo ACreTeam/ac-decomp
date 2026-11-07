@@ -169,7 +169,12 @@ extern int mQst_CheckLimitOver(mQst_base_c* quest) {
                     lbRTC_TimeCopy(&temp, &quest->time_limit);
                     lbRTC_Sub_DD(&temp, days);
 
+#if VERSION == VER_GAFP01_00
+                    if (lbRTC_IsOverTime(rtc_time, &temp) == lbRTC_OVER &&
+                        lbRTC_IsEqualTime(rtc_time, &temp, lbRTC_CHECK_ALL) == FALSE) {
+#else
                     if (lbRTC_IsOverTime(rtc_time, &temp) == lbRTC_OVER) {
+#endif
                         res = TRUE;
                     }
                 }
@@ -987,11 +992,15 @@ extern void mQst_NextSoccer(ACTOR* actor) {
         contest = &Save_Get(animals[npc_idx]).contest_quest;
 
         if (contest->base.progress == 2 && Common_Get(clip).npc_clip != NULL) {
+#if VERSION == VER_GAFP01_00
+            looks = mNpc_GetNpcLooks(actor);
+#else
             Animal_c* animal = npc_actor->npc_info.animal;
 
             if (animal != NULL) {
                 looks = animal->id.looks;
             }
+#endif
 
             if ((*Common_Get(clip).npc_clip->force_call_req_proc)(npc_actor, 0x0D8B + looks) == TRUE) {
                 contest->base.progress = 1;

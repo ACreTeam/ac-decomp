@@ -201,7 +201,11 @@ static void Game_play_fbdemo_fade_out_game_end_move_end(GAME_PLAY* play) {
 }
 
 static void Game_play_change_scene_move_end(GAME_PLAY* play) {
+#if VERSION == VER_GAFP01_00
+    game_goto_next_game_reload_data(&play->game);
+#else
     game_goto_next_game_play(&play->game);
+#endif
     Common_Set(last_scene_no, Save_Get(scene_no));
     Save_Set(scene_no, play->next_scene_no);
 }

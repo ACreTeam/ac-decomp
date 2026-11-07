@@ -10,6 +10,22 @@ extern "C" {
 #include "game.h"
 #include "types.h"
 
+enum {
+    GAME_DLFTBL_FIRST_GAME,
+    GAME_DLFTBL_SELECT,
+    GAME_DLFTBL_PLAY,
+    GAME_DLFTBL_SECOND_GAME,
+    GAME_DLFTBL_4,
+    GAME_DLFTBL_TRADEMARK,
+    GAME_DLFTBL_PLAYER_SELECT,
+    GAME_DLFTBL_SAVE_MENU,
+    GAME_DLFTBL_FAMICOM_EMU,
+    GAME_DLFTBL_PRENMI,
+    GAME_DLFTBL_RELOAD_DATA,
+
+    GAME_DLFTBL_NUM
+};
+
 typedef void (*GAME_CT_PROC)(GAME* game);
 typedef void (*GAME_DT_PROC)(GAME* game);
 

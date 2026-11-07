@@ -519,6 +519,48 @@ static void mNtc_set_near_old_nwrite_data(lbRTC_time_c* nwrite_time, lbRTC_year_
     }
 }
 
+#if VERSION == VER_GAFP01_00
+static int mNtc_make_auto_nwrite_day_string(u8* str, int month, int day) {
+    int month_len;
+    int day_len;
+    u8 buf[56];
+#if GAME_LANGUAGE != GAME_LANG_EN
+    u8* comment_p = str;
+#endif
+
+    day_len = mString_Load_DayStringFromRom(buf, day);
+#if GAME_LANGUAGE == GAME_LANG_EN
+    str[0] = 't';
+    str[1] = 'h';
+    str[2] = 'e';
+    str[3] = CHAR_SPACE;
+    mem_copy(str + 4, buf, day_len);
+    str[day_len + 4] = CHAR_SPACE;
+    str[day_len + 5] = 'o';
+    str[day_len + 6] = 'f';
+    str[day_len + 7] = CHAR_SPACE;
+    month_len = mString_Load_MonthStringFromRom(buf, month);
+    mem_copy(str + day_len + 8, buf, month_len);
+    return month_len + day_len + 8;
+#else
+    mem_copy(str, buf, day_len);
+    comment_p += day_len;
+    comment_p[0] = CHAR_SPACE;
+#if GAME_LANGUAGE == GAME_LANG_ES
+    comment_p[1] = 'd';
+    comment_p[2] = 'e';
+    comment_p[3] = CHAR_SPACE;
+    month_len = mString_Load_MonthStringFromRom(buf, month);
+    mem_copy(comment_p + 4, buf, month_len);
+    return month_len + day_len + 4;
+#else
+    month_len = mString_Load_MonthStringFromRom(buf, month);
+    mem_copy(comment_p + 1, buf, month_len);
+    return month_len + day_len + 1;
+#endif
+#endif
+}
+#else
 static int mNtc_make_auto_nwrite_day_string(u8* str, int month, int day) {
     int month_len;
     int day_len;
@@ -531,6 +573,7 @@ static int mNtc_make_auto_nwrite_day_string(u8* str, int month, int day) {
     mem_copy(str + month_len + 1, buf, day_len);
     return month_len + day_len + 1;
 }
+#endif
 
 static void mNtc_set_auto_nwrite_common_string() {
     int land_name_len;

@@ -48,7 +48,7 @@ static void mNW_InitMyOriginalTexture(int player_no) {
 
     player_no &= 3;
     for (i = 0; i < mNW_DEFAULT_ORIGINAL_TEX_NUM; i++) {
-        _JW_GetResourceAram(JW_GetAramAddress(27) + i * mNW_DESIGN_TEX_SIZE,
+        _JW_GetResourceAram(JW_GetAramAddress(RESOURCE_MY_ORIGINAL) + i * mNW_DESIGN_TEX_SIZE,
                             Save_Get(private_data[player_no].my_org[i & 7].design.data), mNW_DESIGN_TEX_SIZE);
     }
 }
@@ -88,7 +88,7 @@ extern void mNW_InitOneMyOriginal(int player_no) {
  * @param tex_no The index of the texture to retrieve (0-7)
  **/
 static void mNW_CopyNeedleworkDefaultTexture(u8* dst, int tex_no) {
-    u32 addr = JW_GetAramAddress(28);
+    u32 addr = JW_GetAramAddress(RESOURCE_NEEDLEWORK);
     _JW_GetResourceAram(addr + (tex_no & 7) * mNW_DESIGN_TEX_SIZE, dst, mNW_DESIGN_TEX_SIZE);
 }
 
@@ -379,10 +379,16 @@ extern void mNW_SwapOriginalData(mNW_original_design_c* org0, mNW_original_desig
  * @param design The design which will be initialized
  **/
 extern void mNW_InitOriginalData(mNW_original_design_c* design) {
+#if VERSION != VER_GAFP01_00
     static u8 name[mNW_ORIGINAL_DESIGN_NAME_LEN] = "blank           ";
+#endif
 
     u8* tex;
+#if VERSION == VER_GAFP01_00
+    mString_Load_StringFromRom(design->name, mNW_ORIGINAL_DESIGN_NAME_LEN, 0x6E6);
+#else
     mNW_OverWriteOriginalName(design, name);
+#endif
     tex = design->design.data;
     mem_clear(tex, mNW_DESIGN_TEX_SIZE, 0xFF);
     DCStoreRangeNoSync(tex, mNW_DESIGN_TEX_SIZE);

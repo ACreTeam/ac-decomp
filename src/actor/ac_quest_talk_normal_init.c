@@ -846,8 +846,35 @@ static void aQMgr_set_free_str_memory(Anmmem_c* memory) {
 
 typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, lbRTC_ymd_c*);
 
+#if VERSION == VER_GAFP01_00
+#if GAME_LANGUAGE == GAME_LANG_FR
+#define aQMgr_LEAP_MONTH "mois bissextile"
+#elif GAME_LANGUAGE == GAME_LANG_DE
+#define aQMgr_LEAP_MONTH "Schaltmonat"
+#elif GAME_LANGUAGE == GAME_LANG_IT
+#define aQMgr_LEAP_MONTH "mese bisestile"
+#elif GAME_LANGUAGE == GAME_LANG_ES
+#define aQMgr_LEAP_MONTH "mes bisiesto"
+#else
+#define aQMgr_LEAP_MONTH "leap month"
+#endif
+
+static void aQMgr_set_calendar_free_str_common(u8 month, u8 day, int month_str_no, int day_str_no) {
+    static u8 uru_tuki[sizeof(aQMgr_LEAP_MONTH) - 1] = aQMgr_LEAP_MONTH;
+
+    if (month == 13) {
+        mMsg_SET_FREE_STR(month_str_no, uru_tuki, sizeof(uru_tuki));
+    } else {
+        aQMgr_set_number_free_str_add_gatu(month, month_str_no);
+    }
+    aQMgr_set_number_free_str_add_nichi(day, day_str_no);
+}
+#endif
+
 static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int month_str_no, int day_str_no, u8 month, u8 day) {
+#if VERSION != VER_GAFP01_00
     static u8 uru_tuki[10] = "leap month";
+#endif
     lbRTC_ymd_c src_date;
     lbRTC_ymd_c dst_date;
     int ret;
@@ -863,6 +890,9 @@ static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int 
         ret = (*conv_proc)(&dst_date, &src_date);
     }
 
+#if VERSION == VER_GAFP01_00
+    aQMgr_set_calendar_free_str_common(dst_date.month, dst_date.day, month_str_no, day_str_no);
+#else
     if (dst_date.month == 13) {
         mMsg_SET_FREE_STR(month_str_no, uru_tuki, sizeof(uru_tuki));
     } else {
@@ -870,7 +900,17 @@ static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int 
     }
 
     aQMgr_set_number_free_str_add_nichi(dst_date.day, day_str_no);
+#endif
 }
+
+#if VERSION == VER_GAFP01_00
+static void aQMgr_set_harvestmoon_free_str(int month_str_no, int day_str_no, int year) {
+    lbRTC_ymd_c date;
+
+    lbRk_HarvestMoonDay(&date, year);
+    aQMgr_set_calendar_free_str_common(date.month, date.day, month_str_no, day_str_no);
+}
+#endif
 
 static u32 aQMgr_get_rnd_no_cut_10(int min, int max, int round_to_tens) {
     int d = max - min;
@@ -1462,7 +1502,11 @@ static int aQMgr_decide_msg_calendar_ev(QUEST_MANAGER_ACTOR* manager, int looks)
         aQMgr_set_number_free_str_add_nichi(day, mMsg_FREE_STR15);
     }
 
+#if VERSION == VER_GAFP01_00
+    aQMgr_set_harvestmoon_free_str(mMsg_FREE_STR16, mMsg_FREE_STR17, Common_Get(time.rtc_time.year)); // 8th moon 15th day
+#else
     aQMgr_set_calendar_free_str(&lbRk_ToSeiyouReki, mMsg_FREE_STR16, mMsg_FREE_STR17, 8, 15); // 8th moon 15th day
+#endif
     aQMgr_set_calendar_free_str(&lbRk_ToSeiyouReki, mMsg_FREE_STR18, mMsg_FREE_STR19, 9, 13); // 9th moon 13th day
     return ret_msg;
 }
@@ -1514,8 +1558,8 @@ static int aQMgr_decide_msg_special_ev(QUEST_MANAGER_ACTOR* manager, int looks) 
                     }
 
                     if (str_no != -1) {
-                        mString_Load_StringFromRom(l_aqmgr_str, sizeof(l_aqmgr_str), str_no);
-                        mMsg_SET_FREE_STR(mMsg_FREE_STR11, l_aqmgr_str, sizeof(l_aqmgr_str));
+                        mString_Load_StringFromRom(l_aqmgr_str2, sizeof(l_aqmgr_str2), str_no);
+                        mMsg_SET_FREE_STR(mMsg_FREE_STR11, l_aqmgr_str2, sizeof(l_aqmgr_str2));
                         break;
                     }
                 }
@@ -1992,9 +2036,9 @@ static void aQMgr_order_set_string_1(u8* last_str_tbl) {
     last_str_tbl += 2;
     for (i = 0; i < (aQMgr_LAST_STR_NUM - 2); i++) {
         if (*last_str_tbl < (u8)rand_max_table[i]) {
-            last_str_no = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], rand_max_table[i] - 1.0f, *last_str_tbl);
+            last_str_no = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], rand_max_table[i] - 1.0f, *last_str_tbl);
         } else {
-            last_str_no = aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], rand_max_table[i], -1);
+            last_str_no = aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], rand_max_table[i], -1);
         }
 
         *last_str_tbl++ = last_str_no;
@@ -2011,9 +2055,9 @@ static void aQMgr_order_set_string_2(u8* last_str_tbl) {
     u8 str[aQMgr_TEXT_STR_SIZE];
     int shop_level;
 
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR0, 1, 10);
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR1, 10, 99);
-    aQMgr_set_random_number_item_str(l_aqmgr_str2, mMsg_ITEM_STR2, 0, 9);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR0, 1, 10);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR1, 10, 99);
+    aQMgr_set_random_number_item_str(l_aqmgr_str, mMsg_ITEM_STR2, 0, 9);
     shop_level = mSP_GetShopLevel();
 
     if (shop_level < 0 || shop_level >= mSP_SHOP_TYPE_NUM) {
@@ -2031,7 +2075,7 @@ static void aQMgr_order_set_string_3(u8* last_str_tbl) {
     int i;
 
     for (i = 0; i < 3; i++) {
-        aQMgr_set_random_string(l_aqmgr_str, i, base_str_no[i], 32.0f, -1);
+        aQMgr_set_random_string(l_aqmgr_str2, i, base_str_no[i], 32.0f, -1);
     }
 }
 

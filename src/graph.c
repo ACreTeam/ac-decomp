@@ -25,6 +25,9 @@
 #include "sys_dynamic.h"
 #include "sys_ucode.h"
 #include "zurumode.h"
+#if VERSION == VER_GAFP01_00
+#include "reload_data.h"
+#endif
 
 GRAPH graph_class;
 
@@ -65,6 +68,45 @@ static void graph_setup_double_buffer(GRAPH* this) {
 }
 
 #define ARE_INIT_PROCS_EQUAL(proc0, proc1) (((void (*)(GAME*))proc0) == ((void (*)(GAME*))proc1))
+#if VERSION == VER_GAFP01_00
+static int game_get_next_game_dlf_no(GAME* game) {
+    void (*next_game_init_proc)(GAME*) = game_get_next_game_init(game);
+
+    if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, first_game_init)) {
+        return GAME_DLFTBL_FIRST_GAME;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, select_init)) {
+        return GAME_DLFTBL_SELECT;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, play_init)) {
+        return GAME_DLFTBL_PLAY;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, second_game_init)) {
+        return GAME_DLFTBL_SECOND_GAME;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, trademark_init)) {
+        return GAME_DLFTBL_TRADEMARK;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, player_select_init)) {
+        return GAME_DLFTBL_PLAYER_SELECT;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, save_menu_init)) {
+        return GAME_DLFTBL_SAVE_MENU;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, famicom_emu_init)) {
+        return GAME_DLFTBL_FAMICOM_EMU;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, prenmi_init)) {
+        return GAME_DLFTBL_PRENMI;
+    } else if (ARE_INIT_PROCS_EQUAL(next_game_init_proc, reload_data_init)) {
+        return GAME_DLFTBL_RELOAD_DATA;
+    } else {
+        return -1;
+    }
+}
+
+static DLFTBL_GAME* game_get_next_game_dlftbl(GAME* game) {
+    int dlf_no = game_get_next_game_dlf_no(game);
+
+    if (dlf_no >= 0 && dlf_no < GAME_DLFTBL_NUM) {
+        return &game_dlftbls[dlf_no];
+    }
+
+    return NULL;
+}
+#else
 static DLFTBL_GAME* game_get_next_game_dlftbl(GAME* game) {
     void (*next_game_init_proc)(GAME*) = game_get_next_game_init(game);
 
@@ -90,6 +132,7 @@ static DLFTBL_GAME* game_get_next_game_dlftbl(GAME* game) {
 
     return NULL;
 }
+#endif
 
 extern void graph_ct(GRAPH* this) {
     bzero(this, sizeof(GRAPH));
@@ -155,7 +198,9 @@ static int graph_draw_finish(GRAPH* this) {
 
     SYSDYNAMIC_OPEN();
     if (!SYSDYNAMIC_CHECK_START()) {
-#if VERSION == VER_GAFU01_00
+#if VERSION == VER_GAFP01_00
+        _dbg_hungup(__FILE__, 433);
+#elif VERSION == VER_GAFU01_00
         _dbg_hungup(__FILE__, 416);
 #elif VERSION == VER_GAFE01_00
         _dbg_hungup(__FILE__, 417);
@@ -164,7 +209,9 @@ static int graph_draw_finish(GRAPH* this) {
 
     if (!SYSDYNAMIC_CHECK_END()) {
         err = TRUE;
-#if VERSION == VER_GAFU01_00
+#if VERSION == VER_GAFP01_00
+        _dbg_hungup(__FILE__, 441);
+#elif VERSION == VER_GAFU01_00
         _dbg_hungup(__FILE__, 424);
 #elif VERSION == VER_GAFE01_00
         _dbg_hungup(__FILE__, 425);
@@ -301,6 +348,46 @@ static void graph_main(GRAPH* this, GAME* game) {
 }
 #endif
 
+#if VERSION == VER_GAFP01_00
+extern void graph_proc(void* arg) {
+    GRAPH* __graph = &graph_class;
+    DLFTBL_GAME* dlftbl = &game_dlftbls[GAME_DLFTBL_FIRST_GAME];
+    int dlf_no = GAME_DLFTBL_FIRST_GAME;
+    graph_ct(&graph_class);
+
+    while (dlftbl != NULL) {
+        size_t size = dlftbl->alloc_size;
+        GAME* game = (GAME*)malloc(size);
+        game_class_p = game;
+        bzero(game, size);
+        GRAPH_SET_DOING_POINT(__graph, GAME_CT);
+        game_ct(game, dlftbl->init, __graph, dlf_no);
+        emu64_refresh();
+        GRAPH_SET_DOING_POINT(__graph, GAME_CT_FINISHED);
+
+        while (game_is_doing(game)) {
+            if (!dvderr_draw()) {
+                graph_main(__graph, game);
+            } else if (OSGetResetSwitchState()) {
+                __osResetSwitchPressed = TRUE;
+            } else if (__osResetSwitchPressed) {
+                osShutdownStart(OS_RESET_SHUTDOWN);
+            }
+        }
+
+        dlftbl = game_get_next_game_dlftbl(game);
+        dlf_no = game_get_next_game_dlf_no(game);
+        GRAPH_SET_DOING_POINT(__graph, GAME_18);
+        GRAPH_SET_DOING_POINT(__graph, GAME_DT);
+        game_dt(game);
+        GRAPH_SET_DOING_POINT(__graph, GAME_DT_FINISHED);
+        free(game);
+        game_class_p = NULL;
+    }
+
+    graph_dt(__graph);
+}
+#else
 extern void graph_proc(void* arg) {
     GRAPH* __graph = &graph_class;
     DLFTBL_GAME* dlftbl = &game_dlftbls[0];
@@ -333,3 +420,4 @@ extern void graph_proc(void* arg) {
 
     graph_dt(__graph);
 }
+#endif

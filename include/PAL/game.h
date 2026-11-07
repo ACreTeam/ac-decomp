@@ -64,7 +64,7 @@ extern void game_get_controller(GAME* game);
 extern void SetGameFrame(int frame);
 extern void game_main(GAME* game);
 extern void game_resize_hyral(GAME* game, int size);
-extern void game_ct(GAME* game, void (*init)(GAME*), GRAPH* graph);
+extern void game_ct(GAME* game, void (*init)(GAME*), GRAPH* graph, int dlf_no);
 extern void game_dt(GAME* game);
 extern void (*game_get_next_game_init(GAME* game))(GAME*);
 #ifndef MUST_MATCH
@@ -72,7 +72,7 @@ extern size_t game_get_next_game_class_size(GAME* game);
 #endif
 extern int game_is_doing(GAME* game);
 extern int game_getFreeBytes(GAME* game);
-extern void game_goto_next_game_play(GAME* game);
+extern void game_goto_next_game_reload_data(GAME* game);
 #ifndef MUST_MATCH
 extern void game_goto_next_game_famicom_emu(GAME* game);
 #endif

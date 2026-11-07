@@ -302,6 +302,13 @@ extern void mSM_submenu_ctrl(GAME_PLAY* play) {
                         mSM_open_submenu(submenu, mSM_OVL_MAP, 0, 0);
                         mSM_Reset_player_btn_type1(play);
                         break;
+#if VERSION == VER_GAFP01_00
+                    case MUSIC_BOARD1:
+                    case MUSIC_BOARD0:
+                        mSM_open_submenu(submenu, mSM_OVL_MSCORE, 0, 0);
+                        mSM_Reset_player_btn_type1(play);
+                        break;
+#endif
                 }
             }
         }
@@ -395,9 +402,11 @@ static void mSM_move_End(Submenu* submenu) {
         mSM_load_player_anime(play);
         submenu->start_refuse_timer = 1;
 
+#if VERSION != VER_GAFP01_00
         if (submenu->after_mode == 12) {
             mPlib_request_main_demo_wait_from_submenu((ACTOR*)submenu->overlay->menu_info[mSM_OVL_MSCORE].data2);
         }
+#endif
 
         if (mMsg_Check_main_hide(msg_win) == FALSE && mMsg_Check_not_series_main_wait(msg_win)) {
             mMsg_sound_spec_change_voice(msg_win);

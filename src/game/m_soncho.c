@@ -623,9 +623,16 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                     taisou_actor->held_item = FTR_START(FTR_RADIO_TEST);
                     mSC_Radio_change_taisou_card(card, taisou_actor->held_item);
                     mIN_copy_name_str(item_name, taisou_actor->held_item);
+#if VERSION == VER_GAFP01_00
+                    mMsg_Set_free_str_art2(mMsg_Get_base_window_p(), mMsg_FREE_STR1, item_name, mIN_ITEM_NAME_LEN,
+                                           mIN_get_item_article_indef(taisou_actor->held_item),
+                                           mIN_get_item_article_def(taisou_actor->held_item),
+                                           mIN_get_item_gender(taisou_actor->held_item));
+#else
                     article = mIN_get_item_article(taisou_actor->held_item);
                     mMsg_Set_free_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR1, item_name, mIN_ITEM_NAME_LEN,
                                           article);
+#endif
                     taisou_actor->talk_state = 9;
                     msg_no = 0x342A;
 
@@ -652,9 +659,16 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                         mPr_SetFreePossessionItem(Common_Get(now_private), taisou_actor->held_item,
                                                   mPr_ITEM_COND_NORMAL);
                         mIN_copy_name_str(item_name, taisou_actor->held_item);
+#if VERSION == VER_GAFP01_00
+                        mMsg_Set_free_str_art2(mMsg_Get_base_window_p(), mMsg_FREE_STR1, item_name, mIN_ITEM_NAME_LEN,
+                                               mIN_get_item_article_indef(taisou_actor->held_item),
+                                           mIN_get_item_article_def(taisou_actor->held_item),
+                                           mIN_get_item_gender(taisou_actor->held_item));
+#else
                         article = mIN_get_item_article(taisou_actor->held_item);
                         mMsg_Set_free_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR1, item_name, mIN_ITEM_NAME_LEN,
                                               article);
+#endif
                         mSC_Radio_stamp_card(radiocard->days);
                         taisou_actor->talk_state--;
                     }

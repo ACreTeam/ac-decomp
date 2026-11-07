@@ -203,6 +203,10 @@ static void banti_chk_anime_start() {
         banti.day_anim.state = banti_ANIM_STATE_PLAYING;
     }
 
+#if VERSION == VER_GAFP01_00
+    work0 = banti.displayed_time.hour;
+    work1 = Common_Get(time.rtc_time.hour);
+#else
     if (banti.displayed_time.hour == 0 || banti.displayed_time.hour == 12) {
         work0 = 12;
     } else if (banti.displayed_time.hour > 11) {
@@ -218,6 +222,7 @@ static void banti_chk_anime_start() {
     } else {
         work1 = Common_Get(time.rtc_time.hour);
     }
+#endif
 
     disp0 = work0 / 10;
     disp1 = work1 / 10;
@@ -383,7 +388,11 @@ static void banti_draw_hiduke_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, 
         clk_win_suuji29_TA_tex_txt, clk_win_suuji30_TA_tex_txt, clk_win_suuji31_TA_tex_txt
     };
 
+#if VERSION == VER_GAFP01_00
+    static xyz_t set_pos_table[2] = { { 94.0f, -70.0f, 0.0f }, { 64.0f, -70.0f, 0.0f } };
+#else
     static xyz_t set_pos_table[2] = { { 64.0f, -70.0f, 0.0f }, { 94.0f, -70.0f, 0.0f } };
+#endif
 
     GRAPH* g = game->graph;
     xyz_t* set_pos = &set_pos_table[pos_idx];
@@ -491,18 +500,22 @@ static void banti_draw_jikan(Gfx** gfx_pp, GAME_PLAY* play, int alpha) {
     gDPSetEnvColor(gfx_pp[0]++, 60, 25, 10, a);
 
     now_hour = banti.displayed_time.hour;
+#if VERSION != VER_GAFP01_00
     if (now_hour == 0 || now_hour == 12) {
         now_hour = 12;
     } else if (now_hour > 11) {
         now_hour -= 12;
     }
+#endif
 
     next_hour = banti.next_time.hour;
+#if VERSION != VER_GAFP01_00
     if (next_hour == 0 || next_hour == 12) {
         next_hour = 12;
     } else if (next_hour > 11) {
         next_hour -= 12;
     }
+#endif
 
     banti_draw_jikan_sub(gfx_pp, (GAME*)play, &banti.hour_upper_anim, now_hour / 10, next_hour / 10, TRUE, 0);
     banti_draw_jikan_sub(gfx_pp, (GAME*)play, &banti.hour_lower_anim, now_hour % 10, next_hour % 10, FALSE, 1);
@@ -566,7 +579,9 @@ extern void banti_draw(GAME_PLAY* play) {
 
         {
             Gfx** gfx_pp;
+#if VERSION != VER_GAFP01_00
             u8* am_pm_tex = banti.displayed_time.hour < 12 ? clk_win_am_tex_rgb_ia8 : clk_win_pm_tex_rgb_ia8;
+#endif
             int alpha;
             u8 a;
             Gfx* gfx;
@@ -619,10 +634,12 @@ extern void banti_draw(GAME_PLAY* play) {
             }
 
             a = alpha;
+#if VERSION != VER_GAFP01_00
             gDPSetPrimColor(gfx_pp[0]++, 0, a, 255, 255, 120, a);
             gDPSetEnvColor(gfx_pp[0]++, 70, 10, 10, a);
             gSPSegment(gfx_pp[0]++, G_MWO_SEGMENT_A, am_pm_tex);
             gSPDisplayList(gfx_pp[0]++, clk_win_ampmT_model);
+#endif
 
             gDPSetPrimColor(gfx_pp[0]++, 0, a, 255, 255, 0, a);
             gDPSetEnvColor(gfx_pp[0]++, 70, 50, 50, a);
