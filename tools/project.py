@@ -744,6 +744,14 @@ def generate_build_ninja(
     )
     n.newline()
 
+    copy_object = config.tools_dir / "copy_object.py"
+    n.rule(
+        name="copy_object",
+        command=f"$python {copy_object} $in $out",
+        description="COPY $out",
+    )
+    n.newline()
+
     n.comment("MWCC build")
     n.rule(
         name="mwcc",
@@ -980,15 +988,18 @@ def generate_build_ninja(
             lib_name = obj.options["lib"]
             build_rule = "mwcc"
             build_implcit = mwcc_implicit
+            # MWCC emits no dependency file when -o names a renamed object.
+            # Compile under the source stem in a TU-specific directory instead.
+            compile_obj_path = obj.src_obj_path
+            if src_path.stem != obj.src_obj_path.stem:
+                compile_obj_path = (
+                    obj.src_obj_path.with_suffix("") / src_path.with_suffix(".o").name
+                )
             variables = {
                 "mw_version": Path(obj.options["mw_version"]),
                 "cflags": cflags_str,
-                # MWCC otherwise emits the source stem even when the TU is named differently.
-                "basedir": (
-                    obj.src_obj_path if src_path.stem != obj.src_obj_path.stem
-                    else os.path.dirname(obj.src_obj_path)
-                ),
-                "basefile": obj.src_obj_path.with_suffix(""),
+                "basedir": compile_obj_path.parent,
+                "basefile": compile_obj_path.with_suffix(""),
             }
 
             if obj.options["shift_jis"] and obj.options["extab_padding"] is not None:
@@ -1007,13 +1018,20 @@ def generate_build_ninja(
                 build_implcit = [*build_implcit, compilers / "GC/1.3.2f1/lmgr326b.dll"]
             n.comment(f"{obj.name}: {lib_name} (linked {obj.completed})")
             n.build(
-                outputs=obj.src_obj_path,
+                outputs=compile_obj_path,
                 rule=build_rule,
                 inputs=src_path,
                 variables=variables,
                 implicit=build_implcit,
                 order_only="pre-compile",
             )
+            if compile_obj_path != obj.src_obj_path:
+                n.build(
+                    outputs=obj.src_obj_path,
+                    rule="copy_object",
+                    inputs=compile_obj_path,
+                    implicit=copy_object,
+                )
 
             # Add ctx build rule
             if obj.ctx_path is not None:
