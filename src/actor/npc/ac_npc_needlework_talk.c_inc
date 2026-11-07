@@ -340,13 +340,19 @@ static void aNNW_set_5_ways(NPC_NEEDLEWORK_ACTOR* actor, int chose_num) {
         case mChoice_CHOICE1:
             aNNW_change_talk_proc(actor, aNNW_TALK_GBA_LOAD_BF);
             break;
+#if VERSION != VER_GAFP01_00
         case mChoice_CHOICE2:
             aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0);
             break;
         case mChoice_CHOICE3:
             aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_PRG_BF_0);
             break;
+#endif
+#if VERSION == VER_GAFP01_00
+        case mChoice_CHOICE2:
+#else
         case mChoice_CHOICE4:
+#endif
             aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
             break;
         default:
@@ -445,6 +451,9 @@ static void aNNW_talk_listen_sister2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* pla
     if (order != 0) {
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
         actor->npc_class.actor_class.npc_id = aNNW_get_sister_name(actor->npc_class.actor_class.npc_id);
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_client_info(mMsg_Get_base_window_p());
+#endif
         aNNW_change_talk_proc_next(actor);
     }
 }
@@ -455,6 +464,9 @@ static void aNNW_talk_listen_sister3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* pla
     if (order != 0) {
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
         actor->npc_class.actor_class.npc_id = aNNW_get_sister_name(actor->npc_class.actor_class.npc_id);
+#if VERSION == VER_GAFP01_00
+        mMsg_Set_client_info(mMsg_Get_base_window_p());
+#endif
         aNNW_change_talk_proc_next(actor);
     }
 }
@@ -1459,9 +1471,19 @@ static int aNNW_talk_init(ACTOR* actorx, GAME* game) {
     mDemo_Set_ListenAble();
     mDemo_Start(actorx);
     mString_Load_StringFromRom(str, sizeof(str), 0x6D5); // load 'Mabel'
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR0, str, sizeof(str), 0,
+                           mNpc_Name2Gender(SP_NPC_NEEDLEWORK0));
+#else
     mMsg_SET_FREE_STR(mMsg_FREE_STR0, str, sizeof(str));
+#endif
     mString_Load_StringFromRom(str, sizeof(str), 0x6D6); // load 'Sable'
+#if VERSION == VER_GAFP01_00
+    mMsg_Set_free_str_cl_npc(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str, sizeof(str), 0,
+                           mNpc_Name2Gender(SP_NPC_NEEDLEWORK1));
+#else
     mMsg_SET_FREE_STR(mMsg_FREE_STR1, str, sizeof(str));
+#endif
     
     switch (actorx->npc_id) {
         case SP_NPC_NEEDLEWORK0:

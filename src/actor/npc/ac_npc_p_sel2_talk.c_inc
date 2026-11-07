@@ -308,7 +308,17 @@ static void aNPS2_copy_hokanohito(NPC_P_SEL2_ACTOR* p_sel2, u8* str) {
 }
 
 static void aNPS2_set_choice_str(NPC_P_SEL2_ACTOR* p_sel2, int type) {
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_FR
+    static u8 new_player_str[10] = { 'J', 'e', CHAR_SPACE, 'd', CHAR_ACUTE_e, 'b', 'u', 't', 'e', '!' };
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_DE
+    static u8 new_player_str[13] = "Bin neu hier!";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_IT
+    static u8 new_player_str[14] = "Non mi conosci";
+#elif VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+    static u8 new_player_str[12] = "Otra persona";
+#else
     static u8 new_player_str[7] = "I'm new";
+#endif
     mChoice_c* choice_win = mChoice_Get_base_window_p();
     u8* str_p[mChoice_CHOICE_NUM];
     u8* str = static_str;

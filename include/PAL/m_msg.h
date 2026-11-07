@@ -352,6 +352,7 @@ extern int mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_p);
 extern int mMsg_request_main_disappear_wait_type2(mMsg_Window_c* msg_p);
 extern int mMsg_request_main_appear_wait_type2(mMsg_Window_c* msg_p, int clear_flag);
 extern int mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_p);
+extern void mMsg_Set_client_info(mMsg_Window_c* msg_p);
 extern void mMsg_Set_free_str(mMsg_Window_c* msg_p, int free_str_no, u8* str, int str_len);
 extern void mMsg_Set_free_str_cl(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int cl_id);
 extern void mMsg_Set_free_str_art(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int article);

@@ -27,7 +27,11 @@ void aPG_set_loan_balance() {
         int l;
         mFont_UnintToString(str, aPG_LOAN_STR_LEN, loan, 0x6, TRUE, FALSE, TRUE);
         l = mMsg_Get_Length_String(str, 0x7);
+#if VERSION == VER_GAFP01_00
+        str[l] = CHAR_PERIOD;
+#else
         str[l] = CHAR_COMMA;
+#endif
         length = l;
     }
     mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, str, length);

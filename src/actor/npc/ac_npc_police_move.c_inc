@@ -1,3 +1,13 @@
+#if VERSION == VER_GAFP01_00 && GAME_LANGUAGE == GAME_LANG_ES
+#define aPOL_MORNING_START_HOUR 6
+#define aPOL_AFTERNOON_START_HOUR 14
+#define aPOL_EVENING_START_HOUR 19
+#else
+#define aPOL_MORNING_START_HOUR 5
+#define aPOL_AFTERNOON_START_HOUR 10
+#define aPOL_EVENING_START_HOUR 17
+#endif
+
 static void aPOL_set_request_act(NPC_POLICE_ACTOR* actor, u8 idx) {
     u16 arg_data[aNPC_REQUEST_ARG_NUM];
 
@@ -179,11 +189,11 @@ static void aPOL_set_norm_talk_info_talk_request(ACTOR* actorx) {
     if (CLIP(aprilfool_control_clip) != NULL && CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_POLICE) == FALSE) {
         mDemo_Set_msg_num(CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_POLICE, TRUE));
     } else {
-        if (now_sec < mTM_TIME2SEC(5, 0, 0)) {
+        if (now_sec < mTM_TIME2SEC(aPOL_MORNING_START_HOUR, 0, 0)) {
             idx = 3;
-        } else if (now_sec < mTM_TIME2SEC(10, 0, 0)) {
+        } else if (now_sec < mTM_TIME2SEC(aPOL_AFTERNOON_START_HOUR, 0, 0)) {
             idx = 0;
-        } else if (now_sec < mTM_TIME2SEC(17, 0, 0)) {
+        } else if (now_sec < mTM_TIME2SEC(aPOL_EVENING_START_HOUR, 0, 0)) {
             idx = 1;
         } else {
             idx = 2;
